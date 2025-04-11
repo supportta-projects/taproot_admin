@@ -62,21 +62,21 @@ class LoadingButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool enabled;
   final bool expanded;
-  final Color textColor;
+  final Color? textColor;
   final Color? backgroundColor;
   final ButtonType buttonType;
   final Widget? icon;
   final double aspectRatio;
   final EdgeInsetsGeometry padding;
 
-  bool get _isWebOrDesktop {
-    return [
-          TargetPlatform.windows,
-          TargetPlatform.linux,
-          TargetPlatform.macOS,
-        ].contains(defaultTargetPlatform) ||
-        kIsWeb;
-  }
+  // bool get _isWebOrDesktop {
+  //   return [
+  //         TargetPlatform.windows,
+  //         TargetPlatform.linux,
+  //         TargetPlatform.macOS,
+  //       ].contains(defaultTargetPlatform) ||
+  //       kIsWeb;
+  // }
 
   @override
   Widget build(BuildContext context) {
