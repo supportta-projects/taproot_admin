@@ -15,6 +15,13 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> with NameMixin {
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   logWarning("Dependencies changed");
+  //   setState(() {});
+  // }
+
   final _formKey = GlobalKey<FormState>();
   bool _obsecureText = true;
   bool isLoading = false;
@@ -22,88 +29,95 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
   Widget build(BuildContext context) {
     final screenWidth = SizeUtils.width;
     final screenHeight = SizeUtils.height;
+  // logError("SH : $screenHeight");
+  //   logWarning("Screen Width: ${MediaQuery.of(context).size.width}");
+  //   logError("SW : $screenWidth");
+  //   logWarning("Screen Height: ${MediaQuery.of(context).size.height}");
+  
 
     return Scaffold(
-      body: Container(
-        width: screenWidth,
-        height: screenHeight,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(Assets.png.background.path),
-            fit: BoxFit.cover,
+      backgroundColor: Colors.green.shade100,
+      body: Center(
+        child: Container(
+          // padding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingXXL),
+          width: screenWidth * 0.25,
+          height: screenHeight * 0.6,
+          decoration: BoxDecoration(
+            color: CustomColors.secondaryColor,
+            borderRadius: BorderRadius.circular(CustomPadding.padding),
           ),
-        ),
-        child: Center(
-          child: Container(
-            width: screenWidth * 0.25,
-            height: screenHeight * 0.6,
-            decoration: BoxDecoration(
-              color: CustomColors.secondaryColor,
-              borderRadius: BorderRadius.circular(CustomPadding.padding),
-            ),
-            child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: CustomPadding.paddingXL,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('LOGO'),
-                    CustomGap.gapXXL,
-                    nameField(),
-                    CustomGap.gapLarge,
-                    TextFormField(
-                      obscureText: _obsecureText,
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: TextStyle(
-                          color: CustomColors.textColorGrey,
-                        ),
-                        suffixIcon: IconButton(
-                          icon:
-                              _obsecureText
-                                  ? Icon(Icons.visibility_off)
-                                  : Icon(Icons.visibility),
-                          onPressed: () {
-                            setState(() {
-                              _obsecureText = !_obsecureText;
-                            });
-                          },
-                        ),
-                      ),
-                      validator:
-                          (value) =>
-                              value == null || value.isEmpty
-                                  ? "Password is required"
-                                  : null,
-                    ),
-                    CustomGap.gapXL,
-                    LoadingButton(
-                      borderRadius: CustomPadding.padding,
-                      backgroundColor: CustomColors.primaryColor,
-
-                      buttonLoading: isLoading,
-                      text: "Login",
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: CustomPadding.paddingXL,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('LOGO'),
+                  nameField(),
+                  CustomGap.gapLarge,
+                  TextFormField(
+                    obscureText: _obsecureText,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: TextStyle(color: CustomColors.textColorGrey),
+                      suffixIcon: IconButton(
+                        icon:
+                            _obsecureText
+                                ? Icon(Icons.visibility_off)
+                                : Icon(Icons.visibility),
+                        onPressed: () {
                           setState(() {
-                            isLoading = !isLoading;
+                            _obsecureText = !_obsecureText;
                           });
-                          Future.delayed(const Duration(seconds: 2), () {
-                            setState(() {
-                              isLoading = !isLoading;
-                            });
-                            Navigator.of(context).pushNamed(SideNavScreen.path);
-                          });
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  ],
-                ),
+                    validator:
+                        (value) =>
+                            value == null || value.isEmpty
+                                ? "Password is required"
+                                : null,
+                  ),
+                  CustomGap.gapLarge,
+                  LoadingButton(
+                    buttonLoading: false,
+                    text: "Login",
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(SideNavScreen.path);
+                    },
+                  ),
+                  // CommonBtn(text: 'Login', onTap: () {
+
+                  // },)
+                  // Common
+
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     if (_formKey.currentState!.validate()) {}
+                  //   },
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: CustomColors.primaryColor,
+                  //     padding: EdgeInsets.symmetric(
+                  //       vertical: CustomPadding.paddingLarge,
+                  //       horizontal: CustomPadding.paddingXL,
+                  //     ),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(
+                  //         CustomPadding.paddingSmall,
+                  //       ),
+                  //     ),
+                  //   ),
+                  //   child: Text(
+                  //     'Login',
+                  //     style: TextStyle(color: CustomColors.secondaryColor),
+                  //   ),
+                  // ),
+                ],
               ),
             ),
           ),
