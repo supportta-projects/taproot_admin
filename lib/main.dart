@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: AppRoutes.onGenerateRoute,
       
       //TODO : step 3: uncomment the line below to use the onGenerateInitialRoute method
-  //    onGenerateInitialRoutes: AppRoutes.onGenerateInitialRoute,
+      onGenerateInitialRoutes: AppRoutes.onGenerateInitialRoute,
     );
   }
 }

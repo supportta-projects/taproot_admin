@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 
 
-const String fontFamily1 = 'Lato';
+const String fontFamily1 = 'Inter';
 extension BuildContextExtension on BuildContext {
   TextTheme get textTheme => Theme.of(this).textTheme;
 
@@ -46,7 +46,11 @@ extension BuildContextExtension on BuildContext {
   TextStyle get caption => baseTextStyle(fontFamily1, FontWeight.w400);
   TextStyle get overline => baseTextStyle(fontFamily1, FontWeight.w400);
   TextStyle get button => baseTextStyle(fontFamily1, FontWeight.w700);
-    TextStyle get latoRegular => baseTextStyle(fontFamily1, FontWeight.w400);
+    // TextStyle get Inter40016 => baseTextStyle(fontFamily1, FontWeight.w400,\
+
+  
+    
+TextStyle get inter40016 => displayMedium.copyWith(fontSize: 16);
   // TextStyle get latoBold => baseTextStyle(fontFamily1, FontWeight.w700);
   // TextStyle get latoBlack => baseTextStyle('Lato', FontWeight.w900);
   // TextStyle get latoLight => baseTextStyle('Lato', FontWeight.w300);
