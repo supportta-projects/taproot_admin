@@ -1,4 +1,5 @@
-import 'package:taproot_admin/features/auth_screen/view/auth_screen.dart';
+import '../features/side_nav_screen/view/side_nav_screen.dart';
+import '/features/auth_screen/view/auth_screen.dart';
 
 import '/features/landing_screen/landing_page.dart';
 import 'package:flutter/material.dart';
@@ -9,19 +10,16 @@ class AppRoutes {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final Uri uri = Uri.parse(settings.name!);
 
+
     logInfo(uri);
 
     switch (uri.path) {
+      case SideNavScreen.path:
+        return pageRoute(settings, const SideNavScreen());
       case AuthScreen.path:
-        return pageRoute(
-          settings,
-          const AuthScreen(),
-        );  
+        return pageRoute(settings, const AuthScreen());
       case LandingPage.path:
-        return pageRoute(
-          settings,
-          const LandingPage(),
-        );
+        return pageRoute(settings, const LandingPage());
       default:
         return null;
     }
@@ -39,7 +37,7 @@ class AppRoutes {
 
     return [
       pageRoute(
-         RouteSettings(name: AuthScreen.path),
+        RouteSettings(name: AuthScreen.path),
         const AuthScreen(),
         animate: false,
       ),
