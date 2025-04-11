@@ -12,6 +12,11 @@ class AppRoutes {
     logInfo(uri);
 
     switch (uri.path) {
+      case AuthScreen.path:
+        return pageRoute(
+          settings,
+          const AuthScreen(),
+        );  
       case LandingPage.path:
         return pageRoute(
           settings,
