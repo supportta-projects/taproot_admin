@@ -1,6 +1,5 @@
 import '/constants/constants.dart';
 import '/services/size_utils.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // Adjust this as per your project structure
@@ -62,21 +61,21 @@ class LoadingButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool enabled;
   final bool expanded;
-  final Color textColor;
+  final Color? textColor;
   final Color? backgroundColor;
   final ButtonType buttonType;
   final Widget? icon;
   final double aspectRatio;
   final EdgeInsetsGeometry padding;
 
-  bool get _isWebOrDesktop {
-    return [
-          TargetPlatform.windows,
-          TargetPlatform.linux,
-          TargetPlatform.macOS,
-        ].contains(defaultTargetPlatform) ||
-        kIsWeb;
-  }
+  // bool get _isWebOrDesktop {
+  //   return [
+  //         TargetPlatform.windows,
+  //         TargetPlatform.linux,
+  //         TargetPlatform.macOS,
+  //       ].contains(defaultTargetPlatform) ||
+  //       kIsWeb;
+  // }
 
   @override
   Widget build(BuildContext context) {
