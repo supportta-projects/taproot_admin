@@ -11,10 +11,10 @@ class SideNavScreen extends StatefulWidget {
 class _SideNavScreenState extends State<SideNavScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Side Navigation Screen'),
-      ),
+    return Scaffold(
+      
+      appBar: AppBar(title: Text('Side Navigation')),
+      body: Center(child: Text('Side Navigation Screen')),
     );
   }
 }
