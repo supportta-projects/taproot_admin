@@ -12,9 +12,11 @@ class _SideNavScreenState extends State<SideNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(title: Text('Side Navigation')),
-      body: Center(child: Text('Side Navigation Screen')),
+      body: Container(
+        color: Colors.green.shade100,
+        child: Center(child: Text('Side Navigation Screen')),
+      ),
     );
   }
 }
