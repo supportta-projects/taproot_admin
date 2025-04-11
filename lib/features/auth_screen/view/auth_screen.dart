@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/mixins/name_mixin.dart';
-import 'package:taproot_admin/widgets/loading_button.dart';
 
 class AuthScreen extends StatefulWidget {
   static const String path = '/auth';
@@ -69,7 +68,7 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
                                 : null,
                   ),
                   CustomGap.gapLarge,
-                 
+
                   // ElevatedButton(
                   //   onPressed: () {
                   //     if (_formKey.currentState!.validate()) {}
