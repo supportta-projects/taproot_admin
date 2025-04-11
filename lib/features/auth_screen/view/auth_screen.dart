@@ -73,44 +73,25 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
                   ),
                   CustomGap.gapLarge,
                   LoadingButton(
-                    buttonLoading: false,
+                    borderRadius: CustomPadding.padding,
+                    backgroundColor: CustomColors.primaryColor,
+
+                    buttonLoading: isLoading,
                     text: "Login",
                     onPressed: () {
-Navigator.of(context).pushNamed(
-                SideNavScreen.path
-                    );  
-
-
-
-
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = !isLoading;
+                        });
+                        Future.delayed(const Duration(seconds: 2), () {
+                          setState(() {
+                            isLoading = !isLoading;
+                          });
+                          Navigator.of(context).pushNamed(SideNavScreen.path);
+                        });
+                      }
                     },
                   ),
-                  // CommonBtn(text: 'Login', onTap: () {
-
-                  // },)
-                  // Common
-
-                  // ElevatedButton(
-                  //   onPressed: () {
-                  //     if (_formKey.currentState!.validate()) {}
-                  //   },
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: CustomColors.primaryColor,
-                  //     padding: EdgeInsets.symmetric(
-                  //       vertical: CustomPadding.paddingLarge,
-                  //       horizontal: CustomPadding.paddingXL,
-                  //     ),
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(
-                  //         CustomPadding.paddingSmall,
-                  //       ),
-                  //     ),
-                  //   ),
-                  //   child: Text(
-                  //     'Login',
-                  //     style: TextStyle(color: CustomColors.secondaryColor),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
