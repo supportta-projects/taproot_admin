@@ -1,3 +1,5 @@
+import 'package:taproot_admin/theme/theme.dart';
+
 import '/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 
@@ -13,14 +15,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      // theme: ThemeData(
+      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      // ),
+      theme: AppTheme.lightTheme,
       onGenerateRoute: AppRoutes.onGenerateRoute,
-      
+
       //TODO : step 3: uncomment the line below to use the onGenerateInitialRoute method
-  //    onGenerateInitialRoutes: AppRoutes.onGenerateInitialRoute,
+      onGenerateInitialRoutes: AppRoutes.onGenerateInitialRoute,
     );
   }
 }

@@ -6,6 +6,7 @@ class CustomPadding{
 
      static const double padding = 8;
      static const double paddingLarge = 16;
+    //  static const double paddingMedium = 20;
      static const double paddingXL = 32;
      static const double paddingXXL = 64;
      static const double paddingSmall = 4;
@@ -51,6 +52,7 @@ static const textColorLightGrey = Color.fromARGB(255, 200, 200, 200);
 static const textColorDarkGrey = Color.fromARGB(255, 50, 50, 50);
 static const Color buttonColor1 = Colors.blue;
 static const Color buttonColor2 = Colors.lightGreen;
+static const Color textFieldBorderGrey=Color(0xFF79747E);
 static const LinearGradient buttonGradient = LinearGradient(
 colors: [
 buttonColor1,
