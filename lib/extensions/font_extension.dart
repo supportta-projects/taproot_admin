@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taproot_admin/gen/fonts.gen.dart';
+import '/gen/fonts.gen.dart';
 
 const String fontFamily1 = FontFamily.inter;
 
@@ -43,7 +43,7 @@ extension BuildContextExtension on BuildContext {
 
   TextStyle get inter50016 => displayMedium.copyWith(fontSize: 16);
   TextStyle get inter70016 => displayLarge.copyWith(fontSize: 16);
-  
+
   // TextStyle get latoBold => baseTextStyle(fontFamily1, FontWeight.w700);
   // TextStyle get latoBlack => baseTextStyle('Lato', FontWeight.w900);
   // TextStyle get latoLight => baseTextStyle('Lato', FontWeight.w300);

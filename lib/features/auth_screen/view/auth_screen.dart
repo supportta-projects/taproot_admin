@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/mixins/name_mixin.dart';
+import 'package:taproot_admin/features/side_nav_screen/view/side_nav_screen.dart';
+import 'package:taproot_admin/routes/app_routes.dart';
+import 'package:taproot_admin/widgets/common_button.dart';
+import 'package:taproot_admin/widgets/loading_button.dart';
+import '/exporter/exporter.dart';
+import '/mixins/name_mixin.dart';
 
 class AuthScreen extends StatefulWidget {
   static const String path = '/auth';
@@ -16,8 +20,8 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
   bool isLoading = false;
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = SizeUtils.width;
+    final screenHeight = SizeUtils.height;
 
     return Scaffold(
       backgroundColor: Colors.green.shade100,
@@ -68,7 +72,23 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
                                 : null,
                   ),
                   CustomGap.gapLarge,
-                  
+                  LoadingButton(
+                    buttonLoading: false,
+                    text: "Login",
+                    onPressed: () {
+Navigator.of(context).pushNamed(
+                SideNavScreen.path
+                    );  
+
+
+
+
+                    },
+                  ),
+                  // CommonBtn(text: 'Login', onTap: () {
+
+                  // },)
+                  // Common
 
                   // ElevatedButton(
                   //   onPressed: () {
@@ -100,4 +120,3 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
     );
   }
 }
-

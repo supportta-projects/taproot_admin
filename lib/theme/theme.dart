@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:taproot_admin/constants/constants.dart';
-import 'package:taproot_admin/gen/fonts.gen.dart';
+import '/constants/constants.dart';
+import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(

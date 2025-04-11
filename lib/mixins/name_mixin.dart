@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/utils.dart';
-import 'package:taproot_admin/exporter/exporter.dart';
+import '/exporter/exporter.dart';
 
 mixin NameMixin<T extends StatefulWidget> on State<T> {
   final nameController = TextEditingController();
