@@ -1,12 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:taproot_admin/gen/fonts.gen.dart';
 
 
 
 
 
 
-const String fontFamily1 = 'Inter';
+const String fontFamily1 = FontFamily.inter;
+
 extension BuildContextExtension on BuildContext {
   TextTheme get textTheme => Theme.of(this).textTheme;
 
