@@ -27,6 +27,8 @@ class AppRoutes {
 
     logInfo(uri);
 
+    //TODO: step 2: use the shared pref value to navigate to the side navigation page or the auth page
+
     //if shared preference Service is null , we can navigate to the landing page
     //if shared preference Service is not null , we can navigate to the splash Screen then to home page
 
