@@ -1,3 +1,5 @@
+import 'package:taproot_admin/features/auth_screen/view/auth_screen.dart';
+
 import '/features/landing_screen/landing_page.dart';
 import 'package:flutter/material.dart';
 
@@ -30,8 +32,9 @@ class AppRoutes {
 
     return [
       pageRoute(
-        const RouteSettings(name: LandingPage.path),
-        const LandingPage(),
+         RouteSettings(name: AuthScreen.path),
+        const AuthScreen(),
+        animate: false,
       ),
     ];
   }
