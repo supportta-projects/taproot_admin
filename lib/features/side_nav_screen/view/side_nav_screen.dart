@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:taproot_admin/constants/constants.dart';
 import 'package:taproot_admin/core/logger.dart';
+import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/services/size_utils.dart';
 
 import '../widgets/custom_side_bar.dart';
@@ -17,14 +19,25 @@ class _SideNavScreenState extends State<SideNavScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    Container(
+    SizedBox(
       height: SizeUtils.height,
       width: SizeUtils.width,
-      color: Colors.red,
 
       child: Text('Home'),
     ),
-    Center(child: Text('Settings')),
+
+    SizedBox(
+      height: SizeUtils.height,
+      width: SizeUtils.width,
+
+      child: Text('orders'),
+    ),
+    SizedBox(
+      height: SizeUtils.height,
+      width: SizeUtils.width,
+
+      child: Text('cart'),
+    ),
   ];
 
   void _onItemSelected(int index) {
@@ -35,7 +48,35 @@ class _SideNavScreenState extends State<SideNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Side Navigation')),
+      appBar: AppBar(
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.account_circle),
+            onSelected: (value) {
+              if (value == 'profile') {
+              } else if (value == 'logout') {}
+            },
+            itemBuilder:
+                (context) => [
+                
+                  const PopupMenuItem(value: 'profile', child: Text('Profile')),
+                  const PopupMenuItem(
+                    value: 'settings',
+                    child: Text('Settings'),
+                  ),
+                  const PopupMenuItem(value: 'logout', child: Text('Logout')),
+                ],
+          ),
+        ],
+
+        leadingWidth: SizeUtils.width * 0.1,
+        toolbarHeight: SizeUtils.height * 0.1,
+        leading: Padding(
+          padding: EdgeInsets.all(CustomPadding.padding.v),
+          child: SvgPicture.asset(Assets.svg.logo),
+        ),
+      ),
       body: Stack(
         children: [
           _pages[_selectedIndex],

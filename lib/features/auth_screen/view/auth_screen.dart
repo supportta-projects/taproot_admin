@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:taproot_admin/features/side_nav_screen/view/side_nav_screen.dart';
-import 'package:taproot_admin/gen/assets.gen.dart';
-
+import '/features/side_nav_screen/view/side_drawer_nav_screen.dart';
+// import 'package:taproot_admin/features/side_nav_screen/view/side_nav_screen.dart';
 import 'package:taproot_admin/widgets/loading_button.dart';
 import '/exporter/exporter.dart';
 import '/mixins/name_mixin.dart';
@@ -29,11 +28,10 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
   Widget build(BuildContext context) {
     final screenWidth = SizeUtils.width;
     final screenHeight = SizeUtils.height;
-  // logError("SH : $screenHeight");
-  //   logWarning("Screen Width: ${MediaQuery.of(context).size.width}");
-  //   logError("SW : $screenWidth");
-  //   logWarning("Screen Height: ${MediaQuery.of(context).size.height}");
-  
+    // logError("SH : $screenHeight");
+    //   logWarning("Screen Width: ${MediaQuery.of(context).size.width}");
+    //   logError("SW : $screenWidth");
+    //   logWarning("Screen Height: ${MediaQuery.of(context).size.height}");
 
     return Scaffold(
       backgroundColor: Colors.green.shade100,
@@ -88,7 +86,7 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
                     buttonLoading: false,
                     text: "Login",
                     onPressed: () {
-                      Navigator.of(context).pushNamed(SideNavScreen.path);
+                      Navigator.of(context).pushNamed(SideDrawerNavScreen.path);
                     },
                   ),
                   // CommonBtn(text: 'Login', onTap: () {
