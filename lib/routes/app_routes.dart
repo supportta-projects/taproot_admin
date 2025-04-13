@@ -1,3 +1,4 @@
+import '../features/side_nav_screen/view/side_drawer_nav_screen.dart';
 import '../features/side_nav_screen/view/side_nav_screen.dart';
 import '/features/auth_screen/view/auth_screen.dart';
 
@@ -10,10 +11,11 @@ class AppRoutes {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final Uri uri = Uri.parse(settings.name!);
 
-
     logInfo(uri);
 
     switch (uri.path) {
+      case SideDrawerNavScreen.path:
+        return pageRoute(settings, const SideDrawerNavScreen());
       case SideNavScreen.path:
         return pageRoute(settings, const SideNavScreen());
       case AuthScreen.path:

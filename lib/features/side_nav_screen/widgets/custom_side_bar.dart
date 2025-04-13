@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
 // import '../../../constants/constants.dart';
@@ -16,7 +17,7 @@ class CustomSideBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: 0,
+      left: CustomPadding.paddingXL.v,
       top: 0,
       bottom: 0,
       child: Column(
@@ -25,7 +26,7 @@ class CustomSideBar extends StatelessWidget {
         children: [
           Container(
             padding: EdgeInsets.all(CustomPadding.padding.v),
-            width: SizeUtils.width * 0.04,
+            width: SizeUtils.width * 0.045,
             decoration: BoxDecoration(
               color: Colors.white,
               //       color: Colors.red,
@@ -33,7 +34,7 @@ class CustomSideBar extends StatelessWidget {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.1),
                   //  blurRadius: 4,
-                  offset: const Offset(0, 2),
+                  offset: const Offset(1, 3),
                 ),
               ],
               borderRadius: BorderRadius.circular(
@@ -44,15 +45,21 @@ class CustomSideBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 NavItem(
-                  icon: Icons.home,
+                  icon: LucideIcons.clipboardMinus,
                   isSelected: selectedIndex == 0,
                   onTap: () => onItemTap(0),
                 ),
                 //  CustomGap.gapLarge,
                 NavItem(
-                  icon: Icons.settings,
+                  icon: LucideIcons.box,
                   isSelected: selectedIndex == 1,
                   onTap: () => onItemTap(1),
+                ),
+
+                NavItem(
+                  icon: LucideIcons.shoppingCart,
+                  isSelected: selectedIndex == 2,
+                  onTap: () => onItemTap(2),
                 ),
               ],
             ),
@@ -80,12 +87,15 @@ class NavItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(10.v),
+        padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.blue : Colors.transparent,
+          color: isSelected ? CustomColors.primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(CustomPadding.padding.v),
         ),
-        child: Icon(icon, color: isSelected ? Colors.white : Colors.black),
+        child: LucideIconWidget(
+          icon: icon,
+          color: isSelected ? Colors.white : CustomColors.textColorGrey,
+        ),
       ),
     );
   }
