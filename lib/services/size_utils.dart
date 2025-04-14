@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 
 // TODO: These are the Viewport values of your Figma Design.
 // These are used in the code as a reference to create your UI Responsively.
-const num FIGMA_DESIGN_WIDTH = 1826;
-const num FIGMA_DESIGN_HEIGHT = 856;
-const num FIGMA_DESIGN_STATUS_BAR = 0;
+const num FIGMA_DESIGN_WIDTH = 1440;
+const num FIGMA_DESIGN_HEIGHT = 1024;
+const num FIGMA_DESIGN_STATUS_BAR = 70;
 typedef ResponsiveBuild =
     Widget Function(
       BuildContext context,
       Orientation orientation,
       DeviceType deviceType,
     );
+    
 
 class Sizer extends StatelessWidget {
   const Sizer({super.key, required this.builder});
