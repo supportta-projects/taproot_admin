@@ -50,8 +50,8 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
               backgroundColor: Colors.white,
               displayMode: SideMenuDisplayMode.open,
               openSideMenuWidth: (150 / 1440) * SizeUtils.width,
-              selectedColor: Colors.blue.shade100,
-              selectedIconColor: Colors.blue,
+              selectedColor: CustomColors.primaryColor,
+              // selectedIconColor: Colors.blue,
               selectedTitleTextStyle: TextStyle(
                 color: Colors.white,
                 fontSize: 14.fSize,
@@ -61,9 +61,9 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 color: CustomColors.textColorDarkGrey,
                 fontSize: 14.fSize,
               ),
-              hoverColor: Colors.blue.withValues(alpha: 0.5),
+              hoverColor: CustomColors.hoverColor,
               itemOuterPadding: EdgeInsets.symmetric(
-                vertical: CustomPadding.padding,
+                vertical: CustomPadding.paddingSmall.v,
               ),
             ),
             items: [
