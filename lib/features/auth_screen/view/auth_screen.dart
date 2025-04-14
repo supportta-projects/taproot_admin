@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '/features/side_nav_screen/view/side_drawer_nav_screen.dart';
-// import 'package:taproot_admin/features/side_nav_screen/view/side_nav_screen.dart';
+
 import 'package:taproot_admin/widgets/loading_button.dart';
 import '/exporter/exporter.dart';
 import '/mixins/name_mixin.dart';
@@ -14,13 +14,6 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> with NameMixin {
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   logWarning("Dependencies changed");
-  //   setState(() {});
-  // }
-
   final _formKey = GlobalKey<FormState>();
   bool _obsecureText = true;
   bool isLoading = false;
@@ -28,16 +21,11 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
   Widget build(BuildContext context) {
     final screenWidth = SizeUtils.width;
     final screenHeight = SizeUtils.height;
-    // logError("SH : $screenHeight");
-    //   logWarning("Screen Width: ${MediaQuery.of(context).size.width}");
-    //   logError("SW : $screenWidth");
-    //   logWarning("Screen Height: ${MediaQuery.of(context).size.height}");
 
     return Scaffold(
       backgroundColor: Colors.green.shade100,
       body: Center(
         child: Container(
-          // padding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingXXL),
           width: screenWidth * 0.25,
           height: screenHeight * 0.6,
           decoration: BoxDecoration(
@@ -89,32 +77,6 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
                       Navigator.of(context).pushNamed(SideDrawerNavScreen.path);
                     },
                   ),
-                  // CommonBtn(text: 'Login', onTap: () {
-
-                  // },)
-                  // Common
-
-                  // ElevatedButton(
-                  //   onPressed: () {
-                  //     if (_formKey.currentState!.validate()) {}
-                  //   },
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: CustomColors.primaryColor,
-                  //     padding: EdgeInsets.symmetric(
-                  //       vertical: CustomPadding.paddingLarge,
-                  //       horizontal: CustomPadding.paddingXL,
-                  //     ),
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(
-                  //         CustomPadding.paddingSmall,
-                  //       ),
-                  //     ),
-                  //   ),
-                  //   child: Text(
-                  //     'Login',
-                  //     style: TextStyle(color: CustomColors.secondaryColor),
-                  //   ),
-                  // ),
                 ],
               ),
             ),

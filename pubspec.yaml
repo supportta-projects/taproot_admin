@@ -80,6 +80,8 @@ dependencies:
   build_runner: ^2.4.15
   flutter_gen: ^5.10.0
   lucide_icons_flutter: ^2.0.3
+  easy_sidemenu: ^0.6.1
+  # sidebarx: ^0.17.1
 
 dev_dependencies:
   flutter_test:
