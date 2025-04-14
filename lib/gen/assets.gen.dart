@@ -113,9 +113,3 @@ class $AssetsSvgGen {
   /// List of all assets
   List<String> get values => [logo];
 }
-
-class Assets {
-  const Assets._();
-
-  static const $AssetsSvgGen svg = $AssetsSvgGen();
-}
