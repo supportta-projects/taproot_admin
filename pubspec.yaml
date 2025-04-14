@@ -78,9 +78,7 @@ dependencies:
   google_maps_flutter: ^2.12.1
   screen_protector: ^1.4.2+1
   build_runner: ^2.4.15
-  lucide_icons_flutter: ^2.0.3
-  easy_sidemenu: ^0.6.1
-  # sidebarx: ^0.17.1
+  flutter_gen: ^5.10.0
 
 dev_dependencies:
   flutter_test:
@@ -108,6 +106,8 @@ flutter:
   assets:
     - assets/svg/
     # - images/a_dot_ham.jpeg
+    - assets/png/
+  #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

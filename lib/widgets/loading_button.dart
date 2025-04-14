@@ -52,6 +52,7 @@ class LoadingButton extends StatelessWidget {
     this.backgroundColor,
     this.buttonType = ButtonType.filled,
     this.icon,
+    this.borderRadius,
     this.aspectRatio = 60 / 47,
     this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
   });
@@ -67,6 +68,7 @@ class LoadingButton extends StatelessWidget {
   final Widget? icon;
   final double aspectRatio;
   final EdgeInsetsGeometry padding;
+  final double? borderRadius;
 
   // bool get _isWebOrDesktop {
   //   return [
@@ -79,7 +81,7 @@ class LoadingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = BorderRadius.circular(CustomPadding.paddingXL);
+    // final borderRadius = BorderRadius.circular(CustomPadding.paddingXL);
 
     Widget content = MouseRegion(
       cursor: enabled && !buttonLoading
@@ -90,12 +92,12 @@ class LoadingButton extends StatelessWidget {
           border: buttonType.border,
           gradient: backgroundColor != null ? null : buttonType.gradient,
           color: backgroundColor ?? buttonType.color,
-          borderRadius: borderRadius,
+          borderRadius: BorderRadius.circular(borderRadius??CustomPadding.paddingXL),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: borderRadius,
+            borderRadius: BorderRadius.circular(borderRadius??CustomPadding.paddingXL),
             onTap: buttonLoading || !enabled
                 ? null
                 : () {
