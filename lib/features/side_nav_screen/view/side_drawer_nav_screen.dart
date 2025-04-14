@@ -34,11 +34,37 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: kToolbarHeight.h,
-        leading: SvgPicture.asset(
-          Assets.svg.logo,
-          height: SizeUtils.height * 0.05,
+        actions: [
+          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
+          PopupMenuButton<String>(
+            offset: Offset(0, CustomPadding.paddingXL.v),
+            icon: const Icon(Icons.account_circle),
+            onSelected: (value) {
+              if (value == 'profile') {
+                //TODO : Navigate to profile page, if exist
+              } else if (value == 'logout') {}
+            },
+            itemBuilder:
+                (context) => [
+                  PopupMenuItem(value: 'profile', child: Text('Profile')),
+                  PopupMenuItem(value: 'logout', child: Text('Logout')),
+                ],
+          ),
+          CustomGap.gapXL,
+        ],
+
+        leading: Padding(
+          padding: EdgeInsets.only(left: CustomPadding.paddingXL.v),
+          child: Placeholder(
+            //  fallbackWidth: SizeUtils.width * 0.05,
+          ),
         ),
+        toolbarHeight: kToolbarHeight.h,
+        // leading: SvgPicture.asset(
+        //   Assets.svg.logo,
+
+        //   height: SizeUtils.height * 0.05,
+        // ),
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
       ),

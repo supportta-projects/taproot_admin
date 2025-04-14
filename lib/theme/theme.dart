@@ -6,6 +6,8 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     fontFamily: FontFamily.inter,
     scaffoldBackgroundColor: CustomColors.backgroundColor,
+    hoverColor: CustomColors.hoverColor,
+    primaryColor: CustomColors.primaryColor,
 
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
