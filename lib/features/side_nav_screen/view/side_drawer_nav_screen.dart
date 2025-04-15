@@ -38,6 +38,12 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // title: Padding(
+        //   padding: const EdgeInsets.only(
+        //     left: CustomPadding.paddingXXL + CustomPadding.paddingXXL,
+        //   ),
+        //   child: Text('aaaaa'),
+        // ),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
           PopupMenuButton<String>(
@@ -168,11 +174,9 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 ),
 
                 Navigator(
-                  
                   key: _innerNavigatorKey,
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(
-
                       builder:
                           (_) => UserManagementScreen(
                             innerNavigatorKey: _innerNavigatorKey,

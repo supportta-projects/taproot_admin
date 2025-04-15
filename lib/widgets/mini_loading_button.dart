@@ -1,7 +1,8 @@
+import 'package:gap/gap.dart';
+
 import '/exporter/exporter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 
 enum ButtonSize {
   small,
@@ -45,6 +46,7 @@ enum ButtonSize {
 class MiniLoadingButton extends StatelessWidget {
   const MiniLoadingButton({
     super.key,
+    this.icon,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
@@ -53,6 +55,8 @@ class MiniLoadingButton extends StatelessWidget {
     this.backgroundColor = const Color(0xFF007BFF),
     this.textColor = Colors.white,
     this.borderRadius = 8,
+    this.useGradient = false,
+    this.gradientColors,
   });
 
   final String text;
@@ -63,6 +67,9 @@ class MiniLoadingButton extends StatelessWidget {
   final Color backgroundColor;
   final Color textColor;
   final double borderRadius;
+  final IconData? icon;
+  final bool useGradient;
+  final List<Color>? gradientColors;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +91,20 @@ class MiniLoadingButton extends StatelessWidget {
           width: size.width.h,
           height: size.height.h,
           decoration: BoxDecoration(
-            color: enabled ? backgroundColor : Colors.grey.shade400,
+            color:
+                useGradient
+                    ? null
+                    : (enabled ? backgroundColor : Colors.grey.shade400),
+            gradient:
+                useGradient && enabled
+                    ? LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors:
+                          gradientColors ??
+                          [Color(0xFF007BFF), Color(0xFF00C6FF)],
+                    )
+                    : null,
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           child: Center(
@@ -98,13 +118,20 @@ class MiniLoadingButton extends StatelessWidget {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     )
-                    : Text(
-                      text,
-                      style: TextStyle(
-                        fontSize: size.fontSize.fSize,
-                        fontWeight: FontWeight.w600,
-                        color: textColor,
-                      ),
+                    : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(icon, color: textColor),
+                        Gap(CustomPadding.padding),
+                        Text(
+                          text,
+                          style: TextStyle(
+                            fontSize: size.fontSize.fSize,
+                            fontWeight: FontWeight.w600,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
                     ),
           ),
         ),

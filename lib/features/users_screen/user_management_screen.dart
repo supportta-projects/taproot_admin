@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/widgets/loading_button.dart';
+import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 import '../user_data_update_screen/views/user_data_update_screen.dart';
 import 'model/user_data_model.dart';
@@ -48,11 +51,28 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
     return Scaffold(
       body: Container(
-        color: Colors.yellow,
+        color: CustomColors.secondaryColor,
         child: Column(
           children: [
+            Gap(CustomPadding.paddingLarge.v),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                MiniLoadingButton(
+                  icon: Icons.add,
+                  text: 'Add User',
+                  onPressed: () {},
+                  useGradient: true,
+                  gradientColors: [Color(0xff005624), Color(0xff27AE60)],
+                ),
+                Gap(CustomPadding.paddingXL.v),
+              ],
+            ),
             Padding(
-              padding: EdgeInsets.all(CustomPadding.paddingXL.v),
+              padding: EdgeInsets.symmetric(
+                horizontal: CustomPadding.paddingXL.v,
+                vertical: CustomPadding.paddingLarge.v,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -75,46 +95,51 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  PaginatedDataTable(
-                    showEmptyRows: false,
-                    columnSpacing: CustomPadding.paddingXL.v,
-                    actions: [
-                      Row(
-                        children: [
-                          Text(
-                            "Premium Users",
-                            style: context.inter50016.copyWith(
-                              fontSize: 16.fSize,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: CustomPadding.paddingXL,
+                    ),
+                    child: PaginatedDataTable(
+                      showEmptyRows: false,
+                      columnSpacing: CustomPadding.paddingXL.v,
+                      actions: [
+                        Row(
+                          children: [
+                            Text(
+                              "Premium Users",
+                              style: context.inter50016.copyWith(
+                                fontSize: 16.fSize,
+                              ),
                             ),
-                          ),
-                          Switch(
-                            value: showOnlyPremium,
-                            onChanged: (val) {
-                              setState(() {
-                                showOnlyPremium = val;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                    header: const Text(''),
-                    rowsPerPage: rowsPerPage,
-                    availableRowsPerPage: const [8],
-                    columns: const [
-                      DataColumn(label: Text('Full Name')),
-                      DataColumn(label: Text('User ID')),
-                      DataColumn(label: Text('Phone')),
-                      DataColumn(label: Text('WhatsApp')),
-                      DataColumn(label: Text('Email')),
-                      DataColumn(label: Text('Website Link')),
-                      DataColumn(label: Text('Premium')),
-                    ],
-                    source: UserDataTableSource(
-                      filteredUsers,
-                      context,
+                            Switch(
+                              value: showOnlyPremium,
+                              onChanged: (val) {
+                                setState(() {
+                                  showOnlyPremium = val;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                      header: const Text(''),
+                      rowsPerPage: rowsPerPage,
+                      availableRowsPerPage: const [8],
+                      columns: const [
+                        DataColumn(label: Text('Full Name')),
+                        DataColumn(label: Text('User ID')),
+                        DataColumn(label: Text('Phone')),
+                        DataColumn(label: Text('WhatsApp')),
+                        DataColumn(label: Text('Email')),
+                        DataColumn(label: Text('Website Link')),
+                        DataColumn(label: Text('Premium')),
+                      ],
+                      source: UserDataTableSource(
+                        filteredUsers,
+                        context,
 
-                      widget.innerNavigatorKey,
+                        widget.innerNavigatorKey,
+                      ),
                     ),
                   ),
                 ],

@@ -81,6 +81,7 @@ dependencies:
   flutter_gen: ^5.10.0
   lucide_icons_flutter: ^2.0.3
   easy_sidemenu: ^0.6.1
+  lucide_icons: ^0.257.0
 
 dev_dependencies:
   flutter_test:
