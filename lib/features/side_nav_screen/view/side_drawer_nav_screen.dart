@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
+import 'package:taproot_admin/features/users_screen/user_management_screen.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 
 import '../widgets/side_menu_lucide_icon_widgt.dart';
@@ -18,6 +19,9 @@ class SideDrawerNavScreen extends StatefulWidget {
 
 class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
   int _currentIndex = 0;
+
+  final GlobalKey<NavigatorState> _innerNavigatorKey =
+      GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -41,7 +45,6 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
             icon: const Icon(Icons.account_circle),
             onSelected: (value) {
               if (value == 'profile') {
-                //TODO : Navigate to profile page, if exist
               } else if (value == 'logout') {}
             },
             itemBuilder:
@@ -55,16 +58,10 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
 
         leading: Padding(
           padding: EdgeInsets.only(left: CustomPadding.paddingXL.v),
-          child: Placeholder(
-            //  fallbackWidth: SizeUtils.width * 0.05,
-          ),
+          child: Placeholder(),
         ),
         toolbarHeight: kToolbarHeight.h,
-        // leading: SvgPicture.asset(
-        //   Assets.svg.logo,
 
-        //   height: SizeUtils.height * 0.05,
-        // ),
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
       ),
@@ -77,7 +74,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
               displayMode: SideMenuDisplayMode.open,
               openSideMenuWidth: (150 / 1440) * SizeUtils.width,
               selectedColor: CustomColors.primaryColor,
-              // selectedIconColor: Colors.blue,
+
               selectedTitleTextStyle: TextStyle(
                 color: Colors.white,
                 fontSize: 14.fSize,
@@ -122,9 +119,9 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 },
               ),
               SideMenuItem(
-                title: 'Profile',
+                title: 'Users',
                 iconWidget: SideMenuLucideIcon(
-                  icon: LucideIcons.user,
+                  icon: LucideIcons.users,
                   index: 2,
                   currentIndex: _currentIndex,
                 ),
@@ -146,6 +143,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                   setState(() {
                     _currentIndex = index;
                   });
+
                   NavControllers.sideMenuController.changePage(index);
                 },
               ),
@@ -168,12 +166,22 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     style: TextStyle(fontSize: 14.fSize),
                   ),
                 ),
-                Center(
-                  child: Text(
-                    'Profile Page',
-                    style: TextStyle(fontSize: 14.fSize),
-                  ),
+
+                Navigator(
+                  
+                  key: _innerNavigatorKey,
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+
+                      builder:
+                          (_) => UserManagementScreen(
+                            innerNavigatorKey: _innerNavigatorKey,
+                          ),
+                      settings: settings,
+                    );
+                  },
                 ),
+
                 Center(
                   child: Text(
                     'Settings Page',

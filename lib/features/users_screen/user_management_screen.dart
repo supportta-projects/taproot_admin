@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:taproot_admin/exporter/exporter.dart';
 
+import '../user_data_update_screen/views/user_data_update_screen.dart';
 import 'model/user_data_model.dart';
 
-
 class UserManagementScreen extends StatefulWidget {
-const UserManagementScreen({super.key});
+  final GlobalKey<NavigatorState>? innerNavigatorKey;
 
+  const UserManagementScreen({super.key, this.innerNavigatorKey});
 
-static const path = '/userManagementScreen';
+  static const path = '/userManagementScreen';
+
   @override
   State<UserManagementScreen> createState() => _UserManagementScreenState();
 }
@@ -44,69 +47,81 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     final rowsPerPage = 8;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Management'),
-        actions: [
-          ElevatedButton.icon(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              // Add User Logic
-            },
-            label: const Text('Add User'),
-          ),
-          const SizedBox(width: 16),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Search Uses ID, Name, Number',
+      body: Container(
+        color: Colors.yellow,
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(CustomPadding.paddingXL.v),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.search),
+                        hintText: 'Search Uses ID, Name, Number',
+                      ),
+                      onChanged: (val) {
+                        setState(() {
+                          searchQuery = val;
+                        });
+                      },
                     ),
-                    onChanged: (val) {
-                      setState(() {
-                        searchQuery = val;
-                      });
-                    },
                   ),
-                ),
-                const SizedBox(width: 16),
-                const Text("Premium Users"),
-                Switch(
-                  value: showOnlyPremium,
-                  onChanged: (val) {
-                    setState(() {
-                      showOnlyPremium = val;
-                    });
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: PaginatedDataTable(
-              header: const Text(''),
-              rowsPerPage: rowsPerPage,
-              availableRowsPerPage: const [8],
-              columns: const [
-                DataColumn(label: Text('Full Name')),
-                DataColumn(label: Text('User ID')),
-                DataColumn(label: Text('Phone')),
-                DataColumn(label: Text('WhatsApp')),
-                DataColumn(label: Text('Email')),
-                DataColumn(label: Text('Website Link')),
-                DataColumn(label: Text('Premium')),
-              ],
-              source: UserDataTableSource(filteredUsers),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  PaginatedDataTable(
+                    showEmptyRows: false,
+                    columnSpacing: CustomPadding.paddingXL.v,
+                    actions: [
+                      Row(
+                        children: [
+                          Text(
+                            "Premium Users",
+                            style: context.inter50016.copyWith(
+                              fontSize: 16.fSize,
+                            ),
+                          ),
+                          Switch(
+                            value: showOnlyPremium,
+                            onChanged: (val) {
+                              setState(() {
+                                showOnlyPremium = val;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                    header: const Text(''),
+                    rowsPerPage: rowsPerPage,
+                    availableRowsPerPage: const [8],
+                    columns: const [
+                      DataColumn(label: Text('Full Name')),
+                      DataColumn(label: Text('User ID')),
+                      DataColumn(label: Text('Phone')),
+                      DataColumn(label: Text('WhatsApp')),
+                      DataColumn(label: Text('Email')),
+                      DataColumn(label: Text('Website Link')),
+                      DataColumn(label: Text('Premium')),
+                    ],
+                    source: UserDataTableSource(
+                      filteredUsers,
+                      context,
+
+                      widget.innerNavigatorKey,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -114,26 +129,33 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
 class UserDataTableSource extends DataTableSource {
   final List<User> users;
+  final BuildContext context;
+  final GlobalKey<NavigatorState>? innerNavigatorKey;
 
-  UserDataTableSource(this.users);
+  UserDataTableSource(this.users, this.context, this.innerNavigatorKey);
 
   @override
   DataRow getRow(int index) {
     final user = users[index];
+
+    void handleRowTap() {
+      logWarning('Row tapped: ${user.fullName}');
+      innerNavigatorKey?.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => UserDataUpdateScreen(user: user),
+        ),
+      );
+    }
+
     return DataRow(
       cells: [
-        DataCell(Text(user.fullName)),
-        DataCell(Text(user.userId)),
-        DataCell(Text(user.phone)),
-        DataCell(Text(user.whatsapp)),
-        DataCell(Text(user.email)),
-        DataCell(Text(user.website)),
-        DataCell(
-          Switch(
-            value: user.isPremium,
-            onChanged: null, // disabled toggle
-          ),
-        ),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.fullName))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.userId))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.phone))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.whatsapp))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.email))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.website))),
+        DataCell(Switch(value: user.isPremium, onChanged: null)),
       ],
     );
   }
