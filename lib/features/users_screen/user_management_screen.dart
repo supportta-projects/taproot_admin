@@ -99,6 +99,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       horizontal: CustomPadding.paddingXL,
                     ),
                     child: PaginatedDataTable(
+                      
+                    
                       showEmptyRows: false,
                       columnSpacing: CustomPadding.paddingXL.v,
                       actions: [

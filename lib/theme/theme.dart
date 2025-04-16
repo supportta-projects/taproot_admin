@@ -4,6 +4,23 @@ import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    dataTableTheme: DataTableThemeData(
+      dataRowHeight: 50,
+      headingRowHeight: 50,
+      columnSpacing: 20,
+      horizontalMargin: 10,
+      // showBottomBorder: true,
+      headingTextStyle: TextStyle(
+        color: CustomColors.textColor,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+      dataTextStyle: TextStyle(
+        color: CustomColors.textColor,
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+      ),
+    ),
     fontFamily: FontFamily.inter,
     scaffoldBackgroundColor: CustomColors.backgroundColor,
     hoverColor: CustomColors.hoverColor,
