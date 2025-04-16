@@ -118,48 +118,44 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  DetailRow(label: 'Email', value: '-'),
-                                  DetailRow(
-                                    label: 'Website Link',
-                                    value: 'https://docs.google.com...',
-                                  ),
-                                  DetailRow(label: 'Website Link', value: '-'),
-                                ],
-                              ),
+                            child: Column(
+                              children: [
+                                DetailRow(label: 'Email', value: '-'),
+                                DetailRow(
+                                  label: 'Website Link',
+                                  value: 'https://docs.google.com...',
+                                ),
+                                DetailRow(label: 'Website Link', value: '-'),
+                              ],
                             ),
                           ),
                           Expanded(
-                            child: Container(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  top: CustomPadding.paddingXL,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Container(
-                                          width: 200,
-                                          height: 150,
-                                          color: Colors.amber,
-                                        ),
-                                      ],
-                                    ),
-                                    Gap(CustomPadding.paddingXL.v),
-                                    Column(
-                                      children: [
-                                        Container(
-                                          width: 200,
-                                          height: 150,
-                                          color: Colors.black,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: CustomPadding.paddingXL,
+                              ),
+                              child: Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      Container(
+                                        width: 200,
+                                        height: 150,
+                                        color: Colors.amber,
+                                      ),
+                                    ],
+                                  ),
+                                  Gap(CustomPadding.paddingXL.v),
+                                  Column(
+                                    children: [
+                                      Container(
+                                        width: 200,
+                                        height: 150,
+                                        color: Colors.black,
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                           ),

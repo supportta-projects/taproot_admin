@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:taproot_admin/constants/constants.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/services/size_utils.dart';
 import 'package:taproot_admin/widgets/gradient_border_button.dart';
 
 class UserProfileContainer extends StatelessWidget {
@@ -13,7 +11,8 @@ class UserProfileContainer extends StatelessWidget {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          color: CustomColors.lightGreen,
+          color: CustomColors.hoverColor,
+          // color: CustomColors.lightGreen,
           borderRadius: BorderRadius.circular(CustomPadding.padding),
         ),
 
@@ -56,7 +55,12 @@ class UserProfileContainer extends StatelessWidget {
                         (Rect bounds) => RadialGradient(
                           center: Alignment.topCenter,
                           stops: [.5, 1],
-                          colors: [CustomColors.green, CustomColors.greenDark],
+
+                          colors: [
+                            CustomColors.hoverColor,
+                            CustomColors.primaryColor,
+                          ],
+                          // colors: [CustomColors.green, CustomColors.greenDark],
                         ).createShader(bounds),
                     child: Icon(LucideIcons.box),
                   ),

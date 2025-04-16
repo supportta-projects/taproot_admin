@@ -179,6 +179,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     return MaterialPageRoute(
                       builder:
                           (_) => UserManagementScreen(
+                            
                             innerNavigatorKey: _innerNavigatorKey,
                           ),
                       settings: settings,
