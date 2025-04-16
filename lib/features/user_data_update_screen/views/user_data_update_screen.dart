@@ -250,7 +250,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               child: Row(
                 children: [
                   CommonUserContainer(
-                    // height: SizeUtils.height * 050,
+                    height: SizeUtils.height * 0.5,
                     title: 'Gallery',
                     children: [
                       Padding(
@@ -259,6 +259,23 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                           left: CustomPadding.paddingLarge.v,
                         ),
                         child: Row(children: [Text('My Works')]),
+                      ),
+                      Gap(CustomPadding.paddingLarge.v),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: CustomPadding.paddingXXL.v,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ServiceImage(),
+                            ServiceImage(),
+                            ServiceImage(),
+                            ServiceImage(),
+                            ServiceImage(),
+                            ServiceImage(),
+                          ],
+                        ),
                       ),
                       Gap(CustomPadding.paddingLarge.v),
                       Padding(

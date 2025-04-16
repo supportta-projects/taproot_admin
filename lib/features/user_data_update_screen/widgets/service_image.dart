@@ -13,8 +13,8 @@ class ServiceImage extends StatelessWidget {
 
         borderRadius: BorderRadius.circular(CustomPadding.padding.v),
       ),
-      width: 150,
-      height: 150,
+      width: 150.v,
+      height: 150.v,
       child: Center(
         child: Icon(
           LucideIcons.image,

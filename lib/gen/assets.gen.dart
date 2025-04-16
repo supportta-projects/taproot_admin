@@ -44,6 +44,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/pinterest.svg
   String get pinterest => 'assets/svg/pinterest.svg';
 
+  /// File path: assets/svg/premium.svg
+  String get premium => 'assets/svg/premium.svg';
+
   /// File path: assets/svg/twitter.svg
   String get twitter => 'assets/svg/twitter.svg';
 
@@ -59,6 +62,7 @@ class $AssetsSvgGen {
     linkdin,
     logo,
     pinterest,
+    premium,
     twitter,
     youtube,
   ];
