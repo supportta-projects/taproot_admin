@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:taproot_admin/exporter/exporter.dart';
 import '/constants/constants.dart';
 import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
     dataTableTheme: DataTableThemeData(
-      dataRowHeight: 50,
-      headingRowHeight: 50,
-      columnSpacing: 20,
-      horizontalMargin: 10,
+      // dataRowHeight: 50,
+      // headingRowHeight: 50,
+      // columnSpacing: 20,
+      // horizontalMargin: 10,
       // showBottomBorder: true,
       headingTextStyle: TextStyle(
         color: CustomColors.textColor,
-        fontSize: 16,
+        fontSize: 16.fSize,
         fontWeight: FontWeight.w600,
       ),
       dataTextStyle: TextStyle(
         color: CustomColors.textColor,
-        fontSize: 14,
+        fontSize: 14.fSize,
         fontWeight: FontWeight.w400,
       ),
+
+      headingRowAlignment: MainAxisAlignment.center,
     ),
     fontFamily: FontFamily.inter,
     scaffoldBackgroundColor: CustomColors.backgroundColor,
