@@ -5,9 +5,19 @@ import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
-    
     dataTableTheme: DataTableThemeData(
- 
+      
+      // decoration: BoxDecoration(
+      //   color: Colors.white,
+      //   borderRadius: BorderRadius.circular(10),
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: CustomColors.textFieldBorderGrey.withOpacity(0.2),
+      //       blurRadius: 5,
+      //       offset: const Offset(0, 2),
+      //     ),
+      //   ],
+      // ),
       headingRowColor: WidgetStatePropertyAll(Colors.white),
       dataRowColor: WidgetStatePropertyAll(Colors.white),
       // dataRowHeight: 50,

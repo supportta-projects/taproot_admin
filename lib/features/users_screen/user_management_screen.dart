@@ -92,6 +92,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
             SizedBox(
               width: .8 * SizeUtils.width,
               child: PaginatedDataTable(
+                sortColumnIndex: 0,
                 arrowHeadColor: CustomColors.textFieldBorderGrey,
                 // headingRowColor: WidgetStatePropertyAll(
                 //   CustomColors.textFieldBorderGrey,
