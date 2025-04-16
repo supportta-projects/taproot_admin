@@ -4,6 +4,40 @@ import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    switchTheme: SwitchThemeData(
+      thumbIcon: WidgetStateProperty.resolveWith<Icon?>((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Icon(Icons.circle_outlined, color: Colors.grey);
+        }
+        if (states.contains(WidgetState.selected)) {
+          return Icon(Icons.circle, color: CustomColors.primaryColor);
+        }
+        return Icon(Icons.circle_outlined, color: Colors.grey.shade400);
+      }),
+
+      thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Colors.grey; // Disabled thumb
+        }
+        if (states.contains(WidgetState.selected)) {
+          return CustomColors.primaryColor; // ON thumb
+        }
+        return Colors.grey.shade400; // OFF thumb
+      }),
+
+      trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return Colors.grey.shade300; // Disabled track
+        }
+        if (states.contains(WidgetState.selected)) {
+          return Colors.amber; // ON track
+        }
+        return Colors.grey.shade300; // OFF track
+      }),
+
+      trackOutlineColor: WidgetStatePropertyAll(Colors.grey),
+    ),
+
     // cardColor: Colors.yellow,
     // dialogBackgroundColor: Colors.white,
     // dialogTheme: ,
