@@ -90,8 +90,12 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               ),
             ),
             SizedBox(
-              width: .6 * SizeUtils.width,
+              width: .8 * SizeUtils.width,
               child: PaginatedDataTable(
+                arrowHeadColor: CustomColors.textFieldBorderGrey,
+                // headingRowColor: WidgetStatePropertyAll(
+                //   CustomColors.textFieldBorderGrey,
+                // ),
                 // dragStartBehavior: ,
                 showEmptyRows: false,
                 columnSpacing: CustomPadding.paddingXL.v,
@@ -115,7 +119,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   ),
                 ],
                 header: SizedBox(),
-                horizontalMargin: 0,
+                horizontalMargin: .06 * SizeUtils.width,
                 rowsPerPage: rowsPerPage,
                 availableRowsPerPage: const [8],
                 columns: const [
