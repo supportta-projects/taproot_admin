@@ -90,6 +90,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               ),
             ),
             SizedBox(
+              // height: SizeUtils.height * 0.6,
               width: .8 * SizeUtils.width,
               child: PaginatedDataTable(
                 sortColumnIndex: 0,

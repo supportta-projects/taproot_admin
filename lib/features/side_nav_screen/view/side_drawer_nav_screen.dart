@@ -1,11 +1,9 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
 import 'package:taproot_admin/features/users_screen/user_management_screen.dart';
-import 'package:taproot_admin/gen/assets.gen.dart';
 
 import '../widgets/side_menu_lucide_icon_widgt.dart';
 

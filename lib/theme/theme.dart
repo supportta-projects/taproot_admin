@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import '/constants/constants.dart';
 import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    // cardColor: Colors.yellow,
+    // dialogBackgroundColor: Colors.white,
+    // dialogTheme: ,
+    cardTheme: CardTheme(
+      color: Colors.white,
+      shadowColor: CustomColors.textFieldBorderGrey.withValues(alpha: 0.2),
+      elevation: 5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    ),
     dataTableTheme: DataTableThemeData(
-      
       // decoration: BoxDecoration(
       //   color: Colors.white,
       //   borderRadius: BorderRadius.circular(10),

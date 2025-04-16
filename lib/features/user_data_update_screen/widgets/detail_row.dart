@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taproot_admin/constants/constants.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
 class DetailRow extends StatelessWidget {

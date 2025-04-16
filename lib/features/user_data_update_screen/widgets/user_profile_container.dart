@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
-import 'package:taproot_admin/widgets/gradient_border_button.dart';
 
 class UserProfileContainer extends StatelessWidget {
   const UserProfileContainer({super.key});

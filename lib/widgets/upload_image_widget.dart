@@ -66,7 +66,7 @@ class UploadImageWidget extends StatelessWidget {
                               "${SharedPreferencesService.i.domainUrl}${networkImage!}",
                           fit: BoxFit.cover,
                         );
-                    },
+                      },
                     ),
                   ),
                   Center(
@@ -74,7 +74,7 @@ class UploadImageWidget extends StatelessWidget {
                       padding: const EdgeInsets.all(CustomPadding.paddingXL),
                       decoration: BoxDecoration(
                         borderRadius: borderradius,
-                        color: Colors.black.withOpacity(.1),
+                        color: Colors.black.withValues(alpha: .1),
                       ),
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
