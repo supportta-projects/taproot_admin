@@ -5,7 +5,10 @@ import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    
     dataTableTheme: DataTableThemeData(
+ 
+      headingRowColor: WidgetStatePropertyAll(Colors.white),
       dataRowColor: WidgetStatePropertyAll(Colors.white),
       // dataRowHeight: 50,
       // headingRowHeight: 50,
