@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/widgets/loading_button.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 import '../user_data_update_screen/views/user_data_update_screen.dart';
@@ -47,7 +46,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final rowsPerPage = 8;
+    final rowsPerPage = 11;
 
     return Scaffold(
       body: Container(
