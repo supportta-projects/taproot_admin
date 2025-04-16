@@ -23,11 +23,45 @@ class $AssetsPngGen {
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
+  /// File path: assets/svg/behance.svg
+  String get behance => 'assets/svg/behance.svg';
+
+  /// File path: assets/svg/facebook.svg
+  String get facebook => 'assets/svg/facebook.svg';
+
+  /// File path: assets/svg/instagram.svg
+  String get instagram => 'assets/svg/instagram.svg';
+
+  /// File path: assets/svg/link.svg
+  String get link => 'assets/svg/link.svg';
+
+  /// File path: assets/svg/linkdin.svg
+  String get linkdin => 'assets/svg/linkdin.svg';
+
   /// File path: assets/svg/logo.svg
   String get logo => 'assets/svg/logo.svg';
 
+  /// File path: assets/svg/pinterest.svg
+  String get pinterest => 'assets/svg/pinterest.svg';
+
+  /// File path: assets/svg/twitter.svg
+  String get twitter => 'assets/svg/twitter.svg';
+
+  /// File path: assets/svg/youtube.svg
+  String get youtube => 'assets/svg/youtube.svg';
+
   /// List of all assets
-  List<String> get values => [logo];
+  List<String> get values => [
+    behance,
+    facebook,
+    instagram,
+    link,
+    linkdin,
+    logo,
+    pinterest,
+    twitter,
+    youtube,
+  ];
 }
 
 class Assets {
