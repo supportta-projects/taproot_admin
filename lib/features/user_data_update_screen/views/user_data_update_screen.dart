@@ -144,7 +144,6 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               child: Row(
                                 children: [
                                   ImageContainer(title: 'Loco'),
-                                  Gap(CustomPadding.paddingXL.v),
                                   ImageContainer(title: 'Banner Image'),
                                 ],
                               ),
@@ -251,7 +250,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               child: Row(
                 children: [
                   CommonUserContainer(
-                    height: SizeUtils.height * 065,
+                    // height: SizeUtils.height * 050,
                     title: 'Gallery',
                     children: [
                       Padding(
