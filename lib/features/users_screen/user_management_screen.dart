@@ -49,8 +49,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     final rowsPerPage = 11;
 
     return Scaffold(
-      body: Container(
-        color: CustomColors.secondaryColor,
+      body: SizedBox(
         child: Column(
           children: [
             Gap(CustomPadding.paddingLarge.v),
@@ -90,60 +89,52 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 ],
               ),
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: CustomPadding.paddingXL,
+            PaginatedDataTable(
+              
+              // dragStartBehavior: ,
+              showEmptyRows: false,
+              columnSpacing: CustomPadding.paddingXL.v,
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "Premium Users",
+                      style: context.inter50016.copyWith(fontSize: 16.fSize),
                     ),
-                    child: PaginatedDataTable(
-                      
-                    
-                      showEmptyRows: false,
-                      columnSpacing: CustomPadding.paddingXL.v,
-                      actions: [
-                        Row(
-                          children: [
-                            Text(
-                              "Premium Users",
-                              style: context.inter50016.copyWith(
-                                fontSize: 16.fSize,
-                              ),
-                            ),
-                            Switch(
-                              value: showOnlyPremium,
-                              onChanged: (val) {
-                                setState(() {
-                                  showOnlyPremium = val;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                      header: const Text(''),
-                      rowsPerPage: rowsPerPage,
-                      availableRowsPerPage: const [8],
-                      columns: const [
-                        DataColumn(label: Text('Full Name')),
-                        DataColumn(label: Text('User ID')),
-                        DataColumn(label: Text('Phone')),
-                        DataColumn(label: Text('WhatsApp')),
-                        DataColumn(label: Text('Email')),
-                        DataColumn(label: Text('Website Link')),
-                        DataColumn(label: Text('Premium')),
-                      ],
-                      source: UserDataTableSource(
-                        filteredUsers,
-                        context,
+                    Switch(
+                      value: showOnlyPremium,
+                      onChanged: (val) {
+                        setState(() {
+                          showOnlyPremium = val;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+              header: SizedBox(),
+              horizontalMargin: 0,
+              rowsPerPage: rowsPerPage,
+              availableRowsPerPage: const [8],
+              columns: const [
+                DataColumn(
+                  
+                  // headingRowAlignment: ,
+                  
+                  label: Text('Full Name')),
+                DataColumn(label: Text('User ID')),
+                DataColumn(label: Text('Phone')),
+                DataColumn(label: Text('WhatsApp')),
+                DataColumn(label: Text('Email')),
+                DataColumn(label: Text('Website Link')),
+                DataColumn(label: Text('Premium')),
+              ],
+              source: UserDataTableSource(
+                filteredUsers,
+                context,
 
-                        widget.innerNavigatorKey,
-                      ),
-                    ),
-                  ),
-                ],
+                widget.innerNavigatorKey,
               ),
             ),
           ],
