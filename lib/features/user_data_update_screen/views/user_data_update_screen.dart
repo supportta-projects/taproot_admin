@@ -143,25 +143,9 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  Column(
-                                    children: [
-                                      Container(
-                                        width: 200,
-                                        height: 150,
-                                        color: Colors.amber,
-                                      ),
-                                    ],
-                                  ),
+                                  ImageContainer(title: 'Loco'),
                                   Gap(CustomPadding.paddingXL.v),
-                                  Column(
-                                    children: [
-                                      Container(
-                                        width: 200,
-                                        height: 150,
-                                        color: Colors.black,
-                                      ),
-                                    ],
-                                  ),
+                                  ImageContainer(title: 'Banner Image'),
                                 ],
                               ),
                             ),
