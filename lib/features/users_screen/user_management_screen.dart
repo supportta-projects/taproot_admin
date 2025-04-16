@@ -89,52 +89,53 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 ],
               ),
             ),
-            PaginatedDataTable(
-              
-              // dragStartBehavior: ,
-              showEmptyRows: false,
-              columnSpacing: CustomPadding.paddingXL.v,
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "Premium Users",
-                      style: context.inter50016.copyWith(fontSize: 16.fSize),
-                    ),
-                    Switch(
-                      value: showOnlyPremium,
-                      onChanged: (val) {
-                        setState(() {
-                          showOnlyPremium = val;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ],
-              header: SizedBox(),
-              horizontalMargin: 0,
-              rowsPerPage: rowsPerPage,
-              availableRowsPerPage: const [8],
-              columns: const [
-                DataColumn(
-                  
-                  // headingRowAlignment: ,
-                  
-                  label: Text('Full Name')),
-                DataColumn(label: Text('User ID')),
-                DataColumn(label: Text('Phone')),
-                DataColumn(label: Text('WhatsApp')),
-                DataColumn(label: Text('Email')),
-                DataColumn(label: Text('Website Link')),
-                DataColumn(label: Text('Premium')),
-              ],
-              source: UserDataTableSource(
-                filteredUsers,
-                context,
+            SizedBox(
+              width: .6 * SizeUtils.width,
+              child: PaginatedDataTable(
+                // dragStartBehavior: ,
+                showEmptyRows: false,
+                columnSpacing: CustomPadding.paddingXL.v,
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "Premium Users",
+                        style: context.inter50016.copyWith(fontSize: 16.fSize),
+                      ),
+                      Switch(
+                        value: showOnlyPremium,
+                        onChanged: (val) {
+                          setState(() {
+                            showOnlyPremium = val;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+                header: SizedBox(),
+                horizontalMargin: 0,
+                rowsPerPage: rowsPerPage,
+                availableRowsPerPage: const [8],
+                columns: const [
+                  DataColumn(
+                    // headingRowAlignment: ,
+                    label: Text('Full Name'),
+                  ),
+                  DataColumn(label: Text('User ID')),
+                  DataColumn(label: Text('Phone')),
+                  DataColumn(label: Text('WhatsApp')),
+                  DataColumn(label: Text('Email')),
+                  DataColumn(label: Text('Website Link')),
+                  DataColumn(label: Text('Premium')),
+                ],
+                source: UserDataTableSource(
+                  filteredUsers,
+                  context,
 
-                widget.innerNavigatorKey,
+                  widget.innerNavigatorKey,
+                ),
               ),
             ),
           ],
