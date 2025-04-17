@@ -5,11 +5,13 @@ import 'package:taproot_admin/exporter/exporter.dart';
 
 class ServiceCard extends StatelessWidget {
   final bool isEdited;
+  final bool showEdit;
   final String title;
   final String description;
   const ServiceCard({
     required this.title,
-    this.isEdited=false,
+    this.showEdit = false,
+    this.isEdited = false,
     required this.description,
     super.key,
   });
@@ -31,24 +33,28 @@ class ServiceCard extends StatelessWidget {
             children: [
               Text(title, style: context.inter50016),
               Spacer(),
-              isEdited?
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'Edit',
-                  style: context.inter60012.copyWith(
-                    color: CustomColors.greenDark,
-                  ),
-                ),
-              ):SizedBox(),
-              isEdited?
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'Delete',
-                  style: context.inter60012.copyWith(color: CustomColors.red),
-                ),
-              ):SizedBox(),
+              isEdited
+                  ? TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Edit',
+                      style: context.inter60012.copyWith(
+                        color: CustomColors.greenDark,
+                      ),
+                    ),
+                  )
+                  : SizedBox(),
+              isEdited
+                  ? TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Delete',
+                      style: context.inter60012.copyWith(
+                        color: CustomColors.red,
+                      ),
+                    ),
+                  )
+                  : SizedBox(),
             ],
           ),
           Gap(CustomPadding.padding.v),
