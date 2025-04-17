@@ -110,7 +110,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         style: context.inter50016.copyWith(fontSize: 16.fSize),
                       ),
                       Switch(
-                        
                         value: showOnlyPremium,
                         onChanged: (val) {
                           setState(() {

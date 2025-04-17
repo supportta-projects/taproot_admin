@@ -48,6 +48,7 @@ class CustomColors {
   static const textColorLightGrey = Color.fromARGB(255, 200, 200, 200);
   static const textColorDarkGrey = Color.fromARGB(255, 50, 50, 50);
   static const Color buttonColor1 = Colors.blue;
+  static const Color red = Colors.red;
   static const Color buttonColor2 = Colors.lightGreen;
   static const Color green = Color(0xff27AE60);
   static const Color greenDark = Color(0xff005624);

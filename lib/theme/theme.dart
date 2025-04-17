@@ -4,6 +4,11 @@ import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    expansionTileTheme: ExpansionTileThemeData(
+      
+      backgroundColor: CustomColors.lightGreen,
+      collapsedBackgroundColor: CustomColors.lightGreen,
+    ),
     switchTheme: SwitchThemeData(
       thumbIcon: WidgetStateProperty.resolveWith<Icon?>((states) {
         if (states.contains(WidgetState.disabled)) {

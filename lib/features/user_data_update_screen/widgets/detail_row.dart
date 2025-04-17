@@ -12,7 +12,7 @@ class DetailRow extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 10,
-        horizontal: CustomPadding.paddingLarge,
+        horizontal: CustomPadding.paddingLarge.v,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

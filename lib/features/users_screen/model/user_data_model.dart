@@ -5,7 +5,7 @@ class User {
   final String whatsapp;
   final String email;
   final String website;
-  final bool isPremium;
+   bool isPremium;
 
   User({
     required this.fullName,

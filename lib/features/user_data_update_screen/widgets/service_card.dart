@@ -3,12 +3,13 @@ import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
-
 class ServiceCard extends StatelessWidget {
+  final bool isEdited;
   final String title;
   final String description;
   const ServiceCard({
     required this.title,
+    this.isEdited=false,
     required this.description,
     super.key,
   });
@@ -17,8 +18,8 @@ class ServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
-      height: 300.v,
-      width: 200.h,
+      height: 310.v,
+      width: 250.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(CustomPadding.padding),
         border: Border.all(color: CustomColors.textColorLightGrey),
@@ -26,7 +27,30 @@ class ServiceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: context.inter50016),
+          Row(
+            children: [
+              Text(title, style: context.inter50016),
+              Spacer(),
+              isEdited?
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Edit',
+                  style: context.inter60012.copyWith(
+                    color: CustomColors.greenDark,
+                  ),
+                ),
+              ):SizedBox(),
+              isEdited?
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  'Delete',
+                  style: context.inter60012.copyWith(color: CustomColors.red),
+                ),
+              ):SizedBox(),
+            ],
+          ),
           Gap(CustomPadding.padding.v),
           Row(
             children: [

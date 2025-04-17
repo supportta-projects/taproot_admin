@@ -1,20 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 
-class UserProfileContainer extends StatelessWidget {
-  const UserProfileContainer({super.key});
+class UserProfileContainer extends StatefulWidget {
+  final bool isEdit;
+  const UserProfileContainer({super.key, this.isEdit = false});
+
+  @override
+  State<UserProfileContainer> createState() => _UserProfileContainerState();
+}
+
+class _UserProfileContainerState extends State<UserProfileContainer>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _tabController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          color: CustomColors.hoverColor,
-          // color: CustomColors.lightGreen,
+          color: CustomColors.secondaryColor,
+          // color: CustomColors.hoverColor,
           borderRadius: BorderRadius.circular(CustomPadding.padding),
         ),
 
@@ -47,54 +70,65 @@ class UserProfileContainer extends StatelessWidget {
               ),
             ),
 
-            // SizedBox(
-            //   width: 180.v,
-            //   child: GradientBorderButton(
-            //     borderGradientColor: CustomColors.borderGradient,
-            //     children: [
-            //       ShaderMask(
-            //         blendMode: BlendMode.srcIn,
-            //         shaderCallback:
-            //             (Rect bounds) => RadialGradient(
-            //               center: Alignment.topCenter,
-            //               stops: [.5, 1],
-
-            //               colors: [
-            //                 CustomColors.hoverColor,
-            //                 CustomColors.primaryColor,
-            //               ],
-            //               // colors: [CustomColors.green, CustomColors.greenDark],
-            //             ).createShader(bounds),
-            //         child: Icon(LucideIcons.box),
-            //       ),
-            //       Text(
-            //         'Total Orders',
-            //         style: context.inter50014.copyWith(fontSize: 14.fSize),
-            //       ),
-
-            //       Text(
-            //         '2',
-            //         style: context.inter50018.copyWith(fontSize: 18.fSize),
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            Container(
-              width: 150.v,
-              height: 30.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
-                color: CustomColors.lightGreen,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Premium'),
-                  Gap(CustomPadding.padding.v),
-                  SvgPicture.asset(Assets.svg.premium),
-                ],
-              ),
-            ),
+            widget.isEdit
+                ? Container(
+                  width: 250,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      CustomPadding.paddingXL.v,
+                    ),
+                    color: Colors.white,
+                    border: Border.all(color: CustomColors.burgandryRed),
+                  ),
+                  child: TabBar(
+                    dividerColor: Colors.transparent,
+                    controller: _tabController,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicator: BoxDecoration(
+                      color: CustomColors.burgandryRed,
+                      borderRadius: BorderRadius.circular(
+                        CustomPadding.paddingXL.v,
+                      ),
+                    ),
+                    labelColor: Colors.white,
+                    unselectedLabelColor: CustomColors.textColorDarkGrey,
+                    tabs: [
+                      Tab(text: 'Basic'),
+                      Tab(
+                        child: Row(
+                          children: [
+                            Text('Premium'),
+                            Gap(CustomPadding.paddingSmall.v),
+                            SvgPicture.asset(Assets.svg.premium),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+                : Container(
+                  width: 150.v,
+                  height: 30.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      CustomPadding.paddingLarge,
+                    ),
+                    color: CustomColors.lightGreen,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Premium',
+                        style: context.inter50014.copyWith(
+                          color: CustomColors.green,
+                        ),
+                      ),
+                      Gap(CustomPadding.padding.v),
+                      SvgPicture.asset(Assets.svg.premium),
+                    ],
+                  ),
+                ),
           ],
         ),
       ),
