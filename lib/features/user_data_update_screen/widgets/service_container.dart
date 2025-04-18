@@ -5,10 +5,12 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_det
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/expand_tile_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/service_card.dart';
-import 'package:taproot_admin/features/users_screen/model/user_data_model.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/service_edit.dart';
+import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 
-class ServiceContainer extends StatelessWidget {
+class ServiceContainer extends StatefulWidget {
   final bool isEdited;
+
   const ServiceContainer({
     this.isEdited = false,
     super.key,
@@ -17,8 +19,20 @@ class ServiceContainer extends StatelessWidget {
   final User user;
 
   @override
+  State<ServiceContainer> createState() => _ServiceContainerState();
+}
+
+class _ServiceContainerState extends State<ServiceContainer> {
+  bool showEdit = false;
+  void tapEdit() {
+    setState(() {
+      showEdit = !showEdit;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return isEdited
+    return widget.isEdited
         ? ExpandTileContainer(
           title: 'Your Services',
           children: [
@@ -28,17 +42,21 @@ class ServiceContainer extends StatelessWidget {
                 TextFormContainer(
                   initailValue: 'About me',
                   labelText: 'Heading/topic',
-                  user: user,
+                  user: widget.user,
                 ),
                 Gap(CustomPadding.padding.v),
                 Padding(
                   padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
                   child: ServiceCard(
-                    isEdited: isEdited,
+                    onTap: tapEdit,
+                    isEdited: widget.isEdited,
                     title: 'Service',
                     description: loremIpsum,
                   ),
                 ),
+                Gap(CustomPadding.paddingXL.v),
+                if(showEdit)
+                ServiceEdit(widget: widget),
               ],
             ),
           ],
@@ -70,3 +88,4 @@ class ServiceContainer extends StatelessWidget {
         );
   }
 }
+

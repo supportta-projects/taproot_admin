@@ -7,7 +7,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
 import 'package:taproot_admin/services/size_utils.dart';
 
-import '../../users_screen/model/user_data_model.dart';
+import '../../users_screen/user_data_model.dart';
 
 class AdditionalContainer extends StatelessWidget {
   final bool isEdit;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/features/users_screen/model/user_data_model.dart';
+import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 
 class TextFormContainer extends StatelessWidget {
   final String initailValue;

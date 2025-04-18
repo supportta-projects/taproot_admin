@@ -4,7 +4,7 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
-import 'package:taproot_admin/features/users_screen/model/user_data_model.dart';
+import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 
 class ProfileContainer extends StatelessWidget {
   final bool isEdit;

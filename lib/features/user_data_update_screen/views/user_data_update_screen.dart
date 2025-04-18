@@ -8,7 +8,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_c
 import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
-import 'package:taproot_admin/features/users_screen/model/user_data_model.dart';
+import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 
 import '../widgets/additional_container.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
-import 'package:taproot_admin/features/users_screen/model/user_data_model.dart';
+import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 
 class LinkContainer extends StatelessWidget {
   final String name;

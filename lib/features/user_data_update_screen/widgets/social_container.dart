@@ -4,7 +4,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/common_us
 import 'package:taproot_admin/features/user_data_update_screen/widgets/expand_tile_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/link_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_media_container.dart';
-import 'package:taproot_admin/features/users_screen/model/user_data_model.dart';
+import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/services/size_utils.dart';
 

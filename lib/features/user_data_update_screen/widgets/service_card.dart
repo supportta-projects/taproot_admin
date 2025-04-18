@@ -3,19 +3,24 @@ import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
-class ServiceCard extends StatelessWidget {
+class ServiceCard extends StatefulWidget {
+  final VoidCallback? onTap;
   final bool isEdited;
-  final bool showEdit;
   final String title;
   final String description;
   const ServiceCard({
     required this.title,
-    this.showEdit = false,
     this.isEdited = false,
     required this.description,
+     this.onTap,
     super.key,
   });
 
+  @override
+  State<ServiceCard> createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<ServiceCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,11 +36,11 @@ class ServiceCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(title, style: context.inter50016),
+              Text(widget.title, style: context.inter50016),
               Spacer(),
-              isEdited
+              widget.isEdited
                   ? TextButton(
-                    onPressed: () {},
+                    onPressed:widget.onTap,
                     child: Text(
                       'Edit',
                       style: context.inter60012.copyWith(
@@ -44,7 +49,7 @@ class ServiceCard extends StatelessWidget {
                     ),
                   )
                   : SizedBox(),
-              isEdited
+              widget.isEdited
                   ? TextButton(
                     onPressed: () {},
                     child: Text(
@@ -81,7 +86,7 @@ class ServiceCard extends StatelessWidget {
               color: CustomColors.textFieldBorderGrey,
             ),
           ),
-          Text(description, maxLines: 4, style: TextStyle()),
+          Text(widget.description, maxLines: 4, style: TextStyle()),
         ],
       ),
     );

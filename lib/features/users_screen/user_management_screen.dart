@@ -4,7 +4,7 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 import '../user_data_update_screen/views/user_data_update_screen.dart';
-import 'model/user_data_model.dart';
+import 'user_data_model.dart';
 
 class UserManagementScreen extends StatefulWidget {
   final GlobalKey<NavigatorState>? innerNavigatorKey;
