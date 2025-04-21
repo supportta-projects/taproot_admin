@@ -37,6 +37,7 @@ class CustomColors {
   ).withValues(alpha: 0.4);
 
   static const Color burgandryRed = Color(0xFF800020);
+  static const Color hintGrey=Color(0xff7F6E72);
   static const secondaryColor = Colors.white;
   static const tertiaryColor = Color.fromARGB(255, 240, 240, 240);
   // static const backgroundColor = Color.fromARGB(255, 255, 255, 255);

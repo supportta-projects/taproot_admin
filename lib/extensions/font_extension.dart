@@ -41,6 +41,9 @@ extension BuildContextExtension on BuildContext {
   TextStyle get button => baseTextStyle(fontFamily1, FontWeight.w700);
   // TextStyle get Inter40016 => baseTextStyle(fontFamily1, FontWeight.w400,\
 
+
+  TextStyle get inter40016 => displaySmall.copyWith(fontSize: 16);
+
   TextStyle get inter50016 => displayMedium.copyWith(fontSize: 16);
   TextStyle get inter50014 => displayMedium.copyWith(fontSize: 14);
   TextStyle get inter50018 => displayMedium.copyWith(fontSize: 18);

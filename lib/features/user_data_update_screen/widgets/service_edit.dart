@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
@@ -16,20 +17,7 @@ class ServiceEdit extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: EdgeInsets.only(left: CustomPadding.paddingLarge.v),
-          child: Container(
-            width: 200.v,
-            height: 150.h,
-            decoration: BoxDecoration(
-              color: CustomColors.lightGreen,
-              borderRadius: BorderRadius.circular(CustomPadding.padding.v),
-            ),
-            child: Center(
-              child: Icon(Icons.add, size: 40.v, color: CustomColors.greenDark),
-            ),
-          ),
-        ),
+        AddImageContainer(),
         Gap(CustomPadding.paddingLarge.v),
 
         TextFormContainer(
@@ -64,3 +52,4 @@ class ServiceEdit extends StatelessWidget {
     );
   }
 }
+

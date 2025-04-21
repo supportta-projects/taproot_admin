@@ -20,7 +20,7 @@ class ProfileContainer extends StatelessWidget {
         Gap(CustomPadding.paddingLarge.v),
         isEdit
             ? TextFormContainer(
-              initailValue: 'Founder- Supportta Solutions',
+              initialValue: 'Founder- Supportta Solutions',
               labelText: 'Designation',
               user: user,
             )
@@ -31,7 +31,7 @@ class ProfileContainer extends StatelessWidget {
         isEdit
             ? TextFormContainer(
               readonly: true,
-              initailValue: 'Supportta Solutions Private Limited',
+              initialValue: 'Supportta Solutions Private Limited',
               labelText: 'Company Name',
               user: user,
             )
@@ -42,7 +42,7 @@ class ProfileContainer extends StatelessWidget {
         isEdit
             ? TextFormContainer(
               user: user,
-              initailValue: user.email,
+              initialValue: user.email,
               labelText: 'Email',
             )
             : DetailRow(label: 'Email', value: user.email),

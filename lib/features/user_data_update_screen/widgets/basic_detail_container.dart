@@ -61,16 +61,15 @@ class TextFormContainer extends StatelessWidget {
   final int maxline;
   final bool readonly;
   final String labelText;
+  final User? user;
   const TextFormContainer({
     super.key,
     required this.initailValue,
     required this.labelText,
-    required this.user,
+    this.user,
     this.readonly = false,
-    this.maxline=1
+    this.maxline = 1,
   });
-
-  final User user;
 
   @override
   Widget build(BuildContext context) {
@@ -79,10 +78,12 @@ class TextFormContainer extends StatelessWidget {
         horizontal: CustomPadding.paddingLarge.v,
         vertical: CustomPadding.padding.v,
       ),
-      child: TextFormField(maxLines: maxline,
+      child: TextFormField(
+        maxLines: maxline,
         readOnly: readonly,
         initialValue: initailValue,
         decoration: InputDecoration(
+          floatingLabelBehavior: FloatingLabelBehavior.always,
           label: Text(labelText),
           labelStyle: TextStyle(color: CustomColors.textColorDarkGrey),
           enabledBorder: OutlineInputBorder(

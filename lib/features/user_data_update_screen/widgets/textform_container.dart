@@ -3,18 +3,18 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 
 class TextFormContainer extends StatelessWidget {
-  final String initailValue;
+  final String? initialValue;
   final bool readonly;
-  final String labelText;
+  final String? labelText;
+  final User? user;
+
   const TextFormContainer({
     super.key,
-    required this.initailValue,
-    required this.labelText,
-    required this.user,
+    this.initialValue,
+    this.labelText,
+    this.user,
     this.readonly = false,
   });
-
-  final User user;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +25,9 @@ class TextFormContainer extends StatelessWidget {
       ),
       child: TextFormField(
         readOnly: readonly,
-        initialValue: initailValue,
+        initialValue: initialValue,
         decoration: InputDecoration(
-          label: Text(labelText),
+          label: labelText != null ? Text(labelText!) : null,
           labelStyle: TextStyle(color: CustomColors.textColorDarkGrey),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: CustomColors.textColorLightGrey),
