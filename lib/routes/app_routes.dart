@@ -1,3 +1,5 @@
+import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
+
 import '../features/side_nav_screen/view/side_drawer_nav_screen.dart';
 import '../features/side_nav_screen/view/side_nav_screen.dart';
 import '../features/users_screen/user_management_screen.dart';
@@ -21,6 +23,8 @@ class AppRoutes {
         
         
       //   );
+      case ProductScreen.path:
+        return pageRoute(settings, const ProductScreen());
       case UserManagementScreen.path:
         return pageRoute(settings, const UserManagementScreen());
       case SideDrawerNavScreen.path:

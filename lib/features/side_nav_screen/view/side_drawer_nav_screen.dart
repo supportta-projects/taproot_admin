@@ -2,6 +2,7 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
 import 'package:taproot_admin/features/users_screen/user_management_screen.dart';
 
@@ -123,10 +124,24 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 },
               ),
               SideMenuItem(
+                title: 'Product',
+                iconWidget: SideMenuLucideIcon(
+                  icon: LucideIcons.shoppingCart,
+                  index: 2,
+                  currentIndex: _currentIndex,
+                ),
+                onTap: (index, _) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+                  NavControllers.sideMenuController.changePage(index);
+                },
+              ),
+              SideMenuItem(
                 title: 'Users',
                 iconWidget: SideMenuLucideIcon(
                   icon: LucideIcons.users,
-                  index: 2,
+                  index: 3,
                   currentIndex: _currentIndex,
                 ),
                 onTap: (index, _) {
@@ -140,7 +155,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 title: 'Settings',
                 iconWidget: SideMenuLucideIcon(
                   icon: LucideIcons.settings,
-                  index: 3,
+                  index: 4,
                   currentIndex: _currentIndex,
                 ),
                 onTap: (index, _) {
@@ -170,6 +185,14 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     style: TextStyle(fontSize: 14.fSize),
                   ),
                 ),
+                Navigator(
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+                      builder: (_) => ProductScreen(),
+                      settings: settings,
+                    );
+                  },
+                ),
 
                 Navigator(
                   key: _innerNavigatorKey,
@@ -177,7 +200,6 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     return MaterialPageRoute(
                       builder:
                           (_) => UserManagementScreen(
-                            
                             innerNavigatorKey: _innerNavigatorKey,
                           ),
                       settings: settings,

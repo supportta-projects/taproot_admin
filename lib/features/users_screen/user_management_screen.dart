@@ -61,7 +61,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   text: 'Add User',
                   onPressed: () {},
                   useGradient: true,
-                  gradientColors: [Color(0xff005624), Color(0xff27AE60)],
+                  gradientColors: CustomColors.borderGradient.colors,
                 ),
                 Gap(CustomPadding.paddingXL.v),
               ],
