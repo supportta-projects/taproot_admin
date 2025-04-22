@@ -75,32 +75,38 @@ class OrderDetailScreen extends StatelessWidget {
                 CommonUserContainer(
                   title: 'Order Details',
                   children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: CustomPadding.paddingXL.v,
-                      ),
-                      child: Column(
-                        children: [
-                          CardRow(prefixText: 'Order ID', suffixText: orderId),
-                          CardRow(
-                            prefixText: 'Full Name',
-                            suffixText: 'Santhosh Kumar',
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: CustomPadding.paddingLarge.v,
+                            ),
+
+                            child: Column(
+                              spacing: CustomPadding.paddingLarge.v,
+                              children: [
+                                Gap(CustomPadding.padding.v),
+                                CardRow(
+                                  prefixText: 'Order ID',
+                                  suffixText: orderId,
+                                ),
+                                CardRow(
+                                  prefixText: 'Full Name',
+                                  suffixText: 'Santhosh',
+                                ),
+                                CardRow(
+                                  prefixText: 'Email',
+                                  suffixText: 'santhosh@gmail.com',
+                                ),
+                              ],
+                            ),
                           ),
-                          CardRow(prefixText: 'Email', suffixText: '327492'),
-                          CardRow(
-                            prefixText: 'Phone Number',
-                            suffixText: '327492',
-                          ),
-                          CardRow(
-                            prefixText: 'WhatsApp Number',
-                            suffixText: '327492',
-                          ),
-                          CardRow(
-                            prefixText: 'Order Date',
-                            suffixText: '327492',
-                          ),
-                        ],
-                      ),
+                        ),
+                        Expanded(
+                          child: Container(height: 100, color: Colors.black),
+                        ),
+                      ],
                     ),
                   ],
                 ),
