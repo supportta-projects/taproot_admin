@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/services/size_utils.dart';
 
 class SearchWidget extends StatelessWidget {
   const SearchWidget({super.key});
