@@ -3,7 +3,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
 class SearchWidget extends StatelessWidget {
-  const SearchWidget({super.key});
+  final String hintText;
+  const SearchWidget({super.key,required this.hintText});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,7 @@ class SearchWidget extends StatelessWidget {
       width: SizeUtils.width / 3.h,
       child: TextFormField(
         decoration: InputDecoration(
-          hintText: 'Search Template Name',
+          hintText: hintText,
           hintStyle: context.inter40016.copyWith(color: CustomColors.hintGrey),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(color: CustomColors.textColorLightGrey),

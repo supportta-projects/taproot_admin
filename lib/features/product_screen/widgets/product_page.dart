@@ -68,7 +68,7 @@ class _ProductPageState extends State<ProductPage> {
                           children: [
                             Row(
                               children: [
-                                SearchWidget(),
+                                SearchWidget(hintText: 'Search Template Name',),
                                 Spacer(),
                                 SortButton(),
                               ],

@@ -1,3 +1,4 @@
+import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
 
@@ -24,6 +25,8 @@ class AppRoutes {
         
         
       //   );
+      case OrderScreen.path:
+        return pageRoute(settings, const OrderScreen());
       case EditProduct.path:
         return pageRoute(settings, const EditProduct());
       case ProductScreen.path:

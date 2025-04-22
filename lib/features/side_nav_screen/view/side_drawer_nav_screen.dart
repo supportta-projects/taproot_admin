@@ -2,6 +2,7 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
 import 'package:taproot_admin/features/users_screen/user_management_screen.dart';
@@ -21,6 +22,10 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
 
   final GlobalKey<NavigatorState> _innerNavigatorKey =
       GlobalKey<NavigatorState>();
+        final GlobalKey<NavigatorState> _innerOrderNavigatorKey =
+      GlobalKey<NavigatorState>();
+     
+      
 
   @override
   void initState() {
@@ -179,12 +184,10 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     style: TextStyle(fontSize: 14.fSize),
                   ),
                 ),
-                Center(
-                  child: Text(
-                    'Orders Page',
-                    style: TextStyle(fontSize: 14.fSize),
-                  ),
-                ),
+             
+                Navigator(key: _innerOrderNavigatorKey, onGenerateRoute: (settings) {
+                  return MaterialPageRoute(builder: (_) => OrderScreen(innerNavigatorKey: _innerOrderNavigatorKey,),);
+                },),
                 Navigator(
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(
