@@ -257,28 +257,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                                   .borderGradient
                                                   .colors,
                                         ),
-                                    //  ElevatedButton(
-                                    //   onPressed: () {
-                                    //     setState(() {
-                                    //       switch (actionLabel) {
-                                    //         case 'Retry':
-                                    //           statusList[index] = 'placed';
-                                    //           break;
-                                    //         case 'Dispatch':
-                                    //           statusList[index] = 'shipped';
-                                    //           break;
-                                    //         case 'Complete Order':
-                                    //           statusList[index] =
-                                    //               'order completed';
-                                    //           break;
-                                    //       }
-                                    //     });
-                                    //     logInfo(
-                                    //       'Order $index action "$actionLabel" performed',
-                                    //     );
-                                    //   },
-                                    //   child: Text(actionLabel),
-                                    // ),
+                                    
                                   ),
                                 ],
                               );
