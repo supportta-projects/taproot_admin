@@ -47,6 +47,7 @@ class MiniLoadingButton extends StatelessWidget {
   const MiniLoadingButton({
     super.key,
     this.icon,
+    this.needRow=true,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
@@ -58,7 +59,7 @@ class MiniLoadingButton extends StatelessWidget {
     this.useGradient = false,
     this.gradientColors,
   });
-
+final bool needRow;
   final String text;
   final VoidCallback onPressed;
   final bool isLoading;
@@ -121,8 +122,9 @@ class MiniLoadingButton extends StatelessWidget {
                     : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(icon, color: textColor),
-                        Gap(CustomPadding.padding),
+                        needRow?
+                        Icon(icon, color: textColor):SizedBox(),
+                       needRow? Gap(CustomPadding.padding):SizedBox(),
                         Text(
                           text,
                           style: TextStyle(

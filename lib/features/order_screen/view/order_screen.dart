@@ -21,7 +21,30 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  List<String> statusList = List.generate(10, (index) => 'Placed');
+  void retryOrder(int index) {
+    logInfo('Retrying order $index');
+  }
+
+  void dispatchOrder(int index) {
+    logInfo('Dispatching order $index');
+  }
+
+  void completeOrder(int index) {
+    logInfo('Completing order $index');
+  }
+
+  List<String> statusList = [
+    'pending',
+    'failed',
+    'placed',
+    'shipped',
+    'order completed',
+    'failed',
+    'placed',
+    'shipped',
+    'pending',
+    'order completed',
+  ];
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -99,11 +122,11 @@ class _OrderScreenState extends State<OrderScreen> {
                             columns: [
                               DataColumn(label: Text('Order ID')),
                               DataColumn(label: Text('Full Name')),
-                              DataColumn(label: Text('User ID')),
                               DataColumn(label: Text('Phone')),
                               DataColumn(label: Text('Amount')),
                               DataColumn(label: Text('Order Count')),
                               DataColumn(label: Text('Status')),
+                              DataColumn(label: Text('Action')),
                             ],
                             rows: List.generate(10, (index) {
                               void handleRowTap() {
@@ -129,6 +152,23 @@ class _OrderScreenState extends State<OrderScreen> {
                                 );
                               }
 
+                              String status = statusList[index];
+                              String? actionLabel;
+
+                              switch (status) {
+                                case 'failed':
+                                  actionLabel = 'Retry';
+                                  break;
+                                case 'placed':
+                                  actionLabel = 'Dispatch';
+                                  break;
+                                case 'shipped':
+                                  actionLabel = 'Complete Order';
+                                  break;
+                                default:
+                                  actionLabel = null;
+                              }
+
                               return DataRow(
                                 cells: [
                                   DataCell(
@@ -152,14 +192,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                       ),
                                     ),
                                   ),
-                                  DataCell(
-                                    InkWell(
-                                      onTap: handleRowTap,
-                                      child: Center(
-                                        child: Text('UserID$index'),
-                                      ),
-                                    ),
-                                  ),
+
                                   DataCell(
                                     InkWell(
                                       onTap: handleRowTap,
@@ -182,56 +215,70 @@ class _OrderScreenState extends State<OrderScreen> {
                                       ),
                                     ),
                                   ),
+
                                   DataCell(
                                     Center(
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal:
-                                              CustomPadding.paddingLarge.v,
-                                        ),
-                                        height: 50.v,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            CustomPadding.padding.v,
-                                          ),
-                                          border: Border.all(
-                                            color:
-                                                CustomColors.textColorLightGrey,
-                                          ),
-                                        ),
-                                        child: DropdownButton<String>(
-                                          value: statusList[index],
-                                          items:
-                                              [
-                                                'Placed',
-                                                'Shipped',
-                                                'Delivered',
-                                              ].map((status) {
-                                                return DropdownMenuItem<String>(
-                                                  value: status,
-                                                  child: GradientText(
-                                                    status,
-                                                    gradient:
-                                                        CustomColors
-                                                            .borderGradient,
-                                                    style: context.inter60014,
-                                                  ),
-                                                );
-                                              }).toList(),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              statusList[index] =
-                                                  newValue.toString();
-                                            });
-                                            logInfo(
-                                              'Order $index status changed to $newValue',
-                                            );
-                                          },
-
-                                          style: context.inter50014,
-                                        ),
+                                      child: GradientText(
+                                        status,
+                                        gradient: CustomColors.borderGradient,
+                                        style: context.inter50016,
                                       ),
                                     ),
+                                  ),
+                                  DataCell(
+                                    actionLabel == null
+                                        ? SizedBox()
+                                        : MiniLoadingButton(
+                                          needRow: false,
+
+                                          text: actionLabel,
+                                          onPressed: () {
+                                            setState(() {
+                                              switch (actionLabel) {
+                                                case 'Retry':
+                                                  statusList[index] = 'placed';
+                                                  break;
+                                                case 'Dispatch':
+                                                  statusList[index] = 'shipped';
+                                                  break;
+                                                case 'Complete Order':
+                                                  statusList[index] =
+                                                      'order completed';
+                                                  break;
+                                              }
+                                            });
+                                            logInfo(
+                                              'Order $index action "$actionLabel" performed',
+                                            );
+                                          },
+                                          useGradient: true,
+                                          gradientColors:
+                                              CustomColors
+                                                  .borderGradient
+                                                  .colors,
+                                        ),
+                                    //  ElevatedButton(
+                                    //   onPressed: () {
+                                    //     setState(() {
+                                    //       switch (actionLabel) {
+                                    //         case 'Retry':
+                                    //           statusList[index] = 'placed';
+                                    //           break;
+                                    //         case 'Dispatch':
+                                    //           statusList[index] = 'shipped';
+                                    //           break;
+                                    //         case 'Complete Order':
+                                    //           statusList[index] =
+                                    //               'order completed';
+                                    //           break;
+                                    //       }
+                                    //     });
+                                    //     logInfo(
+                                    //       'Order $index action "$actionLabel" performed',
+                                    //     );
+                                    //   },
+                                    //   child: Text(actionLabel),
+                                    // ),
                                   ),
                                 ],
                               );
