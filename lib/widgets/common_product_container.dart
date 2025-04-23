@@ -2,27 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
-class CommonUserContainer extends StatelessWidget {
-  final double? height;
+class CommonProductContainer extends StatelessWidget {
+  final bool isAmountContainer;
   final List<Widget>? children;
   final String title;
-  const CommonUserContainer({
-    required this.title,
-    super.key,
-    this.children,
-    this.height,
-  });
+  const CommonProductContainer({required this.title, super.key, this.children,this.isAmountContainer=false});
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingLarge.v),
       child: Container(
         decoration: BoxDecoration(
           color: CustomColors.secondaryColor,
           borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
         ),
-        height: height ?? SizeUtils.height * 0.42,
-        // height: SizeUtils.height * 0.40,
+
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -45,10 +40,25 @@ class CommonUserContainer extends StatelessWidget {
               ),
             ),
             Column(children: children ?? []),
+            isAmountContainer?
+            Divider(indent: 40, endIndent: 40):SizedBox(),
+            isAmountContainer?
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: CustomPadding.padding.v,
+                horizontal: CustomPadding.paddingXL.v,
+              ),
+              child: Row(
+                children: [
+                  Text('Total Amount'),
+                  Spacer(),
+                  Text('₹298.00 / \$10.00', style: context.inter50024),
+                ],
+              ),
+            ):SizedBox()
           ],
         ),
       ),
     );
   }
 }
-

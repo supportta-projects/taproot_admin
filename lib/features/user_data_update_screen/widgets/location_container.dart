@@ -75,7 +75,7 @@ class LocationContainer extends StatelessWidget {
                 ),
                 DetailRow(label: 'Area', value: 'Baker Junction'),
                 DetailRow(label: 'Pin code', value: '123456'),
-                DetailRow(label: 'Distict', value: 'Kottayam'),
+                DetailRow(label: 'District', value: 'Kottayam'),
                 DetailRow(label: 'State', value: 'Kerala'),
                 DetailRow(label: 'Country', value: 'India'),
               ],

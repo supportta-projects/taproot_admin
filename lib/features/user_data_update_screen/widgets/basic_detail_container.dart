@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons_flutter/test_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row_copy.dart';
 import 'package:taproot_admin/features/users_screen/user_data_model.dart';
+import 'package:taproot_admin/widgets/gradient_text.dart';
 
 class BasicDetailContainer extends StatelessWidget {
   final bool isEdit;
@@ -51,6 +54,38 @@ class BasicDetailContainer extends StatelessWidget {
               labelText: 'WhatsApp Number',
             )
             : DetailRow(label: 'WhatsApp Number', value: user.whatsapp),
+        isEdit
+            ? SizedBox()
+            : DetailRowCopy(
+              label: 'Portfolio Link',
+              value: 'https://docs.google.com',
+              icon: Icons.copy,
+            ),
+        isEdit ? SizedBox() : Gap(CustomPadding.padding.v),
+        isEdit
+            ? SizedBox()
+            : Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: CustomPadding.paddingLarge.v,
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    'QR Code',
+                    style: context.inter50014.copyWith(fontSize: 14.fSize),
+                  ),
+                  Spacer(),
+                  GradientText(
+                    'Download',
+                    gradient: CustomColors.borderGradient,
+                    style: context.inter50014.copyWith(
+                      decoration: TextDecoration.underline,
+                      decorationColor: CustomColors.greenDark,
+                    ),
+                  ),
+                ],
+              ),
+            ),
       ],
     );
   }

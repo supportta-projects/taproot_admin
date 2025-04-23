@@ -2,8 +2,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/view/create_order.dart';
 import 'package:taproot_admin/features/order_screen/view/order_details_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
+import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 import 'package:taproot_admin/widgets/gradient_text.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -36,7 +38,11 @@ class _OrderScreenState extends State<OrderScreen> {
                   MiniLoadingButton(
                     icon: Icons.add,
                     text: 'Create Order',
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => CreateOrder()),
+                      );
+                    },
                     useGradient: true,
                     gradientColors: CustomColors.borderGradient.colors,
                   ),
@@ -108,6 +114,15 @@ class _OrderScreenState extends State<OrderScreen> {
                                   MaterialPageRoute(
                                     builder:
                                         (_) => OrderDetailScreen(
+                                          user: User(
+                                            fullName: 'sss',
+                                            userId: 'ss',
+                                            phone: 'ssss',
+                                            whatsapp: 'ssss',
+                                            email: 'ssss',
+                                            website: 'sssss',
+                                            isPremium: false,
+                                          ),
                                           orderId: 'OrderID$index',
                                         ),
                                   ),
