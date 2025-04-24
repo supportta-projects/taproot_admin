@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 
 class LinkContainer extends StatelessWidget {
@@ -48,7 +48,7 @@ class LinkContainer extends StatelessWidget {
             height: 70,
             color: Colors.white,
             child: TextFormContainer(
-              initailValue: '',
+              initialValue: '',
               labelText: 'Link',
               user: user,
             ),

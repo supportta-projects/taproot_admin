@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 
 class LocationContainer extends StatelessWidget {
@@ -20,12 +20,12 @@ class LocationContainer extends StatelessWidget {
               ? [
                 Gap(CustomPadding.paddingLarge.v),
                 TextFormContainer(
-                  initailValue: '3rd floor CSI Complex',
+                  initialValue: '3rd floor CSI Complex',
                   labelText: 'Building Name',
                   user: user,
                 ),
                 TextFormContainer(
-                  initailValue: 'Baker Junction',
+                  initialValue: 'Baker Junction',
                   labelText: 'Area',
                   user: user,
                 ),
@@ -33,14 +33,14 @@ class LocationContainer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextFormContainer(
-                        initailValue: '123456',
+                        initialValue: '123456',
                         labelText: 'Pin code',
                         user: user,
                       ),
                     ),
                     Expanded(
                       child: TextFormContainer(
-                        initailValue: '123456',
+                        initialValue: '123456',
                         labelText: 'Pin code',
                         user: user,
                       ),
@@ -51,14 +51,14 @@ class LocationContainer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextFormContainer(
-                        initailValue: 'Kerala',
+                        initialValue: 'Kerala',
                         labelText: 'State',
                         user: user,
                       ),
                     ),
                     Expanded(
                       child: TextFormContainer(
-                        initailValue: 'India',
+                        initialValue: 'India',
                         labelText: 'Country',
                         user: user,
                       ),

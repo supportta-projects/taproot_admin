@@ -4,7 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_id_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -108,13 +108,13 @@ class _AddProductState extends State<AddProduct> {
                               children: [
                                 Expanded(
                                   child: TextFormContainer(
-                                    initailValue: '',
+                                    initialValue: '',
                                     labelText: 'Template Name',
                                   ),
                                 ),
                                 Expanded(
                                   child: TextFormContainer(
-                                    initailValue: '',
+                                    initialValue: '',
                                     labelText: 'Discount',
                                   ),
                                 ),
@@ -126,7 +126,7 @@ class _AddProductState extends State<AddProduct> {
                                   child: Column(
                                     children: [
                                       TextFormContainer(
-                                        initailValue: '',
+                                        initialValue: '',
                                         labelText: 'Price',
                                       ),
                                       Row(
@@ -198,7 +198,7 @@ class _AddProductState extends State<AddProduct> {
                                 Expanded(
                                   child: TextFormContainer(
                                     maxline: 4,
-                                    initailValue: '',
+                                    initialValue: '',
                                     labelText: 'Description',
                                   ),
                                 ),

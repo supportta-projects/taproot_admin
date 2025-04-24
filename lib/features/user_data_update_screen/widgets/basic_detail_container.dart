@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:lucide_icons_flutter/test_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row_copy.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 import 'package:taproot_admin/widgets/gradient_text.dart';
 
@@ -27,7 +27,7 @@ class BasicDetailContainer extends StatelessWidget {
         isEdit
             ? TextFormContainer(
               user: user,
-              initailValue: user.fullName,
+              initialValue: user.fullName,
               labelText: 'Full Name',
             )
             : DetailRow(label: 'Full Name', value: user.fullName),
@@ -36,21 +36,21 @@ class BasicDetailContainer extends StatelessWidget {
             ? TextFormContainer(
               readonly: true,
               user: user,
-              initailValue: user.email,
+              initialValue: user.email,
               labelText: 'Email',
             )
             : DetailRow(label: 'Email', value: user.email),
         isEdit
             ? TextFormContainer(
               user: user,
-              initailValue: user.phone,
+              initialValue: user.phone,
               labelText: 'Phone Number',
             )
             : DetailRow(label: 'Phone Number', value: user.phone),
         isEdit
             ? TextFormContainer(
               user: user,
-              initailValue: user.whatsapp,
+              initialValue: user.whatsapp,
               labelText: 'WhatsApp Number',
             )
             : DetailRow(label: 'WhatsApp Number', value: user.whatsapp),
@@ -91,44 +91,44 @@ class BasicDetailContainer extends StatelessWidget {
   }
 }
 
-class TextFormContainer extends StatelessWidget {
-  final String initailValue;
-  final int maxline;
-  final bool readonly;
-  final String labelText;
-  final User? user;
-  const TextFormContainer({
-    super.key,
-    required this.initailValue,
-    required this.labelText,
-    this.user,
-    this.readonly = false,
-    this.maxline = 1,
-  });
+// class TextFormContainer extends StatelessWidget {
+//   final String initailValue;
+//   final int maxline;
+//   final bool readonly;
+//   final String labelText;
+//   final User? user;
+//   const TextFormContainer({
+//     super.key,
+//     required this.initailValue,
+//     required this.labelText,
+//     this.user,
+//     this.readonly = false,
+//     this.maxline = 1,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: CustomPadding.paddingLarge.v,
-        vertical: CustomPadding.padding.v,
-      ),
-      child: TextFormField(
-        maxLines: maxline,
-        readOnly: readonly,
-        initialValue: initailValue,
-        decoration: InputDecoration(
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-          label: Text(labelText),
-          labelStyle: TextStyle(color: CustomColors.textColorDarkGrey),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: CustomColors.textColorLightGrey),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: CustomColors.textColorLightGrey),
-          ),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: EdgeInsets.symmetric(
+//         horizontal: CustomPadding.paddingLarge.v,
+//         vertical: CustomPadding.padding.v,
+//       ),
+//       child: TextFormField(
+//         maxLines: maxline,
+//         readOnly: readonly,
+//         initialValue: initailValue,
+//         decoration: InputDecoration(
+//           floatingLabelBehavior: FloatingLabelBehavior.always,
+//           label: Text(labelText),
+//           labelStyle: TextStyle(color: CustomColors.textColorDarkGrey),
+//           enabledBorder: OutlineInputBorder(
+//             borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+//           ),
+//           focusedBorder: OutlineInputBorder(
+//             borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

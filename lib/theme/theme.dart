@@ -4,6 +4,8 @@ import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+
+  
     expansionTileTheme: ExpansionTileThemeData(
       
       backgroundColor: CustomColors.lightGreen,
@@ -103,13 +105,13 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(),
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: CustomColors.textFieldBorderGrey),
+        borderSide: BorderSide(color: CustomColors.textColorLightGrey),
       ),
       disabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: CustomColors.textFieldBorderGrey),
+        borderSide: BorderSide(color: CustomColors.textColorLightGrey),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: CustomColors.textFieldBorderGrey),
+        borderSide: BorderSide(color: CustomColors.textColorLightGrey),
       ),
     ),
   );

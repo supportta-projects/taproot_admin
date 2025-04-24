@@ -1,3 +1,4 @@
+import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
@@ -25,6 +26,8 @@ class AppRoutes {
         
         
       //   );
+      case ExpenseView.path:
+        return pageRoute(settings, const ExpenseView());
       case OrderScreen.path:
         return pageRoute(settings, const OrderScreen());
       case EditProduct.path:

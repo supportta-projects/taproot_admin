@@ -2,6 +2,7 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
@@ -22,10 +23,8 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
 
   final GlobalKey<NavigatorState> _innerNavigatorKey =
       GlobalKey<NavigatorState>();
-        final GlobalKey<NavigatorState> _innerOrderNavigatorKey =
+  final GlobalKey<NavigatorState> _innerOrderNavigatorKey =
       GlobalKey<NavigatorState>();
-     
-      
 
   @override
   void initState() {
@@ -42,12 +41,6 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // title: Padding(
-        //   padding: const EdgeInsets.only(
-        //     left: CustomPadding.paddingXXL + CustomPadding.paddingXXL,
-        //   ),
-        //   child: Text('aaaaa'),
-        // ),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
           PopupMenuButton<String>(
@@ -157,10 +150,25 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 },
               ),
               SideMenuItem(
+                title: 'Expense',
+                iconWidget: SideMenuLucideIcon(
+                  icon: LucideIcons.network,
+                  index: 4,
+                  currentIndex: _currentIndex,
+                ),
+                onTap: (index, _) {
+                  setState(() {
+                    _currentIndex = index;
+                  });
+
+                  NavControllers.sideMenuController.changePage(index);
+                },
+              ),
+              SideMenuItem(
                 title: 'Settings',
                 iconWidget: SideMenuLucideIcon(
                   icon: LucideIcons.settings,
-                  index: 4,
+                  index: 5,
                   currentIndex: _currentIndex,
                 ),
                 onTap: (index, _) {
@@ -184,10 +192,18 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     style: TextStyle(fontSize: 14.fSize),
                   ),
                 ),
-             
-                Navigator(key: _innerOrderNavigatorKey, onGenerateRoute: (settings) {
-                  return MaterialPageRoute(builder: (_) => OrderScreen(innerNavigatorKey: _innerOrderNavigatorKey,),);
-                },),
+
+                Navigator(
+                  key: _innerOrderNavigatorKey,
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+                      builder:
+                          (_) => OrderScreen(
+                            innerNavigatorKey: _innerOrderNavigatorKey,
+                          ),
+                    );
+                  },
+                ),
                 Navigator(
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(
@@ -205,6 +221,14 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                           (_) => UserManagementScreen(
                             innerNavigatorKey: _innerNavigatorKey,
                           ),
+                      settings: settings,
+                    );
+                  },
+                ),
+                  Navigator(
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+                      builder: (_) => ExpenseView(),
                       settings: settings,
                     );
                   },

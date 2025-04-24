@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:taproot_admin/constants/constants.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/services/size_utils.dart';
 
 import '../../users_screen/user_data_model.dart';
@@ -31,7 +31,7 @@ class AdditionalContainer extends StatelessWidget {
                 children: [
                   isEdit
                       ? TextFormContainer(
-                        initailValue: 'https://docs.google.com',
+                        initialValue: 'https://docs.google.com',
                         labelText: 'Website Link',
                         user: user,
                       )
@@ -41,7 +41,7 @@ class AdditionalContainer extends StatelessWidget {
                       ),
                   isEdit
                       ? TextFormContainer(
-                        initailValue: '-',
+                        initialValue: '-',
                         labelText: 'Website Link',
                         user: user,
                       )

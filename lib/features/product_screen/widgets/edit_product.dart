@@ -4,7 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_id_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -98,13 +98,13 @@ class _EditProductState extends State<EditProduct> {
                     children: [
                       Expanded(
                         child: TextFormContainer(
-                          initailValue: 'Modern Blue Business Card',
+                          initialValue: 'Modern Blue Business Card',
                           labelText: 'Template Name',
                         ),
                       ),
                       Expanded(
                         child: TextFormContainer(
-                          initailValue: "₹149.00 / \$5.00",
+                          initialValue: "₹149.00 / \$5.00",
                           labelText: 'Discount',
                         ),
                       ),
@@ -116,7 +116,7 @@ class _EditProductState extends State<EditProduct> {
                         child: Column(
                           children: [
                             TextFormContainer(
-                              initailValue: '₹149.00 / \$5.00',
+                              initialValue: '₹149.00 / \$5.00',
                               labelText: 'Price',
                             ),
                             Row(
@@ -172,7 +172,7 @@ class _EditProductState extends State<EditProduct> {
                       Expanded(
                         child: TextFormContainer(
                           maxline: 4,
-                          initailValue: loremIpsum,
+                          initialValue: loremIpsum,
                           labelText: 'Description',
                         ),
                       ),
