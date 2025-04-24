@@ -8,7 +8,6 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/common_us
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/users_screen/user_data_model.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
-import 'package:taproot_admin/widgets/gradient_border_button.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
