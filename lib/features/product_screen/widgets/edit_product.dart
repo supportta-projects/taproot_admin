@@ -89,7 +89,9 @@ class _EditProductState extends State<EditProduct> {
                 children: [
                   ProductIdContainer(),
                   Gap(CustomPadding.paddingXL.v),
-                  Row(children: [AddImageContainer()]),
+                  Row(children: [
+                    AddImageContainer()
+                    ]),
                   Gap(CustomPadding.paddingLarge.v),
 
                   Gap(CustomPadding.paddingLarge.v),
