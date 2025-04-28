@@ -30,10 +30,10 @@ class _ProductScreenState extends State<ProductScreen> {
 
                   // ).pushNamed(EditProduct.path);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditProduct()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => EditProduct()),
+                  // );
                 },
                 onBack: () {
                   setState(() {

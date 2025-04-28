@@ -1,11 +1,13 @@
-
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
 class AddImageContainer extends StatelessWidget {
-  
-  const AddImageContainer({super.key});
+  final bool isImageView;
+  final String? path;
+
+  const AddImageContainer({super.key, this.isImageView = false, this.path});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +20,19 @@ class AddImageContainer extends StatelessWidget {
           color: CustomColors.lightGreen,
           borderRadius: BorderRadius.circular(CustomPadding.padding.v),
         ),
-        child: Center(
-          child: Icon(Icons.add, size: 40.v, color: CustomColors.greenDark),
-        ),
+        child:
+            isImageView
+                ? ClipRRect(
+                  borderRadius: BorderRadius.circular(CustomPadding.padding.v),
+                  child: Image.file(File(path.toString()), fit: BoxFit.cover),
+                )
+                : Center(
+                  child: Icon(
+                    Icons.add,
+                    size: 40.v,
+                    color: CustomColors.greenDark,
+                  ),
+                ),
       ),
     );
   }

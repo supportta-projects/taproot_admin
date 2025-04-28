@@ -2,24 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/product_screen/widgets/add_product.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_id_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class EditProduct extends StatefulWidget {
-  const EditProduct({super.key});
-    static const path = '/editproduct';
+  final String? productName;
+  final String? price;
+  final String? offerPrice;
+  final String? description;
+  final String? cardType;
+  final List<String>? images;
 
+  const EditProduct({
+    super.key,
+    this.productName,
+    this.price,
+    this.offerPrice,
+    this.description,
+    this.cardType,
+    this.images,
+  });
+
+  static const path = '/editproduct';
 
   @override
   State<EditProduct> createState() => _EditProductState();
 }
 
 class _EditProductState extends State<EditProduct> {
-  String dropdownvalue = 'Basic';
+  late String dropdownValue;
   var items = ['Premium', 'Basic', 'Modern', 'Classic', 'Business'];
+  @override
+  void initState() {
+    super.initState();
+    dropdownValue = widget.cardType ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,6 +90,8 @@ class _EditProductState extends State<EditProduct> {
                 Gap(CustomPadding.paddingXL.v),
               ],
             ),
+            Gap(CustomPadding.paddingLarge.v),
+
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: CustomPadding.paddingLarge.v,
@@ -89,9 +112,22 @@ class _EditProductState extends State<EditProduct> {
                 children: [
                   ProductIdContainer(),
                   Gap(CustomPadding.paddingXL.v),
-                  Row(children: [
-                    AddImageContainer()
-                    ]),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(
+                      widget.images?.length ?? 0,
+                      (index) => SizedBox(
+                        width: SizeUtils.width / 5,
+                        child: AddImageContainer(
+                          pickImage: () {},
+                          removeImage: () {},
+                          isImageView: true,
+                          path: widget.images![index],
+                        ),
+                      ),
+                    ),
+                  ),
                   Gap(CustomPadding.paddingLarge.v),
 
                   Gap(CustomPadding.paddingLarge.v),
@@ -100,13 +136,13 @@ class _EditProductState extends State<EditProduct> {
                     children: [
                       Expanded(
                         child: TextFormContainer(
-                          initialValue: 'Modern Blue Business Card',
+                          initialValue: ' ${widget.productName}',
                           labelText: 'Template Name',
                         ),
                       ),
                       Expanded(
                         child: TextFormContainer(
-                          initialValue: "₹149.00 / \$5.00",
+                          initialValue: "₹${widget.offerPrice} / \$5.00",
                           labelText: 'Discount',
                         ),
                       ),
@@ -118,7 +154,7 @@ class _EditProductState extends State<EditProduct> {
                         child: Column(
                           children: [
                             TextFormContainer(
-                              initialValue: '₹149.00 / \$5.00',
+                              initialValue: '₹${widget.price} / \$5.00',
                               labelText: 'Price',
                             ),
                             Row(
@@ -143,13 +179,13 @@ class _EditProductState extends State<EditProduct> {
                                     ),
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
-                                        underline: null,
+                                        value: dropdownValue,
                                         icon: Icon(Icons.keyboard_arrow_down),
                                         isExpanded: true,
                                         borderRadius: BorderRadius.circular(
                                           CustomPadding.padding.v,
                                         ),
-                                        value: dropdownvalue,
+
                                         items:
                                             items.map((String items) {
                                               return DropdownMenuItem(
@@ -159,7 +195,7 @@ class _EditProductState extends State<EditProduct> {
                                             }).toList(),
                                         onChanged: (String? newValue) {
                                           setState(() {
-                                            dropdownvalue = newValue!;
+                                            dropdownValue = newValue!;
                                           });
                                         },
                                       ),
@@ -174,7 +210,7 @@ class _EditProductState extends State<EditProduct> {
                       Expanded(
                         child: TextFormContainer(
                           maxline: 4,
-                          initialValue: loremIpsum,
+                          initialValue: '${widget.description}',
                           labelText: 'Description',
                         ),
                       ),

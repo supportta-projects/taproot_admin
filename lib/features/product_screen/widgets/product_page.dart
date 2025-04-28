@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/widgets/add_product.dart';
+import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_detail_row.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
+import 'package:taproot_admin/features/product_screen/widgets/view_product.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class ProductPage extends StatefulWidget {
@@ -18,17 +22,24 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  List<Map<String, String>> products = [];
-  void addProducts(Map<String, String> product) {
+  List<Map<String, Object>> products = [];
+  void addProducts(Map<String, Object> product) {
     setState(() {
       products.add(product);
+      enabledList.add(true);
     });
   }
 
   bool addProduct = false;
-  List<bool> enabledList = List.generate(6, (index) => true);
+  List<bool> enabledList = [];
 
   bool viewProduct = false;
+  @override
+  void initState() {
+    super.initState();
+    enabledList = List.generate(products.length, (index) => true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +127,6 @@ class _ProductPageState extends State<ProductPage> {
                     child: TabBarView(
                       children: [
                         GridView.builder(
-                          // final product=products[index];
                           itemCount: products.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
@@ -125,98 +135,168 @@ class _ProductPageState extends State<ProductPage> {
                                 mainAxisSpacing: CustomPadding.paddingXL.v,
                                 crossAxisSpacing: CustomPadding.paddingXL.v,
                               ),
-                              
-                          itemBuilder:
-                              (context, index) => GestureDetector(
-                                onTap: () {
-                                  widget.viewTap();
-                                  // setState(() {
-                                  //   viewProduct = !viewProduct;
-                                  // });
-                                },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      CustomPadding.paddingLarge.v,
-                                    ),
-                                    border: Border.all(
-                                      width: 2,
-                                      color: CustomColors.textColorLightGrey,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Gap(CustomPadding.paddingLarge.v),
-                                      Row(
-                                        children: [
-                                          Gap(CustomPadding.paddingLarge.v),
-
-                                          Expanded(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: CustomColors.lightGreen,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                      CustomPadding.padding.v,
+                          itemBuilder: (context, index) {
+                            final product = products[index];
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => ViewProduct(
+                                          onBack: () {
+                                            Navigator.pop(context);
+                                          },
+                                          onEdit: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) => EditProduct(
+                                                      price:
+                                                          product['price']
+                                                              .toString(),
+                                                      offerPrice:
+                                                          product['discountPrice']
+                                                              .toString(),
+                                                      productName:
+                                                          product['templateName']
+                                                              .toString(),
+                                                      cardType:
+                                                          product['type']
+                                                              .toString(),
+                                                      description:
+                                                          product['description']
+                                                              .toString(),
+                                                      images:
+                                                          (product['images']
+                                                                  as List<
+                                                                    dynamic
+                                                                  >)
+                                                              .map(
+                                                                (e) =>
+                                                                    e.toString(),
+                                                              )
+                                                              .toList(),
                                                     ),
                                               ),
-                                              height: 170.v,
-                                              width: 200.v,
-                                              child: Center(
-                                                child: Text('image here'),
+                                            );
+                                          },
+                                          price: product['price'].toString(),
+                                          offerPrice:
+                                              product['discountPrice']
+                                                  .toString(),
+                                          productName:
+                                              product['templateName']
+                                                  .toString(),
+                                          cardType: product['type'].toString(),
+                                          description:
+                                              product['description'].toString(),
+                                         images:
+                                              (product['images']
+                                                      as List<dynamic>)
+                                                  .map((e) => e.toString())
+                                                  .toList(),
+
+                                        ),
+                                  ),
+                                );
+                                // widget.viewTap();
+                                // setState(() {
+                                //   viewProduct = !viewProduct;
+                                // });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    CustomPadding.paddingLarge.v,
+                                  ),
+                                  border: Border.all(
+                                    width: 2,
+                                    color: CustomColors.textColorLightGrey,
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Gap(CustomPadding.paddingLarge.v),
+                                    Row(
+                                      children: [
+                                        Gap(CustomPadding.paddingLarge.v),
+                                        Expanded(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: CustomColors.lightGreen,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                    CustomPadding.padding.v,
+                                                  ),
+                                            ),
+                                            height: 170.v,
+                                            width: 200.v,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                    CustomPadding.padding.v,
+                                                  ),
+                                              child: Image.file(
+                                                File(
+                                                  (product['images']
+                                                      as List<String>)[0],
+                                                ),
+                                                fit: BoxFit.cover,
                                               ),
                                             ),
                                           ),
-                                          Gap(CustomPadding.paddingLarge.v),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  products[index]['templateName'] ??
-                                                      'No Name',
-                                                  // 'Modern Blue Business Card',
-                                                  style: context.inter50014,
-                                                ),
-                                                Gap(
-                                                  CustomPadding.paddingLarge.v,
-                                                ),
-                                                ProductDetaileRow(
-                                                  cardType: 'Minimal',
-                                                  price: products[index]['price'] ??
-                                                      'No Price',
-                                                  offerPrice: products[index]['discountPrice'] ??
-                                                      'No offer',
-                                                ),
-                                              ],
-                                            ),
+                                        ),
+                                        Gap(CustomPadding.paddingLarge.v),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                product['templateName']
+                                                    .toString(),
+                                                style: context.inter50014,
+                                              ),
+                                              Gap(CustomPadding.paddingLarge.v),
+                                              ProductDetaileRow(
+                                                cardType:
+                                                    product['type'].toString(),
+                                                price:
+                                                    product['price'].toString(),
+                                                offerPrice:
+                                                    product['discountPrice']
+                                                        .toString(),
+                                              ),
+                                            ],
                                           ),
-                                          Gap(CustomPadding.paddingLarge.v),
-                                        ],
-                                      ),
-                                      Gap(CustomPadding.paddingLarge.v),
-                                      Row(
-                                        children: [
-                                          Gap(CustomPadding.paddingLarge.v),
-                                          Switch(
-                                            value: enabledList[index],
-                                            onChanged: (value) {
-                                              setState(() {
-                                                enabledList[index] = value;
-                                              });
-                                            },
-                                          ),
-                                          Gap(CustomPadding.padding.v),
-                                          enabledList[index]
-                                              ? Text('Enable')
-                                              : Text('Disabled'),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                        ),
+                                        Gap(CustomPadding.paddingLarge.v),
+                                      ],
+                                    ),
+                                    Gap(CustomPadding.paddingLarge.v),
+                                    Row(
+                                      children: [
+                                        Gap(CustomPadding.paddingLarge.v),
+                                        Switch(
+                                          value: enabledList[index],
+                                          onChanged: (value) {
+                                            setState(() {
+                                              enabledList[index] = value;
+                                            });
+                                          },
+                                        ),
+                                        Gap(CustomPadding.padding.v),
+                                        enabledList[index]
+                                            ? Text('Enable')
+                                            : Text('Disabled'),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
+                            );
+                          },
                         ),
                         Center(child: Text('Premium')),
                         Center(child: Text('Basic')),

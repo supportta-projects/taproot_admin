@@ -202,7 +202,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gap/gap.dart';
-import 'package:get/route_manager.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_id_container.dart';
@@ -295,6 +294,11 @@ class _AddProductState extends State<AddProduct> {
                       'price': price,
                       'discountPrice': discountPrice,
                       'description': description,
+                      'images': _selectedImages
+                        .where((image) => image != null)
+                        .map((image) => image!.path)
+                        .toList(),
+                      'type': dropdownvalue,
                     };
                     Navigator.pop(context,newProduct);
                   },
@@ -456,12 +460,16 @@ class AddImageContainer extends StatelessWidget {
   final VoidCallback removeImage;
   final VoidCallback pickImage;
   final File? selectedImage;
+  final bool isImageView;
+  final String? path;
 
   const AddImageContainer({
     super.key,
     required this.removeImage,
     required this.pickImage,
     this.selectedImage,
+    this.isImageView=false,
+    this.path,
   });
 
   @override
@@ -477,7 +485,63 @@ class AddImageContainer extends StatelessWidget {
             color: CustomColors.lightGreen,
             borderRadius: BorderRadius.circular(CustomPadding.padding.v),
           ),
-          child: Center(
+          child:isImageView?Stack(fit: StackFit.expand,children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          CustomPadding.padding.v,
+                        ),
+                        child: Image.file(File(path.toString()), fit: BoxFit.cover),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              removeImage();
+                            },
+                            icon: Icon(
+                              Icons.cancel_outlined,
+                              size: 30.v,
+                              color: CustomColors.secondaryColor,
+                            ),
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              pickImage();
+                            },
+                            child: Container(
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.vertical(
+                                  bottom: Radius.circular(
+                                    CustomPadding.padding.v,
+                                  ),
+                                ),
+                                gradient: CustomColors.borderGradient,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Replace',
+                                    style: context.inter60012.copyWith(
+                                      color: CustomColors.secondaryColor,
+                                    ),
+                                  ),
+                                  Gap(CustomPadding.padding.v),
+                                  Icon(
+                                    Icons.repeat,
+                                    color: CustomColors.secondaryColor,
+                                    size: 25,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],) : Center(
             child:
                 selectedImage == null
                     ? Icon(Icons.add, size: 40.v, color: CustomColors.greenDark)
