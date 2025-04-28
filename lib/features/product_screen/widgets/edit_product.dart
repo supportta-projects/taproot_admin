@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -35,10 +38,46 @@ class EditProduct extends StatefulWidget {
 class _EditProductState extends State<EditProduct> {
   late String dropdownValue;
   var items = ['Premium', 'Basic', 'Modern', 'Classic', 'Business'];
+  List<File> selectedImages = [];
   @override
   void initState() {
     super.initState();
     dropdownValue = widget.cardType ?? '';
+    if (widget.images != null) {
+      selectedImages = widget.images!.map((path) => File(path)).toList();
+    } else {
+      selectedImages = [];
+    }
+  }
+
+  //pick image function
+  void _pickImage(int index) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowedExtensions: ['jpg', 'jpeg', 'png'],
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      setState(() {
+        if (index >= selectedImages.length) {
+          selectedImages.add(File(result.files.first.path!));
+        } else {
+          selectedImages[index] = File(result.files.first.path!);
+        }
+      });
+    }
+  }
+
+  Future<void> pickImage(int index) async {
+    _pickImage(index);
+  }
+
+  void removeImage(int index) {
+    setState(() {
+      if (index < selectedImages.length) {
+        selectedImages.removeAt(index);
+      }
+    });
   }
 
   @override
@@ -66,7 +105,7 @@ class _EditProductState extends State<EditProduct> {
                 Gap(CustomPadding.padding.v),
                 Text('>', style: context.inter60016),
                 Gap(CustomPadding.padding.v),
-                Text('Modern Blue Business Card', style: context.inter60016),
+                Text('${widget.productName}', style: context.inter60016),
                 Spacer(),
 
                 MiniGradientBorderButton(
@@ -115,18 +154,39 @@ class _EditProductState extends State<EditProduct> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: List.generate(
-                      widget.images?.length ?? 0,
-                      (index) => SizedBox(
-                        width: SizeUtils.width / 5,
-                        child: AddImageContainer(
-                          pickImage: () {},
-                          removeImage: () {},
-                          isImageView: true,
-                          path: widget.images![index],
-                        ),
-                      ),
-                    ),
+                    children: List.generate(4, (index) {
+                      
+                      if (index < selectedImages.length) {
+                        return SizedBox(
+                          width: SizeUtils.width / 5,
+                          child: AddImageContainer(
+                            pickImage:
+                                () => _pickImage(
+                                  index,
+                                ),
+                            removeImage: () => removeImage(index),
+                            isImageView: true,
+                            path: selectedImages[index].path,
+                          ),
+                        );
+                      } else {
+                        
+                        return SizedBox(
+                          width: SizeUtils.width / 5,
+                          child: AddImageContainer(
+                            pickImage:
+                                () => _pickImage(
+                                  index,
+                                ), 
+                            removeImage:
+                                () {}, 
+                            isImageView:
+                                false, 
+                            path: null, 
+                          ),
+                        );
+                      }
+                    }),
                   ),
                   Gap(CustomPadding.paddingLarge.v),
 

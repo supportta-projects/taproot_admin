@@ -28,7 +28,7 @@ class _AddProductState extends State<AddProduct> {
   var items = ['Premium', 'Basic', 'Modern', 'Classic', 'Business'];
   final List<File?> _selectedImages = [null, null, null, null];
 
-  void _pickImage(int index) async {
+  void pickImage(int index) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowedExtensions: ['jpg', 'jpeg', 'png'],
@@ -41,7 +41,7 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
-  void _removeImage(int index) {
+  void removeImage(int index) {
     setState(() {
       _selectedImages[index] = null;
 
@@ -134,8 +134,8 @@ class _AddProductState extends State<AddProduct> {
                       if (index == 0 || _selectedImages[index - 1] != null) {
                         return AddImageContainer(
                           selectedImage: _selectedImages[index],
-                          pickImage: () => _pickImage(index),
-                          removeImage: () => _removeImage(index),
+                          pickImage: () => pickImage(index),
+                          removeImage: () => removeImage(index),
                         );
                       } else {
                         return const SizedBox();
