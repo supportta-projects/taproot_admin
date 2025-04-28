@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -5,12 +7,16 @@ import 'package:taproot_admin/exporter/exporter.dart';
 
 class ImageContainer extends StatelessWidget {
   final String imageState;
+  final VoidCallback? onTap;
   final bool isEdit;
   final String title;
   final IconData icon;
+  File? selectedFile;
 
-  const ImageContainer({
+  ImageContainer({
     super.key,
+    required this.onTap,
+    this.selectedFile,
     required this.icon,
     required this.title,
     this.isEdit = false,
@@ -40,39 +46,55 @@ class ImageContainer extends StatelessWidget {
                 mainAxisAlignment:
                     isEdit ? MainAxisAlignment.end : MainAxisAlignment.center,
                 children: [
-                  Center(
-                    child: Icon(
-                      LucideIcons.userRound,
-                      color: CustomColors.textColorDarkGrey,
-                      size: SizeUtils.height * 0.1,
-                    ),
-                  ),
-                  isEdit
-                      ? Container(
-                        width: 140.h,
-                        height: 30.v,
-                        decoration: BoxDecoration(
-                          gradient: CustomColors.borderGradient,
+                  selectedFile != null
+                      ? Expanded(
+                        child: ClipRRect(
                           borderRadius: BorderRadius.vertical(
-                            bottom: Radius.circular(CustomPadding.padding.v),
+                            top: Radius.circular(CustomPadding.padding.v),
+                          ),
+                          child: Image.file(
+                            selectedFile!,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              imageState,
-                              style: context.inter60012.copyWith(
-                                color: CustomColors.secondaryColor,
+                      )
+                      : Icon(
+                        LucideIcons.image,
+                        color: CustomColors.textColorDarkGrey,
+                        size: SizeUtils.height * 0.1,
+                      ),
+
+                  isEdit
+                      ? GestureDetector(
+                        onTap: onTap,
+                        child: Container(
+                          width: 140.h,
+                          height: 30.v,
+                          decoration: BoxDecoration(
+                            gradient: CustomColors.borderGradient,
+                            borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(CustomPadding.padding.v),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                imageState,
+                                style: context.inter60012.copyWith(
+                                  color: CustomColors.secondaryColor,
+                                ),
                               ),
-                            ),
-                            Gap(CustomPadding.padding.v),
-                            Icon(
-                              icon,
-                              color: CustomColors.secondaryColor,
-                              size: SizeUtils.height * 0.02,
-                            ),
-                          ],
+                              Gap(CustomPadding.padding.v),
+                              Icon(
+                                icon,
+                                color: CustomColors.secondaryColor,
+                                size: SizeUtils.height * 0.02,
+                              ),
+                            ],
+                          ),
                         ),
                       )
                       : SizedBox(),
