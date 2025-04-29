@@ -12,6 +12,7 @@ class TextFormContainer extends StatefulWidget {
   final bool isDatePicker;
   final ValueChanged<String>? onChanged;
   final FormFieldValidator<String>? validator;
+  final TextEditingController? controller;
 
   const TextFormContainer({
     super.key,
@@ -24,6 +25,7 @@ class TextFormContainer extends StatefulWidget {
     this.isDatePicker = false,
     this.onChanged,
     this.validator,
+    this.controller
   });
 
   @override
@@ -31,18 +33,20 @@ class TextFormContainer extends StatefulWidget {
 }
 
 class _TextFormContainerState extends State<TextFormContainer> {
-  late TextEditingController _controller;
+  late TextEditingController _internalController;
 
   @override
   void initState() {
     super.initState();
-    // Set initial value in controller
-    _controller = TextEditingController(text: widget.initialValue);
+   _internalController =
+        widget.controller ?? TextEditingController(text: widget.initialValue);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+      if (widget.controller == null) {
+      _internalController.dispose();
+    }
     super.dispose();
   }
 
@@ -58,7 +62,7 @@ class _TextFormContainerState extends State<TextFormContainer> {
       final formatted =
           "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
       setState(() {
-        _controller.text = formatted;
+        _internalController.text = formatted;
       });
     }
   }
@@ -73,7 +77,7 @@ class _TextFormContainerState extends State<TextFormContainer> {
       child: TextFormField(
         validator: widget.validator,
         onChanged: widget.onChanged,
-        controller: _controller,
+        controller: _internalController,
         maxLines: widget.maxline,
         readOnly: widget.readonly || widget.isDatePicker,
         onTap: widget.isDatePicker ? _pickDate : null,

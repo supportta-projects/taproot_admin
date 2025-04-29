@@ -11,9 +11,9 @@ class ImageContainer extends StatelessWidget {
   final bool isEdit;
   final String title;
   final IconData icon;
-  File? selectedFile;
+  final  File? selectedFile;
 
-  ImageContainer({
+ const ImageContainer({
     super.key,
     required this.onTap,
     this.selectedFile,

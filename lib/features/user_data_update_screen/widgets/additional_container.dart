@@ -8,7 +8,6 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/common_us
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
-import 'package:taproot_admin/services/size_utils.dart';
 
 import '../../users_screen/user_data_model.dart';
 
@@ -26,16 +25,21 @@ class AdditionalContainer extends StatefulWidget {
 }
 
 class _AdditionalContainerState extends State<AdditionalContainer> {
-  File? selectedImage;
+  File? selectedImageLoco;
+  File? selectedImageBanner;
 
-  void _pickImage() async {
+  void _pickImage({required bool isLogo}) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowedExtensions: ['jpg', 'jpeg', 'png'],
     );
     if (result != null && result.files.isNotEmpty) {
       setState(() {
-        selectedImage = File(result.files.first.path!);
+        if (isLogo) {
+          selectedImageLoco = File(result.files.first.path!);
+        } else {
+          selectedImageBanner = File(result.files.first.path!);
+        }
       });
     }
   }
@@ -80,12 +84,18 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                     children: [
                       widget.isEdit
                           ? ImageContainer(
-                            selectedFile: selectedImage, // <-- This line added
+                            selectedFile: selectedImageLoco,
                             isEdit: true,
-                            icon: LucideIcons.upload,
+                            icon:
+                                selectedImageLoco == null
+                                    ? LucideIcons.upload
+                                    : LucideIcons.repeat,
                             title: 'Loco',
-                            onTap: _pickImage,
-                            imageState: 'Upload',
+                            onTap: () => _pickImage(isLogo: true),
+                            imageState:
+                                selectedImageLoco == null
+                                    ? 'Upload'
+                                    : 'Replace',
                           )
                           : ImageContainer(
                             onTap: () {},
@@ -93,17 +103,31 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                             title: 'Loco',
                             icon: LucideIcons.upload,
                             imageState: 'Upload',
-                            selectedFile:
-                                null, // <- Not necessary but can be null
+                            selectedFile: null,
                           ),
-                      ImageContainer(
-                        onTap: () {},
-                        isEdit: true,
-                        title: 'Banner Image',
-                        icon: LucideIcons.repeat,
-                        imageState: 'Replace',
-                        selectedFile: null, // <- Provide null
-                      ),
+                      widget.isEdit
+                          ? ImageContainer(
+                            onTap: () => _pickImage(isLogo: false),
+                            isEdit: true,
+                            title: 'Banner Image',
+                            icon:
+                                selectedImageBanner == null
+                                    ? LucideIcons.upload
+                                    : LucideIcons.repeat,
+                            imageState:
+                                selectedImageBanner == null
+                                    ? 'Upload'
+                                    : 'Replace',
+                            selectedFile:
+                                selectedImageBanner, 
+                          )
+                          : ImageContainer(
+                            onTap: () {},
+                            icon: LucideIcons.upload,
+                            title: 'Banner Image',
+                            imageState: 'Upload',
+                            selectedFile: null,
+                          ),
                     ],
                   ),
                 ),
