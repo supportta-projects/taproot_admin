@@ -1,7 +1,9 @@
+import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
 import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
+import 'package:taproot_admin/services/connectivity_service.dart';
 
 import '../features/side_nav_screen/view/side_drawer_nav_screen.dart';
 import '../features/side_nav_screen/view/side_nav_screen.dart';
@@ -22,28 +24,40 @@ class AppRoutes {
     switch (uri.path) {
       // case UserDataUpdateScreen.path:
       //   return pageRoute(settings, const UserDataUpdateScreen()
-        
-        
-        
+
       //   );
+      case DashboardScreen.path:
+        return pageRoute(settings,  DashboardScreen());
+      case ConnectionCheckerScreen.path:
+        return pageRoute(settings, const ConnectionCheckerScreen());
+
       case ExpenseView.path:
         return pageRoute(settings, const ExpenseView());
+
       case OrderScreen.path:
         return pageRoute(settings, const OrderScreen());
+
       case EditProduct.path:
         return pageRoute(settings, const EditProduct());
+
       case ProductScreen.path:
         return pageRoute(settings, const ProductScreen());
+
       case UserManagementScreen.path:
         return pageRoute(settings, const UserManagementScreen());
+
       case SideDrawerNavScreen.path:
         return pageRoute(settings, const SideDrawerNavScreen());
+
       case SideNavScreen.path:
         return pageRoute(settings, const SideNavScreen());
+
       case AuthScreen.path:
         return pageRoute(settings, const AuthScreen());
+
       case LandingPage.path:
         return pageRoute(settings, const LandingPage());
+
       default:
         return null;
     }
@@ -54,19 +68,33 @@ class AppRoutes {
 
     logInfo(uri);
 
-    //TODO: step 2: use the shared pref value to navigate to the side navigation page or the auth page
-
-    //if shared preference Service is null , we can navigate to the landing page
-    //if shared preference Service is not null , we can navigate to the splash Screen then to home page
-
     return [
       pageRoute(
-        RouteSettings(name: AuthScreen.path),
-        const AuthScreen(),
+        const RouteSettings(name: ConnectionCheckerScreen.path),
+        const ConnectionCheckerScreen(),
         animate: false,
       ),
     ];
   }
+
+  // static List<Route<dynamic>> onGenerateInitialRoute(String path) {
+  //   Uri uri = Uri.parse(path);
+
+  //   logInfo(uri);
+
+  //   //TODO: step 2: use the shared pref value to navigate to the side navigation page or the auth page
+
+  //   //if shared preference Service is null , we can navigate to the landing page
+  //   //if shared preference Service is not null , we can navigate to the splash Screen then to home page
+
+  //   return [
+  //     pageRoute(
+  //       RouteSettings(name: AuthScreen.path),
+  //       const AuthScreen(),
+  //       animate: false,
+  //     ),
+  //   ];
+  // }
 
   static Route<T> pageRoute<T>(
     RouteSettings settings,

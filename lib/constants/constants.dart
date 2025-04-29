@@ -54,6 +54,7 @@ class CustomColors {
   static const Color green = Color(0xff27AE60);
   static const Color greenDark = Color(0xff005624);
   static const Color lightGreen = Color(0xffE0EEE8);
+  static const Color greylight=Color(0xffF4F5F6);
   static const Color textFieldBorderGrey = Color(0xFF79747E);
   static const LinearGradient buttonGradient = LinearGradient(
     colors: [buttonColor1, buttonColor2],

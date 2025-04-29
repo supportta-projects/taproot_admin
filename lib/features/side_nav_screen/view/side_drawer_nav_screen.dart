@@ -2,6 +2,7 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
 import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
@@ -186,13 +187,12 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
               controller: NavControllers.pageController,
               physics: NeverScrollableScrollPhysics(),
               children: [
-                Center(
-                  child: Text(
-                    'Dashboard Page',
-                    style: TextStyle(fontSize: 14.fSize),
-                  ),
+                
+                Navigator(
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(builder: (_) => DashboardScreen());
+                  },
                 ),
-
                 Navigator(
                   key: _innerOrderNavigatorKey,
                   onGenerateRoute: (settings) {
@@ -225,7 +225,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     );
                   },
                 ),
-                  Navigator(
+                Navigator(
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(
                       builder: (_) => ExpenseView(),
