@@ -49,102 +49,106 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     final rowsPerPage = 11;
 
     return Scaffold(
-      body: SizedBox(
-        child: Column(
-          children: [
-            Gap(CustomPadding.paddingLarge.v),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                MiniLoadingButton(
-                  icon: Icons.add,
-                  text: 'Add User',
-                  onPressed: () {},
-                  useGradient: true,
-                  gradientColors: CustomColors.borderGradient.colors,
-                ),
-                Gap(CustomPadding.paddingXL.v),
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingXL.v,
-                vertical: CustomPadding.paddingLarge.v,
-              ),
-              child: Row(
+      body: SingleChildScrollView(
+        child: SizedBox(
+          child: Column(
+            children: [
+              Gap(CustomPadding.paddingLarge.v),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: 'Search Uses ID, Name, Number',
-                      ),
-                      onChanged: (val) {
-                        setState(() {
-                          searchQuery = val;
-                        });
-                      },
-                    ),
+                  MiniLoadingButton(
+                    icon: Icons.add,
+                    text: 'Add User',
+                    onPressed: () {},
+                    useGradient: true,
+                    gradientColors: CustomColors.borderGradient.colors,
                   ),
+                  Gap(CustomPadding.paddingXL.v),
                 ],
               ),
-            ),
-            SizedBox(
-              // height: SizeUtils.height * 0.6,
-              width: .8 * SizeUtils.width,
-              child: PaginatedDataTable(
-                sortColumnIndex: 0,
-                arrowHeadColor: CustomColors.textFieldBorderGrey,
-                // headingRowColor: WidgetStatePropertyAll(
-                //   CustomColors.textFieldBorderGrey,
-                // ),
-                // dragStartBehavior: ,
-                showEmptyRows: false,
-                columnSpacing: CustomPadding.paddingXL.v,
-                actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "Premium Users",
-                        style: context.inter50016.copyWith(fontSize: 16.fSize),
-                      ),
-                      Switch(
-                        value: showOnlyPremium,
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: CustomPadding.paddingXL.v,
+                  vertical: CustomPadding.paddingLarge.v,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'Search Uses ID, Name, Number',
+                        ),
                         onChanged: (val) {
                           setState(() {
-                            showOnlyPremium = val;
+                            searchQuery = val;
                           });
                         },
                       ),
-                    ],
-                  ),
-                ],
-                header: SizedBox(),
-                horizontalMargin: .06 * SizeUtils.width,
-                rowsPerPage: rowsPerPage,
-                availableRowsPerPage: const [8],
-                columns: const [
-                  DataColumn(
-                    // headingRowAlignment: ,
-                    label: Text('Full Name'),
-                  ),
-                  DataColumn(label: Text('User ID')),
-                  DataColumn(label: Text('Phone')),
-                  DataColumn(label: Text('WhatsApp')),
-                  DataColumn(label: Text('Email')),
-                  DataColumn(label: Text('Website Link')),
-                  DataColumn(label: Text('Premium')),
-                ],
-                source: UserDataTableSource(
-                  filteredUsers,
-                  context,
-
-                  widget.innerNavigatorKey,
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              SizedBox(
+                // height: SizeUtils.height * 0.6,
+                width: .8 * SizeUtils.width,
+                child: PaginatedDataTable(
+                  sortColumnIndex: 0,
+                  arrowHeadColor: CustomColors.textFieldBorderGrey,
+                  // headingRowColor: WidgetStatePropertyAll(
+                  //   CustomColors.textFieldBorderGrey,
+                  // ),
+                  // dragStartBehavior: ,
+                  showEmptyRows: false,
+                  columnSpacing: CustomPadding.paddingXL.v,
+                  actions: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Premium Users",
+                          style: context.inter50016.copyWith(
+                            fontSize: 16.fSize,
+                          ),
+                        ),
+                        Switch(
+                          value: showOnlyPremium,
+                          onChanged: (val) {
+                            setState(() {
+                              showOnlyPremium = val;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                  header: SizedBox(),
+                  horizontalMargin: .06 * SizeUtils.width,
+                  rowsPerPage: rowsPerPage,
+                  availableRowsPerPage: const [8],
+                  columns: const [
+                    DataColumn(
+                      // headingRowAlignment: ,
+                      label: Text('Full Name'),
+                    ),
+                    DataColumn(label: Text('User ID')),
+                    DataColumn(label: Text('Phone')),
+                    DataColumn(label: Text('WhatsApp')),
+                    DataColumn(label: Text('Email')),
+                    DataColumn(label: Text('Website Link')),
+                    DataColumn(label: Text('Premium')),
+                  ],
+                  source: UserDataTableSource(
+                    filteredUsers,
+                    context,
+
+                    widget.innerNavigatorKey,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
