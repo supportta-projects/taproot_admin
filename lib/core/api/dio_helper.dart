@@ -24,7 +24,9 @@ class DioHelper with ErrorExceptionHandler {
           },
         ),
       );
-
+      dio.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
       dio.interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) {
@@ -101,6 +103,21 @@ class DioHelper with ErrorExceptionHandler {
     Options? options,
   }) {
     return getDio(type).delete(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+  }
+
+  Future<Response> patch(
+    String path, {
+    ApiType type = ApiType.base,
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+  }) {
+    return getDio(type).patch(
       path,
       data: data,
       queryParameters: queryParameters,

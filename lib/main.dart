@@ -1,3 +1,5 @@
+import 'package:taproot_admin/core/api/dio_helper.dart';
+import 'package:taproot_admin/services/shared_pref_services.dart';
 import 'package:taproot_admin/services/size_utils.dart';
 
 import '/theme/theme.dart';
@@ -5,7 +7,10 @@ import '/theme/theme.dart';
 import '/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async{
+   WidgetsFlutterBinding.ensureInitialized();
+  await SharedPreferencesService.i.initialize(); 
+  await DioHelper().init();
   runApp(const MyApp());
 }
 

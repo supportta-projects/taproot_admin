@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:taproot_admin/features/auth_screen/data/auth_service.dart';
 import '/features/side_nav_screen/view/side_drawer_nav_screen.dart';
 
 import 'package:taproot_admin/widgets/loading_button.dart';
 import '/exporter/exporter.dart';
-import '/mixins/name_mixin.dart';
 
 class AuthScreen extends StatefulWidget {
   static const String path = '/auth';
@@ -13,10 +13,15 @@ class AuthScreen extends StatefulWidget {
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> with NameMixin {
+class _AuthScreenState extends State<AuthScreen>  {
   final _formKey = GlobalKey<FormState>();
   bool _obsecureText = true;
   bool isLoading = false;
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController=TextEditingController();
+  
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = SizeUtils.width;
@@ -42,9 +47,16 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text('LOGO'),
-                  nameField(),
+                 
+                  TextFormField(controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: CustomColors.textColorGrey),
+                    ),
+                    validator: (value) => value==null||value.isEmpty?'Email is required':null,
+                  ),
                   CustomGap.gapLarge,
-                  TextFormField(
+                  TextFormField(controller: passwordController,
                     obscureText: _obsecureText,
                     enableSuggestions: false,
                     autocorrect: false,
@@ -73,8 +85,29 @@ class _AuthScreenState extends State<AuthScreen> with NameMixin {
                   LoadingButton(
                     buttonLoading: false,
                     text: "Login",
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(SideDrawerNavScreen.path);
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        try {
+                          await AuthService.loginAdmin(
+                            username: emailController.text.trim(),
+                            password: passwordController.text.trim(),
+                          );
+                          Navigator.of(
+                            context,
+                          ).pushReplacementNamed(SideDrawerNavScreen.path);
+                        } catch (e) {
+                          setState(() {
+                            isLoading = false;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Login failed: $e')),
+                          );
+                        }
+                      }
+                      // Navigator.of(context).pushNamed(SideDrawerNavScreen.path);
                     },
                   ),
                 ],

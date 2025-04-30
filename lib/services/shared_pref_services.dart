@@ -10,8 +10,6 @@ const String domainKey = "domain";
 const String defaultCompanyKey = "defaultCompany";
 
 class SharedPreferencesService {
-  String get domainUrl => getValue(key: domainKey);
-
   SharedPreferencesService._private();
 
   static SharedPreferencesService get i => _instance;
@@ -21,8 +19,18 @@ class SharedPreferencesService {
 
   late final Box _prefs;
 
+  // Getter for the token
   String get token => _prefs.get(_token) ?? "";
 
+  // Setter for the token
+  set token(String value) {
+    _prefs.put(_token, value);
+  }
+
+  // Getter for domain URL
+  String get domainUrl => getValue(key: domainKey);
+
+  // Initialize Hive Box with encryption
   Future<void> initialize() async {
     final key = [
       108,
@@ -70,14 +78,17 @@ class SharedPreferencesService {
     );
   }
 
+  // Method to fetch value from Hive Box
   String getValue({String key = _token}) {
     return _prefs.get(key) ?? '';
   }
 
+  // Method to clear all values from Hive Box
   Future<void> clear() async {
     await _prefs.clear();
   }
 
+  // Method to set value in Hive Box
   Future<void> setValue({String key = _token, required String value}) async {
     await _prefs.put(key, value);
   }
