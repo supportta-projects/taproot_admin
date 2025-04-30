@@ -16,4 +16,15 @@ class User {
     required this.website,
     required this.isPremium,
   });
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      fullName: json['name'] ?? '',
+      userId: json['code'] ?? '',
+      phone: json['phone'] ?? '',
+      whatsapp: json['whatsapp'] ?? '',
+      email: json['email'] ?? '',
+      website: json['website'] ?? '',
+      isPremium: json['isPremium'] ?? false,
+    );
+  }
 }

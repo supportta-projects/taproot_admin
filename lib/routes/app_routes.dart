@@ -7,7 +7,7 @@ import 'package:taproot_admin/services/connectivity_service.dart';
 
 import '../features/side_nav_screen/view/side_drawer_nav_screen.dart';
 import '../features/side_nav_screen/view/side_nav_screen.dart';
-import '../features/users_screen/user_management_screen.dart';
+import '../features/users_screen/view/user_management_screen.dart';
 import '/features/auth_screen/view/auth_screen.dart';
 
 import '/features/landing_screen/landing_page.dart';

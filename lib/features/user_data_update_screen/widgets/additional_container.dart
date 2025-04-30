@@ -9,7 +9,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 
-import '../../users_screen/user_data_model.dart';
+import '../../users_screen/data/user_data_model.dart';
 
 class AdditionalContainer extends StatefulWidget {
   final bool isEdit;

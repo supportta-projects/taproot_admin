@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/users_screen/data/user_service.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
-import '../user_data_update_screen/views/user_data_update_screen.dart';
-import 'user_data_model.dart';
+import '../../user_data_update_screen/views/user_data_update_screen.dart';
+import '../data/user_data_model.dart';
 
 class UserManagementScreen extends StatefulWidget {
   final GlobalKey<NavigatorState>? innerNavigatorKey;
@@ -18,21 +19,15 @@ class UserManagementScreen extends StatefulWidget {
 }
 
 class _UserManagementScreenState extends State<UserManagementScreen> {
-  List<User> users = List.generate(
-    20,
-    (index) => User(
-      fullName: 'Santhosh Kumar',
-      userId: '9123456789',
-      phone: '9123456789',
-      whatsapp: '9123456789',
-      email: 'harshvardhan@gmail.com',
-      website: 'supportasolutions.com',
-      isPremium: index % 2 == 0,
-    ),
-  );
-
+  List<User> users = [];
+  bool isLoading = true;
+  int currentPage = 1;
+  int totalPages = 1;
+  int totalUser = 0;
   String searchQuery = '';
   bool showOnlyPremium = false;
+  final rowsPerPage = 10;
+  UserDataTableSource? _dataSource;
 
   List<User> get filteredUsers {
     return users.where((user) {
@@ -44,10 +39,51 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     }).toList();
   }
 
+  Future<void> loadUsers() async {
+    try {
+      final response = await UserService.fetchUser(currentPage);
+      setState(() {
+        users = response.users;
+        totalUser = response.totalCount;
+        // totalPages = response.totalPages;
+        isLoading = false;
+        final filtered = filteredUsers;
+        _dataSource = UserDataTableSource(
+          filtered,
+          response.totalCount,
+          context,
+          widget.innerNavigatorKey,
+        );
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      throw Exception(e);
+    }
+  }
+
+  @override
+  void initState() {
+    loadUsers();
+
+    // TODO: implement initState
+    super.initState();
+  }
+
+  int _firstRowIndex = 0;
+
+  void _handlePageChange(int firstRowIndex) {
+    setState(() {
+      _firstRowIndex = firstRowIndex;
+      currentPage = (_firstRowIndex ~/ rowsPerPage) + 1;
+    });
+    loadUsers(); // load data for new page
+  }
+
   @override
   Widget build(BuildContext context) {
-    final rowsPerPage = 11;
-
     return Scaffold(
       body: SingleChildScrollView(
         child: SizedBox(
@@ -84,6 +120,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           setState(() {
                             searchQuery = val;
                           });
+                          loadUsers(); // refresh the data
                         },
                       ),
                     ),
@@ -94,6 +131,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 // height: SizeUtils.height * 0.6,
                 width: .8 * SizeUtils.width,
                 child: PaginatedDataTable(
+                  onPageChanged: _handlePageChange,
+
                   sortColumnIndex: 0,
                   arrowHeadColor: CustomColors.textFieldBorderGrey,
                   // headingRowColor: WidgetStatePropertyAll(
@@ -118,11 +157,13 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                             setState(() {
                               showOnlyPremium = val;
                             });
+                            loadUsers(); // refresh the data
                           },
                         ),
                       ],
                     ),
                   ],
+                  dataRowMaxHeight: 80,
                   header: SizedBox(),
                   horizontalMargin: .06 * SizeUtils.width,
                   rowsPerPage: rowsPerPage,
@@ -139,12 +180,20 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     DataColumn(label: Text('Website Link')),
                     DataColumn(label: Text('Premium')),
                   ],
-                  source: UserDataTableSource(
-                    filteredUsers,
-                    context,
+                  source:
+                      _dataSource ??
+                      UserDataTableSource(
+                        [],
+                        0,
+                        context,
+                        widget.innerNavigatorKey,
+                      ),
+                  //  UserDataTableSource(
+                  //   filteredUsers,
+                  //   context,
 
-                    widget.innerNavigatorKey,
-                  ),
+                  //   widget.innerNavigatorKey,
+                  // ),
                 ),
               ),
             ],
@@ -159,11 +208,31 @@ class UserDataTableSource extends DataTableSource {
   final List<User> users;
   final BuildContext context;
   final GlobalKey<NavigatorState>? innerNavigatorKey;
+  final int totalCount;
 
-  UserDataTableSource(this.users, this.context, this.innerNavigatorKey);
+  UserDataTableSource(
+    this.users,
+    this.totalCount,
+    this.context,
+    this.innerNavigatorKey,
+  );
 
   @override
   DataRow getRow(int index) {
+    if (index >= users.length) {
+      return DataRow(
+        cells: [
+          DataCell(Text('No data available')),
+          DataCell(Text('')),
+          DataCell(Text('')),
+          DataCell(Text('')),
+          DataCell(Text('')),
+          DataCell(Text('')),
+          DataCell(Text('')),
+        ],
+      );
+    }
+
     final user = users[index];
 
     void handleRowTap() {
@@ -177,12 +246,33 @@ class UserDataTableSource extends DataTableSource {
 
     return DataRow(
       cells: [
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.fullName))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.userId))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.phone))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.whatsapp))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.email))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.website))),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text(user.fullName)),
+          ),
+        ),
+        DataCell(
+          InkWell(onTap: handleRowTap, child: Center(child: Text(user.userId))),
+        ),
+        DataCell(
+          InkWell(onTap: handleRowTap, child: Center(child: Text(user.phone))),
+        ),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text(user.whatsapp)),
+          ),
+        ),
+        DataCell(
+          InkWell(onTap: handleRowTap, child: Center(child: Text(user.email))),
+        ),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text(user.website)),
+          ),
+        ),
         DataCell(Switch(value: user.isPremium, onChanged: null)),
       ],
     );
@@ -192,8 +282,7 @@ class UserDataTableSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => users.length;
-
+  int get rowCount => totalCount;
   @override
   int get selectedRowCount => 0;
 }

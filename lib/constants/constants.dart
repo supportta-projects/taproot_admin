@@ -52,6 +52,7 @@ class CustomColors {
   static const Color red = Colors.red;
   static const Color buttonColor2 = Colors.lightGreen;
   static const Color green = Color(0xff27AE60);
+  static const Color brown=Color(0xffa2845e);
   static const Color greenDark = Color(0xff005624);
   static const Color lightGreen = Color(0xffE0EEE8);
   static const Color greylight=Color(0xffF4F5F6);

@@ -5,13 +5,13 @@ import 'package:taproot_admin/services/shared_pref_services.dart';
 
 class AuthService with ErrorExceptionHandler {
   static Future<void> loginAdmin({
-    required String username,
+    required String email,
     required String password,
   }) async {
     try {
       final response = await DioHelper().patch(
         '/admin/login',
-        data: {'email': username, 'password': password},
+        data: {'email': email, 'password': password},
         type: ApiType.baseUrl,
       );
       String token = response.data['result']['token'];

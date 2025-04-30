@@ -26,7 +26,7 @@ class DashBoardContainer extends StatelessWidget {
         margin: EdgeInsets.all(CustomPadding.paddingXL.v),
         padding: EdgeInsets.all(CustomPadding.paddingXL.v),
 
-        height: 200.v,
+        height: 170.v,
         decoration: BoxDecoration(
           color: CustomColors.greylight,
           borderRadius: BorderRadius.circular(CustomPadding.padding.v),

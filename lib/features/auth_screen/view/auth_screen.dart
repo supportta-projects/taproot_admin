@@ -92,7 +92,7 @@ class _AuthScreenState extends State<AuthScreen>  {
                         });
                         try {
                           await AuthService.loginAdmin(
-                            username: emailController.text.trim(),
+                            email: emailController.text.trim(),
                             password: passwordController.text.trim(),
                           );
                           Navigator.of(

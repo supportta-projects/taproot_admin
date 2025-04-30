@@ -5,6 +5,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/chart_data.dart';
 import 'package:taproot_admin/features/Dashboard_screen/widgets/dashboard_container.dart';
+import 'package:taproot_admin/features/Dashboard_screen/widgets/order_details_container.dart';
+import 'package:taproot_admin/features/Dashboard_screen/widgets/refund_order_container.dart';
 
 class DashboardScreen extends StatelessWidget {
   final List<ChartData> data = [
@@ -24,8 +26,12 @@ class DashboardScreen extends StatelessWidget {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Dashboard', style: context.inter60024),
+            Padding(
+              padding: EdgeInsets.only(left: CustomPadding.paddingLarge.v),
+              child: Text('Dashboard', style: context.inter60024),
+            ),
             Gap(CustomPadding.paddingLarge.v),
             Container(
               margin: EdgeInsets.symmetric(
@@ -68,9 +74,18 @@ class DashboardScreen extends StatelessWidget {
             Gap(CustomPadding.paddingLarge.v),
             Row(
               children: [
+                Gap(CustomPadding.paddingLarge.v),
+
                 Expanded(
-                  child: SizedBox(
-                    height: 500,
+                  child: Container(
+                    padding: EdgeInsets.all(CustomPadding.paddingXL.v),
+                    decoration: BoxDecoration(
+                      color: CustomColors.secondaryColor,
+                      borderRadius: BorderRadius.circular(
+                        CustomPadding.paddingLarge.v,
+                      ),
+                    ),
+                    height: 600,
                     child: SfCartesianChart(
                       legend: Legend(
                         isVisible: true,
@@ -110,7 +125,42 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Expanded(child: Container()),
+                Gap(CustomPadding.paddingXL.v),
+                Expanded(
+                  child: Container(
+                    height: 600,
+                    decoration: BoxDecoration(
+                      color: CustomColors.secondaryColor,
+                      borderRadius: BorderRadius.circular(
+                        CustomPadding.paddingLarge.v,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: CustomPadding.paddingLarge.v,
+                      children: [
+                        OrderDetailsContainer(
+                          title: 'Total Orders',
+                          totalCount: 60,
+                          statusCount: 5,
+                          statusTitle: 'New Order',
+                        ),
+                        OrderDetailsContainer(
+                          title: 'Total Orders Delivered',
+                          totalCount: 58,
+                          statusCount: 5,
+                          statusTitle: 'Delivered Order',
+                        ),
+                        RefundOrderContainer(
+                          title: 'Refunded Orders',
+                          refundCount: 2,
+                          refundedAmount: 5000,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Gap(CustomPadding.paddingLarge.v),
               ],
             ),
           ],

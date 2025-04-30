@@ -7,7 +7,7 @@ import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
-import 'package:taproot_admin/features/users_screen/user_management_screen.dart';
+import 'package:taproot_admin/features/users_screen/view/user_management_screen.dart';
 
 import '../widgets/side_menu_lucide_icon_widgt.dart';
 
