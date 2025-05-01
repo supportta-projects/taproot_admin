@@ -40,27 +40,60 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   }
 
   Future<void> loadUsers() async {
+    // if (!mounted) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
     try {
       final response = await UserService.fetchUser(currentPage);
+
+      // if (!mounted) return;
+
       setState(() {
         users = response.users;
         totalUser = response.totalCount;
-        // totalPages = response.totalPages;
+        totalPages = (totalUser / rowsPerPage).ceil(); // Calculate total pages
         isLoading = false;
-        final filtered = filteredUsers;
+
+        // Apply filters if any
+        final filtered =
+            users.where((user) {
+              final matchSearch = user.fullName.toLowerCase().contains(
+                searchQuery.toLowerCase(),
+              );
+              final matchPremium = showOnlyPremium ? user.isPremium : true;
+              return matchSearch && matchPremium;
+            }).toList();
+
         _dataSource = UserDataTableSource(
           filtered,
-          response.totalCount,
+          totalUser,
           context,
           widget.innerNavigatorKey,
         );
-        isLoading = false;
       });
     } catch (e) {
+      // if (!mounted) return;
+
       setState(() {
         isLoading = false;
       });
       throw Exception(e);
+    }
+  }
+
+  void _handlePageChange(int firstRowIndex) {
+    // if (!mounted) return;
+
+    final newPage = (firstRowIndex / rowsPerPage).floor() + 1;
+
+    if (newPage != currentPage && newPage <= totalPages) {
+      setState(() {
+        currentPage = newPage;
+      });
+      loadUsers();
     }
   }
 
@@ -70,16 +103,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
     // TODO: implement initState
     super.initState();
-  }
-
-  int _firstRowIndex = 0;
-
-  void _handlePageChange(int firstRowIndex) {
-    setState(() {
-      _firstRowIndex = firstRowIndex;
-      currentPage = (_firstRowIndex ~/ rowsPerPage) + 1;
-    });
-    loadUsers(); // load data for new page
   }
 
   @override
@@ -120,7 +143,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           setState(() {
                             searchQuery = val;
                           });
-                          loadUsers(); // refresh the data
+                          loadUsers();
                         },
                       ),
                     ),
@@ -128,17 +151,13 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 ),
               ),
               SizedBox(
-                // height: SizeUtils.height * 0.6,
                 width: .8 * SizeUtils.width,
                 child: PaginatedDataTable(
                   onPageChanged: _handlePageChange,
 
                   sortColumnIndex: 0,
                   arrowHeadColor: CustomColors.textFieldBorderGrey,
-                  // headingRowColor: WidgetStatePropertyAll(
-                  //   CustomColors.textFieldBorderGrey,
-                  // ),
-                  // dragStartBehavior: ,
+
                   showEmptyRows: false,
                   columnSpacing: CustomPadding.paddingXL.v,
                   actions: [
@@ -166,8 +185,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   dataRowMaxHeight: 80,
                   header: SizedBox(),
                   horizontalMargin: .06 * SizeUtils.width,
-                  rowsPerPage: rowsPerPage,
-                  availableRowsPerPage: const [8],
+                  rowsPerPage: 10,
+                  availableRowsPerPage: const [8, 10, 12],
+                  // You can customize this if needed
+                  showFirstLastButtons: true,
                   columns: const [
                     DataColumn(
                       // headingRowAlignment: ,
@@ -184,7 +205,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       _dataSource ??
                       UserDataTableSource(
                         [],
-                        0,
+                        totalUser,
                         context,
                         widget.innerNavigatorKey,
                       ),
@@ -219,21 +240,16 @@ class UserDataTableSource extends DataTableSource {
 
   @override
   DataRow getRow(int index) {
-    if (index >= users.length) {
+    // Calculate the actual index within the current page's data
+    final actualIndex = index % users.length;
+
+    if (actualIndex >= users.length) {
       return DataRow(
-        cells: [
-          DataCell(Text('No data available')),
-          DataCell(Text('')),
-          DataCell(Text('')),
-          DataCell(Text('')),
-          DataCell(Text('')),
-          DataCell(Text('')),
-          DataCell(Text('')),
-        ],
+        cells: List<DataCell>.generate(7, (index) => const DataCell(Text(''))),
       );
     }
 
-    final user = users[index];
+    final user = users[actualIndex];
 
     void handleRowTap() {
       logWarning('Row tapped: ${user.fullName}');
@@ -246,33 +262,12 @@ class UserDataTableSource extends DataTableSource {
 
     return DataRow(
       cells: [
-        DataCell(
-          InkWell(
-            onTap: handleRowTap,
-            child: Center(child: Text(user.fullName)),
-          ),
-        ),
-        DataCell(
-          InkWell(onTap: handleRowTap, child: Center(child: Text(user.userId))),
-        ),
-        DataCell(
-          InkWell(onTap: handleRowTap, child: Center(child: Text(user.phone))),
-        ),
-        DataCell(
-          InkWell(
-            onTap: handleRowTap,
-            child: Center(child: Text(user.whatsapp)),
-          ),
-        ),
-        DataCell(
-          InkWell(onTap: handleRowTap, child: Center(child: Text(user.email))),
-        ),
-        DataCell(
-          InkWell(
-            onTap: handleRowTap,
-            child: Center(child: Text(user.website)),
-          ),
-        ),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.fullName))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.userId))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.phone))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.whatsapp))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.email))),
+        DataCell(InkWell(onTap: handleRowTap, child: Text(user.website))),
         DataCell(Switch(value: user.isPremium, onChanged: null)),
       ],
     );
@@ -283,6 +278,7 @@ class UserDataTableSource extends DataTableSource {
 
   @override
   int get rowCount => totalCount;
+
   @override
   int get selectedRowCount => 0;
 }
