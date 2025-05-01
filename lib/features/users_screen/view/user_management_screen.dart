@@ -262,12 +262,33 @@ class UserDataTableSource extends DataTableSource {
 
     return DataRow(
       cells: [
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.fullName))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.userId))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.phone))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.whatsapp))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.email))),
-        DataCell(InkWell(onTap: handleRowTap, child: Text(user.website))),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text(user.fullName)),
+          ),
+        ),
+        DataCell(
+          InkWell(onTap: handleRowTap, child: Center(child: Text(user.userId))),
+        ),
+        DataCell(
+          InkWell(onTap: handleRowTap, child: Center(child: Text(user.phone))),
+        ),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text(user.whatsapp)),
+          ),
+        ),
+        DataCell(
+          InkWell(onTap: handleRowTap, child: Center(child: Text(user.email))),
+        ),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text(user.website)),
+          ),
+        ),
         DataCell(Switch(value: user.isPremium, onChanged: null)),
       ],
     );
