@@ -4,10 +4,7 @@ import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
-
-  
     expansionTileTheme: ExpansionTileThemeData(
-      
       backgroundColor: CustomColors.lightGreen,
       collapsedBackgroundColor: CustomColors.lightGreen,
     ),
@@ -49,10 +46,12 @@ class AppTheme {
     // dialogBackgroundColor: Colors.white,
     // dialogTheme: ,
     cardTheme: CardTheme(
-      color: Colors.white,
+      color: CustomColors.lightGreen,
       shadowColor: CustomColors.textFieldBorderGrey.withValues(alpha: 0.2),
       elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
+      ),
     ),
     dataTableTheme: DataTableThemeData(
       // decoration: BoxDecoration(

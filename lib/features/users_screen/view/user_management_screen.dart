@@ -29,15 +29,15 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   final rowsPerPage = 10;
   UserDataTableSource? _dataSource;
 
-  List<User> get filteredUsers {
-    return users.where((user) {
-      final matchSearch = user.fullName.toLowerCase().contains(
-        searchQuery.toLowerCase(),
-      );
-      final matchPremium = showOnlyPremium ? user.isPremium : true;
-      return matchSearch && matchPremium;
-    }).toList();
-  }
+  // List<User> get filteredUsers {
+  //   return users.where((user) {
+  //     final matchSearch = user.fullName.toLowerCase().contains(
+  //       searchQuery.toLowerCase(),
+  //     );
+  //     final matchPremium = showOnlyPremium ? user.isPremium : true;
+  //     return matchSearch && matchPremium;
+  //   }).toList();
+  // }
 
   Future<void> loadUsers() async {
     // if (!mounted) return;
@@ -153,48 +153,48 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               SizedBox(
                 width: .8 * SizeUtils.width,
                 child: PaginatedDataTable(
+                  headingRowColor: WidgetStateProperty.resolveWith<Color>((
+                    Set<WidgetState> states,
+                  ) {
+                    return CustomColors.lightGreen;
+                  }),
                   onPageChanged: _handlePageChange,
 
                   sortColumnIndex: 0,
-                  arrowHeadColor: CustomColors.textFieldBorderGrey,
+                  //TODO
+                  arrowHeadColor: CustomColors.green,
 
                   showEmptyRows: false,
                   columnSpacing: CustomPadding.paddingXL.v,
                   actions: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          "Premium Users",
-                          style: context.inter50016.copyWith(
-                            fontSize: 16.fSize,
-                          ),
-                        ),
-                        Switch(
-                          value: showOnlyPremium,
-                          onChanged: (val) {
-                            setState(() {
-                              showOnlyPremium = val;
-                            });
-                            loadUsers(); // refresh the data
-                          },
-                        ),
-                      ],
+                    Text(
+                      "Premium Users",
+                      style: context.inter50016.copyWith(fontSize: 16.fSize),
+                    ),
+                    Switch(
+                      value: showOnlyPremium,
+                      onChanged: (val) {
+                        setState(() {
+                          showOnlyPremium = val;
+                        });
+                        loadUsers(); // refresh the data
+                      },
                     ),
                   ],
-                  dataRowMaxHeight: 80,
+                  dataRowMaxHeight: 60,
                   header: SizedBox(),
                   horizontalMargin: .06 * SizeUtils.width,
                   rowsPerPage: 10,
                   availableRowsPerPage: const [8, 10, 12],
                   // You can customize this if needed
                   showFirstLastButtons: true,
-                  columns: const [
+                  columns: [
+                    DataColumn(label: Text('User ID')),
                     DataColumn(
                       // headingRowAlignment: ,
                       label: Text('Full Name'),
                     ),
-                    DataColumn(label: Text('User ID')),
+
                     DataColumn(label: Text('Phone')),
                     DataColumn(label: Text('WhatsApp')),
                     DataColumn(label: Text('Email')),
@@ -204,19 +204,17 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   source:
                       _dataSource ??
                       UserDataTableSource(
+                        
                         [],
                         totalUser,
                         context,
                         widget.innerNavigatorKey,
                       ),
-                  //  UserDataTableSource(
-                  //   filteredUsers,
-                  //   context,
-
-                  //   widget.innerNavigatorKey,
-                  // ),
+                  
                 ),
               ),
+
+              Gap(CustomPadding.paddingXL.v),
             ],
           ),
         ),
@@ -241,9 +239,9 @@ class UserDataTableSource extends DataTableSource {
   @override
   DataRow getRow(int index) {
     // Calculate the actual index within the current page's data
-    final actualIndex = index % users.length;
+    final actualIndex = index % (users.length + 1);
 
-    if (actualIndex >= users.length) {
+    if (actualIndex >= (users.length)) {
       return DataRow(
         cells: List<DataCell>.generate(7, (index) => const DataCell(Text(''))),
       );
@@ -263,14 +261,15 @@ class UserDataTableSource extends DataTableSource {
     return DataRow(
       cells: [
         DataCell(
+          InkWell(onTap: handleRowTap, child: Center(child: Text(user.userId))),
+        ),
+        DataCell(
           InkWell(
             onTap: handleRowTap,
             child: Center(child: Text(user.fullName)),
           ),
         ),
-        DataCell(
-          InkWell(onTap: handleRowTap, child: Center(child: Text(user.userId))),
-        ),
+
         DataCell(
           InkWell(onTap: handleRowTap, child: Center(child: Text(user.phone))),
         ),
@@ -289,7 +288,12 @@ class UserDataTableSource extends DataTableSource {
             child: Center(child: Text(user.website)),
           ),
         ),
-        DataCell(Switch(value: user.isPremium, onChanged: null)),
+        DataCell(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Switch(value: user.isPremium, onChanged: null)],
+          ),
+        ),
       ],
     );
   }
