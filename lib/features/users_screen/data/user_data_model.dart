@@ -5,6 +5,7 @@ class User {
   final String whatsapp;
   final String email;
   final String website;
+  final String id;
    bool isPremium;
 
   User({
@@ -14,6 +15,7 @@ class User {
     required this.whatsapp,
     required this.email,
     required this.website,
+    required this.id,
     required this.isPremium,
   });
   factory User.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,7 @@ class User {
       whatsapp: json['whatsapp'] ?? '',
       email: json['email'] ?? '',
       website: json['website'] ?? '',
+      id: json['_id']??'',
       isPremium: json['isPremium'] ?? false,
     );
   }

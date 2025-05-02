@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row_copy.dart';
@@ -8,15 +9,32 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/widgets/gradient_text.dart';
 
-class BasicDetailContainer extends StatelessWidget {
+class BasicDetailContainer extends StatefulWidget {
+  final PortfolioDataModel? portfolio;
+
+  final dynamic user;
   final bool isEdit;
   const BasicDetailContainer({
     super.key,
     required this.user,
     this.isEdit = false,
+    this.portfolio,
   });
 
-  final User user;
+  @override
+  State<BasicDetailContainer> createState() => _BasicDetailContainerState();
+}
+
+class _BasicDetailContainerState extends State<BasicDetailContainer> {
+  late User user;
+
+  @override
+  void initState() {
+    user = widget.user;
+
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,45 +42,54 @@ class BasicDetailContainer extends StatelessWidget {
       title: 'Basic Details',
       children: [
         Gap(CustomPadding.paddingLarge.v),
-        isEdit
+        widget.isEdit
             ? TextFormContainer(
-              user: user,
-              initialValue: user.fullName,
+              user: widget.user,
+              initialValue: widget.portfolio!.name,
               labelText: 'Full Name',
             )
-            : DetailRow(label: 'Full Name', value: user.fullName),
+            : DetailRow(
+              label: 'Full Name',
+              value: widget.portfolio?.name ?? 'loading...',
+            ),
 
-        isEdit
+        widget.isEdit
             ? TextFormContainer(
               readonly: true,
-              user: user,
-              initialValue: user.email,
+              user: widget.user,
+              initialValue: widget.user.email,
               labelText: 'Email',
             )
-            : DetailRow(label: 'Email', value: user.email),
-        isEdit
+            : DetailRow(label: 'Email', value: widget.user.email),
+        widget.isEdit
             ? TextFormContainer(
-              user: user,
-              initialValue: user.phone,
+              user: widget.user,
+              initialValue: widget.portfolio!.phoneNumber,
               labelText: 'Phone Number',
             )
-            : DetailRow(label: 'Phone Number', value: user.phone),
-        isEdit
+            : DetailRow(
+              label: 'Phone Number',
+              value: widget.portfolio?.phoneNumber ?? 'loading...',
+            ),
+        widget.isEdit
             ? TextFormContainer(
-              user: user,
-              initialValue: user.whatsapp,
+              user: widget.user,
+              initialValue: widget.portfolio!.whatsappNumber,
               labelText: 'WhatsApp Number',
             )
-            : DetailRow(label: 'WhatsApp Number', value: user.whatsapp),
-        isEdit
+            : DetailRow(
+              label: 'WhatsApp Number',
+              value: widget.portfolio?.whatsappNumber ?? 'loading...',
+            ),
+        widget.isEdit
             ? SizedBox()
             : DetailRowCopy(
               label: 'Portfolio Link',
               value: 'https://docs.google.com',
               icon: Icons.copy,
             ),
-        isEdit ? SizedBox() : Gap(CustomPadding.padding.v),
-        isEdit
+        widget.isEdit ? SizedBox() : Gap(CustomPadding.padding.v),
+        widget.isEdit
             ? SizedBox()
             : Padding(
               padding: EdgeInsets.symmetric(
@@ -90,45 +117,3 @@ class BasicDetailContainer extends StatelessWidget {
     );
   }
 }
-
-// class TextFormContainer extends StatelessWidget {
-//   final String initailValue;
-//   final int maxline;
-//   final bool readonly;
-//   final String labelText;
-//   final User? user;
-//   const TextFormContainer({
-//     super.key,
-//     required this.initailValue,
-//     required this.labelText,
-//     this.user,
-//     this.readonly = false,
-//     this.maxline = 1,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: EdgeInsets.symmetric(
-//         horizontal: CustomPadding.paddingLarge.v,
-//         vertical: CustomPadding.padding.v,
-//       ),
-//       child: TextFormField(
-//         maxLines: maxline,
-//         readOnly: readonly,
-//         initialValue: initailValue,
-//         decoration: InputDecoration(
-//           floatingLabelBehavior: FloatingLabelBehavior.always,
-//           label: Text(labelText),
-//           labelStyle: TextStyle(color: CustomColors.textColorDarkGrey),
-//           enabledBorder: OutlineInputBorder(
-//             borderSide: BorderSide(color: CustomColors.textColorLightGrey),
-//           ),
-//           focusedBorder: OutlineInputBorder(
-//             borderSide: BorderSide(color: CustomColors.textColorLightGrey),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }

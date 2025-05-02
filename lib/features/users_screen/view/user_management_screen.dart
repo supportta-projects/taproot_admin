@@ -204,13 +204,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   source:
                       _dataSource ??
                       UserDataTableSource(
-                        
                         [],
                         totalUser,
                         context,
                         widget.innerNavigatorKey,
                       ),
-                  
                 ),
               ),
 

@@ -137,7 +137,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                   MaterialPageRoute(
                                     builder:
                                         (_) => OrderDetailScreen(
-                                          user: User(
+                                          user: User(id: 'm',
                                             fullName: 'sss',
                                             userId: 'ss',
                                             phone: 'ssss',

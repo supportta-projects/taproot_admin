@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 
 class LocationContainer extends StatelessWidget {
+  final PortfolioDataModel? portfolio;
   final bool isEdit;
-  const LocationContainer({super.key, required this.user, this.isEdit = false});
+  const LocationContainer({
+    super.key,
+    required this.user,
+    this.isEdit = false,
+    this.portfolio,
+  });
   final User user;
 
   @override
@@ -20,12 +27,12 @@ class LocationContainer extends StatelessWidget {
               ? [
                 Gap(CustomPadding.paddingLarge.v),
                 TextFormContainer(
-                  initialValue: '3rd floor CSI Complex',
+                  initialValue: portfolio!.buildingName,
                   labelText: 'Building Name',
                   user: user,
                 ),
                 TextFormContainer(
-                  initialValue: 'Baker Junction',
+                  initialValue: portfolio!.area,
                   labelText: 'Area',
                   user: user,
                 ),
@@ -33,15 +40,15 @@ class LocationContainer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextFormContainer(
-                        initialValue: '123456',
+                        initialValue: portfolio!.pincode,
                         labelText: 'Pin code',
                         user: user,
                       ),
                     ),
                     Expanded(
                       child: TextFormContainer(
-                        initialValue: '123456',
-                        labelText: 'Pin code',
+                        initialValue: portfolio!.district,
+                        labelText: 'District',
                         user: user,
                       ),
                     ),
@@ -51,7 +58,7 @@ class LocationContainer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextFormContainer(
-                        initialValue: 'Kerala',
+                        initialValue: portfolio!.state,
                         labelText: 'State',
                         user: user,
                       ),
@@ -71,12 +78,24 @@ class LocationContainer extends StatelessWidget {
 
                 DetailRow(
                   label: 'Building Name',
-                  value: '3rd floor CSI Complex',
+                  value: portfolio?.buildingName ?? 'Loading...',
                 ),
-                DetailRow(label: 'Area', value: 'Baker Junction'),
-                DetailRow(label: 'Pin code', value: '123456'),
-                DetailRow(label: 'District', value: 'Kottayam'),
-                DetailRow(label: 'State', value: 'Kerala'),
+                DetailRow(
+                  label: 'Area',
+                  value: portfolio?.area ?? 'Loading...',
+                ),
+                DetailRow(
+                  label: 'Pin code',
+                  value: portfolio?.pincode ?? 'Loading...',
+                ),
+                DetailRow(
+                  label: 'District',
+                  value: portfolio?.district ?? 'Loading...',
+                ),
+                DetailRow(
+                  label: 'State',
+                  value: portfolio?.state ?? 'Loading...',
+                ),
                 DetailRow(label: 'Country', value: 'India'),
               ],
     );

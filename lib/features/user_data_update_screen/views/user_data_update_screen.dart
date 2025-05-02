@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
@@ -26,10 +28,12 @@ class UserDataUpdateScreen extends StatefulWidget {
 }
 
 class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
+  PortfolioDataModel? portfolio;
   late final User user;
   @override
   void initState() {
     user = widget.user;
+    fetchPortfolio();
     // TODO: implement initState
     super.initState();
   }
@@ -39,6 +43,18 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     setState(() {
       userEdit = !userEdit;
     });
+  }
+
+  Future fetchPortfolio() async {
+    final result = await PortfolioService.getPortfolio(userid: user.id);
+
+    if (result != null) {
+      setState(() {
+        portfolio = result;
+      });
+    } else {
+      logError('Failed to fetch portfolio');
+    }
   }
 
   @override
@@ -143,9 +159,13 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               ),
               child: Row(
                 children: [
-                  UserProfileContainer(isEdit: userEdit),
+                  UserProfileContainer(isEdit: userEdit, user: user),
                   Gap(CustomPadding.paddingXL.v),
-                  BasicDetailContainer(user: user, isEdit: userEdit),
+                  BasicDetailContainer(
+                    user: user,
+                    isEdit: userEdit,
+                    portfolio: portfolio,
+                  ),
                 ],
               ),
             ),
@@ -157,10 +177,18 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               ),
               child: Row(
                 children: [
-                  ProfileContainer(user: user, isEdit: userEdit),
+                  ProfileContainer(
+                    user: user,
+                    isEdit: userEdit,
+                    portfolio: portfolio,
+                  ),
                   Gap(CustomPadding.paddingXL.v),
 
-                  LocationContainer(user: user, isEdit: userEdit),
+                  LocationContainer(
+                    user: user,
+                    isEdit: userEdit,
+                    portfolio: portfolio,
+                  ),
                 ],
               ),
             ),

@@ -3,11 +3,20 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
+import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 
 class UserProfileContainer extends StatefulWidget {
+  final PortfolioDataModel? portfolio;
+  final dynamic user;
   final bool isEdit;
-  const UserProfileContainer({super.key, this.isEdit = false});
+  const UserProfileContainer({
+    super.key,
+    this.isEdit = false,
+    required this.user,
+    this.portfolio,
+  });
 
   @override
   State<UserProfileContainer> createState() => _UserProfileContainerState();
@@ -16,10 +25,14 @@ class UserProfileContainer extends StatefulWidget {
 class _UserProfileContainerState extends State<UserProfileContainer>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late final User user;
+  late bool isPremium;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    user = widget.user;
+    isPremium = widget.portfolio!.isPremium;
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -64,7 +77,8 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                 vertical: CustomPadding.padding,
               ),
               child: Text(
-                'User ID',
+                user.userId,
+                // 'User ID',
                 style: context.inter60020.copyWith(fontSize: 20.fSize),
               ),
             ),
@@ -118,13 +132,15 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Premium',
+                        isPremium ? 'Premium' : 'Base',
                         style: context.inter50014.copyWith(
                           color: CustomColors.green,
                         ),
                       ),
                       Gap(CustomPadding.padding.v),
-                      SvgPicture.asset(Assets.svg.premium),
+                      isPremium
+                          ? SvgPicture.asset(Assets.svg.premium)
+                          : SizedBox(),
                     ],
                   ),
                 ),
