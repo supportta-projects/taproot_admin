@@ -4,6 +4,8 @@ enum ApiType { base, coffee, baseUrl }
 class BaseUrlConstant {
   static const String base = 'https://jsonplaceholder.typicode.com';
   static const String coffee = 'https://api.sampleapis.com';
+    // static const String baseUrl = 'http://192.168.1.48:5000/api/v1';
+
   static const String baseUrl = 'http://213.210.36.7:5000/api/v1';
 
   static String getBaseUrl(ApiType type) {

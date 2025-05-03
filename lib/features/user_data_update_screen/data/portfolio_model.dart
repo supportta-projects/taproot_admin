@@ -1,29 +1,28 @@
+
+
+
 class PortfolioDataModel {
   final String id;
   final String name;
   final String email;
   final String phoneNumber;
   final String whatsappNumber;
-
   final String companyName;
   final String designation;
   final String workEmail;
   final String primaryWebsite;
   final String secondaryWebsite;
-
   final String buildingName;
   final String area;
   final String pincode;
   final String district;
   final String state;
-
   final String aboutHeading;
   final String aboutDescription;
-
   final String userId;
   final String userCode;
   final bool isPremium;
-
+  final List<SocialMedia> socialMedia;
   final List<Service> services;
 
   PortfolioDataModel({
@@ -47,11 +46,12 @@ class PortfolioDataModel {
     required this.userId,
     required this.userCode,
     required this.isPremium,
+    required this.socialMedia,
     required this.services,
   });
 
   factory PortfolioDataModel.fromJson(Map<String, dynamic> json) {
-    final portfolio = json['portfolio'];
+    final portfolio = json['result']['portfolio'];
     final personalInfo = portfolio['personalInfo'];
     final workInfo = portfolio['workInfo'];
     final addressInfo = portfolio['addressInfo'];
@@ -78,10 +78,31 @@ class PortfolioDataModel {
       aboutDescription: about['description'],
       userId: user['_id'],
       userCode: user['code'],
-      isPremium: user['isPremium'],
-      services: List<Service>.from(
-        json['services'].map((x) => Service.fromJson(x)),
-      ),
+      isPremium: user['isPremium'] == true || user['isPremium'] == 'true',
+      socialMedia:
+          (portfolio['socialMedia'] as List<dynamic>)
+              .map((e) => SocialMedia.fromJson(e))
+              .toList(),
+      services:
+          (json['result']['services'] as List<dynamic>)
+              .map((e) => Service.fromJson(e))
+              .toList(),
+    );
+  }
+}
+
+class SocialMedia {
+  final String id;
+  final String source;
+  final String link;
+
+  SocialMedia({required this.id, required this.source, required this.link});
+
+  factory SocialMedia.fromJson(Map<String, dynamic> json) {
+    return SocialMedia(
+      id: json['_id'],
+      source: json['source'],
+      link: json['link'],
     );
   }
 }

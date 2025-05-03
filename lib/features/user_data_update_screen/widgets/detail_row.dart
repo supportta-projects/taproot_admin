@@ -4,15 +4,18 @@ import 'package:taproot_admin/exporter/exporter.dart';
 class DetailRow extends StatelessWidget {
   final String label;
   final String value;
+  final VoidCallback? ontap;
 
   const DetailRow({
     super.key,
     required this.label,
     required this.value,
+    this.ontap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isLink = ontap != null;
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: 10,
@@ -22,11 +25,16 @@ class DetailRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: context.inter50014.copyWith(fontSize: 14.fSize)),
-          Text(
-            value,
-            style: context.inter50014.copyWith(
-              fontSize: 14.fSize,
-              color: CustomColors.textFieldBorderGrey,
+          GestureDetector(
+            onTap: ontap,
+            child: Text(
+              value,
+              style: context.inter50014.copyWith(
+                fontSize: 14.fSize,
+                color: isLink ? CustomColors.green : Colors.black87,
+                decoration:
+                    isLink ? TextDecoration.underline : TextDecoration.none,
+              ),
             ),
           ),
         ],

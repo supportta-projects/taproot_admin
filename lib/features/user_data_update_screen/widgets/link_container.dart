@@ -8,12 +8,14 @@ import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 class LinkContainer extends StatelessWidget {
   final String name;
   final String svg;
+  final String initaialValue;
 
   const LinkContainer({
     super.key,
     required this.user,
     required this.name,
     required this.svg,
+    this.initaialValue = '',
   });
 
   final User user;
@@ -48,7 +50,7 @@ class LinkContainer extends StatelessWidget {
             height: 70,
             color: Colors.white,
             child: TextFormContainer(
-              initialValue: '',
+              initialValue: initaialValue,
               labelText: 'Link',
               user: user,
             ),

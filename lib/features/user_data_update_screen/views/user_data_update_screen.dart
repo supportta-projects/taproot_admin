@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
+import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
@@ -30,10 +32,12 @@ class UserDataUpdateScreen extends StatefulWidget {
 class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
   PortfolioDataModel? portfolio;
   late final User user;
+  bool isLoading = false;
   @override
   void initState() {
     user = widget.user;
     fetchPortfolio();
+    // fetchPortfolio();
     // TODO: implement initState
     super.initState();
   }
@@ -46,194 +50,251 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
   }
 
   Future fetchPortfolio() async {
-    final result = await PortfolioService.getPortfolio(userid: user.id);
-
-    if (result != null) {
+    try {
       setState(() {
-        portfolio = result;
+        isLoading = true;
       });
-    } else {
-      logError('Failed to fetch portfolio');
+      final result = await PortfolioService.getPortfolio(userid: user.id);
+
+      if (result != null) {
+        setState(() {
+          portfolio = result;
+          setState(() {
+            isLoading = false;
+          });
+        });
+      }
+    } catch (e) {
+      if (e is CustomException && e.statusCode == 404) {
+        // Navigate to a not found screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => AddUserPortfolio()),
+        );
+      } else {
+        logError(e.toString());
+      }
     }
   }
+
+  // Future fetchPortfolio() async {
+  //   final result = await PortfolioService.getPortfolio(userid: user.id);
+
+  //   if (result != null) {
+  //     setState(() {
+  //       portfolio = result;
+  //     });
+  //   } else {
+  //     logError('Failed to fetch portfolio');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.pop(context);
-              },
+      body:
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
 
-              child: Text('Click here to go back to the previous screen'),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'User  >  User Details',
-                    style: context.inter60016.copyWith(color: Colors.green),
-                  ),
-                  Spacer(),
-                  userEdit
-                      ? MiniLoadingButton(
-                        icon: LucideIcons.save,
-                        text: 'Save',
-                        onPressed: editUser,
-                        useGradient: true,
-                        gradientColors: CustomColors.borderGradient.colors,
-                      )
-                      : MiniLoadingButton(
-                        icon: Icons.edit,
-                        text: 'Edit',
-                        onPressed: editUser,
-                        useGradient: true,
-                        gradientColors: CustomColors.borderGradient.colors,
+                      child: Text(
+                        'Click here to go back to the previous screen',
                       ),
-                  Gap(CustomPadding.paddingLarge.v),
-                  MiniGradientBorderButton(
-                    text: 'Back',
-                    icon: Icons.arrow_back,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-
-                    gradient: LinearGradient(
-                      colors: CustomColors.borderGradient.colors,
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            'User  >  User Details',
+                            style: context.inter60016.copyWith(
+                              color: Colors.green,
+                            ),
+                          ),
+                          Spacer(),
+                          userEdit
+                              ? MiniLoadingButton(
+                                icon: LucideIcons.save,
+                                text: 'Save',
+                                onPressed: editUser,
+                                useGradient: true,
+                                gradientColors:
+                                    CustomColors.borderGradient.colors,
+                              )
+                              : MiniLoadingButton(
+                                icon: Icons.edit,
+                                text: 'Edit',
+                                onPressed: editUser,
+                                useGradient: true,
+                                gradientColors:
+                                    CustomColors.borderGradient.colors,
+                              ),
+                          Gap(CustomPadding.paddingLarge.v),
+                          MiniGradientBorderButton(
+                            text: 'Back',
+                            icon: Icons.arrow_back,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
 
-                  // MiniGradientBorderButton(
-                  //   text: 'Back',
-                  //   icon: Icons.arrow_back,
-                  //   onPressed: () async {
-                  //     if (userEdit) {
-                  //       final shouldDiscard = await showDialog<bool>(
-                  //         context: context,
-                  //         builder:
-                  //             (context) => AlertDialog(
-                  //               title: const Text('Discard changes?'),
-                  //               content: const Text(
-                  //                 'You have unsaved changes. Are you sure you want to go back?',
-                  //               ),
-                  //               actions: [
-                  //                 TextButton(
-                  //                   onPressed:
-                  //                       () => Navigator.of(context).pop(false),
-                  //                   child: const Text('Cancel'),
-                  //                 ),
-                  //                 TextButton(
-                  //                   onPressed:
-                  //                       () => Navigator.of(context).pop(true),
-                  //                   child: const Text('Discard'),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //       );
-                  //       if (shouldDiscard == true) {
-                  //         Navigator.pop(context);
-                  //       }
-                  //     } else {
-                  //       Navigator.pop(context);
-                  //     }
-                  //   },
-                  //   gradient: LinearGradient(
-                  //     colors: CustomColors.borderGradient.colors,
-                  //   ),
-                  // ),
-                ],
-              ),
-            ),
-            Gap(CustomPadding.paddingLarge.v),
+                            gradient: LinearGradient(
+                              colors: CustomColors.borderGradient.colors,
+                            ),
+                          ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge,
-              ),
-              child: Row(
-                children: [
-                  UserProfileContainer(isEdit: userEdit, user: user),
-                  Gap(CustomPadding.paddingXL.v),
-                  BasicDetailContainer(
-                    user: user,
-                    isEdit: userEdit,
-                    portfolio: portfolio,
-                  ),
-                ],
-              ),
-            ),
-            Gap(CustomPadding.paddingXL.v),
+                          // MiniGradientBorderButton(
+                          //   text: 'Back',
+                          //   icon: Icons.arrow_back,
+                          //   onPressed: () async {
+                          //     if (userEdit) {
+                          //       final shouldDiscard = await showDialog<bool>(
+                          //         context: context,
+                          //         builder:
+                          //             (context) => AlertDialog(
+                          //               title: const Text('Discard changes?'),
+                          //               content: const Text(
+                          //                 'You have unsaved changes. Are you sure you want to go back?',
+                          //               ),
+                          //               actions: [
+                          //                 TextButton(
+                          //                   onPressed:
+                          //                       () => Navigator.of(context).pop(false),
+                          //                   child: const Text('Cancel'),
+                          //                 ),
+                          //                 TextButton(
+                          //                   onPressed:
+                          //                       () => Navigator.of(context).pop(true),
+                          //                   child: const Text('Discard'),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //       );
+                          //       if (shouldDiscard == true) {
+                          //         Navigator.pop(context);
+                          //       }
+                          //     } else {
+                          //       Navigator.pop(context);
+                          //     }
+                          //   },
+                          //   gradient: LinearGradient(
+                          //     colors: CustomColors.borderGradient.colors,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
 
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge,
-              ),
-              child: Row(
-                children: [
-                  ProfileContainer(
-                    user: user,
-                    isEdit: userEdit,
-                    portfolio: portfolio,
-                  ),
-                  Gap(CustomPadding.paddingXL.v),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge,
+                      ),
+                      child: Row(
+                        children: [
+                          UserProfileContainer(isEdit: userEdit, user: user),
+                          Gap(CustomPadding.paddingXL.v),
+                          BasicDetailContainer(
+                            user: user,
+                            isEdit: userEdit,
+                            portfolio: portfolio,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingXL.v),
 
-                  LocationContainer(
-                    user: user,
-                    isEdit: userEdit,
-                    portfolio: portfolio,
-                  ),
-                ],
-              ),
-            ),
-            Gap(CustomPadding.paddingXL.v),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-              ),
-              child: Row(
-                children: [AdditionalContainer(user: user, isEdit: userEdit)],
-              ),
-            ),
-            Gap(CustomPadding.paddingXL.v),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-              ),
-              child: Row(
-                children: [SocialContainer(isEdit: userEdit, user: user)],
-              ),
-            ),
-            Gap(CustomPadding.paddingXL.v),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-              ),
-              child: Row(
-                children: [AboutContainer(user: user, isEdit: userEdit)],
-              ),
-            ),
-            Gap(CustomPadding.paddingXL.v),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-              ),
-              child: Row(
-                children: [ServiceContainer(isEdited: userEdit, user: user)],
-              ),
-            ),
-            Gap(CustomPadding.paddingXXL.v),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge,
+                      ),
+                      child: Row(
+                        children: [
+                          ProfileContainer(
+                            user: user,
+                            isEdit: userEdit,
+                            portfolio: portfolio,
+                          ),
+                          Gap(CustomPadding.paddingXL.v),
 
-            // Add your form fields here
-          ],
-        ),
-      ),
+                          LocationContainer(
+                            user: user,
+                            isEdit: userEdit,
+                            portfolio: portfolio,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingXL.v),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge.v,
+                      ),
+                      child: Row(
+                        children: [
+                          AdditionalContainer(
+                            user: user,
+                            isEdit: userEdit,
+                            portfolio: portfolio,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingXL.v),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge.v,
+                      ),
+                      child: Row(
+                        children: [
+                          SocialContainer(
+                            isEdit: userEdit,
+                            user: user,
+                            portfolio: portfolio,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingXL.v),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge.v,
+                      ),
+                      child: Row(
+                        children: [
+                          AboutContainer(
+                            user: user,
+                            isEdit: userEdit,
+                            portfolio: portfolio,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingXL.v),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge.v,
+                      ),
+                      child: Row(
+                        children: [
+                          ServiceContainer(isEdited: userEdit, user: user),
+                        ],
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingXXL.v),
+
+                    // Add your form fields here
+                  ],
+                ),
+              ),
     );
   }
 }

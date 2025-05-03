@@ -57,10 +57,13 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             ? TextFormContainer(
               readonly: true,
               user: widget.user,
-              initialValue: widget.user.email,
+              initialValue: widget.portfolio!.email,
               labelText: 'Email',
             )
-            : DetailRow(label: 'Email', value: widget.user.email),
+            : DetailRow(
+              label: 'Email',
+              value: widget.portfolio?.email ?? 'loading...',
+            ),
         widget.isEdit
             ? TextFormContainer(
               user: widget.user,

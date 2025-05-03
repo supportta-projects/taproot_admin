@@ -3,14 +3,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
+import 'package:taproot_admin/widgets/launch_url.dart';
 
 class SocialMediaContainer extends StatelessWidget {
   final String svg;
   final String name;
+  final String? link;
   const SocialMediaContainer({
     super.key,
     required this.svg,
     required this.name,
+    this.link,
   });
 
   @override
@@ -27,7 +30,11 @@ class SocialMediaContainer extends StatelessWidget {
           ),
         ),
         Gap(CustomPadding.padding.v),
-        SvgPicture.asset(Assets.svg.link),
+        if (link != null && link!.isNotEmpty)
+          GestureDetector(
+            onTap: () => launchWebsiteLink(link!, context),
+            child: SvgPicture.asset(Assets.svg.link),
+          ),
       ],
     );
   }

@@ -28,7 +28,7 @@ class ProfileContainer extends StatelessWidget {
         Gap(CustomPadding.paddingLarge.v),
         isEdit
             ? TextFormContainer(
-              initialValue: portfolio!.designation ,
+              initialValue: portfolio!.designation,
               labelText: 'Designation',
               user: user,
             )
@@ -50,10 +50,13 @@ class ProfileContainer extends StatelessWidget {
         isEdit
             ? TextFormContainer(
               user: user,
-              initialValue: portfolio!.email,
+              initialValue: portfolio!.workEmail,
               labelText: 'Email',
             )
-            : DetailRow(label: 'Email', value: portfolio?.email ?? ' loading...'),
+            : DetailRow(
+              label: 'Email',
+              value: portfolio?.workEmail ?? ' loading...',
+            ),
       ],
     );
   }

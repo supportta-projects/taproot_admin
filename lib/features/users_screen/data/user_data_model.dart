@@ -6,7 +6,7 @@ class User {
   final String email;
   final String website;
   final String id;
-   bool isPremium;
+  bool isPremium;
 
   User({
     required this.fullName,
@@ -22,11 +22,11 @@ class User {
     return User(
       fullName: json['name'] ?? '',
       userId: json['code'] ?? '',
-      phone: json['phone'] ?? '',
-      whatsapp: json['whatsapp'] ?? '',
+      phone: json['phoneNumber'] ?? '',
+      whatsapp: json['whatsappNumber'] ?? '',
       email: json['email'] ?? '',
       website: json['website'] ?? '',
-      id: json['_id']??'',
+      id: json['_id'] ?? '',
       isPremium: json['isPremium'] ?? false,
     );
   }

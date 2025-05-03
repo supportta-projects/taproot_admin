@@ -13,12 +13,10 @@ class PortfolioService with ErrorExceptionHandler {
         type: ApiType.baseUrl,
       );
 
-      final resultData = response.data['result'];
-      final model = PortfolioDataModel.fromJson(resultData);
+      final model = PortfolioDataModel.fromJson(response.data);
       return model;
     } catch (e) {
-      PortfolioService().handleError(e);
-      return null;
+      throw PortfolioService().handleError(e);
     }
   }
 }

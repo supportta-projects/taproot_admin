@@ -4,20 +4,26 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:taproot_admin/constants/constants.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
+import 'package:taproot_admin/widgets/launch_url.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../users_screen/data/user_data_model.dart';
 
 class AdditionalContainer extends StatefulWidget {
+  final PortfolioDataModel? portfolio;
+
   final bool isEdit;
   final User user;
   const AdditionalContainer({
     super.key,
     required this.user,
     this.isEdit = false,
+    this.portfolio,
   });
 
   @override
@@ -57,21 +63,35 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                 children: [
                   widget.isEdit
                       ? TextFormContainer(
-                        initialValue: 'https://docs.google.com',
+                        initialValue: widget.portfolio!.primaryWebsite,
                         labelText: 'Website Link',
                         user: widget.user,
                       )
                       : DetailRow(
                         label: 'Website Link',
-                        value: 'https://docs.google.com',
+                        value:
+                            widget.portfolio?.primaryWebsite ?? 'loading....',
+                        ontap:
+                            () => launchWebsiteLink(
+                              widget.portfolio?.primaryWebsite ?? '',
+                              context,
+                            ),
                       ),
                   widget.isEdit
                       ? TextFormContainer(
-                        initialValue: '-',
+                        initialValue: widget.portfolio!.secondaryWebsite,
                         labelText: 'Website Link',
                         user: widget.user,
                       )
-                      : DetailRow(label: 'Website Link', value: '-'),
+                      : DetailRow(
+                        label: 'Website Link',
+                        value: widget.portfolio?.secondaryWebsite ?? '-',
+                        ontap:
+                            () => launchWebsiteLink(
+                              widget.portfolio?.secondaryWebsite ?? '',
+                              context,
+                            ),
+                      ),
                 ],
               ),
             ),
@@ -118,8 +138,7 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                                 selectedImageBanner == null
                                     ? 'Upload'
                                     : 'Replace',
-                            selectedFile:
-                                selectedImageBanner, 
+                            selectedFile: selectedImageBanner,
                           )
                           : ImageContainer(
                             onTap: () {},

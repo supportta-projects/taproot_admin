@@ -26,13 +26,13 @@ class _UserProfileContainerState extends State<UserProfileContainer>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late final User user;
-  late bool isPremium;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     user = widget.user;
-    isPremium = widget.portfolio!.isPremium;
+
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -45,6 +45,8 @@ class _UserProfileContainerState extends State<UserProfileContainer>
 
   @override
   Widget build(BuildContext context) {
+    
+
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -131,16 +133,17 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        isPremium ? 'Premium' : 'Base',
-                        style: context.inter50014.copyWith(
-                          color: CustomColors.green,
-                        ),
-                      ),
+                      (widget.portfolio?.isPremium ?? false)
+                          ? Text(
+                            'Premium',
+                            style: context.inter50014.copyWith(
+                              color: CustomColors.green,
+                            ),
+                          )
+                          : Text('Base'),
+
                       Gap(CustomPadding.padding.v),
-                      isPremium
-                          ? SvgPicture.asset(Assets.svg.premium)
-                          : SizedBox(),
+                      SvgPicture.asset(Assets.svg.premium),
                     ],
                   ),
                 ),

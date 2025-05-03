@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
+import 'package:taproot_admin/widgets/gradient_text.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 import '../../user_data_update_screen/views/user_data_update_screen.dart';
 import '../data/user_data_model.dart';
 
 class UserManagementScreen extends StatefulWidget {
+
   final GlobalKey<NavigatorState>? innerNavigatorKey;
 
   const UserManagementScreen({super.key, this.innerNavigatorKey});
@@ -289,7 +292,31 @@ class UserDataTableSource extends DataTableSource {
         DataCell(
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [Switch(value: user.isPremium, onChanged: null)],
+            children: [
+              Container(
+                width: 120.v,
+                height: 40.v,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(CustomPadding.padding.v),
+                  color:
+                      user.isPremium
+                          ? CustomColors.lightGreen
+                          : CustomColors.greylight,
+                ),
+                child: Center(
+                  child:
+                      user.isPremium
+                          ? GradientText(
+                            'Premium',
+                            gradient: CustomColors.borderGradient,
+                            style: context.inter50014,
+                          )
+                          : Text('Base', style: context.inter50014),
+                ),
+              ),
+
+              // Switch(value: user.isPremium, onChanged: null)
+            ],
           ),
         ),
       ],
