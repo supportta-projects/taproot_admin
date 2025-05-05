@@ -21,7 +21,7 @@ class CommonUserContainer extends StatelessWidget {
           color: CustomColors.secondaryColor,
           borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
         ),
-        height: height ?? SizeUtils.height * 0.42,
+        height: height ?? SizeUtils.height * 0.48,
         // height: SizeUtils.height * 0.40,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,4 +51,3 @@ class CommonUserContainer extends StatelessWidget {
     );
   }
 }
-

@@ -10,7 +10,6 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/launch_url.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../users_screen/data/user_data_model.dart';
 
@@ -63,32 +62,32 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                 children: [
                   widget.isEdit
                       ? TextFormContainer(
-                        initialValue: widget.portfolio!.primaryWebsite,
+                        initialValue: widget.portfolio!.workInfo.primaryWebsite,
                         labelText: 'Website Link',
                         user: widget.user,
                       )
                       : DetailRow(
                         label: 'Website Link',
                         value:
-                            widget.portfolio?.primaryWebsite ?? 'loading....',
+                            widget.portfolio?.workInfo. primaryWebsite ?? 'loading....',
                         ontap:
                             () => launchWebsiteLink(
-                              widget.portfolio?.primaryWebsite ?? '',
+                              widget.portfolio?.workInfo. primaryWebsite ?? '',
                               context,
                             ),
                       ),
                   widget.isEdit
                       ? TextFormContainer(
-                        initialValue: widget.portfolio!.secondaryWebsite,
+                        initialValue: widget.portfolio!.workInfo. secondaryWebsite,
                         labelText: 'Website Link',
                         user: widget.user,
                       )
                       : DetailRow(
                         label: 'Website Link',
-                        value: widget.portfolio?.secondaryWebsite ?? '-',
+                        value: widget.portfolio?.workInfo. secondaryWebsite ?? '-',
                         ontap:
                             () => launchWebsiteLink(
-                              widget.portfolio?.secondaryWebsite ?? '',
+                              widget.portfolio?.workInfo. secondaryWebsite ?? '',
                               context,
                             ),
                       ),

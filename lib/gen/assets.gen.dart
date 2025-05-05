@@ -29,6 +29,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/facebook.svg
   String get facebook => 'assets/svg/facebook.svg';
 
+  /// File path: assets/svg/github.svg
+  String get github => 'assets/svg/github.svg';
+
   /// File path: assets/svg/instagram.svg
   String get instagram => 'assets/svg/instagram.svg';
 
@@ -57,6 +60,7 @@ class $AssetsSvgGen {
   List<String> get values => [
     behance,
     facebook,
+    github,
     instagram,
     link,
     linkdin,

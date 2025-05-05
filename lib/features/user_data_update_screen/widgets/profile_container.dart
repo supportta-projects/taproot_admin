@@ -28,34 +28,34 @@ class ProfileContainer extends StatelessWidget {
         Gap(CustomPadding.paddingLarge.v),
         isEdit
             ? TextFormContainer(
-              initialValue: portfolio!.designation,
+              initialValue: portfolio!.workInfo. designation,
               labelText: 'Designation',
               user: user,
             )
             : DetailRow(
               label: 'Designation',
-              value: portfolio?.designation ?? 'loading...',
+              value: portfolio?.workInfo.designation ?? 'loading...',
             ),
         isEdit
             ? TextFormContainer(
               readonly: true,
-              initialValue: portfolio!.companyName,
+              initialValue: portfolio!.workInfo.companyName,
               labelText: 'Company Name',
               user: user,
             )
             : DetailRow(
               label: 'Company Name',
-              value: portfolio?.companyName ?? 'loading...',
+              value: portfolio?.workInfo.companyName ?? 'loading...',
             ),
         isEdit
             ? TextFormContainer(
               user: user,
-              initialValue: portfolio!.workEmail,
+              initialValue: portfolio!.workInfo.workEmail,
               labelText: 'Email',
             )
             : DetailRow(
               label: 'Email',
-              value: portfolio?.workEmail ?? ' loading...',
+              value: portfolio?.workInfo.workEmail ?? ' loading...',
             ),
       ],
     );

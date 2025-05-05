@@ -49,9 +49,9 @@ class AboutContainer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Gap(CustomPadding.paddingLarge),
-                  Text(portfolio!.aboutHeading, style: context.inter50016),
+                  Text(portfolio!.about.heading, style: context.inter50016),
                   Gap(CustomPadding.paddingLarge),
-                  Text(portfolio!.aboutDescription, maxLines: 8),
+                  Text(portfolio!.about.description, maxLines: 8),
                 ],
               ),
             ),

@@ -6,11 +6,9 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
@@ -50,44 +48,37 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
   }
 
   Future fetchPortfolio() async {
+    setState(() {
+      isLoading = true; // Start loading
+    });
     try {
-      setState(() {
-        isLoading = true;
-      });
       final result = await PortfolioService.getPortfolio(userid: user.id);
 
       if (result != null) {
         setState(() {
-          portfolio = result;
-          setState(() {
-            isLoading = false;
-          });
+          portfolio = result; // Update portfolio data
+          isLoading = false; // End loading
         });
       }
     } catch (e) {
+      setState(() {
+        isLoading = false; // End loading even in case of error
+      });
       if (e is CustomException && e.statusCode == 404) {
-        // Navigate to a not found screen
+        // Navigate to add user portfolio screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => AddUserPortfolio()),
+          MaterialPageRoute(builder: (_) => AddUserPortfolio(user: user)),
         );
       } else {
         logError(e.toString());
+        // You can show a Snackbar or AlertDialog to inform the user
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     }
   }
-
-  // Future fetchPortfolio() async {
-  //   final result = await PortfolioService.getPortfolio(userid: user.id);
-
-  //   if (result != null) {
-  //     setState(() {
-  //       portfolio = result;
-  //     });
-  //   } else {
-  //     logError('Failed to fetch portfolio');
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +114,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                           Spacer(),
                           userEdit
                               ? MiniLoadingButton(
-                                icon: LucideIcons.save,
+                                icon: Icons.save,
                                 text: 'Save',
                                 onPressed: editUser,
                                 useGradient: true,
@@ -264,31 +255,34 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: CustomPadding.paddingLarge.v,
-                      ),
-                      child: Row(
-                        children: [
-                          AboutContainer(
-                            user: user,
-                            isEdit: userEdit,
-                            portfolio: portfolio,
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //     horizontal: CustomPadding.paddingLarge.v,
+                    //   ),
+                    //   child: SingleChildScrollView(
+                    //     scrollDirection: Axis.horizontal,
+                    //     child: Row(
+                    //       children: [
+                    //         AboutContainer(
+                    //           user: user,
+                    //           isEdit: userEdit,
+                    //           portfolio: portfolio,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     Gap(CustomPadding.paddingXL.v),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: CustomPadding.paddingLarge.v,
-                      ),
-                      child: Row(
-                        children: [
-                          ServiceContainer(isEdited: userEdit, user: user),
-                        ],
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //     horizontal: CustomPadding.paddingLarge.v,
+                    //   ),
+                    //   child: Row(
+                    //     children: [
+                    //       ServiceContainer(isEdited: userEdit, user: user),
+                    //     ],
+                    //   ),
+                    // ),
                     Gap(CustomPadding.paddingXXL.v),
 
                     // Add your form fields here

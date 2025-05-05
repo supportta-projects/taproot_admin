@@ -1,84 +1,34 @@
-
-
-
 class PortfolioDataModel {
   final String id;
-  final String name;
-  final String email;
-  final String phoneNumber;
-  final String whatsappNumber;
-  final String companyName;
-  final String designation;
-  final String workEmail;
-  final String primaryWebsite;
-  final String secondaryWebsite;
-  final String buildingName;
-  final String area;
-  final String pincode;
-  final String district;
-  final String state;
-  final String aboutHeading;
-  final String aboutDescription;
-  final String userId;
-  final String userCode;
-  final bool isPremium;
+  final PersonalInfo personalInfo;
+  final WorkInfo workInfo;
+  final AddressInfo addressInfo;
+  final About about;
+  final UserInfo user;
   final List<SocialMedia> socialMedia;
   final List<Service> services;
 
   PortfolioDataModel({
     required this.id,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-    required this.whatsappNumber,
-    required this.companyName,
-    required this.designation,
-    required this.workEmail,
-    required this.primaryWebsite,
-    required this.secondaryWebsite,
-    required this.buildingName,
-    required this.area,
-    required this.pincode,
-    required this.district,
-    required this.state,
-    required this.aboutHeading,
-    required this.aboutDescription,
-    required this.userId,
-    required this.userCode,
-    required this.isPremium,
+    required this.personalInfo,
+    required this.workInfo,
+    required this.addressInfo,
+    required this.about,
+    required this.user,
     required this.socialMedia,
     required this.services,
   });
 
   factory PortfolioDataModel.fromJson(Map<String, dynamic> json) {
     final portfolio = json['result']['portfolio'];
-    final personalInfo = portfolio['personalInfo'];
-    final workInfo = portfolio['workInfo'];
-    final addressInfo = portfolio['addressInfo'];
-    final about = portfolio['about'];
-    final user = portfolio['user'];
 
     return PortfolioDataModel(
       id: portfolio['_id'],
-      name: personalInfo['name'],
-      email: personalInfo['email'],
-      phoneNumber: personalInfo['phoneNumber'],
-      whatsappNumber: personalInfo['whatsappNumber'],
-      companyName: workInfo['companyName'],
-      designation: workInfo['designation'],
-      workEmail: workInfo['workEmail'],
-      primaryWebsite: workInfo['primaryWebsite'],
-      secondaryWebsite: workInfo['secondaryWebsite'],
-      buildingName: addressInfo['buildingName'],
-      area: addressInfo['area'],
-      pincode: addressInfo['pincode'],
-      district: addressInfo['district'],
-      state: addressInfo['state'],
-      aboutHeading: about['heading'],
-      aboutDescription: about['description'],
-      userId: user['_id'],
-      userCode: user['code'],
-      isPremium: user['isPremium'] == true || user['isPremium'] == 'true',
+      personalInfo: PersonalInfo.fromJson(portfolio['personalInfo']),
+      workInfo: WorkInfo.fromJson(portfolio['workInfo']),
+      addressInfo: AddressInfo.fromJson(portfolio['addressInfo']),
+      about: About.fromJson(portfolio['about']),
+      user: UserInfo.fromJson(portfolio['user']),
       socialMedia:
           (portfolio['socialMedia'] as List<dynamic>)
               .map((e) => SocialMedia.fromJson(e))
@@ -89,10 +39,159 @@ class PortfolioDataModel {
               .toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'personalInfo': personalInfo.toJson(),
+      'workInfo': workInfo.toJson(),
+      'addressInfo': addressInfo.toJson(),
+      'about': about.toJson(),
+      'user': user.toJson(),
+      'socialMedia': socialMedia.map((e) => e.toJson()).toList(),
+      'services': services.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class PersonalInfo {
+  final String name;
+  final String email;
+  final String phoneNumber;
+  final String whatsappNumber;
+
+  PersonalInfo({
+    required this.name,
+    required this.email,
+    required this.phoneNumber,
+    required this.whatsappNumber,
+  });
+
+  factory PersonalInfo.fromJson(Map<String, dynamic> json) {
+    return PersonalInfo(
+      name: json['name'],
+      email: json['email'],
+      phoneNumber: json['phoneNumber'],
+      whatsappNumber: json['whatsappNumber'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'email': email,
+    'phoneNumber': phoneNumber,
+    'whatsappNumber': whatsappNumber,
+  };
+}
+
+class WorkInfo {
+  final String companyName;
+  final String designation;
+  final String workEmail;
+  final String primaryWebsite;
+  final String secondaryWebsite;
+
+  WorkInfo({
+    required this.companyName,
+    required this.designation,
+    required this.workEmail,
+    required this.primaryWebsite,
+    required this.secondaryWebsite,
+  });
+
+  factory WorkInfo.fromJson(Map<String, dynamic> json) {
+    return WorkInfo(
+      companyName: json['companyName'],
+      designation: json['designation'],
+      workEmail: json['workEmail'],
+      primaryWebsite: json['primaryWebsite'],
+      secondaryWebsite: json['secondaryWebsite'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'companyName': companyName,
+    'designation': designation,
+    'workEmail': workEmail,
+    'primaryWebsite': primaryWebsite,
+    'secondaryWebsite': secondaryWebsite,
+  };
+}
+
+class AddressInfo {
+  final String buildingName;
+  final String area;
+  final String pincode;
+  final String district;
+  final String state;
+
+  AddressInfo({
+    required this.buildingName,
+    required this.area,
+    required this.pincode,
+    required this.district,
+    required this.state,
+  });
+
+  factory AddressInfo.fromJson(Map<String, dynamic> json) {
+    return AddressInfo(
+      buildingName: json['buildingName'],
+      area: json['area'],
+      pincode: json['pincode'],
+      district: json['district'],
+      state: json['state'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'buildingName': buildingName,
+    'area': area,
+    'pincode': pincode,
+    'district': district,
+    'state': state,
+  };
+}
+
+class About {
+  final String heading;
+  final String description;
+
+  About({required this.heading, required this.description});
+
+  factory About.fromJson(Map<String, dynamic> json) {
+    return About(heading: json['heading'], description: json['description']);
+  }
+
+  Map<String, dynamic> toJson() => {
+    'heading': heading,
+    'description': description,
+  };
+}
+
+class UserInfo {
+  final String id;
+  final String code;
+  final bool isPremium;
+
+  UserInfo({required this.id, required this.code, required this.isPremium});
+
+  factory UserInfo.fromJson(Map<String, dynamic> json) {
+    return UserInfo(
+      id: json['_id'],
+      code: json['code'],
+      isPremium: json['isPremium'] == true || json['isPremium'] == 'true',
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    '_id': id,
+    'code': code,
+    'isPremium': isPremium,
+  };
 }
 
 class SocialMedia {
-  final String id;
+  final String? id;
   final String source;
   final String link;
 
@@ -104,6 +203,14 @@ class SocialMedia {
       source: json['source'],
       link: json['link'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    final data = <String, dynamic>{'source': source, 'link': link};
+    if (id != null && id!.isNotEmpty) {
+      data['_id'] = id;
+    }
+    return data;
   }
 }
 
@@ -134,4 +241,17 @@ class Service {
       createdAt: DateTime.parse(json['createdAt']),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    '_id': id,
+    'user': user,
+    'portfolio': portfolio,
+    'heading': heading,
+    'description': description,
+    'createdAt': createdAt.toIso8601String(),
+  };
 }
+
+
+
+

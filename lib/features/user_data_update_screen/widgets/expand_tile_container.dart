@@ -4,7 +4,7 @@ import 'package:taproot_admin/exporter/exporter.dart';
 class ExpandTileContainer extends StatelessWidget {
   final List<Widget>? children;
   final String title;
-  const ExpandTileContainer({super.key, this.children,required this.title});
+  const ExpandTileContainer({super.key, this.children, required this.title});
 
   @override
   Widget build(BuildContext context) {

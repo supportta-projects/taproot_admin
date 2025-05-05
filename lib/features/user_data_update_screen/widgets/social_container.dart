@@ -28,19 +28,15 @@ class SocialContainer extends StatelessWidget {
     return isEdit
         ? hasSocialMediaLinks
             ? ExpandTileContainer(
-              title: 'Social Medias',
+              title: 'Social Media',
               children:
                   portfolio!.socialMedia.map((item) {
                     return LinkContainer(
                       user: user,
-                      name: _capitalize(
-                        item.source,
-                      ), 
-                      svg: _getSvgForPlatform(
-                        item.source,
-                      ), 
-                      initaialValue:
-                          item.link, 
+                      name: _capitalize(item.source),
+                     
+                      svg: _getSvgForPlatform(item.source),
+                      initaialValue: item.link,
                     );
                   }).toList(),
             )
@@ -134,7 +130,7 @@ String _getSvgForPlatform(String platform) {
     case 'youtube':
       return Assets.svg.youtube;
     case 'github':
-      return Assets.svg.pinterest;
+      return Assets.svg.github;
 
     default:
       return Assets.svg.link;

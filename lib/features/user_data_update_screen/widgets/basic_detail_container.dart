@@ -45,44 +45,45 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
         widget.isEdit
             ? TextFormContainer(
               user: widget.user,
-              initialValue: widget.portfolio!.name,
+              initialValue: widget.portfolio!.personalInfo.name,
               labelText: 'Full Name',
             )
             : DetailRow(
               label: 'Full Name',
-              value: widget.portfolio?.name ?? 'loading...',
+              value: widget.portfolio?.personalInfo.name ?? 'loading...',
             ),
 
         widget.isEdit
             ? TextFormContainer(
               readonly: true,
               user: widget.user,
-              initialValue: widget.portfolio!.email,
+              initialValue: widget.portfolio!.personalInfo.email,
               labelText: 'Email',
             )
             : DetailRow(
               label: 'Email',
-              value: widget.portfolio?.email ?? 'loading...',
+              value: widget.portfolio?.personalInfo.email ?? 'loading...',
             ),
         widget.isEdit
             ? TextFormContainer(
               user: widget.user,
-              initialValue: widget.portfolio!.phoneNumber,
+              initialValue: widget.portfolio!.personalInfo.phoneNumber,
               labelText: 'Phone Number',
             )
             : DetailRow(
               label: 'Phone Number',
-              value: widget.portfolio?.phoneNumber ?? 'loading...',
+              value: widget.portfolio?.personalInfo.phoneNumber ?? 'loading...',
             ),
         widget.isEdit
             ? TextFormContainer(
               user: widget.user,
-              initialValue: widget.portfolio!.whatsappNumber,
+              initialValue: widget.portfolio!.personalInfo.whatsappNumber,
               labelText: 'WhatsApp Number',
             )
             : DetailRow(
               label: 'WhatsApp Number',
-              value: widget.portfolio?.whatsappNumber ?? 'loading...',
+              value:
+                  widget.portfolio?.personalInfo.whatsappNumber ?? 'loading...',
             ),
         widget.isEdit
             ? SizedBox()

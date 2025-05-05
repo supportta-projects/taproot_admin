@@ -30,6 +30,8 @@ class DioHelper with ErrorExceptionHandler {
       dio.interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) {
+            final fullUrl = '${options.baseUrl}${options.path}';
+            logSuccess("Request URL: $fullUrl");
             logInfo("REQUEST[${options.method}] => PATH: ${options.path}");
             logSuccess("Headers: ${options.headers}");
             return handler.next(options);

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 
 class TextFormContainer extends StatefulWidget {
-  
-  final String initialValue;
+  final String? initialValue;
   final int maxline;
   final bool readonly;
   final String labelText;
@@ -12,12 +12,14 @@ class TextFormContainer extends StatefulWidget {
   final bool isDatePicker;
   final ValueChanged<String>? onChanged;
   final FormFieldValidator<String>? validator;
+  final List<TextInputFormatter>? inputFormatters;
   final TextEditingController? controller;
+  final bool isNumberField;
 
   const TextFormContainer({
     super.key,
-    required this.initialValue,
-    
+     this.initialValue,
+
     required this.labelText,
     this.user,
     this.readonly = false,
@@ -25,7 +27,9 @@ class TextFormContainer extends StatefulWidget {
     this.isDatePicker = false,
     this.onChanged,
     this.validator,
-    this.controller
+    this.controller,
+    this.inputFormatters,
+    this.isNumberField = false,
   });
 
   @override
@@ -38,13 +42,13 @@ class _TextFormContainerState extends State<TextFormContainer> {
   @override
   void initState() {
     super.initState();
-   _internalController =
+    _internalController =
         widget.controller ?? TextEditingController(text: widget.initialValue);
   }
 
   @override
   void dispose() {
-      if (widget.controller == null) {
+    if (widget.controller == null) {
       _internalController.dispose();
     }
     super.dispose();
@@ -82,6 +86,7 @@ class _TextFormContainerState extends State<TextFormContainer> {
         readOnly: widget.readonly || widget.isDatePicker,
         onTap: widget.isDatePicker ? _pickDate : null,
         decoration: InputDecoration(
+          prefix: widget.isNumberField ? Text('+91 ') : null,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           label: Text(widget.labelText),
           labelStyle: TextStyle(color: CustomColors.textColorDarkGrey),
@@ -92,6 +97,7 @@ class _TextFormContainerState extends State<TextFormContainer> {
             borderSide: BorderSide(color: CustomColors.textColorLightGrey),
           ),
         ),
+        inputFormatters: widget.inputFormatters,
       ),
     );
   }

@@ -26,14 +26,22 @@ class _UserProfileContainerState extends State<UserProfileContainer>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late final User user;
-
+  bool isPremiumSelected = false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     user = widget.user;
 
     _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) return;
+
+      setState(() {
+        isPremiumSelected = _tabController.index == 1;
+        logSuccess('isPremiumSelected: $isPremiumSelected');
+      });
+    });
   }
 
   @override
@@ -45,8 +53,6 @@ class _UserProfileContainerState extends State<UserProfileContainer>
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -133,7 +139,7 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      (widget.portfolio?.isPremium ?? false)
+                      (widget.portfolio?.user.isPremium ?? false)
                           ? Text(
                             'Premium',
                             style: context.inter50014.copyWith(

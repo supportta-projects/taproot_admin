@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/features/product_screen/widgets/add_product.dart';
-import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_page.dart';
 import 'package:taproot_admin/features/product_screen/widgets/view_product.dart';
 

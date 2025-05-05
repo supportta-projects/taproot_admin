@@ -27,12 +27,12 @@ class LocationContainer extends StatelessWidget {
               ? [
                 Gap(CustomPadding.paddingLarge.v),
                 TextFormContainer(
-                  initialValue: portfolio!.buildingName,
+                  initialValue: portfolio!.addressInfo. buildingName,
                   labelText: 'Building Name',
                   user: user,
                 ),
                 TextFormContainer(
-                  initialValue: portfolio!.area,
+                  initialValue: portfolio!.addressInfo. area,
                   labelText: 'Area',
                   user: user,
                 ),
@@ -40,14 +40,14 @@ class LocationContainer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextFormContainer(
-                        initialValue: portfolio!.pincode,
+                        initialValue: portfolio!.addressInfo.pincode,
                         labelText: 'Pin code',
                         user: user,
                       ),
                     ),
                     Expanded(
                       child: TextFormContainer(
-                        initialValue: portfolio!.district,
+                        initialValue: portfolio!.addressInfo.district,
                         labelText: 'District',
                         user: user,
                       ),
@@ -58,7 +58,7 @@ class LocationContainer extends StatelessWidget {
                   children: [
                     Expanded(
                       child: TextFormContainer(
-                        initialValue: portfolio!.state,
+                        initialValue: portfolio!.addressInfo.state,
                         labelText: 'State',
                         user: user,
                       ),
@@ -78,23 +78,23 @@ class LocationContainer extends StatelessWidget {
 
                 DetailRow(
                   label: 'Building Name',
-                  value: portfolio?.buildingName ?? 'Loading...',
+                  value: portfolio?.addressInfo.buildingName ?? 'Loading...',
                 ),
                 DetailRow(
                   label: 'Area',
-                  value: portfolio?.area ?? 'Loading...',
+                  value: portfolio?.addressInfo.area ?? 'Loading...',
                 ),
                 DetailRow(
                   label: 'Pin code',
-                  value: portfolio?.pincode ?? 'Loading...',
+                  value: portfolio?.addressInfo.pincode ?? 'Loading...',
                 ),
                 DetailRow(
                   label: 'District',
-                  value: portfolio?.district ?? 'Loading...',
+                  value: portfolio?.addressInfo.district ?? 'Loading...',
                 ),
                 DetailRow(
                   label: 'State',
-                  value: portfolio?.state ?? 'Loading...',
+                  value: portfolio?.addressInfo.state ?? 'Loading...',
                 ),
                 DetailRow(label: 'Country', value: 'India'),
               ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
 import 'package:taproot_admin/widgets/gradient_text.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
