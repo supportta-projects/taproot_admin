@@ -128,7 +128,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       showDialog(
                         context: context,
                         builder: (context) {
-                          return AddUserDialog();
+                          return AddUserDialog(onCallFunction: () => loadUsers);
                         },
                       );
                     },

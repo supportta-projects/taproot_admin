@@ -140,7 +140,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => EditUserPortfolio(user: widget.user,portfolio: portfolio,),
+                                      builder: (context) => EditUserPortfolio(user: widget.user,portfolio: portfolio,onCallFunction: fetchPortfolio,),
                                     ),
                                   );
                                 },

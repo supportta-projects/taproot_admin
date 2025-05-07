@@ -95,8 +95,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
           heading: aboutHeadingController.text,
           description: aboutDescriptionController.text,
         ),
-        user: UserInfo(id: user.id, code: user.userId, isPremium: true
-        ),
+        user: UserInfo(id: user.id, code: user.userId, isPremium: true),
         socialMedia: socialLinks,
         services: [],
       );

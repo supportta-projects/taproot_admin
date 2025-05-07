@@ -36,7 +36,11 @@ class UserService with ErrorExceptionHandler {
         type: ApiType.baseUrl,
         data: userData,
       );
-      return response.data;
+      if (response.statusCode == 201) {
+        return;
+      } else {
+        throw Exception("Failed to create user");
+      }
     } catch (e) {
       throw UserService().handleError(e);
     }

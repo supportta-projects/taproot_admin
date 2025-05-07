@@ -4,6 +4,7 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 
 class TextFormContainer extends StatefulWidget {
+  final bool autofocus;
   final String? initialValue;
   final int maxline;
   final bool readonly;
@@ -17,8 +18,10 @@ class TextFormContainer extends StatefulWidget {
   final bool isNumberField;
 
   const TextFormContainer({
+  
     super.key,
      this.initialValue,
+     this.autofocus = false,
 
     required this.labelText,
     this.user,
@@ -79,8 +82,9 @@ class _TextFormContainerState extends State<TextFormContainer> {
         vertical: CustomPadding.padding.v,
       ),
       child: TextFormField(
+        autofocus: widget.autofocus,
         validator: widget.validator,
-        onChanged: widget.onChanged,
+        // onChanged: widget.onChanged,
         controller: _internalController,
         maxLines: widget.maxline,
         readOnly: widget.readonly || widget.isDatePicker,

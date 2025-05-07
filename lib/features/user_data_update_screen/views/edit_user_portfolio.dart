@@ -3,7 +3,6 @@ import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/additional_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
@@ -15,12 +14,14 @@ import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class EditUserPortfolio extends StatefulWidget {
   final PortfolioDataModel? portfolio;
+  final VoidCallback onCallFunction;
 
   final User user;
   const EditUserPortfolio({
     super.key,
     required this.user,
     required this.portfolio,
+    required this.onCallFunction,
   });
 
   @override
@@ -28,18 +29,40 @@ class EditUserPortfolio extends StatefulWidget {
 }
 
 class _EditUserPortfolioState extends State<EditUserPortfolio> {
+  PortfolioDataModel? theFetchedPortfolio;
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneNumber = TextEditingController();
+  final TextEditingController whatsappNumber = TextEditingController();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchedTexfieldValue();
+  }
+
+  void fetchedTexfieldValue() {
+    theFetchedPortfolio = widget.portfolio;
+
+    nameController.text = theFetchedPortfolio!.personalInfo.name;
+    emailController.text = theFetchedPortfolio!.personalInfo.email;
+    phoneNumber.text = theFetchedPortfolio!.personalInfo.phoneNumber;
+    whatsappNumber.text = theFetchedPortfolio!.personalInfo.whatsappNumber;
+  }
+
+  // void updatePortfolio() {
   Future<void> editPortfolio() async {
     try {
       final portfolio = widget.portfolio!;
       final portfolioEditData = PortfolioDataModel(
-        id: '',
+        id: portfolio.id,
         personalInfo: PersonalInfo(
-          name: portfolio.personalInfo.name,
-          email: portfolio.personalInfo.email,
-          phoneNumber: portfolio.personalInfo.phoneNumber,
-          whatsappNumber: portfolio.personalInfo.whatsappNumber,
-          profileImage: '',
-          bannerImage: '',
+          name: nameController.text,
+          email: emailController.text,
+          phoneNumber: phoneNumber.text,
+          whatsappNumber: whatsappNumber.text,
         ),
         workInfo: WorkInfo(
           companyName: portfolio.workInfo.companyName,
@@ -48,9 +71,22 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           primaryWebsite: portfolio.workInfo.primaryWebsite,
           secondaryWebsite: portfolio.workInfo.secondaryWebsite,
         ),
-        addressInfo: portfolio.addressInfo,
-        about: portfolio.about,
-        user: portfolio.user,
+        addressInfo: AddressInfo(
+          buildingName: portfolio.addressInfo.buildingName,
+          area: portfolio.addressInfo.area,
+          pincode: portfolio.addressInfo.pincode,
+          district: portfolio.addressInfo.district,
+          state: portfolio.addressInfo.state,
+        ),
+        about: About(
+          heading: portfolio.about.heading,
+          description: portfolio.about.description,
+        ),
+        user: UserInfo(
+          id: portfolio.user.id,
+          code: portfolio.user.code,
+          isPremium: portfolio.user.isPremium,
+        ),
         socialMedia: portfolio.socialMedia,
         services: portfolio.services,
       );
@@ -60,6 +96,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       );
     } catch (e) {}
   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -75,14 +112,16 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                 MiniLoadingButton(
                   icon: Icons.save,
                   text: 'Save',
+
                   onPressed: () async {
                     await editPortfolio();
-                    // You might want to give feedback or navigate back
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Portfolio updated successfully!'),
-                      ),
-                    );
+                    if (!mounted) return;
+                    widget.onCallFunction();
+
+                    Navigator.pop(context);
+                    // updatePortfolio();
+
+                    // popUpMessage(context);
                   },
 
                   useGradient: true,
@@ -118,6 +157,13 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                   ),
                   Gap(CustomPadding.paddingXL.v),
                   BasicDetailContainer(
+                    autofocus: false,
+                    // initialValue: widget.portfolio!.personalInfo.name,
+                    namecontroller: nameController,
+                    emailController: emailController,
+                    whatsappController: whatsappNumber,
+                    phoneController: phoneNumber,
+
                     user: widget.user,
                     isEdit: true,
                     portfolio: widget.portfolio,
@@ -149,20 +195,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               ),
             ),
             Gap(CustomPadding.paddingXL.v),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(
-            //     horizontal: CustomPadding.paddingLarge.v,
-            //   ),
-            //   child: Row(
-            //     children: [
-            //       AdditionalContainer(
-            //         user: widget.user,
-            //         isEdit: true,
-            //         portfolio: widget.portfolio,
-            //       ),
-            //     ],
-            //   ),
-            // ),
+
             Gap(CustomPadding.paddingXL.v),
             Padding(
               padding: EdgeInsets.symmetric(
@@ -179,23 +212,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               ),
             ),
             Gap(CustomPadding.paddingXL.v),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(
-            //     horizontal: CustomPadding.paddingLarge.v,
-            //   ),
-            //   child: SingleChildScrollView(
-            //     scrollDirection: Axis.horizontal,
-            //     child: Row(
-            //       children: [
-            //         AboutContainer(
-            //           user: widget.user,
-            //           isEdit: true,
-            //           portfolio: widget.portfolio,
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
