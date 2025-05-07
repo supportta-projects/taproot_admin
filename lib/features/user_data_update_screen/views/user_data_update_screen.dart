@@ -88,8 +88,6 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,9 +124,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               ? MiniLoadingButton(
                                 icon: Icons.save,
                                 text: 'Save',
-                                onPressed: () {
-                                  
-                                },
+                                onPressed: () {},
                                 useGradient: true,
                                 gradientColors:
                                     CustomColors.borderGradient.colors,
@@ -140,7 +136,13 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => EditUserPortfolio(user: widget.user,portfolio: portfolio,onCallFunction: fetchPortfolio,),
+                                      builder:
+                                          (context) => EditUserPortfolio(
+                                            user: widget.user,
+                                            portfolio: portfolio,
+                                            onCallFunction:
+                                                () => fetchPortfolio(),
+                                          ),
                                     ),
                                   );
                                 },

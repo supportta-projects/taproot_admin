@@ -8,10 +8,13 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 
 class ProfileContainer extends StatelessWidget {
+  final TextEditingController designation =TextEditingController();
+    final TextEditingController companyController = TextEditingController();
+
   final PortfolioDataModel? portfolio;
 
   final bool isEdit;
-  const ProfileContainer({
+   ProfileContainer({
     super.key,
     required this.user,
     this.isEdit = false,
