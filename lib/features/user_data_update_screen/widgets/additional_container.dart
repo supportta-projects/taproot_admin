@@ -69,25 +69,28 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                       : DetailRow(
                         label: 'Website Link',
                         value:
-                            widget.portfolio?.workInfo. primaryWebsite ?? 'loading....',
+                            widget.portfolio?.workInfo.primaryWebsite ??
+                            'loading....',
                         ontap:
                             () => launchWebsiteLink(
-                              widget.portfolio?.workInfo. primaryWebsite ?? '',
+                              widget.portfolio?.workInfo.primaryWebsite ?? '',
                               context,
                             ),
                       ),
                   widget.isEdit
                       ? TextFormContainer(
-                        initialValue: widget.portfolio!.workInfo. secondaryWebsite,
+                        initialValue:
+                            widget.portfolio!.workInfo.secondaryWebsite,
                         labelText: 'Website Link',
                         user: widget.user,
                       )
                       : DetailRow(
                         label: 'Website Link',
-                        value: widget.portfolio?.workInfo. secondaryWebsite ?? '-',
+                        value:
+                            widget.portfolio?.workInfo.secondaryWebsite ?? '-',
                         ontap:
                             () => launchWebsiteLink(
-                              widget.portfolio?.workInfo. secondaryWebsite ?? '',
+                              widget.portfolio?.workInfo.secondaryWebsite ?? '',
                               context,
                             ),
                       ),

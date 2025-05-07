@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
+import 'package:taproot_admin/features/user_data_update_screen/views/edit_user_portfolio.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
@@ -49,36 +49,46 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
 
   Future fetchPortfolio() async {
     setState(() {
-      isLoading = true; // Start loading
+      isLoading = true;
     });
     try {
       final result = await PortfolioService.getPortfolio(userid: user.id);
 
       if (result != null) {
         setState(() {
-          portfolio = result; // Update portfolio data
-          isLoading = false; // End loading
+          portfolio = result;
+          isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        isLoading = false; // End loading even in case of error
+        isLoading = false;
       });
-      if (e is CustomException && e.statusCode == 404) {
-        // Navigate to add user portfolio screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => AddUserPortfolio(user: user)),
-        );
-      } else {
-        logError(e.toString());
-        // You can show a Snackbar or AlertDialog to inform the user
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      if (mounted) {
+        if (e is CustomException && e.statusCode == 404) {
+          // Navigate to add user portfolio screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => AddUserPortfolio(user: user)),
+          );
+
+          // Navigator.pushReplacementNamed(
+          //   context,
+          //   '/addUserPortfolio',
+          //   arguments: user,
+          // );
+        } else {
+          logError(e.toString());
+          // You can show a Snackbar or AlertDialog to inform the user
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        }
       }
     }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +126,9 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               ? MiniLoadingButton(
                                 icon: Icons.save,
                                 text: 'Save',
-                                onPressed: editUser,
+                                onPressed: () {
+                                  
+                                },
                                 useGradient: true,
                                 gradientColors:
                                     CustomColors.borderGradient.colors,
@@ -124,7 +136,14 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               : MiniLoadingButton(
                                 icon: Icons.edit,
                                 text: 'Edit',
-                                onPressed: editUser,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EditUserPortfolio(user: widget.user,portfolio: portfolio,),
+                                    ),
+                                  );
+                                },
                                 useGradient: true,
                                 gradientColors:
                                     CustomColors.borderGradient.colors,
@@ -191,7 +210,14 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                       child: Row(
                         children: [
-                          UserProfileContainer(isEdit: userEdit, user: user),
+                          UserProfileContainer(
+                            isEdit: userEdit,
+                            user: user,
+                            onPremiumChanged:
+                                (value) => setState(() {
+                                  user.isPremium = value;
+                                }),
+                          ),
                           Gap(CustomPadding.paddingXL.v),
                           BasicDetailContainer(
                             user: user,

@@ -4,16 +4,39 @@ import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/features/users_screen/data/user_paginated_model.dart';
 
 class UserService with ErrorExceptionHandler {
-  static Future<PaginatedUserResponse> fetchUser(int page) async {
+  static Future<PaginatedUserResponse> fetchUser(
+    int page,
+    String? searchQuery,
+    bool? isPremiumOnly,
+  ) async {
     try {
       final response = await DioHelper().get(
         '/user',
         type: ApiType.baseUrl,
-        queryParameters: {'page': page},
+        queryParameters: {
+          'page': page,
+          if (searchQuery != null && searchQuery.isNotEmpty)
+            'search': searchQuery,
+          if (isPremiumOnly == true) 'premium': true,
+        },
       );
       final data = response.data;
       return PaginatedUserResponse.fromJson(data);
-      
+    } catch (e) {
+      throw UserService().handleError(e);
+    }
+  }
+
+  static Future<void> createUser({
+    required Map<String, dynamic> userData,
+  }) async {
+    try {
+      final response = await DioHelper().post(
+        '/user',
+        type: ApiType.baseUrl,
+        data: userData,
+      );
+      return response.data;
     } catch (e) {
       throw UserService().handleError(e);
     }

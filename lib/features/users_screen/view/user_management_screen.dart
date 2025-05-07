@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
+import 'package:taproot_admin/features/users_screen/widget/adduser_dialog.dart';
 import 'package:taproot_admin/widgets/gradient_text.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -9,7 +10,6 @@ import '../../user_data_update_screen/views/user_data_update_screen.dart';
 import '../data/user_data_model.dart';
 
 class UserManagementScreen extends StatefulWidget {
-
   final GlobalKey<NavigatorState>? innerNavigatorKey;
 
   const UserManagementScreen({super.key, this.innerNavigatorKey});
@@ -28,19 +28,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   int totalUser = 0;
   String searchQuery = '';
   bool showOnlyPremium = false;
+  int premiumUsers = 0;
   final rowsPerPage = 10;
   UserDataTableSource? _dataSource;
-
-  // List<User> get filteredUsers {
-  //   return users.where((user) {
-  //     final matchSearch = user.fullName.toLowerCase().contains(
-  //       searchQuery.toLowerCase(),
-  //     );
-  //     final matchPremium = showOnlyPremium ? user.isPremium : true;
-  //     return matchSearch && matchPremium;
-  //   }).toList();
-  // }
-
+  final _tableKey = GlobalKey<PaginatedDataTableState>();
   Future<void> loadUsers() async {
     // if (!mounted) return;
 
@@ -49,26 +40,38 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     });
 
     try {
-      final response = await UserService.fetchUser(currentPage);
+      final response = await UserService.fetchUser(
+        currentPage,
+        searchQuery,
+        showOnlyPremium,
+      );
 
       // if (!mounted) return;
 
       setState(() {
         users = response.users;
+        premiumUsers = users.where((user) => user.isPremium).length;
+
         totalUser = response.totalCount;
         totalPages = (totalUser / rowsPerPage).ceil(); // Calculate total pages
         isLoading = false;
 
-        // Apply filters if any
         final filtered =
             users.where((user) {
-              final matchSearch = user.fullName.toLowerCase().contains(
-                searchQuery.toLowerCase(),
-              );
+              final query = searchQuery.toLowerCase();
+
+              final matchName = user.fullName.toLowerCase().contains(query);
+              final matchNumber = user.phone.toLowerCase().contains(query);
+              final matchUserId = user.userId.toLowerCase().contains(query);
+
+              final matchWhatsapp = user.whatsapp.toLowerCase().contains(query);
+              final matchSearch =
+                  matchName || matchNumber || matchWhatsapp || matchUserId;
+
               final matchPremium = showOnlyPremium ? user.isPremium : true;
+
               return matchSearch && matchPremium;
             }).toList();
-
         _dataSource = UserDataTableSource(
           filtered,
           totalUser,
@@ -121,7 +124,14 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   MiniLoadingButton(
                     icon: Icons.add,
                     text: 'Add User',
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AddUserDialog();
+                        },
+                      );
+                    },
                     useGradient: true,
                     gradientColors: CustomColors.borderGradient.colors,
                   ),
@@ -144,6 +154,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         onChanged: (val) {
                           setState(() {
                             searchQuery = val;
+                            _tableKey.currentState?.pageTo(0);
                           });
                           loadUsers();
                         },
@@ -155,6 +166,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               SizedBox(
                 width: .8 * SizeUtils.width,
                 child: PaginatedDataTable(
+                  key: _tableKey,
                   headingRowColor: WidgetStateProperty.resolveWith<Color>((
                     Set<WidgetState> states,
                   ) {
@@ -178,6 +190,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       onChanged: (val) {
                         setState(() {
                           showOnlyPremium = val;
+                          _tableKey.currentState?.pageTo(0);
                         });
                         loadUsers(); // refresh the data
                       },

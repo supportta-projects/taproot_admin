@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
@@ -16,6 +17,7 @@ import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class AddUserPortfolio extends StatefulWidget {
+  static const path = '/addUserPortfolio';
   const AddUserPortfolio({super.key, required this.user});
   final User user;
   // final dynamic user;
@@ -27,6 +29,7 @@ class AddUserPortfolio extends StatefulWidget {
 class _AddUserPortfolioState extends State<AddUserPortfolio> {
   late final User user;
   bool _isLoading = false;
+  bool _isPremium = false;
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -52,6 +55,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   @override
   void initState() {
     user = widget.user;
+    _isPremium = user.isPremium;
     // TODO: implement initState
     super.initState();
   }
@@ -91,7 +95,8 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
           heading: aboutHeadingController.text,
           description: aboutDescriptionController.text,
         ),
-        user: UserInfo(id: user.id, code: user.userId, isPremium: false),
+        user: UserInfo(id: user.id, code: user.userId, isPremium: true
+        ),
         socialMedia: socialLinks,
         services: [],
       );
@@ -101,29 +106,35 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
         userid: user.id,
         portfolioData: portfolioData,
       );
-
-      if (result != null) {
-        // Show success message, or navigate to another screen
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Portfolio added successfully!')),
-        );
-      } else {
-        // Handle failure, maybe show an error message
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to add portfolio.')));
+      if (mounted) {
+        if (result != null) {
+          // Show success message, or navigate to another screen
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Portfolio added successfully!')),
+          );
+          Navigator.pop(context);
+        } else {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Failed to add portfolio.')));
+        }
       }
     } catch (e) {
       logError('User: ${user.id}, ${user.userId}');
       logError(e);
-      // Handle any errors that occur during the API call
-      // final message = e is CustomException ? e.message : e;
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      final message = e is CustomException ? e.message : 'Fill Correct Details';
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
     } finally {
-      setState(() {
-        _isLoading = false; // Hide loading indicator
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -189,7 +200,14 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
 
               PaddingRow(
                 children: [
-                  UserProfileContainer(user: user, isEdit: true),
+                  UserProfileContainer(
+                    user: user,
+                    isEdit: true,
+                    onPremiumChanged:
+                        (value) => setState(() {
+                          _isPremium = value;
+                        }),
+                  ),
                   Gap(CustomPadding.paddingXL.v),
 
                   AddBasicDetailContainer(

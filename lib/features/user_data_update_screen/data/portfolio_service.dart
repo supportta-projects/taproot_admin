@@ -74,6 +74,34 @@ class PortfolioService with ErrorExceptionHandler {
       throw PortfolioService().handleError(e);
     }
   }
+
+  static Future<PortfolioDataModel?> editPortfolio({
+    required String userid,
+    required Map<String, dynamic> portfolioEditedData,
+  }) async {
+    try {
+      final response = await DioHelper().patch(
+        '/portfolio/$userid',
+        type: ApiType.baseUrl,
+        data: portfolioEditedData,
+      );
+
+      if (response.statusCode == 200) {
+        return PortfolioDataModel.fromJson(response.data);
+      } else if (response.statusCode == 400) {
+        final msg = response.data['message'] as String?;
+        throw Exception(msg ?? 'Invalid portfolio data');
+      } else if (response.statusCode == 404) {
+        throw Exception('Portfolio not found for user ID: $userid');
+      } else {
+        throw Exception('Failed to edit portfolio');
+      }
+    } catch (e) {
+      logError('EditPortfolio Error: $e');
+      throw PortfolioService().handleError(e);
+    }
+  }
+
 }
 
 

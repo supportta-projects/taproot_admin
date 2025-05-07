@@ -59,12 +59,16 @@ class PersonalInfo {
   final String email;
   final String phoneNumber;
   final String whatsappNumber;
+  final String? bannerImage;
+  final String? profileImage;
 
   PersonalInfo({
     required this.name,
     required this.email,
     required this.phoneNumber,
     required this.whatsappNumber,
+    this.bannerImage,
+    this.profileImage,
   });
 
   factory PersonalInfo.fromJson(Map<String, dynamic> json) {

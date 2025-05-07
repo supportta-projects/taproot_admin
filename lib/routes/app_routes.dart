@@ -3,6 +3,8 @@ import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
+import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
+import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/services/connectivity_service.dart';
 
 import '../features/side_nav_screen/view/side_drawer_nav_screen.dart';
@@ -18,6 +20,8 @@ import '../core/logger.dart';
 class AppRoutes {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final Uri uri = Uri.parse(settings.name!);
+    logInfo('Route name: ${settings.name}');
+    logInfo('URI path: ${uri.path}');
 
     logInfo(uri);
 
@@ -27,7 +31,7 @@ class AppRoutes {
 
       //   );
       case DashboardScreen.path:
-        return pageRoute(settings,  DashboardScreen());
+        return pageRoute(settings, DashboardScreen());
       case ConnectionCheckerScreen.path:
         return pageRoute(settings, const ConnectionCheckerScreen());
 
@@ -54,6 +58,11 @@ class AppRoutes {
 
       case AuthScreen.path:
         return pageRoute(settings, const AuthScreen());
+
+        //TODO : navigate to the add user portfolio screen
+      case '/addUserPortfolio':
+        final user = settings.arguments as User;
+        return pageRoute(settings, AddUserPortfolio(user: user));
 
       case LandingPage.path:
         return pageRoute(settings, const LandingPage());
