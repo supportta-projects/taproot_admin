@@ -219,20 +219,20 @@ class SocialMedia {
 }
 
 class Service {
-  final String id;
-  final String user;
-  final String portfolio;
+  final String ?id;
+  final String? user;
+  final String? portfolio;
   final String heading;
   final String description;
-  final DateTime createdAt;
+  final DateTime? createdAt;
 
   Service({
-    required this.id,
-    required this.user,
-    required this.portfolio,
+     this.id,
+     this.user,
+     this.portfolio,
     required this.heading,
     required this.description,
-    required this.createdAt,
+   this.createdAt,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -252,10 +252,6 @@ class Service {
     'portfolio': portfolio,
     'heading': heading,
     'description': description,
-    'createdAt': createdAt.toIso8601String(),
+    'createdAt': createdAt?.toIso8601String(),
   };
 }
-
-
-
-

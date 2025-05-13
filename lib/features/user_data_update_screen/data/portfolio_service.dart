@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
@@ -102,6 +103,49 @@ class PortfolioService with ErrorExceptionHandler {
     }
   }
 
+  static Future<PortfolioDataModel> addService({
+    required String userId,
+    required String portfolioId,
+    required Map<String, dynamic> serviceData,
+  }) async {
+    try {
+      // final formData = FormData.fromMap(serviceData);
+      final response = await DioHelper().post(
+        '/portfolio-service/$userId/service/$portfolioId',
+        type: ApiType.baseUrl,
+        data: serviceData,
+      );
+      if (response.statusCode == 200) {
+        return PortfolioDataModel.fromJson(response.data);
+      } else {
+        throw Exception('Failed to add service');
+      }
+    } catch (e) {
+      logError('AddService Error: $e');
+      throw PortfolioService().handleError(e);
+    }
+  }
+
+  static Future<PortfolioDataModel> editService({
+    required String serviceId,
+    required Map<String, dynamic> editServiceData,
+  }) async {
+    try {
+      final response = await DioHelper().patch(
+        '/portfolio-service/service/$serviceId',
+        type: ApiType.baseUrl,
+        data: editServiceData,
+      );
+      if (response.statusCode == 200) {
+        return PortfolioDataModel.fromJson(response.data);
+      } else {
+        throw Exception('failed');
+      }
+    } catch (e) {
+      logError('Edit service Error:$e');
+      throw Exception('Edit service failed: $e');
+    }
+  }
 }
 
 

@@ -1,10 +1,13 @@
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/product_screen/data/product_category_model.dart';
+import 'package:taproot_admin/features/product_screen/data/product_model.dart';
+import 'package:taproot_admin/features/product_screen/data/product_service.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_id_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
@@ -12,32 +15,59 @@ import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class AddProduct extends StatefulWidget {
   final VoidCallback onBack;
-  const AddProduct({super.key, required this.onBack});
+  // final ProductCategory ? productCategory;
+
+  // final Future<void> Function()? fetchCategoryFunction;
+  final Future<void> Function()? onSave;
+  const AddProduct({super.key, required this.onBack, this.onSave});
 
   @override
   State<AddProduct> createState() => _AddProductState();
 }
 
 class _AddProductState extends State<AddProduct> {
+  final TextEditingController _templateNameController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _discountPriceController =
+      TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  // final TextEditingController _designTypeController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String templateName = '';
   String price = '';
   String discountPrice = '';
   String description = '';
-
-  String dropdownvalue = 'Basic';
-  var items = ['Premium', 'Basic', 'Modern', 'Classic', 'Business'];
+  List<ProductCategory> productCategories = [];
+  ProductCategory? selectedCategory;
   final List<File?> _selectedImages = [null, null, null, null];
 
   void pickImage(int index) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowedExtensions: ['jpg', 'jpeg', 'png'],
+      withData: true,
     );
 
     if (result != null && result.files.isNotEmpty) {
+      final pickedFile = result.files.first;
+
       setState(() {
-        _selectedImages[index] = File(result.files.first.path!);
+        _selectedImages[index] = File(pickedFile.path!);
       });
+
+      final imageBytes = pickedFile.bytes;
+      final filename = pickedFile.name;
+
+      if (imageBytes != null) {
+        final uploadResult = await ProductService.uploadImageFile(
+          imageBytes,
+          filename,
+        );
+        logSuccess('name: ${uploadResult['name']}');
+        logSuccess('key: ${uploadResult['key']}');
+        logSuccess('size: ${uploadResult['size']}');
+        logSuccess('mimetype: ${uploadResult['mimetype']}');
+      }
     }
   }
 
@@ -51,206 +81,307 @@ class _AddProductState extends State<AddProduct> {
     });
   }
 
+  Future<void> addProduct() async {
+    try {
+      List<ProductImage> productImages = [];
+      for (var image in _selectedImages) {
+        if (image != null) {
+          final uploadResult = await ProductService.uploadImageFile(
+            image.readAsBytesSync(),
+            image.path.split('/').last,
+          );
+          productImages.add(
+            ProductImage(
+              name: uploadResult['name'],
+              key: uploadResult['key'],
+              size: uploadResult['size'],
+              mimetype: uploadResult['mimetype'],
+            ),
+          );
+        }
+      }
+      await ProductService.addProduct(
+        name: _templateNameController.text,
+        categoryId: selectedCategory!.id,
+        description: _descriptionController.text,
+        actualPrice: double.tryParse(_priceController.text) ?? 0.0,
+        discountPrice: double.tryParse(_discountPriceController.text) ?? 0.0,
+        discountPercentage:
+            double.tryParse(_discountPriceController.text) ?? 0.0,
+        productImages: productImages,
+      );
+      logSuccess('Product added successfully');
+    } catch (e) {
+      logError('Error: $e');
+    }
+  }
+
+  Future<void> fetchProductCategories() async {
+    try {
+      final response = await ProductService.getProductCategory();
+      setState(() {
+        productCategories = response;
+        if (productCategories.isNotEmpty) {
+          selectedCategory = productCategories[0];
+        }
+      });
+    } catch (e) {
+      logError('Error fetching product categories: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    fetchProductCategories();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Gap(CustomPadding.paddingXL.v),
-            Row(
-              children: [
-                Gap(CustomPadding.paddingXL.v),
-                GestureDetector(
-                  onTap: () {
-                    widget.onBack();
-                  },
-                  child: Text(
-                    'Product',
-                    style: context.inter60016.copyWith(
-                      color: CustomColors.greenDark,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Gap(CustomPadding.paddingXL.v),
+              Row(
+                children: [
+                  Gap(CustomPadding.paddingXL.v),
+                  GestureDetector(
+                    onTap: () {
+                      widget.onBack();
+                    },
+                    child: Text(
+                      'Product',
+                      style: context.inter60016.copyWith(
+                        color: CustomColors.greenDark,
+                      ),
                     ),
                   ),
-                ),
-                Gap(CustomPadding.padding.v),
-                Text('>', style: context.inter60016),
-                Gap(CustomPadding.padding.v),
-                Text('Add Product', style: context.inter60016),
-                Spacer(),
-                MiniGradientBorderButton(
-                  text: 'Back',
-                  icon: Icons.arrow_back,
-                  onPressed: widget.onBack,
-                  gradient: LinearGradient(
-                    colors: CustomColors.borderGradient.colors,
+                  Gap(CustomPadding.padding.v),
+                  Text('>', style: context.inter60016),
+                  Gap(CustomPadding.padding.v),
+                  Text('Add Product', style: context.inter60016),
+                  Spacer(),
+                  MiniGradientBorderButton(
+                    text: 'Back',
+                    icon: Icons.arrow_back,
+                    onPressed: widget.onBack,
+                    gradient: LinearGradient(
+                      colors: CustomColors.borderGradient.colors,
+                    ),
                   ),
-                ),
-                Gap(CustomPadding.paddingLarge.v),
-                MiniLoadingButton(
-                  icon: LucideIcons.save,
-                  text: 'Save',
-                  onPressed: () {
-                    final newProduct = {
-                      'templateName': templateName,
-                      'price': price,
-                      'discountPrice': discountPrice,
-                      'description': description,
-                      'images': _selectedImages
-                        .where((image) => image != null)
-                        .map((image) => image!.path)
-                        .toList(),
-                      'type': dropdownvalue,
-                    };
-                    Navigator.pop(context,newProduct);
-                  },
-                  useGradient: true,
-                  gradientColors: CustomColors.borderGradient.colors,
-                ),
-                Gap(CustomPadding.paddingXL.v),
-              ],
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-                vertical: CustomPadding.paddingLarge.v,
-              ),
-              margin: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-              ),
-              decoration: BoxDecoration(
-                color: CustomColors.secondaryColor,
-                borderRadius: BorderRadius.circular(
-                  CustomPadding.paddingLarge.v,
-                ),
-              ),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ProductIdContainer(),
-                  Gap(CustomPadding.paddingXL.v),
-                  Row(
-                    children: List.generate(4, (index) {
-                      if (index == 0 || _selectedImages[index - 1] != null) {
-                        return AddImageContainer(
-                          selectedImage: _selectedImages[index],
-                          pickImage: () => pickImage(index),
-                          removeImage: () => removeImage(index),
-                        );
-                      } else {
-                        return const SizedBox();
+                  Gap(CustomPadding.paddingLarge.v),
+                  //TODO: image validation
+                  MiniLoadingButton(
+                    icon: LucideIcons.save,
+                    text: 'Save',
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await addProduct();
+                        await widget.onSave!();
+                        Navigator.pop(context);
                       }
-                    }),
+                    },
+                    useGradient: true,
+                    gradientColors: CustomColors.borderGradient.colors,
                   ),
+                  Gap(CustomPadding.paddingXL.v),
+                ],
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: CustomPadding.paddingLarge.v,
+                  vertical: CustomPadding.paddingLarge.v,
+                ),
+                margin: EdgeInsets.symmetric(
+                  horizontal: CustomPadding.paddingLarge.v,
+                ),
+                decoration: BoxDecoration(
+                  color: CustomColors.secondaryColor,
+                  borderRadius: BorderRadius.circular(
+                    CustomPadding.paddingLarge.v,
+                  ),
+                ),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ProductIdContainer(),
+                    Gap(CustomPadding.paddingXL.v),
+                    Row(
+                      children: List.generate(4, (index) {
+                        if (index == 0 || _selectedImages[index - 1] != null) {
+                          return AddImageContainer(
+                            selectedImage: _selectedImages[index],
+                            pickImage: () => pickImage(index),
+                            removeImage: () => removeImage(index),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      }),
+                    ),
 
-                  Gap(CustomPadding.paddingLarge.v),
-                  Text(
-                    'You can Choose a Maximum of 4 Photos. JPG, GIF, or PNG. Max size of 800K',
-                    style: TextStyle(color: CustomColors.hintGrey),
-                  ),
-                  Gap(CustomPadding.paddingLarge.v),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextFormContainer(
-                          initialValue: '',
-                          labelText: 'Template Name',
-                          onChanged: (value) {
-                            setState(() {
-                              templateName = value;
-                            });
-                          },
+                    Gap(CustomPadding.paddingLarge.v),
+                    Text(
+                      'You can Choose a Maximum of 4 Photos. JPG, GIF, or PNG. Max size of 800K',
+                      style: TextStyle(color: CustomColors.hintGrey),
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormContainer(
+                            controller: _templateNameController,
+                            initialValue: '',
+                            labelText: 'Template Name',
+                            onChanged: (value) {
+                              setState(() {
+                                templateName = value;
+                              });
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a product name';
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: TextFormContainer(
-                          initialValue: '',
-                          labelText: 'Discount',
-                          onChanged: (value) {
-                            discountPrice = value;
-                          },
+                        Expanded(
+                          child: TextFormContainer(
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            controller: _discountPriceController,
+                            initialValue: '',
+                            labelText: 'Discount',
+                            onChanged: (value) {
+                              discountPrice = value;
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a discount price';
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          children: [
-                            TextFormContainer(
-                              initialValue: '',
-                              labelText: 'Price',
-                              onChanged: (value) {
-                                price = value;
-                              },
-                            ),
-                            Row(
-                              children: [
-                                Gap(CustomPadding.paddingLarge.v),
-                                Text('Design Type'),
-                                Expanded(
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: CustomPadding.paddingLarge.v,
-                                    ),
-                                    margin: EdgeInsets.symmetric(
-                                      horizontal: CustomPadding.paddingLarge.v,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        CustomPadding.paddingSmall.v,
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              TextFormContainer(
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                controller: _priceController,
+                                initialValue: '',
+                                labelText: 'Price',
+                                onChanged: (value) {
+                                  price = value;
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a price';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              Row(
+                                children: [
+                                  Gap(CustomPadding.paddingLarge.v),
+                                  Text('Design Type'),
+                                  Expanded(
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            CustomPadding.paddingLarge.v,
                                       ),
-                                      border: Border.all(
-                                        color: CustomColors.textColorLightGrey,
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal:
+                                            CustomPadding.paddingLarge.v,
                                       ),
-                                    ),
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        underline: null,
-                                        icon: Icon(Icons.keyboard_arrow_down),
-                                        isExpanded: true,
+                                      decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(
-                                          CustomPadding.padding.v,
+                                          CustomPadding.paddingSmall.v,
                                         ),
-                                        value: dropdownvalue,
-                                        items:
-                                            items.map((String items) {
-                                              return DropdownMenuItem(
-                                                value: items,
-                                                child: Text(items),
-                                              );
-                                            }).toList(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            dropdownvalue = newValue!;
-                                          });
-                                        },
+                                        border: Border.all(
+                                          color:
+                                              CustomColors.textColorLightGrey,
+                                        ),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<ProductCategory>(
+                                          underline: null,
+                                          icon: Icon(Icons.keyboard_arrow_down),
+                                          isExpanded: true,
+                                          borderRadius: BorderRadius.circular(
+                                            CustomPadding.padding.v,
+                                          ),
+                                          value: selectedCategory,
+                                          items:
+                                              productCategories.map((category) {
+                                                return DropdownMenuItem(
+                                                  value: category,
+                                                  child: Text(category.name),
+                                                );
+                                              }).toList(),
+
+                                          onChanged: (
+                                            ProductCategory? newValue,
+                                          ) {
+                                            setState(() {
+                                              selectedCategory = newValue;
+                                            });
+                                            logSuccess(
+                                              'Selected: ${newValue!.name}',
+                                            );
+                                            logSuccess(
+                                              'Selected ID: ${newValue.id}',
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: TextFormContainer(
-                          maxline: 4,
-                          initialValue: '',
-                          labelText: 'Description',
-                          onChanged: (value) {
-                            description = value;
-                          },
+                        Expanded(
+                          child: TextFormContainer(
+                            controller: _descriptionController,
+                            maxline: 4,
+                            initialValue: '',
+                            labelText: 'Description',
+                            onChanged: (value) {
+                              description = value;
+                            },
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value.split(' ').length < 5) {
+                                return 'Please enter at least 5 words';
+                              }
+                              return null;
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -269,7 +400,7 @@ class AddImageContainer extends StatelessWidget {
     required this.removeImage,
     required this.pickImage,
     this.selectedImage,
-    this.isImageView=false,
+    this.isImageView = false,
     this.path,
   });
 
@@ -286,12 +417,19 @@ class AddImageContainer extends StatelessWidget {
             color: CustomColors.lightGreen,
             borderRadius: BorderRadius.circular(CustomPadding.padding.v),
           ),
-          child:isImageView?Stack(fit: StackFit.expand,children: [
+          child:
+              isImageView
+                  ? Stack(
+                    fit: StackFit.expand,
+                    children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(
                           CustomPadding.padding.v,
                         ),
-                        child: Image.file(File(path.toString()), fit: BoxFit.cover),
+                        child: Image.file(
+                          File(path.toString()),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -342,71 +480,85 @@ class AddImageContainer extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ],) : Center(
-            child:
-                selectedImage == null
-                    ? Icon(Icons.add, size: 40.v, color: CustomColors.greenDark)
-                    : Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            CustomPadding.padding.v,
-                          ),
-                          child: Image.file(selectedImage!, fit: BoxFit.cover),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                removeImage();
-                              },
-                              icon: Icon(
-                                Icons.cancel_outlined,
-                                size: 30.v,
-                                color: CustomColors.secondaryColor,
-                              ),
-                            ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                pickImage();
-                              },
-                              child: Container(
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.vertical(
-                                    bottom: Radius.circular(
-                                      CustomPadding.padding.v,
-                                    ),
+                    ],
+                  )
+                  : Center(
+                    child:
+                        selectedImage == null
+                            ? Icon(
+                              Icons.add,
+                              size: 40.v,
+                              color: CustomColors.greenDark,
+                            )
+                            : Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                    CustomPadding.padding.v,
                                   ),
-                                  gradient: CustomColors.borderGradient,
+                                  child: Image.file(
+                                    selectedImage!,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Text(
-                                      'Replace',
-                                      style: context.inter60012.copyWith(
+                                    IconButton(
+                                      onPressed: () {
+                                        removeImage();
+                                      },
+                                      icon: Icon(
+                                        Icons.cancel_outlined,
+                                        size: 30.v,
                                         color: CustomColors.secondaryColor,
                                       ),
                                     ),
-                                    Gap(CustomPadding.padding.v),
-                                    Icon(
-                                      Icons.repeat,
-                                      color: CustomColors.secondaryColor,
-                                      size: 25,
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: () {
+                                        pickImage();
+                                      },
+                                      child: Container(
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.vertical(
+                                            bottom: Radius.circular(
+                                              CustomPadding.padding.v,
+                                            ),
+                                          ),
+                                          gradient: CustomColors.borderGradient,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Replace',
+                                              style: context.inter60012
+                                                  .copyWith(
+                                                    color:
+                                                        CustomColors
+                                                            .secondaryColor,
+                                                  ),
+                                            ),
+                                            Gap(CustomPadding.padding.v),
+                                            Icon(
+                                              Icons.repeat,
+                                              color:
+                                                  CustomColors.secondaryColor,
+                                              size: 25,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-          ),
+                  ),
         ),
       ),
     );

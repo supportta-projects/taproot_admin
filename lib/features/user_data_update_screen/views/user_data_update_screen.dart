@@ -6,9 +6,11 @@ import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_mo
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/edit_user_portfolio.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
@@ -283,23 +285,20 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(
-                    //     horizontal: CustomPadding.paddingLarge.v,
-                    //   ),
-                    //   child: SingleChildScrollView(
-                    //     scrollDirection: Axis.horizontal,
-                    //     child: Row(
-                    //       children: [
-                    //         AboutContainer(
-                    //           user: user,
-                    //           isEdit: userEdit,
-                    //           portfolio: portfolio,
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge.v,
+                      ),
+                      child: Row(
+                        children: [
+                          AboutContainer(
+                            user: user,
+                            isEdit: userEdit,
+                            portfolio: portfolio,
+                          ),
+                        ],
+                      ),
+                    ),
                     Gap(CustomPadding.paddingXL.v),
                     // Padding(
                     //   padding: EdgeInsets.symmetric(
@@ -307,7 +306,24 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                     //   ),
                     //   child: Row(
                     //     children: [
-                    //       ServiceContainer(isEdited: userEdit, user: user),
+                    //       ServiceContainer(
+                    //         isEdited: userEdit,
+                    //         user: user,
+                    //         portfolio: portfolio,
+                    //         onServiceAdd: () async {
+                    //           // Refresh the portfolio data after adding
+                    //           await fetchPortfolio();
+                    //         },
+                    //         onServiceEdit: (Service service) async {
+                    //           // Refresh the portfolio data after editing
+                    //           await fetchPortfolio();
+                    //         },
+                    //         onServiceDelete: (String serviceId) async {
+                    //           // Refresh the portfolio data after deleting
+                    //           await fetchPortfolio();
+                    //         },
+                    //       ),
+
                     //     ],
                     //   ),
                     // ),

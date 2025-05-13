@@ -8,17 +8,23 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 
 class ProfileContainer extends StatelessWidget {
-  final TextEditingController designation =TextEditingController();
-    final TextEditingController companyController = TextEditingController();
+  final TextEditingController? designationController;
+    final TextEditingController? companyController;
+  final TextEditingController?
+   workEmailController;
+
 
   final PortfolioDataModel? portfolio;
 
   final bool isEdit;
-   ProfileContainer({
+const   ProfileContainer({
     super.key,
     required this.user,
     this.isEdit = false,
     this.portfolio,
+    this.companyController,
+    this.workEmailController,
+    this.designationController,
   });
 
   final User user;
@@ -31,7 +37,8 @@ class ProfileContainer extends StatelessWidget {
         Gap(CustomPadding.paddingLarge.v),
         isEdit
             ? TextFormContainer(
-              initialValue: portfolio!.workInfo. designation,
+              controller: designationController,
+              // initialValue: portfolio!.workInfo. designation,
               labelText: 'Designation',
               user: user,
             )
@@ -40,7 +47,8 @@ class ProfileContainer extends StatelessWidget {
               value: portfolio?.workInfo.designation ?? 'loading...',
             ),
         isEdit
-            ? TextFormContainer(
+            ? TextFormContainer(  
+              controller: companyController,
               readonly: true,
               initialValue: portfolio!.workInfo.companyName,
               labelText: 'Company Name',
@@ -52,6 +60,7 @@ class ProfileContainer extends StatelessWidget {
             ),
         isEdit
             ? TextFormContainer(
+              controller: workEmailController,
               user: user,
               initialValue: portfolio!.workInfo.workEmail,
               labelText: 'Email',

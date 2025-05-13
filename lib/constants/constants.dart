@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
+
+
+const String baseUrl = "http://213.210.36.7:5000";
+
 class CustomPadding {
   static const double padding = 8;
   static const double paddingLarge = 16;

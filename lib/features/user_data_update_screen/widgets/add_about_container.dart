@@ -6,7 +6,12 @@ import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 class AddAboutContainer extends StatelessWidget {
   final TextEditingController headingcontroller;
   final TextEditingController descriptioncontroller;
-  const AddAboutContainer({super.key, required this.user,required this.headingcontroller,required this.descriptioncontroller});
+  const AddAboutContainer({
+    super.key,
+    required this.user,
+    required this.headingcontroller,
+    required this.descriptioncontroller,
+  });
 
   final User user;
 
@@ -21,8 +26,10 @@ class AddAboutContainer extends StatelessWidget {
           labelText: 'Heading/topic',
           user: user,
         ),
-        TextFormContainer(controller: descriptioncontroller,
-          maxline: 8,
+        TextFormContainer(
+          controller: descriptioncontroller,
+          maxline: 20,
+
           initialValue: '',
           labelText: 'Description',
           user: user,

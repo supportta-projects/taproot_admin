@@ -64,6 +64,7 @@ class DioHelper with ErrorExceptionHandler {
     ApiType type = ApiType.base,
     Map<String, dynamic>? queryParameters,
     Options? options,
+    
   }) {
     return getDio(
       type,

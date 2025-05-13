@@ -14,6 +14,10 @@ import 'package:taproot_admin/widgets/launch_url.dart';
 import '../../users_screen/data/user_data_model.dart';
 
 class AdditionalContainer extends StatefulWidget {
+    final TextEditingController? primaryWebsiteController;
+      final TextEditingController? secondaryWebsiteController;
+
+
   final PortfolioDataModel? portfolio;
 
   final bool isEdit;
@@ -23,6 +27,8 @@ class AdditionalContainer extends StatefulWidget {
     required this.user,
     this.isEdit = false,
     this.portfolio,
+    this.primaryWebsiteController,
+    this.secondaryWebsiteController
   });
 
   @override
@@ -61,8 +67,8 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
               child: Column(
                 children: [
                   widget.isEdit
-                      ? TextFormContainer(
-                        initialValue: widget.portfolio!.workInfo.primaryWebsite,
+                      ? TextFormContainer(controller: widget.primaryWebsiteController,
+                        // initialValue: widget.portfolio!.workInfo.primaryWebsite,
                         labelText: 'Website Link',
                         user: widget.user,
                       )
@@ -79,8 +85,9 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                       ),
                   widget.isEdit
                       ? TextFormContainer(
-                        initialValue:
-                            widget.portfolio!.workInfo.secondaryWebsite,
+                        controller: widget.secondaryWebsiteController,
+                        // initialValue:
+                        //     widget.portfolio!.workInfo.secondaryWebsite,
                         labelText: 'Website Link',
                         user: widget.user,
                       )

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_id_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
@@ -8,6 +9,7 @@ import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class ViewProduct extends StatefulWidget {
+  final Product? product;
   final String? productName;
   final String? price;
   final String? offerPrice;
@@ -26,6 +28,7 @@ class ViewProduct extends StatefulWidget {
     this.offerPrice,
     this.description,
     this.cardType,
+    this.product,
   });
 
   @override
@@ -117,7 +120,8 @@ class _ViewProductState extends State<ViewProduct> {
                       width: SizeUtils.width / 5,
                       child: AddImageContainer(
                         isImageView: true,
-                        path: widget.images![index],
+                        path:
+                            '$baseUrl/file?key=products/${widget.images![index]}',
                       ),
                     ),
                   ),
@@ -131,19 +135,20 @@ class _ViewProductState extends State<ViewProduct> {
                     children: [
                       CardRow(
                         prefixText: 'Template Name',
-                        suffixText: '${widget.productName}',
+                        suffixText: widget.product?.name ?? '',
                       ),
                       CardRow(
                         prefixText: 'Price',
-                        suffixText: "₹${widget.price} / \$5.00",
+                        suffixText: "₹${widget.product!.actualPrice} / \$5.00",
                       ),
                       CardRow(
                         prefixText: 'Discount Price',
-                        suffixText: "₹${widget.offerPrice} / \$4.00",
+                        suffixText:
+                            "₹${widget.product!.discountedPrice} / \$4.00",
                       ),
                       CardRow(
                         prefixText: 'Design Type',
-                        suffixText: '${widget.cardType}',
+                        suffixText: widget.product!.category!.name.toString(),
                       ),
                       CardRow(
                         prefixText: 'Description',

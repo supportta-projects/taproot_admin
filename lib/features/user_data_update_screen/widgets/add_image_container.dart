@@ -1,4 +1,4 @@
-import 'dart:io';
+
 
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -24,7 +24,7 @@ class AddImageContainer extends StatelessWidget {
             isImageView
                 ? ClipRRect(
                   borderRadius: BorderRadius.circular(CustomPadding.padding.v),
-                  child: Image.file(File(path.toString()), fit: BoxFit.cover),
+                  child: Image.network(path.toString(), fit: BoxFit.cover),
                 )
                 : Center(
                   child: Icon(

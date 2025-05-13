@@ -18,10 +18,9 @@ class TextFormContainer extends StatefulWidget {
   final bool isNumberField;
 
   const TextFormContainer({
-  
     super.key,
-     this.initialValue,
-     this.autofocus = false,
+    this.initialValue,
+    this.autofocus = false,
 
     required this.labelText,
     this.user,
@@ -82,6 +81,7 @@ class _TextFormContainerState extends State<TextFormContainer> {
         vertical: CustomPadding.padding.v,
       ),
       child: TextFormField(
+        // scrollPhysics: const BouncingScrollPhysics(),
         autofocus: widget.autofocus,
         validator: widget.validator,
         // onChanged: widget.onChanged,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
@@ -9,7 +9,7 @@ class LinkContainer extends StatefulWidget {
   final String name;
   final String svg;
   final String initaialValue;
-   final ValueChanged<String>? onChanged; 
+  final ValueChanged<String>? onChanged;
 
   const LinkContainer({
     super.key,
@@ -17,7 +17,7 @@ class LinkContainer extends StatefulWidget {
     required this.name,
     required this.svg,
     this.initaialValue = '',
-    this.onChanged,
+    this.onChanged, required String source,
   });
 
   final User user;
@@ -28,21 +28,39 @@ class LinkContainer extends StatefulWidget {
 
 class _LinkContainerState extends State<LinkContainer> {
   late TextEditingController _controller;
+
   @override
   void initState() {
     _controller = TextEditingController(text: widget.initaialValue);
-     _controller.addListener(() {
+    _controller.addListener(() {
       widget.onChanged!(_controller.text);
     });
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    // TODO: implement dispose
     super.dispose();
+  }
+
+  // Validate the link based on the platform name
+  String? _validateLink(String? value) {
+    // Check if the value contains the platform name (case insensitive)
+    if (value != null &&
+        value.isNotEmpty &&
+        !value.contains(widget.name.toLowerCase())) {
+      return 'Please provide a valid ${widget.name} link';
+    }
+
+    // Check if the value is a valid URL
+    if (value != null &&
+        value.isNotEmpty &&
+        !(Uri.tryParse(value)?.isAbsolute ?? false)) {
+      return 'Please enter a valid URL';
+    }
+
+    return null;
   }
 
   @override
@@ -56,7 +74,6 @@ class _LinkContainerState extends State<LinkContainer> {
             child: Row(
               children: [
                 Gap(CustomPadding.paddingXL.v),
-
                 SvgPicture.asset(widget.svg),
                 Gap(CustomPadding.paddingLarge.v),
                 Text(
@@ -72,13 +89,14 @@ class _LinkContainerState extends State<LinkContainer> {
         ),
         Expanded(
           child: Container(
-            height: 70,
+            height: 90,
             color: Colors.white,
             child: TextFormContainer(
               controller: _controller,
               initialValue: widget.initaialValue,
               labelText: 'Link',
               user: widget.user,
+              validator: _validateLink,
             ),
           ),
         ),
