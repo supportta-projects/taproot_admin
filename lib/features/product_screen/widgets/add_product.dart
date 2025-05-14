@@ -38,6 +38,8 @@ class _AddProductState extends State<AddProduct> {
   String discountPrice = '';
   String description = '';
   List<ProductCategory> productCategories = [];
+  List<String> uploadedImageKeys = [];
+
   ProductCategory? selectedCategory;
   final List<File?> _selectedImages = [null, null, null, null];
 
@@ -63,6 +65,9 @@ class _AddProductState extends State<AddProduct> {
           imageBytes,
           filename,
         );
+        setState(() {
+          uploadedImageKeys.add(uploadResult['key']);
+        });
         logSuccess('name: ${uploadResult['name']}');
         logSuccess('key: ${uploadResult['key']}');
         logSuccess('size: ${uploadResult['size']}');
@@ -174,7 +179,7 @@ class _AddProductState extends State<AddProduct> {
                     ),
                   ),
                   Gap(CustomPadding.paddingLarge.v),
-                  //TODO: image validation
+                  //TODO: image
                   MiniLoadingButton(
                     icon: LucideIcons.save,
                     text: 'Save',
@@ -218,6 +223,11 @@ class _AddProductState extends State<AddProduct> {
                             selectedImage: _selectedImages[index],
                             pickImage: () => pickImage(index),
                             removeImage: () => removeImage(index),
+                            imagekey:
+                                uploadedImageKeys.isNotEmpty &&
+                                        index < uploadedImageKeys.length
+                                    ? uploadedImageKeys[index]
+                                    : null,
                           );
                         } else {
                           return const SizedBox();
@@ -394,6 +404,7 @@ class AddImageContainer extends StatelessWidget {
   final File? selectedImage;
   final bool isImageView;
   final String? path;
+  final String? imagekey;
 
   const AddImageContainer({
     super.key,
@@ -402,6 +413,7 @@ class AddImageContainer extends StatelessWidget {
     this.selectedImage,
     this.isImageView = false,
     this.path,
+    this.imagekey,
   });
 
   @override
@@ -426,10 +438,10 @@ class AddImageContainer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(
                           CustomPadding.padding.v,
                         ),
-                        child: Image.file(
-                          File(path.toString()),
-                          fit: BoxFit.cover,
+                        child: Image.network(
+                          '$baseUrl/file?key=products/$path',
                         ),
+                        // Image.file(File(path.toString()), fit: BoxFit.cover),
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -497,10 +509,14 @@ class AddImageContainer extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(
                                     CustomPadding.padding.v,
                                   ),
-                                  child: Image.file(
-                                    selectedImage!,
+                                  child: Image.network(
+                                    '$baseUrl/file?key=products/$imagekey',
                                     fit: BoxFit.cover,
                                   ),
+                                  //  Image.file(
+                                  //   selectedImage!,
+                                  //   fit: BoxFit.cover,
+                                  // ),
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -563,4 +579,24 @@ class AddImageContainer extends StatelessWidget {
       ),
     );
   }
+
+  // Widget _buildImageFromPath(String? path) {
+  //   if (path == null || path.isEmpty) {
+  //     return const Icon(Icons.broken_image, size: 50);
+  //   }
+
+  //   final isNetwork = path.startsWith('http') || path.startsWith('https');
+
+  //   return isNetwork
+  //       ? Image.network(
+  //         path,
+  //         fit: BoxFit.cover,
+  //         errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+  //       )
+  //       : Image.file(
+  //         File(path),
+  //         fit: BoxFit.cover,
+  //         errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+  //       );
+  // }
 }

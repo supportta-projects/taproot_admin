@@ -64,7 +64,7 @@ class _ViewProductState extends State<ViewProduct> {
               Gap(CustomPadding.padding.v),
               Text('>', style: context.inter60016),
               Gap(CustomPadding.padding.v),
-              Text('${widget.productName}', style: context.inter60016),
+              Text('${widget.product!.name}', style: context.inter60016),
               Spacer(),
               MiniLoadingButton(
                 icon: Icons.edit,
@@ -152,7 +152,7 @@ class _ViewProductState extends State<ViewProduct> {
                       ),
                       CardRow(
                         prefixText: 'Description',
-                        suffixText: '${widget.description}',
+                        suffixText: '${widget.product!.description}',
                       ),
                     ],
                   ),

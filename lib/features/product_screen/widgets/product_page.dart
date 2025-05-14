@@ -255,6 +255,16 @@ class _ProductPageState extends State<ProductPage>
                                                             (
                                                               context,
                                                             ) => EditProduct(
+                                                              product:
+                                                                  productcard,
+                                                              images:
+                                                                  productcard
+                                                                      .productImages!
+                                                                      .map(
+                                                                        (e) =>
+                                                                            e.key,
+                                                                      )
+                                                                      .toList(),
                                                               // price:
                                                               //     product.actualPrice
                                                               //         .toString(),

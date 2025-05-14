@@ -41,8 +41,8 @@ class AppRoutes {
       case OrderScreen.path:
         return pageRoute(settings, const OrderScreen());
 
-      case EditProduct.path:
-        return pageRoute(settings, const EditProduct());
+      // case EditProduct.path:
+      //   return pageRoute(settings, const EditProduct());
 
       case ProductScreen.path:
         return pageRoute(settings, const ProductScreen());

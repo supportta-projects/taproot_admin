@@ -118,4 +118,55 @@ class ProductService with ErrorExceptionHandler {
       throw ProductService().handleError('Failed to load products, $e');
     }
   }
+
+  static Future<ProductResponse> editProduct({
+    String? name,
+    String? categoryId,
+    String? description,
+    double? actualPrice,
+    double? discountPrice,
+    double? discountPercentage,
+    List<ProductImage>? productImages,
+    required String productId,
+  }) async {
+    try {
+      final updateProduct = Product(
+        name: name,
+        actualPrice: actualPrice,
+        category: Category(id: categoryId.toString()),
+        description: description,
+        productImages: productImages,
+        discountedPrice: discountPrice,
+      );
+      final response = await DioHelper().patch(
+        '/product$productId',
+        type: ApiType.baseUrl,
+      );
+      if (response.statusCode == 200) {
+        logSuccess("Response Data: ${response.data}");
+        return ProductResponse.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load products');
+      }
+    } catch (e) {
+      throw ProductService().handleError('Failed to load products, $e');
+    }
+  }
+
+  static Future<void> deleteImage(ProductImage image) async {
+    try {
+      final response = await DioHelper().delete(
+        '/product/upload',
+        type: ApiType.baseUrl,
+        data: {"file": image.toJson()},
+      );
+      if(response.statusCode==200){
+        logSuccess('image deleted successfully');
+      }else{
+        logError('image deleted failed');
+      }
+    } catch (e) {
+       throw ProductService().handleError(e);
+    }
+  }
 }

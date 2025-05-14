@@ -267,16 +267,16 @@ class CoverImage {
 }
 
 class ProductImage {
-  final String name;
+  final String? name;
   final String key;
-  final int size;
-  final String mimetype;
+  final int? size;
+  final String? mimetype;
 
   ProductImage({
-    required this.name,
+     this.name,
     required this.key,
-    required this.size,
-    required this.mimetype,
+     this.size,
+     this.mimetype,
   });
 
   factory ProductImage.fromJson(Map<String, dynamic> json) {
