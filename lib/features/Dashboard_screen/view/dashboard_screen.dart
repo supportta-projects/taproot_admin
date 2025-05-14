@@ -4,11 +4,47 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/chart_data.dart';
+import 'package:taproot_admin/features/Dashboard_screen/data/dashboard_model.dart';
 import 'package:taproot_admin/features/Dashboard_screen/widgets/dashboard_container.dart';
 import 'package:taproot_admin/features/Dashboard_screen/widgets/order_details_container.dart';
 import 'package:taproot_admin/features/Dashboard_screen/widgets/refund_order_container.dart';
 
-class DashboardScreen extends StatelessWidget {
+import '../data/dashboard_services.dart';
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+  static const path = '/dashboardScreen';
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  Future<void> _fetchDashboardData() async {
+    try {
+      final response = await DashboardServices.getDashData();
+
+      if (response.success) {
+        logError(response.message);
+        setState(() {
+          // dashboardData = response.result;
+        });
+      } else {
+        // Handle error
+      }
+    } catch (e) {
+      // Handle error
+    } 
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDashboardData();
+  }
+
+  List<DashboardData> dashboardData = [];
+
   final List<ChartData> data = [
     ChartData('Jan', 500, 200, 1000),
     ChartData('Feb', 700, 250, 1200),
@@ -17,9 +53,6 @@ class DashboardScreen extends StatelessWidget {
     ChartData('May', 750, 300, 1250),
     ChartData('June', 900, 400, 1400),
   ];
-
-  DashboardScreen({super.key});
-  static const path = '/dashboardScreen';
 
   @override
   Widget build(BuildContext context) {
