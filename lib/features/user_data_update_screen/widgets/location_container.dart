@@ -22,7 +22,7 @@ class LocationContainer extends StatefulWidget {
   final bool isEdit;
   const LocationContainer({
     super.key,
-    required this.user,
+  this.user,
     this.isEdit = false,
     this.portfolio,
     this.buildingNamecontroller,
@@ -32,7 +32,7 @@ class LocationContainer extends StatefulWidget {
     this.districtController,
     this.stateController,
   });
-  final User user;
+  final User? user;
 
   @override
   State<LocationContainer> createState() => _LocationContainerState();

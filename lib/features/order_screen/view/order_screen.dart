@@ -7,8 +7,7 @@ import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/view/create_order.dart';
 import 'package:taproot_admin/features/order_screen/view/order_details_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
-import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
-import 'package:taproot_admin/widgets/gradient_text.dart';
+
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class OrderScreen extends StatefulWidget {
@@ -23,7 +22,8 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-List<Order> allOrder=[];
+  List<Order> allOrder = [];
+  OrderDataSource? orderDataSource;
   void retryOrder(int index) {
     logInfo('Retrying order $index');
   }
@@ -36,32 +36,41 @@ List<Order> allOrder=[];
     logInfo('Completing order $index');
   }
 
-  List<String> statusList = [
-    'pending',
-    'failed',
-    'placed',
-    'shipped',
-    'order completed',
-    'failed',
-    'placed',
-    'shipped',
-    'pending',
-    'order completed',
-  ];
+  // List<String> statusList = [
+  //   'pending',
+  //   'failed',
+  //   'placed',
+  //   'shipped',
+  //   'order completed',
+  //   'failed',
+  //   'placed',
+  //   'shipped',
+  //   'pending',
+  //   'order completed',
+  // ];
 
   Future<void> fetchAllOrder() async {
     try {
       final response = await OrderService.getAllOrder();
       setState(() {
         allOrder = response.results;
-        logSuccess(allOrder);
+        logSuccess('Number of orders loaded: ${allOrder.length}');
+        orderDataSource = OrderDataSource(
+          orderList: allOrder,
+          context: context,
+          navigatorKey: widget.innerNavigatorKey,
+        );
+        // logSuccess(allOrder);
       });
-    } catch (e) {}
+    } catch (e) {
+      logError('error $e');
+    }
   }
 
   @override
   void initState() {
     fetchAllOrder();
+
     // TODO: implement initState
     super.initState();
   }
@@ -284,8 +293,6 @@ List<Order> allOrder=[];
                           //     );
                           //   }),
                           // ),
-                          Center(child: Text('data')),
-
                           PaginatedDataTable(
                             dataRowMaxHeight: 80,
                             rowsPerPage: 8,
@@ -295,17 +302,19 @@ List<Order> allOrder=[];
                               DataColumn(label: Text('Phone')),
                               DataColumn(label: Text('Amount')),
                               DataColumn(label: Text('Order Count')),
-                              DataColumn(label: Text('Status')),
-                              DataColumn(label: Text('Action')),
+                              // DataColumn(label: Text('Status')),
+                              // DataColumn(label: Text('Action')),
                             ],
-                            source: OrderDataSource(
-                              orderList: allOrder,
-                              context: context,
-                              statusList: statusList,
-                              navigatorKey: widget.innerNavigatorKey,
-                              notifyParent: () {},
-                            ),
+                            source:
+                                orderDataSource ??
+                                OrderDataSource(
+                                  orderList: [],
+                                  context: context,
+                                  navigatorKey: widget.innerNavigatorKey,
+                                ),
                           ),
+                          Center(child: Text('data')),
+
                           Center(child: Text('data')),
                           Center(child: Text('data')),
                         ],
@@ -324,29 +333,28 @@ List<Order> allOrder=[];
 
 class OrderDataSource extends DataTableSource {
   final List<Order> orderList;
-  final List<String> statusList;
+  // final List<String> statusList;
   final BuildContext context;
   final GlobalKey<NavigatorState>? navigatorKey;
-  final void Function() notifyParent;
 
   OrderDataSource({
     required this.context,
-    required this.statusList,
+    // required this.statusList,
     required this.navigatorKey,
-    required this.notifyParent,
-    required this.orderList
+    required this.orderList,
   });
 
   @override
   DataRow? getRow(int index) {
-    if (index >= statusList.length) return null;
+    if (index >= orderList.length) return null;
+    final order = orderList[index];
 
     void handleRowTap() {
       final navigator = navigatorKey?.currentState ?? Navigator.of(context);
       navigator.push(
         MaterialPageRoute(
           builder:
-              (_) => OrderDetailScreen(
+              (_) => OrderDetailScreen( order: order,
                 // user: User(
                 //   id: 'm',
                 //   fullName: 'sss',
@@ -357,25 +365,25 @@ class OrderDataSource extends DataTableSource {
                 //   website: 'sssss',
                 //   isPremium: false,
                 // ),
-                orderId: 'OrderID$index',
+                orderId: order.code,
               ),
         ),
       );
     }
 
-    String status = statusList[index];
-    String? actionLabel;
-    switch (status) {
-      case 'failed':
-        actionLabel = 'Retry';
-        break;
-      case 'placed':
-        actionLabel = 'Dispatch';
-        break;
-      case 'shipped':
-        actionLabel = 'Complete Order';
-        break;
-    }
+    // String status = statusList[index];
+    // String? actionLabel;
+    // switch (status) {
+    //   case 'failed':
+    //     actionLabel = 'Retry';
+    //     break;
+    //   case 'placed':
+    //     actionLabel = 'Dispatch';
+    //     break;
+    //   case 'shipped':
+    //     actionLabel = 'Complete Order';
+    //     break;
+    // }
 
     return DataRow(
       cells: [
@@ -384,7 +392,7 @@ class OrderDataSource extends DataTableSource {
             onTap: handleRowTap,
             child: Center(
               child: Text(
-                '',
+                order.code,
                 style: context.inter60016.copyWith(color: CustomColors.green),
               ),
             ),
@@ -393,61 +401,61 @@ class OrderDataSource extends DataTableSource {
         DataCell(
           InkWell(
             onTap: handleRowTap,
-            child: Center(child: Text('shahil $index')),
+            child: Center(child: Text(order.user.name)),
           ),
         ),
         DataCell(
           InkWell(
             onTap: handleRowTap,
-            child: Center(child: Text('9234567890')),
+            child: Center(child: Text(order.address.mobile)),
           ),
         ),
         DataCell(
           InkWell(
             onTap: handleRowTap,
-            child: Center(child: Text('₹${(index + 1) * 1000}')),
+            child: Center(child: Text('₹${order.totalAmount}')),
           ),
         ),
         DataCell(
           InkWell(
             onTap: handleRowTap,
-            child: Center(child: Text('${index + 1}')),
+            child: Center(child: Text(order.totalProducts.toString())),
           ),
         ),
-        DataCell(
-          Center(
-            child: GradientText(
-              status,
-              gradient: CustomColors.borderGradient,
-              style: context.inter50016,
-            ),
-          ),
-        ),
-        DataCell(
-          actionLabel == null
-              ? const SizedBox()
-              : MiniLoadingButton(
-                needRow: false,
-                text: actionLabel,
-                onPressed: () {
-                  switch (actionLabel) {
-                    case 'Retry':
-                      statusList[index] = 'placed';
-                      break;
-                    case 'Dispatch':
-                      statusList[index] = 'shipped';
-                      break;
-                    case 'Complete Order':
-                      statusList[index] = 'order completed';
-                      break;
-                  }
-                  logInfo('Order $index action "$actionLabel" performed');
-                  notifyParent(); // refresh widget
-                },
-                useGradient: true,
-                gradientColors: CustomColors.borderGradient.colors,
-              ),
-        ),
+        // DataCell(
+        //   Center(
+        //     child: GradientText(
+        //       status,
+        //       gradient: CustomColors.borderGradient,
+        //       style: context.inter50016,
+        //     ),
+        //   ),
+        // ),
+        // DataCell(
+        //   actionLabel == null
+        //       ? const SizedBox()
+        //       : MiniLoadingButton(
+        //         needRow: false,
+        //         text: actionLabel,
+        //         onPressed: () {
+        //           switch (actionLabel) {
+        //             case 'Retry':
+        //               statusList[index] = 'placed';
+        //               break;
+        //             case 'Dispatch':
+        //               statusList[index] = 'shipped';
+        //               break;
+        //             case 'Complete Order':
+        //               statusList[index] = 'order completed';
+        //               break;
+        //           }
+        //           logInfo('Order $index action "$actionLabel" performed');
+        //           notifyParent(); // refresh widget
+        //         },
+        //         useGradient: true,
+        //         gradientColors: CustomColors.borderGradient.colors,
+        //       ),
+        // ),
       ],
     );
   }
@@ -456,7 +464,7 @@ class OrderDataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => statusList.length;
+  int get rowCount => orderList.length;
 
   @override
   int get selectedRowCount => 0;

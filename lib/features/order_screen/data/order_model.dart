@@ -1,3 +1,5 @@
+import 'package:taproot_admin/exporter/exporter.dart';
+
 class OrderResponse {
   final int currentPage;
   final List<Order> results;
@@ -12,82 +14,95 @@ class OrderResponse {
   });
 
   factory OrderResponse.fromJson(Map<String, dynamic> json) {
-    return OrderResponse(
-      currentPage: json['currentPage'],
-      results: List<Order>.from(json['results'].map((x) => Order.fromJson(x))),
-      totalCount: json['totalCount'],
-      totalPages: json['totalPages'],
-    );
+    try {
+      return OrderResponse(
+        currentPage: json['currentPage'] ?? 1,
+        results: List<Order>.from(
+          (json['results'] ?? []).map((x) => Order.fromJson(x)),
+        ),
+        totalCount: json['totalCount'] ?? 0,
+        totalPages: json['totalPages'] ?? 0,
+      );
+    } catch (e, stackTrace) {
+      logInfo("Error parsing OrderResponse: $e");
+      logInfo("JSON data: $json");
+      logInfo("Stack trace: $stackTrace");
+      rethrow;
+    }
   }
-
-  Map<String, dynamic> toJson() => {
-    'currentPage': currentPage,
-    'results': results.map((x) => x.toJson()).toList(),
-    'totalCount': totalCount,
-    'totalPages': totalPages,
-  };
 }
 
 class Order {
   final String id;
   final String code;
-  final String paymentStatus;
+  final String orderStatus;
   final bool isDeleted;
   final User user;
   final Address address;
-  final NfcDetails nfcDetails;
-  final List<ProductItem> products;
+  final int totalProducts;
+  final int totalAmount;
+  final String paymentStatus;
 
   Order({
     required this.id,
     required this.code,
-    required this.paymentStatus,
+    required this.orderStatus,
     required this.isDeleted,
     required this.user,
     required this.address,
-    required this.nfcDetails,
-    required this.products,
+    required this.totalProducts,
+    required this.totalAmount,
+    required this.paymentStatus
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
-    return Order(
-      id: json['_id'],
-      code: json['code'],
-      paymentStatus: json['paymentStatus'],
-      isDeleted: json['isDeleted'],
-      user: User.fromJson(json['user']),
-      address: Address.fromJson(json['address']),
-      nfcDetails: NfcDetails.fromJson(json['nfcDetails']),
-      products: List<ProductItem>.from(
-        json['products'].map((x) => ProductItem.fromJson(x)),
-      ),
-    );
+    try {
+      return Order(
+        id: json['_id']?.toString() ?? '',
+        code: json['code']?.toString() ?? '',
+        orderStatus: json['orderStatus']?.toString() ?? '',
+        isDeleted: json['isDeleted'] ?? false,
+        // Create User from userData instead of user
+        user: User.fromJson(json['userData'] ?? {'name': ''}),
+        address: Address.fromJson(json['address'] ?? {}),
+        totalProducts: json['totalProducts'] ?? 0,
+        totalAmount: json['totalAmount'] ?? 0,
+        paymentStatus: json['paymentStatus']??''
+      );
+    } catch (e, stackTrace) {
+      logInfo("Error parsing Order: $e");
+      logInfo("JSON data: $json");
+      logInfo("Stack trace: $stackTrace");
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() => {
     '_id': id,
     'code': code,
-    'paymentStatus': paymentStatus,
+    'orderStatus': orderStatus,
     'isDeleted': isDeleted,
-    'user': user.toJson(),
+    'userData': user.toJson(),
     'address': address.toJson(),
-    'nfcDetails': nfcDetails.toJson(),
-    'products': products.map((x) => x.toJson()).toList(),
+    'totalProducts': totalProducts,
+    'totalAmount': totalAmount,
+    'paymentStatus':paymentStatus
   };
 }
 
 class User {
-  final String id;
   final String name;
-  final String email;
 
-  User({required this.id, required this.name, required this.email});
+  User({required this.name});
 
   factory User.fromJson(Map<String, dynamic> json) {
-    return User(id: json['_id'], name: json['name'], email: json['email']);
+    // The name is coming from userData.name in the parent object
+    return User(
+      name: json['name'] ?? '', // Add null safety
+    );
   }
 
-  Map<String, dynamic> toJson() => {'_id': id, 'name': name, 'email': email};
+  Map<String, dynamic> toJson() => {'name': name};
 }
 
 class Address {
@@ -96,7 +111,10 @@ class Address {
   Address({required this.mobile});
 
   factory Address.fromJson(Map<String, dynamic> json) {
-    return Address(mobile: json['mobile']);
+    return Address(
+      mobile:
+          json['mobile']?.toString() ?? '', // Add toString() and null safety
+    );
   }
 
   Map<String, dynamic> toJson() => {'mobile': mobile};
