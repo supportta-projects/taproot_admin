@@ -255,6 +255,8 @@ class _ProductPageState extends State<ProductPage>
                                                             (
                                                               context,
                                                             ) => EditProduct(
+                                                              onRefreshProduct:
+                                                                  fetchInitialData,
                                                               product:
                                                                   productcard,
                                                               images:

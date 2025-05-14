@@ -17,6 +17,7 @@ import 'package:taproot_admin/widgets/mini_loading_button.dart';
 class EditProduct extends StatefulWidget {
   final Product? product;
 
+  final VoidCallback onRefreshProduct;
   final String? productName;
   final String? price;
   final String? offerPrice;
@@ -33,6 +34,7 @@ class EditProduct extends StatefulWidget {
     this.cardType,
     this.images,
     required this.product,
+    required this.onRefreshProduct,
   });
 
   static const path = '/editproduct';
@@ -68,7 +70,7 @@ class _EditProductState extends State<EditProduct> {
       final pickedFile = result.files.first;
       final newImage = File(pickedFile.path!);
 
-      // If replacing an existing image from the server
+      // If replacing an existing image
       if (isExistingUrl) {
         final oldImageKey = existingImageUrls[index];
         try {
@@ -99,21 +101,29 @@ class _EditProductState extends State<EditProduct> {
             imageBytes,
             filename,
           );
+
           setState(() {
-            uploadedImageKeys.insert(index, uploadResult['key']);
+            if (index < uploadedImageKeys.length) {
+              uploadedImageKeys[index] = uploadResult['key'];
+            } else {
+              uploadedImageKeys.add(uploadResult['key']);
+            }
           });
           logSuccess('Uploaded: ${uploadResult['name']}');
           logSuccess('Key: ${uploadResult['key']}');
+          logSuccess('Size: ${uploadResult['size']}');
+          logSuccess('Mimetype: ${uploadResult['mimetype']}');
         } catch (e) {
           logError('Image upload failed: $e');
+          setState(() {
+            if (index < selectedImages.length) {
+              selectedImages.removeAt(index);
+            }
+          });
         }
       }
     }
   }
-
-  
-
- 
 
   Future<void> deleteImage(ProductImage image) async {
     try {
@@ -122,9 +132,89 @@ class _EditProductState extends State<EditProduct> {
       logError('error delete $e');
     }
   }
-  // Future<void> updateProduct()async{
 
-  // }
+  Future<void> updateProduct() async {
+    try {
+      List<ProductImage> productImages = [];
+
+      // Add existing images with complete information
+      for (String imageUrl in existingImageUrls) {
+        String fileName = imageUrl.split('-').last;
+        String extension = fileName.split('.').last.toLowerCase();
+        int? existingSize;
+        if (widget.product?.productImages != null) {
+          final existingImage = widget.product!.productImages!.firstWhere(
+            (img) => img.key == imageUrl,
+            orElse: () => ProductImage(key: imageUrl, size: 0),
+          );
+          existingSize = existingImage.size;
+        }
+
+        if (existingSize == null || existingSize == 0) {
+          // If size is not available in existing data, throw an error
+          throw Exception('Size is required for existing image: $fileName');
+        }
+        productImages.add(
+          ProductImage(
+            name: fileName,
+            key: imageUrl,
+            size: existingSize,
+            // You might want to store the actual size if available
+            mimetype: 'image/$extension',
+          ),
+        );
+      }
+
+      // Add newly uploaded images
+      for (int i = 0; i < uploadedImageKeys.length; i++) {
+        String key = uploadedImageKeys[i];
+        String fileName = key.split('-').last;
+        String extension = fileName.split('.').last.toLowerCase();
+
+        File? file = i < selectedImages.length ? selectedImages[i] : null;
+
+        productImages.add(
+          ProductImage(
+            name: fileName,
+            key: key,
+            size: file?.lengthSync() ?? 0,
+            mimetype: 'image/$extension',
+          ),
+        );
+      }
+
+      logSuccess(
+        'Product Images to send: ${productImages.map((img) => img.toJson()).toList()}',
+      );
+
+      final response = await ProductService.editProduct(
+        productId: widget.product!.id.toString(),
+        name: nameController.text.trim(),
+        actualPrice: double.parse(priceController.text.trim()),
+        discountPrice: double.parse(discountController.text.trim()),
+        productImages: productImages,
+        description: descriptionController.text.trim(),
+        categoryId: selectedCategory?.id,
+      );
+
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Product updated successfully')),
+        );
+        Navigator.pop(context);
+        widget.onRefreshProduct();
+      } else {
+        throw Exception(response.message);
+      }
+    } catch (e) {
+      logError('Error updating product: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception:', '').trim()),
+        ),
+      );
+    }
+  }
 
   void removeImage({required int index, required bool isExistingUrl}) {
     setState(() {
@@ -214,7 +304,9 @@ class _EditProductState extends State<EditProduct> {
                 MiniLoadingButton(
                   icon: LucideIcons.save,
                   text: 'Save',
-                  onPressed: () {},
+                  onPressed: () async {
+                    await updateProduct();
+                  },
                   useGradient: true,
                   gradientColors: CustomColors.borderGradient.colors,
                 ),

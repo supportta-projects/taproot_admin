@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/view/create_order.dart';
 import 'package:taproot_admin/features/order_screen/view/order_details_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
@@ -21,6 +22,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
+  var allOrderList;
   void retryOrder(int index) {
     logInfo('Retrying order $index');
   }
@@ -45,6 +47,24 @@ class _OrderScreenState extends State<OrderScreen> {
     'pending',
     'order completed',
   ];
+
+  Future<void> fetchAllOrder() async {
+    try {
+      final response = await OrderService.getAllOrder();
+      setState(() {
+        allOrderList = response.results;
+        logSuccess(allOrderList);
+      });
+    } catch (e) {}
+  }
+
+  @override
+  void initState() {
+    fetchAllOrder();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -137,7 +157,8 @@ class _OrderScreenState extends State<OrderScreen> {
                                   MaterialPageRoute(
                                     builder:
                                         (_) => OrderDetailScreen(
-                                          user: User(id: 'm',
+                                          user: User(
+                                            id: 'm',
                                             fullName: 'sss',
                                             userId: 'ss',
                                             phone: 'ssss',
@@ -257,7 +278,6 @@ class _OrderScreenState extends State<OrderScreen> {
                                                   .borderGradient
                                                   .colors,
                                         ),
-                                    
                                   ),
                                 ],
                               );

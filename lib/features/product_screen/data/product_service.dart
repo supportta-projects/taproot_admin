@@ -119,39 +119,67 @@ class ProductService with ErrorExceptionHandler {
     }
   }
 
-  static Future<ProductResponse> editProduct({
+static Future<ProductResponse> editProduct({
     String? name,
     String? categoryId,
     String? description,
     double? actualPrice,
     double? discountPrice,
-    double? discountPercentage,
     List<ProductImage>? productImages,
     required String productId,
   }) async {
     try {
-      final updateProduct = Product(
-        name: name,
-        actualPrice: actualPrice,
-        category: Category(id: categoryId.toString()),
-        description: description,
-        productImages: productImages,
-        discountedPrice: discountPrice,
-      );
+      final Map<String, dynamic> requestBody = {
+        if (name != null) 'name': name,
+        if (categoryId != null) 'categoryId': categoryId,
+        if (description != null) 'description': description,
+        if (actualPrice != null) 'actualPrice': actualPrice,
+        if (discountPrice != null) 'discountPrice': discountPrice,
+        if (productImages != null)
+          'productImages':
+              productImages
+                  .map(
+                    (img) => {
+                      'name':
+                          img.name ??
+                          img.key
+                              .split('-')
+                              .last, // Use filename from key if name is null
+                      'key': img.key,
+                      'size': img.size ?? 0,
+                      'mimetype':
+                          img.mimetype ??
+                          'image/${img.key.split('.').last.toLowerCase()}',
+                    },
+                  )
+                  .toList(),
+      };
+
+      logSuccess("Request Body: $requestBody");
+
       final response = await DioHelper().patch(
-        '/product$productId',
+        '/product/$productId',
         type: ApiType.baseUrl,
+        data: requestBody,
       );
+
       if (response.statusCode == 200) {
-        logSuccess("Response Data: ${response.data}");
         return ProductResponse.fromJson(response.data);
       } else {
-        throw Exception('Failed to load products');
+        throw Exception(response.data['message'] ?? 'Failed to update product');
       }
     } catch (e) {
-      throw ProductService().handleError('Failed to load products, $e');
+      if (e is DioException && e.response != null) {
+        logError("Server Error Response: ${e.response?.data}");
+        throw Exception(
+          e.response?.data['message'] ?? 'Failed to update product',
+        );
+      }
+      throw ProductService().handleError('Failed to update product: $e');
     }
   }
+
+
 
   static Future<void> deleteImage(ProductImage image) async {
     try {
@@ -160,13 +188,13 @@ class ProductService with ErrorExceptionHandler {
         type: ApiType.baseUrl,
         data: {"file": image.toJson()},
       );
-      if(response.statusCode==200){
+      if (response.statusCode == 200) {
         logSuccess('image deleted successfully');
-      }else{
+      } else {
         logError('image deleted failed');
       }
     } catch (e) {
-       throw ProductService().handleError(e);
+      throw ProductService().handleError(e);
     }
   }
 }
