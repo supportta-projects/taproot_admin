@@ -5,7 +5,7 @@ import '../../../core/api/dio_helper.dart';
 import '../../../core/api/error_exception_handler.dart';
 
 class DashboardServices with ErrorExceptionHandler {
-  static Future<DashboardModel> getAllOrder() async {
+  static Future<DashboardModel> getDashData() async {
     try {
       final response = await DioHelper().get(
         '/dashboard',
