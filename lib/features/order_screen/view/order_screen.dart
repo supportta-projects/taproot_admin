@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/view/create_order.dart';
 import 'package:taproot_admin/features/order_screen/view/order_details_screen.dart';
@@ -22,7 +23,7 @@ class OrderScreen extends StatefulWidget {
 }
 
 class _OrderScreenState extends State<OrderScreen> {
-  var allOrderList;
+List<Order> allOrder=[];
   void retryOrder(int index) {
     logInfo('Retrying order $index');
   }
@@ -52,8 +53,8 @@ class _OrderScreenState extends State<OrderScreen> {
     try {
       final response = await OrderService.getAllOrder();
       setState(() {
-        allOrderList = response.results;
-        logSuccess(allOrderList);
+        allOrder = response.results;
+        logSuccess(allOrder);
       });
     } catch (e) {}
   }
@@ -137,8 +138,157 @@ class _OrderScreenState extends State<OrderScreen> {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          DataTable(
+                          // DataTable(
+                          //   dataRowMaxHeight: 80,
+                          //   columns: [
+                          //     DataColumn(label: Text('Order ID')),
+                          //     DataColumn(label: Text('Full Name')),
+                          //     DataColumn(label: Text('Phone')),
+                          //     DataColumn(label: Text('Amount')),
+                          //     DataColumn(label: Text('Order Count')),
+                          //     DataColumn(label: Text('Status')),
+                          //     DataColumn(label: Text('Action')),
+                          //   ],
+                          //   rows: List.generate(10, (index) {
+                          //     void handleRowTap() {
+                          //       final navigator =
+                          //           widget.innerNavigatorKey?.currentState ??
+                          //           Navigator.of(context);
+                          //       navigator.push(
+                          //         MaterialPageRoute(
+                          //           builder:
+                          //               (_) => OrderDetailScreen(
+                          //                 user: User(
+                          //                   id: 'm',
+                          //                   fullName: 'sss',
+                          //                   userId: 'ss',
+                          //                   phone: 'ssss',
+                          //                   whatsapp: 'ssss',
+                          //                   email: 'ssss',
+                          //                   website: 'sssss',
+                          //                   isPremium: false,
+                          //                 ),
+                          //                 orderId: 'OrderID$index',
+                          //               ),
+                          //         ),
+                          //       );
+                          //     }
+
+                          //     String status = statusList[index];
+                          //     String? actionLabel;
+
+                          //     switch (status) {
+                          //       case 'failed':
+                          //         actionLabel = 'Retry';
+                          //         break;
+                          //       case 'placed':
+                          //         actionLabel = 'Dispatch';
+                          //         break;
+                          //       case 'shipped':
+                          //         actionLabel = 'Complete Order';
+                          //         break;
+                          //       default:
+                          //         actionLabel = null;
+                          //     }
+
+                          //     return DataRow(
+                          //       cells: [
+                          //         DataCell(
+                          //           InkWell(
+                          //             onTap: handleRowTap,
+                          //             child: Center(
+                          //               child: Text(
+                          //                 'OrderID$index',
+                          //                 style: context.inter60016.copyWith(
+                          //                   color: CustomColors.green,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         DataCell(
+                          //           InkWell(
+                          //             onTap: handleRowTap,
+                          //             child: Center(
+                          //               child: Text('shahil $index'),
+                          //             ),
+                          //           ),
+                          //         ),
+
+                          //         DataCell(
+                          //           InkWell(
+                          //             onTap: handleRowTap,
+                          //             child: Center(child: Text('9234567890')),
+                          //           ),
+                          //         ),
+                          //         DataCell(
+                          //           InkWell(
+                          //             onTap: handleRowTap,
+                          //             child: Center(
+                          //               child: Text('₹${(index + 1) * 1000}'),
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         DataCell(
+                          //           InkWell(
+                          //             onTap: handleRowTap,
+                          //             child: Center(
+                          //               child: Text('${index + 1}'),
+                          //             ),
+                          //           ),
+                          //         ),
+
+                          //         DataCell(
+                          //           Center(
+                          //             child: GradientText(
+                          //               status,
+                          //               gradient: CustomColors.borderGradient,
+                          //               style: context.inter50016,
+                          //             ),
+                          //           ),
+                          //         ),
+                          //         DataCell(
+                          //           actionLabel == null
+                          //               ? SizedBox()
+                          //               : MiniLoadingButton(
+                          //                 needRow: false,
+
+                          //                 text: actionLabel,
+                          //                 onPressed: () {
+                          //                   setState(() {
+                          //                     switch (actionLabel) {
+                          //                       case 'Retry':
+                          //                         statusList[index] = 'placed';
+                          //                         break;
+                          //                       case 'Dispatch':
+                          //                         statusList[index] = 'shipped';
+                          //                         break;
+                          //                       case 'Complete Order':
+                          //                         statusList[index] =
+                          //                             'order completed';
+                          //                         break;
+                          //                     }
+                          //                   });
+                          //                   logInfo(
+                          //                     'Order $index action "$actionLabel" performed',
+                          //                   );
+                          //                 },
+                          //                 useGradient: true,
+                          //                 gradientColors:
+                          //                     CustomColors
+                          //                         .borderGradient
+                          //                         .colors,
+                          //               ),
+                          //         ),
+                          //       ],
+                          //     );
+                          //   }),
+                          // ),
+                          Center(child: Text('data')),
+
+                          PaginatedDataTable(
                             dataRowMaxHeight: 80,
+                            rowsPerPage: 8,
                             columns: [
                               DataColumn(label: Text('Order ID')),
                               DataColumn(label: Text('Full Name')),
@@ -148,142 +298,14 @@ class _OrderScreenState extends State<OrderScreen> {
                               DataColumn(label: Text('Status')),
                               DataColumn(label: Text('Action')),
                             ],
-                            rows: List.generate(10, (index) {
-                              void handleRowTap() {
-                                final navigator =
-                                    widget.innerNavigatorKey?.currentState ??
-                                    Navigator.of(context);
-                                navigator.push(
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => OrderDetailScreen(
-                                          user: User(
-                                            id: 'm',
-                                            fullName: 'sss',
-                                            userId: 'ss',
-                                            phone: 'ssss',
-                                            whatsapp: 'ssss',
-                                            email: 'ssss',
-                                            website: 'sssss',
-                                            isPremium: false,
-                                          ),
-                                          orderId: 'OrderID$index',
-                                        ),
-                                  ),
-                                );
-                              }
-
-                              String status = statusList[index];
-                              String? actionLabel;
-
-                              switch (status) {
-                                case 'failed':
-                                  actionLabel = 'Retry';
-                                  break;
-                                case 'placed':
-                                  actionLabel = 'Dispatch';
-                                  break;
-                                case 'shipped':
-                                  actionLabel = 'Complete Order';
-                                  break;
-                                default:
-                                  actionLabel = null;
-                              }
-
-                              return DataRow(
-                                cells: [
-                                  DataCell(
-                                    InkWell(
-                                      onTap: handleRowTap,
-                                      child: Center(
-                                        child: Text(
-                                          'OrderID$index',
-                                          style: context.inter60016.copyWith(
-                                            color: CustomColors.green,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    InkWell(
-                                      onTap: handleRowTap,
-                                      child: Center(
-                                        child: Text('shahil $index'),
-                                      ),
-                                    ),
-                                  ),
-
-                                  DataCell(
-                                    InkWell(
-                                      onTap: handleRowTap,
-                                      child: Center(child: Text('9234567890')),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    InkWell(
-                                      onTap: handleRowTap,
-                                      child: Center(
-                                        child: Text('₹${(index + 1) * 1000}'),
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    InkWell(
-                                      onTap: handleRowTap,
-                                      child: Center(
-                                        child: Text('${index + 1}'),
-                                      ),
-                                    ),
-                                  ),
-
-                                  DataCell(
-                                    Center(
-                                      child: GradientText(
-                                        status,
-                                        gradient: CustomColors.borderGradient,
-                                        style: context.inter50016,
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    actionLabel == null
-                                        ? SizedBox()
-                                        : MiniLoadingButton(
-                                          needRow: false,
-
-                                          text: actionLabel,
-                                          onPressed: () {
-                                            setState(() {
-                                              switch (actionLabel) {
-                                                case 'Retry':
-                                                  statusList[index] = 'placed';
-                                                  break;
-                                                case 'Dispatch':
-                                                  statusList[index] = 'shipped';
-                                                  break;
-                                                case 'Complete Order':
-                                                  statusList[index] =
-                                                      'order completed';
-                                                  break;
-                                              }
-                                            });
-                                            logInfo(
-                                              'Order $index action "$actionLabel" performed',
-                                            );
-                                          },
-                                          useGradient: true,
-                                          gradientColors:
-                                              CustomColors
-                                                  .borderGradient
-                                                  .colors,
-                                        ),
-                                  ),
-                                ],
-                              );
-                            }),
+                            source: OrderDataSource(
+                              orderList: allOrder,
+                              context: context,
+                              statusList: statusList,
+                              navigatorKey: widget.innerNavigatorKey,
+                              notifyParent: () {},
+                            ),
                           ),
-                          Center(child: Text('data')),
                           Center(child: Text('data')),
                           Center(child: Text('data')),
                         ],
@@ -298,4 +320,144 @@ class _OrderScreenState extends State<OrderScreen> {
       ),
     );
   }
+}
+
+class OrderDataSource extends DataTableSource {
+  final List<Order> orderList;
+  final List<String> statusList;
+  final BuildContext context;
+  final GlobalKey<NavigatorState>? navigatorKey;
+  final void Function() notifyParent;
+
+  OrderDataSource({
+    required this.context,
+    required this.statusList,
+    required this.navigatorKey,
+    required this.notifyParent,
+    required this.orderList
+  });
+
+  @override
+  DataRow? getRow(int index) {
+    if (index >= statusList.length) return null;
+
+    void handleRowTap() {
+      final navigator = navigatorKey?.currentState ?? Navigator.of(context);
+      navigator.push(
+        MaterialPageRoute(
+          builder:
+              (_) => OrderDetailScreen(
+                // user: User(
+                //   id: 'm',
+                //   fullName: 'sss',
+                //   userId: 'ss',
+                //   phone: 'ssss',
+                //   whatsapp: 'ssss',
+                //   email: 'ssss',
+                //   website: 'sssss',
+                //   isPremium: false,
+                // ),
+                orderId: 'OrderID$index',
+              ),
+        ),
+      );
+    }
+
+    String status = statusList[index];
+    String? actionLabel;
+    switch (status) {
+      case 'failed':
+        actionLabel = 'Retry';
+        break;
+      case 'placed':
+        actionLabel = 'Dispatch';
+        break;
+      case 'shipped':
+        actionLabel = 'Complete Order';
+        break;
+    }
+
+    return DataRow(
+      cells: [
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(
+              child: Text(
+                '',
+                style: context.inter60016.copyWith(color: CustomColors.green),
+              ),
+            ),
+          ),
+        ),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text('shahil $index')),
+          ),
+        ),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text('9234567890')),
+          ),
+        ),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text('₹${(index + 1) * 1000}')),
+          ),
+        ),
+        DataCell(
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(child: Text('${index + 1}')),
+          ),
+        ),
+        DataCell(
+          Center(
+            child: GradientText(
+              status,
+              gradient: CustomColors.borderGradient,
+              style: context.inter50016,
+            ),
+          ),
+        ),
+        DataCell(
+          actionLabel == null
+              ? const SizedBox()
+              : MiniLoadingButton(
+                needRow: false,
+                text: actionLabel,
+                onPressed: () {
+                  switch (actionLabel) {
+                    case 'Retry':
+                      statusList[index] = 'placed';
+                      break;
+                    case 'Dispatch':
+                      statusList[index] = 'shipped';
+                      break;
+                    case 'Complete Order':
+                      statusList[index] = 'order completed';
+                      break;
+                  }
+                  logInfo('Order $index action "$actionLabel" performed');
+                  notifyParent(); // refresh widget
+                },
+                useGradient: true,
+                gradientColors: CustomColors.borderGradient.colors,
+              ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  bool get isRowCountApproximate => false;
+
+  @override
+  int get rowCount => statusList.length;
+
+  @override
+  int get selectedRowCount => 0;
 }

@@ -12,13 +12,13 @@ import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class OrderDetailScreen extends StatefulWidget {
-  final dynamic user;
+  final dynamic? user;
 
   final String orderId;
   const OrderDetailScreen({
     super.key,
     required this.orderId,
-    required this.user,
+     this.user,
   });
 
   @override
