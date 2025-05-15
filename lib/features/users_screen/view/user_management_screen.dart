@@ -170,13 +170,15 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   headingRowColor: WidgetStateProperty.resolveWith<Color>((
                     Set<WidgetState> states,
                   ) {
-                    return CustomColors.lightGreen;
+                    return CustomColors.borderGradient.colors.last.withValues(
+                      alpha: .008,
+                    );
                   }),
                   onPageChanged: _handlePageChange,
 
                   sortColumnIndex: 0,
                   //TODO
-                  arrowHeadColor: CustomColors.green,
+                  arrowHeadColor: CustomColors.borderGradient.colors.first,
 
                   showEmptyRows: false,
                   columnSpacing: CustomPadding.paddingXL.v,

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
-
-
 const String baseUrl = "http://213.210.36.7:5000";
 
 class CustomPadding {
@@ -41,7 +39,7 @@ class CustomColors {
   ).withValues(alpha: 0.4);
 
   static const Color burgandryRed = Color(0xFF800020);
-  static const Color hintGrey=Color(0xff7F6E72);
+  static const Color hintGrey = Color(0xff7F6E72);
   static const secondaryColor = Colors.white;
   static const tertiaryColor = Color.fromARGB(255, 240, 240, 240);
   // static const backgroundColor = Color.fromARGB(255, 255, 255, 255);
@@ -56,16 +54,18 @@ class CustomColors {
   static const Color red = Colors.red;
   static const Color buttonColor2 = Colors.lightGreen;
   static const Color green = Color(0xff27AE60);
-  static const Color brown=Color(0xffa2845e);
+  static const Color brown = Color(0xffa2845e);
   static const Color greenDark = Color(0xff005624);
   static const Color lightGreen = Color(0xffE0EEE8);
-  static const Color greylight=Color(0xffF4F5F6);
+  static const Color greylight = Color(0xffF4F5F6);
   static const Color textFieldBorderGrey = Color(0xFF79747E);
   static const LinearGradient buttonGradient = LinearGradient(
     colors: [buttonColor1, buttonColor2],
   );
   static const LinearGradient borderGradient = LinearGradient(
-    colors: [Color(0xff27AE60), Color(0xff005624)],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [Color(0xff0078e0), Color(0xff00b2af)],
   );
 }
 
