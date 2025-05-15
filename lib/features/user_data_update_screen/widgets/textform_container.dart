@@ -84,7 +84,7 @@ class _TextFormContainerState extends State<TextFormContainer> {
         // scrollPhysics: const BouncingScrollPhysics(),
         autofocus: widget.autofocus,
         validator: widget.validator,
-        // onChanged: widget.onChanged,
+        onChanged: widget.onChanged,
         controller: _internalController,
         maxLines: widget.maxline,
         readOnly: widget.readonly || widget.isDatePicker,

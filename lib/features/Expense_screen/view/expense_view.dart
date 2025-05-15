@@ -37,6 +37,7 @@ class _ExpenseViewState extends State<ExpenseView> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   MiniLoadingButton(
+                    
                     icon: Icons.add,
                     text: 'Add Expense',
                     onPressed: () async{

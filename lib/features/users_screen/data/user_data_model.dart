@@ -31,3 +31,26 @@ class User {
     );
   }
 }
+
+class UserSearch {
+  final String fullName;
+  final String userId;
+  final String phone;
+  final String whatsapp;
+
+  UserSearch({
+    required this.fullName,
+    required this.userId,
+    required this.phone,
+    required this.whatsapp,
+  });
+
+  factory UserSearch.fromJson(Map<String, dynamic> json) {
+    return UserSearch(
+      fullName: json['name'] ?? '',
+      userId: json['code'] ?? '',
+      phone: json['phoneNumber'] ?? '',
+      whatsapp: json['whatsappNumber'] ?? '',
+    );
+  }
+}

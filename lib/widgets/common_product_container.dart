@@ -2,12 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
-class CommonProductContainer extends StatelessWidget {
+class CommonProductContainer extends StatefulWidget {
   final bool isAmountContainer;
   final List<Widget>? children;
   final String title;
-  const CommonProductContainer({required this.title, super.key, this.children,this.isAmountContainer=false});
+  final int? grandTotal;
+  const CommonProductContainer({
+    required this.title,
+    super.key,
+    this.children,
+    this.isAmountContainer = false,
+    this.grandTotal,
+  });
 
+  @override
+  State<CommonProductContainer> createState() => _CommonProductContainerState();
+}
+
+class _CommonProductContainerState extends State<CommonProductContainer> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -35,27 +47,29 @@ class CommonProductContainer extends StatelessWidget {
                 children: [
                   Gap(CustomPadding.paddingLarge),
 
-                  Text(title, style: context.inter60022),
+                  Text(widget.title, style: context.inter60022),
                 ],
               ),
             ),
-            Column(children: children ?? []),
-            isAmountContainer?
-            Divider(indent: 40, endIndent: 40):SizedBox(),
-            isAmountContainer?
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: CustomPadding.padding.v,
-                horizontal: CustomPadding.paddingXL.v,
-              ),
-              child: Row(
-                children: [
-                  Text('Total Amount'),
-                  Spacer(),
-                  Text('₹298.00 / \$10.00', style: context.inter50024),
-                ],
-              ),
-            ):SizedBox()
+            Column(children: widget.children ?? []),
+            widget.isAmountContainer
+                ? Divider(indent: 40, endIndent: 40)
+                : SizedBox(),
+            widget.isAmountContainer
+                ? Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: CustomPadding.padding.v,
+                    horizontal: CustomPadding.paddingXL.v,
+                  ),
+                  child: Row(
+                    children: [
+                      Text('Total Amount'),
+                      Spacer(),
+                      Text('₹${widget.grandTotal}', style: context.inter50024),
+                    ],
+                  ),
+                )
+                : SizedBox(),
           ],
         ),
       ),

@@ -14,7 +14,10 @@ class AppTheme {
           return Icon(Icons.circle_outlined, color: Colors.grey);
         }
         if (states.contains(WidgetState.selected)) {
-          return Icon(Icons.circle, color: CustomColors.primaryColor);
+          return Icon(
+            Icons.circle,
+            color: CustomColors.borderGradient.colors.first,
+          );
         }
         return Icon(Icons.circle_outlined, color: Colors.grey.shade400);
       }),
@@ -24,7 +27,7 @@ class AppTheme {
           return Colors.grey; // Disabled thumb
         }
         if (states.contains(WidgetState.selected)) {
-          return CustomColors.primaryColor; // ON thumb
+          return CustomColors.borderGradient.colors.first; // ON thumb
         }
         return Colors.grey.shade400; // OFF thumb
       }),
@@ -34,7 +37,10 @@ class AppTheme {
           return Colors.grey.shade300; // Disabled track
         }
         if (states.contains(WidgetState.selected)) {
-          return Colors.amber; // ON track
+          return Colors.grey.shade300; // OFF track
+          // return CustomColors.borderGradient.colors.last.withValues(
+          //   alpha: 0.3,
+          // ); // ON track
         }
         return Colors.grey.shade300; // OFF track
       }),
@@ -46,7 +52,8 @@ class AppTheme {
     // dialogBackgroundColor: Colors.white,
     // dialogTheme: ,
     cardTheme: CardTheme(
-      color: CustomColors.borderGradient.colors.last.withValues(alpha: 0.1),
+      color: Colors.white,
+      // color: CustomColors.borderGradient.colors.last.withValues(alpha: 0.1),
       shadowColor: Colors.transparent,
       // shadowColor: CustomColors.textFieldBorderGrey.withValues(alpha: 0.2),
       elevation: 5,
