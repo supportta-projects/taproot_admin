@@ -334,6 +334,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     CommonProductContainer(
                       isAmountContainer: true,
                       title: 'Product Summary',
+                      grandTotal: orderDetails!.totalPrice.toInt(),
                       children: [
                         Column(
                           children: [
@@ -550,7 +551,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                         ),
                                         CardRow(
                                           prefixText: 'Total Amount',
-                                          suffixText: '₹ 12000',
+                                          suffixText:
+                                              ' ₹ ${orderDetails!.totalPrice}',
                                           sufixstyle: context.inter50016,
                                         ),
                                       ],

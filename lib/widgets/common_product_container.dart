@@ -6,7 +6,14 @@ class CommonProductContainer extends StatelessWidget {
   final bool isAmountContainer;
   final List<Widget>? children;
   final String title;
-  const CommonProductContainer({required this.title, super.key, this.children,this.isAmountContainer=false});
+  final int? grandTotal;
+  const CommonProductContainer({
+    required this.title,
+    super.key,
+    this.children,
+    this.isAmountContainer = false,
+    this.grandTotal,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,22 +47,22 @@ class CommonProductContainer extends StatelessWidget {
               ),
             ),
             Column(children: children ?? []),
-            isAmountContainer?
-            Divider(indent: 40, endIndent: 40):SizedBox(),
-            isAmountContainer?
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: CustomPadding.padding.v,
-                horizontal: CustomPadding.paddingXL.v,
-              ),
-              child: Row(
-                children: [
-                  Text('Total Amount'),
-                  Spacer(),
-                  Text('₹298.00 / \$10.00', style: context.inter50024),
-                ],
-              ),
-            ):SizedBox()
+            isAmountContainer ? Divider(indent: 40, endIndent: 40) : SizedBox(),
+            isAmountContainer
+                ? Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: CustomPadding.padding.v,
+                    horizontal: CustomPadding.paddingXL.v,
+                  ),
+                  child: Row(
+                    children: [
+                      Text('Total Amount'),
+                      Spacer(),
+                      Text('₹$grandTotal', style: context.inter50024),
+                    ],
+                  ),
+                )
+                : SizedBox(),
           ],
         ),
       ),
