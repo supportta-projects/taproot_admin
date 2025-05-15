@@ -18,6 +18,13 @@ class CreateOrder extends StatefulWidget {
 }
 
 class _CreateOrderState extends State<CreateOrder> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchUser('');
+  }
+
   List<UserSearch> userSearchList = [];
   bool isLoading = false;
   bool isSearching = false;
@@ -32,8 +39,9 @@ class _CreateOrderState extends State<CreateOrder> {
       setState(() {
         userSearchList = response.userSearchList;
         isLoading = false;
+        // logWarning(userSearchList);
       });
-
+      // logError(userSearchList);
     } catch (e) {
       logError('Error fetching user: $e');
     }
@@ -135,10 +143,20 @@ class _CreateOrderState extends State<CreateOrder> {
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder:
-                                        (context) => CreateOrderDetails(fetchUser: fetchUser,userSearchList: userSearchList,
-                                          
-                                        ),
+                                    builder: (context) {
+                                      logError(userSearchList.toString());
+                                      return CreateOrderDetails(
+                                        email: userSearchList[index].email,
+                                        phoneNumber:
+                                            userSearchList[index].phone,
+                                        whatsAppNumber:
+                                            userSearchList[index].phone,
+                                        fullName:
+                                            userSearchList[index].fullName,
+                                        fetchUser: fetchUser,
+                                        userSearchList: userSearchList,
+                                      );
+                                    },
                                   ),
                                 );
                               },
