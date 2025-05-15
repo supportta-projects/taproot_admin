@@ -89,7 +89,8 @@ class NavItem extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
         decoration: BoxDecoration(
-          color: isSelected ? CustomColors.primaryColor : Colors.transparent,
+          gradient: isSelected ? CustomColors.borderGradient : null,
+          // color: isSelected ? CustomColors.primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(CustomPadding.padding.v),
         ),
         child: LucideIconWidget(

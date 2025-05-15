@@ -77,7 +77,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
               backgroundColor: Colors.white,
               displayMode: SideMenuDisplayMode.open,
               openSideMenuWidth: (150 / 1440) * SizeUtils.width,
-              selectedColor: CustomColors.primaryColor,
+              selectedColor: CustomColors.borderGradient.colors.first,
 
               selectedTitleTextStyle: TextStyle(
                 color: Colors.white,
@@ -95,6 +95,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
             ),
             items: [
               SideMenuItem(
+                
                 title: 'Dashboard',
                 iconWidget: SideMenuLucideIcon(
                   icon: LucideIcons.clipboardMinus,
@@ -187,7 +188,6 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
               controller: NavControllers.pageController,
               physics: NeverScrollableScrollPhysics(),
               children: [
-                
                 Navigator(
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(builder: (_) => DashboardScreen());

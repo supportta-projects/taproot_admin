@@ -51,7 +51,9 @@ class _AuthScreenState extends State<AuthScreen> {
                           Text('LOGO'),
 
                           TextFormField(
-                            controller: emailController,
+                            initialValue: "admin@supporttacards.com",
+
+                            // controller: emailController,
                             decoration: InputDecoration(
                               labelText: 'Email',
                               labelStyle: TextStyle(
@@ -66,7 +68,8 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           CustomGap.gapLarge,
                           TextFormField(
-                            controller: passwordController,
+                            initialValue: "Admin@Supportta765",
+                            //  controller: passwordController,
                             obscureText: _obsecureText,
                             enableSuggestions: false,
                             autocorrect: false,
@@ -104,9 +107,15 @@ class _AuthScreenState extends State<AuthScreen> {
                                 });
                                 try {
                                   await AuthService.loginAdmin(
-                                    email: emailController.text.trim(),
-                                    password: passwordController.text.trim(),
+                                    ///
+                                    //TODO
+                                    // email: emailController.text.trim(),
+                                    // password: passwordController.text.trim(),
+                                    password: "Admin@Supportta765",
+                                    email: "admin@supporttacards.com",
                                   );
+
+                                  //TODO : fix context
                                   Navigator.of(context).pushReplacementNamed(
                                     SideDrawerNavScreen.path,
                                   );

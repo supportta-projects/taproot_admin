@@ -46,8 +46,9 @@ class AppTheme {
     // dialogBackgroundColor: Colors.white,
     // dialogTheme: ,
     cardTheme: CardTheme(
-      color: CustomColors.lightGreen,
-      shadowColor: CustomColors.textFieldBorderGrey.withValues(alpha: 0.2),
+      color: CustomColors.borderGradient.colors.last.withValues(alpha: 0.1),
+      shadowColor: Colors.transparent,
+      // shadowColor: CustomColors.textFieldBorderGrey.withValues(alpha: 0.2),
       elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),

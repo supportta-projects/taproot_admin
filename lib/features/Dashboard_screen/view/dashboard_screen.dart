@@ -34,7 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
     } catch (e) {
       // Handle error
-    } 
+    }
   }
 
   @override
@@ -74,7 +74,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               decoration: BoxDecoration(
                 color: CustomColors.secondaryColor,
                 borderRadius: BorderRadius.circular(
-                  CustomPadding.paddingLarge.v,
+                  CustomPadding.padding.v + CustomPadding.paddingLarge.v,
                 ),
               ),
               child: Row(
