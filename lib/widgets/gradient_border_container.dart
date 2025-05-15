@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
 class GradientBorderField extends StatelessWidget {
+  final ValueChanged? onchange;
   final String hintText;
-  const GradientBorderField({super.key,required this.hintText});
+  const GradientBorderField({super.key, required this.hintText, this.onchange});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,9 @@ class GradientBorderField extends StatelessWidget {
             border: Border.all(width: 2, color: Colors.white),
           ),
           child: TextFormField(
+            onChanged: (value) {
+              onchange;
+            },
             decoration: InputDecoration(
               border: InputBorder.none,
               enabledBorder: InputBorder.none,

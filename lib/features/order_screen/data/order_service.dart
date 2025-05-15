@@ -33,20 +33,24 @@ class OrderService with ErrorExceptionHandler {
   }
 
   static Future<PaginatedUserResponse> fetchUser(
-    int page,
+    // int page,
     String? searchQuery,
-  )async{
-    try{
-       final response=await DioHelper().get('/user',type: ApiType.baseUrl, queryParameters: {
-          'page': page,
+  ) async {
+    try {
+      final response = await DioHelper().get(
+        '/user',
+        type: ApiType.baseUrl,
+        queryParameters: {
+          'limit': 4,
+          // 'page': page,
           if (searchQuery != null && searchQuery.isNotEmpty)
             'search': searchQuery,
-        });
-        final data=response.data;
-        return PaginatedUserResponse.fromJson(data);
-    }catch(e){
+        },
+      );
+      final data = response.data;
+      return PaginatedUserResponse.fromJson(data);
+    } catch (e) {
       throw OrderService().handleError(e);
     }
   }
-
 }
