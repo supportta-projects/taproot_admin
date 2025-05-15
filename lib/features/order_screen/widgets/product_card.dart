@@ -4,9 +4,14 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 
 class ProductCard extends StatefulWidget {
-  const ProductCard({super.key, required this.orderEdit});
-
+  const ProductCard({super.key, required this.orderEdit, required this.discountPrice,required this.price, required this.quantity, required this.totalPrice});
+final int price;
+final int discountPrice;
   final bool orderEdit;
+  
+  final int quantity;
+  
+  final int totalPrice;
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -56,19 +61,19 @@ class _ProductCardState extends State<ProductCard> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 CardRow(prefixText: 'Design Type', suffixText: 'Minimal'),
-                CardRow(prefixText: 'Price', suffixText: '₹149.00 / \$5.00'),
-                CardRow(prefixText: 'Discount', suffixText: '₹149.00 / \$5.00'),
+                CardRow(prefixText: 'Price', suffixText: widget.price.toString()),
+                CardRow(prefixText: 'Discount', suffixText: widget.discountPrice.toString()),
                 Row(
                   children: [
                     Text('Qty'),
                     Spacer(),
 
-                    Chip(label: Text('Qty : 2')),
+                    Chip(label: Text(widget.quantity.toString())),
                   ],
                 ),
                 CardRow(
                   prefixText: 'Total Amount',
-                  suffixText: '₹298.00 / \$10.00',
+                  suffixText: widget.totalPrice.toString(),
                 ),
               ],
             ),
