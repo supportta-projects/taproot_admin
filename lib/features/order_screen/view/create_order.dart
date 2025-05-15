@@ -20,6 +20,7 @@ class CreateOrder extends StatefulWidget {
 class _CreateOrderState extends State<CreateOrder> {
   List<UserSearch> userSearchList = [];
   bool isLoading = false;
+  bool isSearching = false;
 
   Future<void> fetchUser(String searchQuery) async {
     try {
@@ -32,6 +33,7 @@ class _CreateOrderState extends State<CreateOrder> {
         userSearchList = response.userSearchList;
         isLoading = false;
       });
+
     } catch (e) {
       logError('Error fetching user: $e');
     }
@@ -101,13 +103,18 @@ class _CreateOrderState extends State<CreateOrder> {
 
                 GradientBorderField(
                   hintText: 'Search User name, User ID',
-                  onChanged: (value) => fetchUser(value),
+                  onChanged: (value) {
+                    fetchUser(value);
+                    setState(() {
+                      isSearching = value.isNotEmpty;
+                    });
+                  },
                 ),
                 Gap(CustomPadding.paddingLarge.v),
 
                 if (isLoading)
                   CircularProgressIndicator()
-                else
+                else if (isSearching && userSearchList.isNotEmpty)
                   Container(
                     margin: EdgeInsets.symmetric(
                       horizontal: CustomPadding.paddingLarge,
@@ -125,18 +132,13 @@ class _CreateOrderState extends State<CreateOrder> {
                         return Column(
                           children: [
                             ListTile(
-                              // shape: ,
-
-                              // style: ,
-                              // contentPadding: EdgeInsets.all(
-                              //   CustomPadding.padding.v,
-                              // ),
-                              // focusColor: ,
-                              // hoverColor: CustomColors.green,
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => CreateOrderDetails(),
+                                    builder:
+                                        (context) => CreateOrderDetails(fetchUser: fetchUser,userSearchList: userSearchList,
+                                          
+                                        ),
                                   ),
                                 );
                               },
