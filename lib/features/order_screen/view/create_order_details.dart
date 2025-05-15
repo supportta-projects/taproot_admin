@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -18,6 +19,8 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
     return Scaffold(
       body: Column(
         children: [
+          Gap(CustomPadding.paddingXL.v),
+
           Row(
             children: [
               Gap(CustomPadding.paddingXL.v),
@@ -67,6 +70,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
             ],
           ),
           Gap(CustomPadding.paddingLarge.v),
+          CommonProductContainer(title: 'Order Details'),
         ],
       ),
     );

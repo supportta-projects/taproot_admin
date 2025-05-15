@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
+import 'package:taproot_admin/features/order_screen/view/create_order_details.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/gradient_border_container.dart';
@@ -19,8 +20,6 @@ class CreateOrder extends StatefulWidget {
 class _CreateOrderState extends State<CreateOrder> {
   List<UserSearch> userSearchList = [];
   bool isLoading = false;
-
-  
 
   Future<void> fetchUser(String searchQuery) async {
     try {
@@ -49,9 +48,7 @@ class _CreateOrderState extends State<CreateOrder> {
               children: [
                 Gap(CustomPadding.paddingXL.v),
                 GestureDetector(
-                  onTap: () {
-                    
-                  },
+                  onTap: () {},
                   child: Text(
                     'Order',
                     style: context.inter60016.copyWith(
@@ -107,7 +104,6 @@ class _CreateOrderState extends State<CreateOrder> {
                   onChanged: (value) => fetchUser(value),
                 ),
                 Gap(CustomPadding.paddingLarge.v),
-                
 
                 if (isLoading)
                   CircularProgressIndicator()
@@ -137,7 +133,13 @@ class _CreateOrderState extends State<CreateOrder> {
                               // ),
                               // focusColor: ,
                               // hoverColor: CustomColors.green,
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateOrderDetails(),
+                                  ),
+                                );
+                              },
                               title: Padding(
                                 padding: EdgeInsets.only(
                                   bottom: CustomPadding.paddingLarge.v,
