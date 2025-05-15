@@ -170,9 +170,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                   headingRowColor: WidgetStateProperty.resolveWith<Color>((
                     Set<WidgetState> states,
                   ) {
-                    return CustomColors.borderGradient.colors.last.withValues(
-                      alpha: .008,
-                    );
+                    return Colors.transparent;
                   }),
                   onPageChanged: _handlePageChange,
 
@@ -311,10 +309,17 @@ class UserDataTableSource extends DataTableSource {
                 width: 120.v,
                 height: 40.v,
                 decoration: BoxDecoration(
+                  border: Border.all(
+                    color:
+                        user.isPremium
+                            ? CustomColors.borderGradient.colors.first
+                            : CustomColors.greylight,
+                    width: 1,
+                  ),
                   borderRadius: BorderRadius.circular(CustomPadding.padding.v),
                   color:
                       user.isPremium
-                          ? CustomColors.lightGreen
+                          ? Colors.transparent
                           : CustomColors.greylight,
                 ),
                 child: Center(

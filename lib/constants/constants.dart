@@ -31,12 +31,14 @@ class CustomColors {
   // static const primaryColor = Color(0xffFFA500);
   static const primaryColor = burgandryRed;
   static const backgroundColor = Color(0xffF8F9FC);
-  static Color hoverColor = Color.fromARGB(
-    255,
-    234,
-    120,
-    112,
-  ).withValues(alpha: 0.4);
+  // static Color hoverColor = Color.fromARGB(
+  //   255,
+  //   234,
+  //   120,
+  //   112,
+  // ).withValues(alpha: 0.4);
+
+  static Color hoverColor = borderGradient.colors.last.withValues(alpha: 0.15);
 
   static const Color burgandryRed = Color(0xFF800020);
   static const Color hintGrey = Color(0xff7F6E72);
