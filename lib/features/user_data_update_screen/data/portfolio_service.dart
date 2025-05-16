@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
@@ -144,6 +147,39 @@ class PortfolioService with ErrorExceptionHandler {
     } catch (e) {
       logError('Edit service Error:$e');
       throw Exception('Edit service failed: $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>> uploadImageFile(
+    Uint8List imageBytes,
+    String filename,
+  ) async {
+    try {
+      final formData = FormData.fromMap({
+        'image': MultipartFile.fromBytes(
+          imageBytes,
+          filename: filename,
+          contentType: MediaType('image', 'jpeg'), // adjust if PNG
+        ),
+      });
+
+      final response = await DioHelper().post(
+        '/portfolio/upload',
+        type: ApiType.baseUrl,
+        data: formData,
+        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+      );
+
+      if (response.data != null && response.data['result'] != null) {
+        final result = response.data['result'] as Map<String, dynamic>;
+        logSuccess('Upload success: $result');
+        return result;
+      } else {
+        throw Exception('Invalid upload response');
+      }
+    } catch (e) {
+      logError('Upload failed: $e');
+      throw PortfolioService().handleError('Upload failed: $e');
     }
   }
 }

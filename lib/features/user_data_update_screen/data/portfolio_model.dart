@@ -59,16 +59,16 @@ class PersonalInfo {
   final String email;
   final String phoneNumber;
   final String whatsappNumber;
-  final String? bannerImage;
-  final String? profileImage;
+  final ProductImage? profilePicture;
+  final ProductImage? bannerImage;
 
   PersonalInfo({
     required this.name,
     required this.email,
     required this.phoneNumber,
     required this.whatsappNumber,
+    this.profilePicture,
     this.bannerImage,
-    this.profileImage,
   });
 
   factory PersonalInfo.fromJson(Map<String, dynamic> json) {
@@ -77,6 +77,14 @@ class PersonalInfo {
       email: json['email'],
       phoneNumber: json['phoneNumber'],
       whatsappNumber: json['whatsappNumber'],
+      profilePicture:
+          json['profilePicture'] != null
+              ? ProductImage.fromJson(json['profilePicture'])
+              : null,
+      bannerImage:
+          json['bannerImage'] != null
+              ? ProductImage.fromJson(json['bannerImage'])
+              : null,
     );
   }
 
@@ -85,8 +93,84 @@ class PersonalInfo {
     'email': email,
     'phoneNumber': phoneNumber,
     'whatsappNumber': whatsappNumber,
+    'profilePicture': profilePicture?.toJson(),
+    'bannerImage': bannerImage?.toJson(),
   };
+
+  String? getProfilePictureUrl(String baseUrl) {
+    return profilePicture?.getImageUrl(baseUrl);
+  }
+
+  String? getBannerImageUrl(String baseUrl) {
+    return bannerImage?.getImageUrl(baseUrl);
+  }
 }
+
+class ProductImage {
+  final String? name;
+  final String key;
+  final int? size;
+  final String? mimetype;
+
+  ProductImage({this.name, required this.key, this.size, this.mimetype});
+
+  factory ProductImage.fromJson(Map<String, dynamic> json) {
+    return ProductImage(
+      name: json['name'],
+      key: json['key'],
+      size: int.tryParse(json['size']?.toString() ?? ''),
+      mimetype: json['mimetype'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'key': key,
+    'size': size,
+    'mimetype': mimetype,
+  };
+
+  String? getImageUrl(String baseUrl) {
+    if (key.isNotEmpty) {
+      return '$baseUrl/file?key=portfolios/$key';
+    }
+    return null;
+  }
+}
+
+// class PersonalInfo {
+//   final String name;
+//   final String email;
+//   final String phoneNumber;
+//   final String whatsappNumber;
+//   final String? bannerImage;
+//   final String? profileImage;
+
+//   PersonalInfo({
+//     required this.name,
+//     required this.email,
+//     required this.phoneNumber,
+//     required this.whatsappNumber,
+//     this.bannerImage,
+//     this.profileImage,
+//   });
+
+//   factory PersonalInfo.fromJson(Map<String, dynamic> json) {
+//     return PersonalInfo(
+//       name: json['name'],
+//       email: json['email'],
+//       phoneNumber: json['phoneNumber'],
+//       whatsappNumber: json['whatsappNumber'],
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() => {
+//     'name': name,
+//     'email': email,
+//     'phoneNumber': phoneNumber,
+//     'whatsappNumber': whatsappNumber,
+//   };
+// }
 
 class WorkInfo {
   final String companyName;
@@ -94,6 +178,7 @@ class WorkInfo {
   final String workEmail;
   final String primaryWebsite;
   final String secondaryWebsite;
+  final ProductImage? companyLogo;
 
   WorkInfo({
     required this.companyName,
@@ -101,6 +186,7 @@ class WorkInfo {
     required this.workEmail,
     required this.primaryWebsite,
     required this.secondaryWebsite,
+    this.companyLogo,
   });
 
   factory WorkInfo.fromJson(Map<String, dynamic> json) {
@@ -110,6 +196,10 @@ class WorkInfo {
       workEmail: json['workEmail'],
       primaryWebsite: json['primaryWebsite'],
       secondaryWebsite: json['secondaryWebsite'],
+      companyLogo:
+          json['companyLogo'] != null
+              ? ProductImage.fromJson(json['companyLogo'])
+              : null,
     );
   }
 
@@ -119,7 +209,12 @@ class WorkInfo {
     'workEmail': workEmail,
     'primaryWebsite': primaryWebsite,
     'secondaryWebsite': secondaryWebsite,
+    'companyLogo': companyLogo?.toJson(),
   };
+
+  String? getCompanyLogoUrl(String baseUrl) {
+    return companyLogo?.getImageUrl(baseUrl);
+  }
 }
 
 class AddressInfo {
@@ -219,7 +314,7 @@ class SocialMedia {
 }
 
 class Service {
-  final String ?id;
+  final String? id;
   final String? user;
   final String? portfolio;
   final String heading;
@@ -227,12 +322,12 @@ class Service {
   final DateTime? createdAt;
 
   Service({
-     this.id,
-     this.user,
-     this.portfolio,
+    this.id,
+    this.user,
+    this.portfolio,
     required this.heading,
     required this.description,
-   this.createdAt,
+    this.createdAt,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {

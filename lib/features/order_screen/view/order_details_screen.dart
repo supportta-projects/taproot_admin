@@ -429,6 +429,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                   title: 'Banner Image',
                                   imageState: 'Upload',
                                   selectedFile: null,
+                                  
                                 ),
                           ],
                         ),

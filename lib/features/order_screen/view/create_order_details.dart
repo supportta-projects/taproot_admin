@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
@@ -35,6 +36,22 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
   UserSearch? userSearchList;
   bool isLoading = false;
   bool isSearching = false;
+  @override
+  void initState() {
+    getOrderId();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  Future getOrderId() async {
+    try {
+      final response = await OrderService.getOrderId();
+      logSuccess(response);
+    } catch (e) {
+      logError('Error fetching order ID: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

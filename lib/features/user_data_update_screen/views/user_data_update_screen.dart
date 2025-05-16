@@ -214,6 +214,8 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       child: Row(
                         children: [
                           UserProfileContainer(
+                            imageUrl: portfolio?.personalInfo
+                                .getProfilePictureUrl(baseUrl),
                             isEdit: userEdit,
                             user: user,
                             onPremiumChanged:
@@ -261,6 +263,11 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       child: Row(
                         children: [
                           AdditionalContainer(
+                            logoImageUrl: portfolio?.workInfo.getCompanyLogoUrl(
+                              baseUrl,
+                            ),
+                            bannerImageUrl: portfolio?.personalInfo
+                                .getBannerImageUrl(baseUrl),
                             user: user,
                             isEdit: userEdit,
                             portfolio: portfolio,

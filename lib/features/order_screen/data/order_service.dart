@@ -32,6 +32,17 @@ class OrderService with ErrorExceptionHandler {
     }
   }
 
+  static Future getOrderId() async {
+    try {
+      final response = await DioHelper().get(
+        '/order/id',
+        type: ApiType.baseUrl,
+      );
+    } catch (e) {
+      throw OrderService().handleError(e);
+    }
+  }
+
   static Future<PaginatedUserResponse> fetchUser(
     // int page,
     String? searchQuery,

@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -7,9 +10,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/about_con
 import 'package:taproot_admin/features/user_data_update_screen/widgets/additional_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/padding_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
@@ -34,7 +35,15 @@ class EditUserPortfolio extends StatefulWidget {
 
 class _EditUserPortfolioState extends State<EditUserPortfolio> {
   PortfolioDataModel? theFetchedPortfolio;
-
+  // PlatformFile? pickedImage;
+  // String? previewImageUrl;
+  // Uint8List? previewImageBytes;
+  PlatformFile? pickedProfileImage; // For profile image
+  PlatformFile? pickedLogoImage; // For logo image
+  PlatformFile? pickedBannerImage; // For banner image
+  Uint8List? previewProfileBytes;
+  Uint8List? previewLogoBytes;
+  Uint8List? previewBannerBytes;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
@@ -73,7 +82,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   void fetchedTexfieldValue() {
     theFetchedPortfolio = widget.portfolio;
 
-    nameController.text = theFetchedPortfolio!.personalInfo.name;
+    nameController.text = theFetchedPortfolio?.personalInfo.name ?? '';
     emailController.text = theFetchedPortfolio!.personalInfo.email;
     phoneNumberController.text = theFetchedPortfolio!.personalInfo.phoneNumber;
     whatsappNumberController.text =
@@ -103,19 +112,84 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     }
   }
 
-  // void updatePortfolio() {
   Future<void> editPortfolio() async {
     try {
       final portfolio = widget.portfolio!;
+
+      // Keep existing images if no new ones are selected
+      ProductImage? updatedProfilePicture =
+          portfolio.personalInfo.profilePicture;
+      ProductImage? updatedBannerImage = portfolio.personalInfo.bannerImage;
+      ProductImage? updatedCompanyLogo = portfolio.workInfo.companyLogo;
+
+      // Upload new images only if they are selected
+
+      if (pickedProfileImage?.bytes != null) {
+        try {
+          final profileUploadResult = await PortfolioService.uploadImageFile(
+            pickedProfileImage!.bytes!,
+            pickedProfileImage!.name,
+          );
+
+          updatedProfilePicture = ProductImage(
+            name: profileUploadResult['name'],
+            key: profileUploadResult['key'],
+            size: int.tryParse(profileUploadResult['size'].toString()),
+            mimetype: profileUploadResult['mimetype'],
+          );
+        } catch (e) {
+          logError('Error uploading profile: $e');
+        }
+      }
+      if (pickedLogoImage?.bytes != null) {
+        try {
+          final logoUploadResult = await PortfolioService.uploadImageFile(
+            pickedLogoImage!.bytes!,
+            pickedLogoImage!.name,
+          );
+
+          updatedCompanyLogo = ProductImage(
+            name: logoUploadResult['name'],
+            key: logoUploadResult['key'],
+            size: int.tryParse(logoUploadResult['size'].toString()),
+            mimetype: logoUploadResult['mimetype'],
+          );
+        } catch (e) {
+          logError('Error uploading logo: $e');
+        }
+      }
+
+      if (pickedBannerImage?.bytes != null) {
+        try {
+          final bannerUploadResult = await PortfolioService.uploadImageFile(
+            pickedBannerImage!.bytes!,
+            pickedBannerImage!.name,
+          );
+
+          updatedBannerImage = ProductImage(
+            name: bannerUploadResult['name'],
+            key: bannerUploadResult['key'],
+            size: int.tryParse(bannerUploadResult['size'].toString()),
+            mimetype: bannerUploadResult['mimetype'],
+          );
+        } catch (e) {
+          logError('Error uploading banner: $e');
+        }
+      }
+
+      // Create the portfolio edit data
       final portfolioEditData = PortfolioDataModel(
-        id: portfolio.id,
+        id: '',
         personalInfo: PersonalInfo(
+          profilePicture: updatedProfilePicture,
+          bannerImage: updatedBannerImage,
           name: nameController.text,
           email: emailController.text,
           phoneNumber: phoneNumberController.text,
           whatsappNumber: whatsappNumberController.text,
         ),
         workInfo: WorkInfo(
+          companyLogo: updatedCompanyLogo,
           companyName: companyNameController.text,
           designation: designationcontroller.text,
           workEmail: workemailController.text,
@@ -149,12 +223,154 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           ),
         ),
       );
+
+      // Send the update request
       final response = await PortfolioService.editPortfolio(
         userid: widget.user.id,
         portfolioEditedData: portfolioEditData.toJson(),
       );
-    } catch (e) {}
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Portfolio updated successfully')),
+        );
+      }
+    } catch (e) {
+      logError('Error editing portfolio: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update portfolio. Please try again.'),
+          ),
+        );
+      }
+    }
   }
+
+  // void updatePortfolio() {
+  // Future<void> editPortfolio() async {
+  //   try {
+  //     final portfolio = widget.portfolio!;
+  //     ProductImage? updatedProfilePicture =
+  //         portfolio.personalInfo.profilePicture;
+  //     ProductImage? updatedBannerImage = portfolio.personalInfo.bannerImage;
+  //     ProductImage? updatedCompanyLogo = portfolio.workInfo.companyLogo;
+
+  //     if (pickedProfileImage != null) {
+  //       final profileUploadResult = await PortfolioService.uploadImageFile(
+  //         pickedProfileImage!.bytes!,
+  //         pickedProfileImage!.name,
+  //       );
+
+  //       updatedProfilePicture = ProductImage(
+  //         name: profileUploadResult['name'],
+  //         key: profileUploadResult['key'],
+  //         size: int.tryParse(profileUploadResult['size'].toString()),
+  //         mimetype: profileUploadResult['mimetype'],
+  //       );
+  //     }
+  //     if (pickedLogoImage != null) {
+  //       final logoUploadResult = await PortfolioService.uploadImageFile(
+  //         pickedLogoImage!.bytes!,
+  //         pickedLogoImage!.name,
+  //       );
+
+  //       updatedCompanyLogo = ProductImage(
+  //         name: logoUploadResult['name'],
+  //         key: logoUploadResult['key'],
+  //         size: int.tryParse(logoUploadResult['size'].toString()),
+  //         mimetype: logoUploadResult['mimetype'],
+  //       );
+  //     }
+
+  //     // Handle banner image upload
+  //     if (pickedBannerImage != null) {
+  //       final bannerUploadResult = await PortfolioService.uploadImageFile(
+  //         pickedBannerImage!.bytes!,
+  //         pickedBannerImage!.name,
+  //       );
+
+  //       updatedBannerImage = ProductImage(
+  //         name: bannerUploadResult['name'],
+  //         key: bannerUploadResult['key'],
+  //         size: int.tryParse(bannerUploadResult['size'].toString()),
+  //         mimetype: bannerUploadResult['mimetype'],
+  //       );
+  //     }
+
+  //     // if (pickedImage != null) {
+  //     //   final uploadResult = await PortfolioService.uploadImageFile(
+  //     //     pickedImage!.bytes!,
+  //     //     pickedImage!.name,
+  //     //   );
+
+  //     //   // Create new ProductImage from upload response
+  //     //   updatedProfilePicture = ProductImage(
+  //     //     name: uploadResult['name'],
+  //     //     key: uploadResult['key'],
+  //     //     size: int.tryParse(uploadResult['size'].toString()),
+  //     //     mimetype: uploadResult['mimetype'],
+  //     //   );
+  //     //   updatedBannerImage = ProductImage(
+  //     //     name: uploadResult['name'],
+  //     //     key: uploadResult['key'],
+  //     //     size: int.tryParse(uploadResult['size'].toString()),
+  //     //     mimetype: uploadResult['mimetype'],
+  //     //   );
+
+  //     final portfolioEditData = PortfolioDataModel(
+  //       id: portfolio.id,
+  //       personalInfo: PersonalInfo(
+  //         bannerImage: updatedBannerImage,
+  //         profilePicture: updatedProfilePicture,
+  //         name: nameController.text,
+  //         email: emailController.text,
+  //         phoneNumber: phoneNumberController.text,
+  //         whatsappNumber: whatsappNumberController.text,
+  //       ),
+  //       workInfo: WorkInfo(
+  //         companyLogo: updatedCompanyLogo,
+  //         companyName: companyNameController.text,
+  //         designation: designationcontroller.text,
+  //         workEmail: workemailController.text,
+  //         primaryWebsite: primaryWebsiteController.text,
+  //         secondaryWebsite: secondaryWebsiteController.text,
+  //       ),
+  //       addressInfo: AddressInfo(
+  //         buildingName: buildingNamecontroller.text,
+  //         area: areaController.text,
+  //         pincode: pincodeController.text,
+  //         district: districtController.text,
+  //         state: stateController.text,
+  //       ),
+  //       about: About(
+  //         heading: headingcontroller.text,
+  //         description: descriptioncontroller.text,
+  //       ),
+  //       user: UserInfo(
+  //         id: '',
+  //         code: portfolio.user.code,
+  //         isPremium: portfolio.user.isPremium,
+  //       ),
+  //       socialMedia: List<SocialMedia>.from(theFetchedPortfolio!.socialMedia),
+  //       services: List<Service>.from(
+  //         theFetchedPortfolio!.services.map(
+  //           (service) => Service(
+  //             id: service.id,
+  //             heading: serviceHeadingController.text,
+  //             description: serviceDescriptionController.text,
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //     final response = await PortfolioService.editPortfolio(
+  //       userid: widget.user.id,
+  //       portfolioEditedData: portfolioEditData.toJson(),
+  //     );
+  //   } catch (e) {
+  //     logError('Error editing portfolio: $e'); // Log the error for debugging
+  //   }
+  // }
 
   bool isLoading = false;
 
@@ -251,6 +467,103 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     }
   }
 
+  void pickProfileImage() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowedExtensions: ['jpg', 'jpeg', 'png'],
+        withData: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          pickedProfileImage = result.files.first;
+          previewProfileBytes = pickedProfileImage!.bytes;
+        });
+
+        // if (pickedProfileImage?.bytes != null) {
+        //   final uploadResult = await PortfolioService.uploadImageFile(
+        //     pickedProfileImage!.bytes!,
+        //     pickedProfileImage!.name,
+        //   );
+        //   logInfo('Upload success: $uploadResult');
+        // }
+      }
+    } catch (e) {
+      logError('Error picking or uploading profile image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error uploading profile image: $e')),
+        );
+      }
+    }
+  }
+
+  // void pickImage() async {
+  //   try {
+  //     final result = await FilePicker.platform.pickFiles(
+  //       type: FileType.image,
+  //       allowedExtensions: ['jpg', 'jpeg', 'png'],
+  //       withData: true,
+  //     );
+
+  //     if (result != null && result.files.isNotEmpty) {
+  //       setState(() {
+  //         pickedImage = result.files.first;
+  //         previewImageBytes = pickedImage!.bytes; // Store the bytes for preview
+  //       });
+
+  //       // Upload the image file after picking it
+  //       if (pickedImage?.bytes != null) {
+  //         final uploadResult = await PortfolioService.uploadImageFile(
+  //           pickedImage!.bytes!,
+  //           pickedImage!.name,
+  //         );
+
+  //         logInfo('Upload success: $uploadResult');
+  //       }
+  //     } else {
+  //       logInfo('No image selected.');
+  //     }
+  //   } catch (e) {
+  //     logError('Error picking or uploading image: $e');
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(
+  //         context,
+  //       ).showSnackBar(SnackBar(content: Text('Error uploading image: $e')));
+  //     }
+  //   }
+  // }
+  // void pickImage() async {
+  //   try {
+  //     final result = await FilePicker.platform.pickFiles(
+  //       type: FileType.image,
+  //       allowedExtensions: ['jpg', 'jpeg', 'png'],
+  //       withData: true,
+  //     );
+
+  //     if (result != null && result.files.isNotEmpty) {
+  //       setState(() {
+  //         pickedImage = result.files.first;
+  //       });
+
+  //       // Upload the image file after picking it
+  //       final uploadResult = await PortfolioService.uploadImageFile(
+  //         pickedImage!.bytes!, // image data as Uint8List
+  //         pickedImage!.name, // filename with extension
+  //       );
+
+  //       // You can do something with uploadResult here
+  //       logInfo('Upload result: $uploadResult');
+  //       // Or update UI / state with uploaded info
+  //     } else {
+  //       logInfo('No image selected.');
+  //     }
+  //   } catch (e) {
+  //     logError('Error picking or uploading image: $e');
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -309,7 +622,12 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               child: Row(
                 children: [
                   UserProfileContainer(
-                    isEdit: false,
+                    previewImageBytes: previewProfileBytes,
+                    onTapEdit: pickProfileImage,
+                    imageUrl: widget.portfolio?.personalInfo
+                        .getProfilePictureUrl(baseUrl),
+
+                    isEdit: true,
                     user: widget.user,
                     onPremiumChanged: (value) => setState(() {}),
                   ),
@@ -369,12 +687,42 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               child: Row(
                 children: [
                   AdditionalContainer(
+                    logoImageUrl: widget.portfolio?.workInfo.getCompanyLogoUrl(
+                      baseUrl,
+                    ),
+                    bannerImageUrl: widget.portfolio?.personalInfo
+                        .getBannerImageUrl(baseUrl),
                     primaryWebsiteController: primaryWebsiteController,
                     secondaryWebsiteController: secondaryWebsiteController,
                     user: widget.user,
                     isEdit: true,
                     portfolio: widget.portfolio,
+                    onLogoSelected: (file) {
+                      setState(() {
+                        pickedLogoImage = file;
+                        previewLogoBytes = file.bytes;
+                      });
+                    },
+                    onBannerSelected: (file) {
+                      setState(() {
+                        pickedBannerImage = file;
+                        previewBannerBytes = file.bytes;
+                      });
+                    },
                   ),
+
+                  // AdditionalContainer(
+                  //   logoImageUrl: widget.portfolio?.workInfo.getCompanyLogoUrl(
+                  //     baseUrl,
+                  //   ),
+                  //   bannerImageUrl: widget.portfolio?.personalInfo
+                  //       .getBannerImageUrl(baseUrl),
+                  //   primaryWebsiteController: primaryWebsiteController,
+                  //   secondaryWebsiteController: secondaryWebsiteController,
+                  //   user: widget.user,
+                  //   isEdit: true,
+                  //   portfolio: widget.portfolio,
+                  // ),
                 ],
               ),
             ),
@@ -439,7 +787,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
             //       onServiceAdd: addServiceToPortfolio,
             //       onServiceEdit: editService,
             //       onServiceDelete: (p0) {
-                    
+
             //       },
             //     ),
             //   ],

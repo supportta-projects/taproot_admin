@@ -1,7 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
@@ -12,6 +13,9 @@ class UserProfileContainer extends StatefulWidget {
   final dynamic user;
   final bool isEdit;
   final ValueChanged<bool> onPremiumChanged;
+  final String? imageUrl;
+  final VoidCallback? onTapEdit;
+  final Uint8List? previewImageBytes;
 
   const UserProfileContainer({
     super.key,
@@ -19,6 +23,9 @@ class UserProfileContainer extends StatefulWidget {
     required this.user,
     this.portfolio,
     required this.onPremiumChanged,
+    this.imageUrl,
+    this.onTapEdit,
+    this.previewImageBytes,
   });
 
   @override
@@ -69,20 +76,60 @@ class _UserProfileContainerState extends State<UserProfileContainer>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Profile icon & ID
-            Container(
-              width: 200.v,
-              height: 200.v,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(60),
-                color: CustomColors.textColorLightGrey,
-              ),
-              child: Center(
-                child: Icon(
-                  LucideIcons.userRound,
-                  color: CustomColors.textColorDarkGrey,
-                  size: SizeUtils.height * 0.1,
+            Stack(
+              children: [
+                Container(
+                  width: 200.v,
+                  height: 200.v,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      CustomPadding.paddingXXL,
+                    ),
+                    color: CustomColors.textColorLightGrey,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      CustomPadding.paddingXXL,
+                    ),
+                    child:
+                        widget.previewImageBytes != null
+                            ? Image.memory(
+                              widget.previewImageBytes!,
+                              fit: BoxFit.cover,
+                            )
+                            : (widget.imageUrl != null &&
+                                widget.imageUrl!.isNotEmpty)
+                            ? Image.network(widget.imageUrl!, fit: BoxFit.cover)
+                            : Center(
+                              child: Icon(
+                                Icons.person,
+                                size: 80.v,
+                                color: CustomColors.textColorDarkGrey,
+                              ),
+                            ),
+                  ),
                 ),
-              ),
+                if (widget.isEdit)
+                  Positioned(
+                    top: 1,
+                    right: 8,
+                    child: Container(
+                      padding: EdgeInsets.all(CustomPadding.padding),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: GestureDetector(
+                        onTap: widget.onTapEdit,
+                        child: Icon(
+                          Icons.edit,
+                          color: CustomColors.buttonColor1,
+                          size: 25,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -349,11 +396,6 @@ class _UserProfileContainerState extends State<UserProfileContainer>
 //     );
 //   }
 
-
-
-
-
-  
 //   // Widget build(BuildContext context) {
 //   //   return Expanded(
 //   //     child: Container(
