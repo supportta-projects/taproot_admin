@@ -6,7 +6,7 @@ import 'package:taproot_admin/features/users_screen/data/user_service.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class AddUserDialog extends StatefulWidget {
-  final VoidCallback onCallFunction;
+  final VoidCallback onCallFunction; // Change this line
   const AddUserDialog({super.key, required this.onCallFunction});
 
   @override
@@ -15,22 +15,46 @@ class AddUserDialog extends StatefulWidget {
 
 class _AddUserDialogState extends State<AddUserDialog> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  Future<void> addUser(BuildContext context) async {
+  bool isLoading = false;
+
+  Future<void> addUser(BuildContext currentContext) async {
     if (!_formKey.currentState!.validate()) {
       return;
-    } else {
-      Navigator.pop(context);
-      widget.onCallFunction;
     }
+
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      final result = await UserService.createUser(
+      await UserService.createUser(
         userData: {'name': nameController.text, 'email': emailController.text},
       );
+
+      if (!mounted) return;
+
+      // Close the dialog first
+      Navigator.pop(currentContext);
+
+      // Call the refresh function
+      widget.onCallFunction();
+
+      // Show success message
+      ScaffoldMessenger.of(
+        currentContext,
+      ).showSnackBar(const SnackBar(content: Text('User added successfully!')));
     } catch (e) {
-      logInfo('Error creating user: $e');
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      ScaffoldMessenger.of(currentContext).showSnackBar(
+        const SnackBar(content: Text('Failed to add user. Please try again.')),
+      );
     }
   }
 
@@ -97,15 +121,9 @@ class _AddUserDialogState extends State<AddUserDialog> {
               MiniLoadingButton(
                 needRow: false,
                 text: 'Add',
-                onPressed: () {
-                  addUser(context);
-
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   SnackBar(content: Text('Account added successfully!')),
-                  // );
-
-                  // TODO: Handle add action
-                },
+                isLoading: isLoading,
+                enabled: !isLoading, // Add this line
+                onPressed: () => addUser(context),
                 useGradient: true,
                 gradientColors: CustomColors.borderGradient.colors,
               ),

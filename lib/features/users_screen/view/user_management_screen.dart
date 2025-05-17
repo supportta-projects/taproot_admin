@@ -32,9 +32,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   final rowsPerPage = 10;
   UserDataTableSource? _dataSource;
   final _tableKey = GlobalKey<PaginatedDataTableState>();
-  Future<void> loadUsers() async {
-    // if (!mounted) return;
 
+  Future<void> loadUsers() async {
     setState(() {
       isLoading = true;
     });
@@ -46,32 +45,28 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         showOnlyPremium,
       );
 
-      // if (!mounted) return;
+      if (!mounted) return;
 
       setState(() {
         users = response.users;
         premiumUsers = users.where((user) => user.isPremium).length;
-
         totalUser = response.totalCount;
-        totalPages = (totalUser / rowsPerPage).ceil(); // Calculate total pages
+        totalPages = (totalUser / rowsPerPage).ceil();
         isLoading = false;
 
         final filtered =
             users.where((user) {
               final query = searchQuery.toLowerCase();
-
               final matchName = user.fullName.toLowerCase().contains(query);
               final matchNumber = user.phone.toLowerCase().contains(query);
               final matchUserId = user.userId.toLowerCase().contains(query);
-
               final matchWhatsapp = user.whatsapp.toLowerCase().contains(query);
               final matchSearch =
                   matchName || matchNumber || matchWhatsapp || matchUserId;
-
               final matchPremium = showOnlyPremium ? user.isPremium : true;
-
               return matchSearch && matchPremium;
             }).toList();
+
         _dataSource = UserDataTableSource(
           filtered,
           totalUser,
@@ -80,14 +75,26 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         );
       });
     } catch (e) {
-      // if (!mounted) return;
-
+      if (!mounted) return;
       setState(() {
         isLoading = false;
       });
-      throw Exception(e);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to load users: $e')));
     }
   }
+
+  void refreshList() {
+    setState(() {
+      currentPage = 1;
+      if (_tableKey.currentState != null) {
+        _tableKey.currentState!.pageTo(0);
+      }
+    });
+    loadUsers();
+  }
+
 
   void _handlePageChange(int firstRowIndex) {
     // if (!mounted) return;
@@ -127,14 +134,16 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (context) {
-                          return AddUserDialog(onCallFunction: () => loadUsers);
-                        },
+                        barrierDismissible: false,
+                        builder:
+                            (dialogContext) =>
+                                AddUserDialog(onCallFunction: refreshList),
                       );
                     },
                     useGradient: true,
                     gradientColors: CustomColors.borderGradient.colors,
                   ),
+
                   Gap(CustomPadding.paddingXL.v),
                 ],
               ),

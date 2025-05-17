@@ -62,7 +62,7 @@ class AppRoutes {
         //TODO : navigate to the add user portfolio screen
       case '/addUserPortfolio':
         final user = settings.arguments as User;
-        return pageRoute(settings, AddUserPortfolio(user: user));
+        return pageRoute(settings, AddUserPortfolio(user: user, ));
 
       case LandingPage.path:
         return pageRoute(settings, const LandingPage());

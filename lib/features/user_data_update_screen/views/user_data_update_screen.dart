@@ -313,7 +313,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                     //   child: Row(
                     //     children: [
                     //       ServiceContainer(
-                    //         isEdited: userEdit,
+                    //         isEdited: false,
                     //         user: user,
                     //         portfolio: portfolio,
                     //         onServiceAdd: () async {
@@ -329,7 +329,6 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                     //           await fetchPortfolio();
                     //         },
                     //       ),
-
                     //     ],
                     //   ),
                     // ),

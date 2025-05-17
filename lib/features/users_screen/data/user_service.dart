@@ -1,6 +1,7 @@
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
+import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/users_screen/data/user_paginated_model.dart';
 
 class UserService with ErrorExceptionHandler {
@@ -27,7 +28,7 @@ class UserService with ErrorExceptionHandler {
     }
   }
 
-  static Future<void> createUser({
+  static Future<bool> createUser({
     required Map<String, dynamic> userData,
   }) async {
     try {
@@ -36,13 +37,13 @@ class UserService with ErrorExceptionHandler {
         type: ApiType.baseUrl,
         data: userData,
       );
-      if (response.statusCode == 201) {
-        return;
-      } else {
-        throw Exception("Failed to create user");
-      }
+
+      // Return true if successful
+      return response.statusCode == 201;
     } catch (e) {
+      logError('Error creating user: $e'); 
       throw UserService().handleError(e);
     }
   }
+
 }

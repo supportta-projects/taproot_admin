@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
@@ -20,6 +23,7 @@ class AddUserPortfolio extends StatefulWidget {
   static const path = '/addUserPortfolio';
   const AddUserPortfolio({super.key, required this.user});
   final User user;
+
   // final dynamic user;
 
   @override
@@ -28,6 +32,7 @@ class AddUserPortfolio extends StatefulWidget {
 
 class _AddUserPortfolioState extends State<AddUserPortfolio> {
   late final User user;
+
   bool _isLoading = false;
   bool _isPremium = false;
 
@@ -52,6 +57,13 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
       TextEditingController();
   final _formKey = GlobalKey<FormState>();
   List<SocialMedia> socialLinks = [];
+  PlatformFile? pickedProfileImage;
+  PlatformFile? pickedLogoImage;
+  PlatformFile? pickedBannerImage;
+  Uint8List? previewProfileBytes;
+  Uint8List? previewLogoBytes;
+  Uint8List? previewBannerBytes;
+
   @override
   void initState() {
     user = widget.user;
@@ -69,15 +81,66 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
     });
 
     try {
+      ProductImage? profilePicture;
+      ProductImage? bannerImage;
+      ProductImage? companyLogo;
+      // Upload profile image if selected
+      if (pickedProfileImage?.bytes != null) {
+        final profileUploadResult = await PortfolioService.uploadImageFile(
+          pickedProfileImage!.bytes!,
+          pickedProfileImage!.name,
+        );
+
+        profilePicture = ProductImage(
+          name: profileUploadResult['name'],
+          key: profileUploadResult['key'],
+          size: int.tryParse(profileUploadResult['size'].toString()),
+          mimetype: profileUploadResult['mimetype'],
+        );
+      }
+
+      // Upload logo if selected
+      if (pickedLogoImage?.bytes != null) {
+        final logoUploadResult = await PortfolioService.uploadImageFile(
+          pickedLogoImage!.bytes!,
+          pickedLogoImage!.name,
+        );
+
+        companyLogo = ProductImage(
+          name: logoUploadResult['name'],
+          key: logoUploadResult['key'],
+          size: int.tryParse(logoUploadResult['size'].toString()),
+          mimetype: logoUploadResult['mimetype'],
+        );
+      }
+
+      // Upload banner if selected
+      if (pickedBannerImage?.bytes != null) {
+        final bannerUploadResult = await PortfolioService.uploadImageFile(
+          pickedBannerImage!.bytes!,
+          pickedBannerImage!.name,
+        );
+
+        bannerImage = ProductImage(
+          name: bannerUploadResult['name'],
+          key: bannerUploadResult['key'],
+          size: int.tryParse(bannerUploadResult['size'].toString()),
+          mimetype: bannerUploadResult['mimetype'],
+        );
+      }
+
       final portfolio = PortfolioDataModel(
         id: '',
         personalInfo: PersonalInfo(
+          profilePicture: profilePicture,
+          bannerImage: bannerImage,
           name: nameController.text,
           email: emailController.text,
           phoneNumber: '+91${phoneController.text}',
           whatsappNumber: '+91${whatsappController.text}',
         ),
         workInfo: WorkInfo(
+          companyLogo: companyLogo,
           companyName: companyController.text,
           designation: designationController.text,
           workEmail: workEmailController.text,
@@ -133,6 +196,38 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
         setState(() {
           _isLoading = false;
         });
+      }
+    }
+  }
+
+  void pickProfileImage() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowedExtensions: ['jpg', 'jpeg', 'png'],
+        withData: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          pickedProfileImage = result.files.first;
+          previewProfileBytes = pickedProfileImage!.bytes;
+        });
+
+        // if (pickedProfileImage?.bytes != null) {
+        //   final uploadResult = await PortfolioService.uploadImageFile(
+        //     pickedProfileImage!.bytes!,
+        //     pickedProfileImage!.name,
+        //   );
+        //   logInfo('Upload success: $uploadResult');
+        // }
+      }
+    } catch (e) {
+      logError('Error picking or uploading profile image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error uploading profile image: $e')),
+        );
       }
     }
   }
@@ -200,6 +295,9 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
               PaddingRow(
                 children: [
                   UserProfileContainer(
+                    imageUrl: null,
+                    previewImageBytes: previewProfileBytes,
+                    onTapEdit: pickProfileImage,
                     user: user,
                     isEdit: true,
                     onPremiumChanged:
@@ -240,6 +338,18 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
               PaddingRow(
                 children: [
                   AddAdditionalDetails(
+                    onLogoSelected: (file) {
+                      setState(() {
+                        pickedLogoImage = file;
+                        previewLogoBytes = file.bytes;
+                      });
+                    },
+                    onBannerSelected: (file) {
+                      setState(() {
+                        pickedBannerImage = file;
+                        previewBannerBytes = file.bytes;
+                      });
+                    },
                     primaryWebsitecontroller: primaryWebsiteController,
                     secondaryWebsitecontroller: secondaryWebsiteController,
                   ),
