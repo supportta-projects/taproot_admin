@@ -51,7 +51,10 @@ class _CommonProductContainerState extends State<CommonProductContainer> {
                 ],
               ),
             ),
-            Column(children: widget.children ?? []),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widget.children ?? [],
+            ),
             widget.isAmountContainer
                 ? Divider(indent: 40, endIndent: 40)
                 : SizedBox(),

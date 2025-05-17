@@ -120,7 +120,7 @@ class _ViewProductState extends State<ViewProduct> {
                       width: SizeUtils.width / 5,
                       child: AddImageContainer(
                         isImageView: true,
-                        path:
+                        imageUrl:
                             '$baseUrl/file?key=products/${widget.images![index]}',
                       ),
                     ),

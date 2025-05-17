@@ -9,11 +9,12 @@ import 'package:taproot_admin/features/user_data_update_screen/views/edit_user_p
 import 'package:taproot_admin/features/user_data_update_screen/widgets/about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/padding_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
+import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -88,6 +89,24 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
         }
       }
     }
+  }
+
+  String? getServiceImageUrl() {
+    // Add these debug logs
+    logSuccess('Portfolio services: ${portfolio?.services}');
+    if (portfolio?.services.isNotEmpty == true) {
+      logSuccess('First service: ${portfolio!.services[0].toJson()}');
+      logSuccess('Service image: ${portfolio!.services[0].image?.toJson()}');
+    }
+
+    if (portfolio?.services.isNotEmpty == true &&
+        portfolio?.services[0].image?.key != null) {
+      final imageUrl =
+          '$baseUrl/file?key=portfolios/portfolio_services/${portfolio!.services[0].image!.key}';
+      logSuccess('Generated image URL: $imageUrl'); // Debug log
+      return imageUrl;
+    }
+    return null;
   }
 
   @override
@@ -307,27 +326,146 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: CustomPadding.paddingLarge.v,
-                      ),
-                      child: Row(
+                    // if (portfolio?.services.isNotEmpty == true)
+                    //   Padding(
+                    //     padding: EdgeInsets.symmetric(
+                    //       horizontal: CustomPadding.paddingLarge.v,
+                    //     ),
+                    //     child: Row(
+                    //       children: [
+                    //         ServiceContainer(
+
+                    //           services: [],
+                    //           // imageUrl:                              //     portfolio?.services.isNotEmpty == true &&
+                    //           //             portfolio?.services[0].image?.key !=
+                    //           //                 null
+                    //           //         ? '$baseUrl/file?key=portfolios/portfolio_services/${portfolio!.services[0].image!.key}' // Try without the portfolios/portfolio_services/ path
+                    //           //         : null,
+                    //           saveButton: () {},
+                    //           isEdited: false,
+                    //           user: user,
+                    //           portfolio: portfolio,
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    Visibility(
+                      visible: !(portfolio?.services.isEmpty ?? true),
+                      child: CommonProductContainer(
+                        title: 'Your Services',
                         children: [
-                          ServiceContainer(
-                            saveButton: () {},
-                            isEdited: false,
-                            user: user,
-                            portfolio: portfolio,
+                          Gap(CustomPadding.paddingLarge.v),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: CustomPadding.paddingLarge.v,
+                            ),
+                            child: Text('Heading/Topic'),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: CustomPadding.paddingLarge.v,
+                            ),
+                            child: Text(
+                              portfolio?.serviceHeading.isNotEmpty == true
+                                  ? portfolio!.serviceHeading
+                                  : 'No heading available',
+                              style: context.inter40016,
+                            ),
+                          ),
+                          Gap(CustomPadding.paddingXL.v),
+                          SizedBox(
+                            height: 400,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: (portfolio?.services.length ?? 0)
+                                  .clamp(0, 3),
+
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    left:
+                                        index == 0
+                                            ? CustomPadding.paddingLarge.v
+                                            : 0,
+                                    right: CustomPadding.paddingLarge.v,
+                                  ),
+                                  child: ServiceCardWidget(
+                                    baseUrl: baseUrl,
+                                    service: portfolio!.services[index],
+                                    portfolio: portfolio,
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ],
                       ),
                     ),
+
                     Gap(CustomPadding.paddingXXL.v),
 
                     // Add your form fields here
                   ],
                 ),
               ),
+    );
+  }
+}
+
+class ServiceCardWidget extends StatelessWidget {
+  final PortfolioDataModel? portfolio;
+  final baseUrl;
+  final Service service;
+  const ServiceCardWidget({
+    super.key,
+    required this.portfolio,
+    required this.baseUrl,
+    required this.service,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
+      width: 350,
+      height: 400,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(CustomPadding.padding.v),
+        border: Border.all(color: CustomColors.hintGrey),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(service.heading, style: context.inter50014),
+          Gap(CustomPadding.paddingLarge.v),
+          SizedBox(
+            height: 160,
+            width: double.infinity,
+            child:
+                service.image?.key != null
+                    ? Image.network(
+                      '$baseUrl/file?key=portfolios/portfolio_services/${service.image!.key}',
+                      fit: BoxFit.fill,
+                    )
+                    : const Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        size: 40,
+                        color: CustomColors.hintGrey,
+                      ),
+                    ),
+          ),
+          Gap(CustomPadding.paddingLarge.v),
+          Text(
+            'Description',
+            style: TextStyle(color: CustomColors.textFieldBorderGrey),
+          ),
+          Gap(CustomPadding.paddingLarge.v),
+          Expanded(
+            child: SingleChildScrollView(child: Text(service.description)),
+          ),
+        ],
+      ),
     );
   }
 }

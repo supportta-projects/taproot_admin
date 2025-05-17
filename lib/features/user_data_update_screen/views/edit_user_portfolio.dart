@@ -6,12 +6,17 @@ import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
+import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/additional_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/expand_tile_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/padding_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
@@ -44,6 +49,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   Uint8List? previewProfileBytes;
   Uint8List? previewLogoBytes;
   Uint8List? previewBannerBytes;
+  ProductImage? pickedServiceImage;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
@@ -65,6 +71,8 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       TextEditingController();
   final TextEditingController headingcontroller = TextEditingController();
   final TextEditingController descriptioncontroller = TextEditingController();
+  final TextEditingController serviceHeadController = TextEditingController();
+
   final TextEditingController serviceHeadingController =
       TextEditingController();
   final TextEditingController serviceDescriptionController =
@@ -102,6 +110,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     headingcontroller.text = theFetchedPortfolio!.about.heading;
     descriptioncontroller.text = theFetchedPortfolio!.about.description;
     if (theFetchedPortfolio!.services.isNotEmpty) {
+      serviceHeadController.text = theFetchedPortfolio!.serviceHeading;
       serviceHeadingController.text = theFetchedPortfolio!.services[0].heading;
       serviceDescriptionController.text =
           theFetchedPortfolio!.services[0].description;
@@ -180,6 +189,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       // Create the portfolio edit data
       final portfolioEditData = PortfolioDataModel(
         id: '',
+        serviceHeading: serviceHeadController.text,
         personalInfo: PersonalInfo(
           profilePicture: updatedProfilePicture,
           bannerImage: updatedBannerImage,
@@ -246,8 +256,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       }
     }
   }
-
-
 
   bool isLoading = false;
 
@@ -653,22 +661,59 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
             ),
 
             Gap(CustomPadding.paddingXL.v),
-            // PaddingRow(
-            //   children: [
-            //       ServiceContainer(
-            //       serviceHeadingController: serviceHeadingController,
-            //       serviceDescriptionController: serviceDescriptionController,
-            //       portfolio: widget.portfolio,
-            //       isEdited: true,
-            //       user: widget.user,
-            //       onServiceAdd: addServiceToPortfolio,
-            //       onServiceEdit: editService,
-            //       onServiceDelete: (p0) {
+            PaddingRow(
+              children: [
+                ExpandTileContainer(
+                  title: 'Your Services',
+                  children: [
+                    TextFormContainer(labelText: 'Heading/Topic'),
+                    Gap(CustomPadding.paddingLarge.v),
+                    Divider(endIndent: 20, indent: 20, thickness: 1),
+                    Gap(CustomPadding.paddingLarge.v),
 
-            //       },
-            //     ),
-            //   ],
-            // ),
+                    Row(
+                      children: [
+                        Gap(CustomPadding.paddingLarge.v),
+                        AddImageContainer(
+                          imageUrl: null,
+                          initialImage: null,
+                          onImageSelected: (ProductImage? image) {
+                            setState(() {
+                              pickedServiceImage = image;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
+                    TextFormContainer(
+                      labelText: 'Heading/Topic',
+                      controller: serviceHeadingController,
+                    ),
+                    TextFormContainer(
+                      labelText: 'Description',
+                      maxline: 7,
+                      controller: serviceDescriptionController,
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        MiniLoadingButton(
+                          icon: Icons.save,
+                          text: 'Save',
+                          onPressed: () {},
+                          useGradient: true,
+                          gradientColors: CustomColors.borderGradient.colors,
+                        ),
+                        Gap(CustomPadding.paddingLarge.v),
+                      ],
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
+                  ],
+                ),
+              ],
+            ),
             Gap(CustomPadding.paddingXL.v),
           ],
         ),

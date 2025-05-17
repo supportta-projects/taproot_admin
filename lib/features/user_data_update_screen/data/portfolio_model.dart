@@ -6,6 +6,7 @@ class PortfolioDataModel {
   final About about;
   final UserInfo user;
   final List<SocialMedia> socialMedia;
+  final String serviceHeading;
   final List<Service> services;
 
   PortfolioDataModel({
@@ -17,6 +18,7 @@ class PortfolioDataModel {
     required this.user,
     required this.socialMedia,
     required this.services,
+    required this.serviceHeading
   });
 
   factory PortfolioDataModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,7 @@ class PortfolioDataModel {
           (portfolio['socialMedia'] as List<dynamic>)
               .map((e) => SocialMedia.fromJson(e))
               .toList(),
+      serviceHeading: portfolio['serviceHeading'],        
       services:
           (json['result']['services'] as List<dynamic>)
               .map((e) => Service.fromJson(e))
@@ -49,6 +52,7 @@ class PortfolioDataModel {
       'about': about.toJson(),
       'user': user.toJson(),
       'socialMedia': socialMedia.map((e) => e.toJson()).toList(),
+      'serviceHeading':serviceHeading,
       'services': services.map((e) => e.toJson()).toList(),
     };
   }
@@ -320,6 +324,7 @@ class Service {
   final String heading;
   final String description;
   final DateTime? createdAt;
+  final ProductImage? image;
 
   Service({
     this.id,
@@ -328,6 +333,7 @@ class Service {
     required this.heading,
     required this.description,
     this.createdAt,
+     this.image,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -338,6 +344,8 @@ class Service {
       heading: json['heading'],
       description: json['description'],
       createdAt: DateTime.parse(json['createdAt']),
+       image:
+          json['image'] != null ? ProductImage.fromJson(json['image']) : null, 
     );
   }
 
@@ -348,5 +356,12 @@ class Service {
     'heading': heading,
     'description': description,
     'createdAt': createdAt?.toIso8601String(),
+     'image': image?.toJson(),
   };
+   String? getImageUrl(String baseUrl) {
+    if (image?.key != null) {
+      return '$baseUrl/file?key=portfolios/portfolio_services/${image!.key}';
+    }
+    return null;
+  }
 }

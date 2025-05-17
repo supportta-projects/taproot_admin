@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -10,12 +11,18 @@ import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_se
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_additional_details.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_basicdetail_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_social_media_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_user_location.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_user_profile.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/expand_tile_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/padding_row.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
+import 'package:taproot_admin/gen/assets.gen.dart';
+import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -53,7 +60,13 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   final TextEditingController districtController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
   final TextEditingController aboutHeadingController = TextEditingController();
+  final TextEditingController serviceHeadController = TextEditingController();
+
   final TextEditingController aboutDescriptionController =
+      TextEditingController();
+  final TextEditingController serviceHeadingController =
+      TextEditingController();
+  final TextEditingController serviceDescriptionController =
       TextEditingController();
   final _formKey = GlobalKey<FormState>();
   List<SocialMedia> socialLinks = [];
@@ -63,6 +76,12 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   Uint8List? previewProfileBytes;
   Uint8List? previewLogoBytes;
   Uint8List? previewBannerBytes;
+
+  List<Service> services = [];
+  // PlatformFile? pickedServiceImage;
+  Uint8List? previewServiceBytes;
+  ProductImage? pickedServiceImage;
+  String? imageUrl;
 
   @override
   void initState() {
@@ -160,6 +179,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
         ),
         user: UserInfo(id: user.id, code: user.userId, isPremium: true),
         socialMedia: socialLinks,
+        serviceHeading: serviceHeadController.text,
         services: [],
       );
 
@@ -200,6 +220,49 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
     }
   }
 
+  // void handleServiceSave() async {
+  //   if (serviceHeadingController.text.isEmpty ||
+  //       serviceDescriptionController.text.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Please fill all service details')),
+  //     );
+  //     return;
+  //   }
+
+  //   ProductImage? serviceImage;
+  //   if (pickedServiceImage?.bytes != null) {
+  //     try {
+  //       final uploadResult = await PortfolioService.uploadImageFile(
+  //         pickedServiceImage!.bytes!,
+  //         pickedServiceImage!.name,
+  //       );
+
+  //       serviceImage = ProductImage(
+  //         name: uploadResult['name'],
+  //         key: uploadResult['key'],
+  //         size: int.tryParse(uploadResult['size'].toString()),
+  //         mimetype: uploadResult['mimetype'],
+  //       );
+  //     } catch (e) {
+  //       logError('Error uploading service image: $e');
+  //     }
+  //   }
+
+  //   setState(() {
+  //     services.add(
+  //       Service(
+  //         heading: serviceHeadingController.text,
+  //         description: serviceDescriptionController.text,
+  //         image: serviceImage,
+  //       ),
+  //     );
+  //     serviceHeadingController.clear();
+  //     serviceDescriptionController.clear();
+  //     pickedServiceImage = pickedServiceImage;
+  //     previewServiceBytes = previewServiceBytes;
+  //   });
+  // }
+
   void pickProfileImage() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -231,6 +294,8 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
       }
     }
   }
+
+  
 
   @override
   void dispose() {
@@ -378,16 +443,260 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                   ),
                 ],
               ),
-              // Gap(CustomPadding.paddingXL.v),
-              // PaddingRow(
-              //   children: [ServiceContainer( isEdited: true, user: user,saveButton: () {
+              Gap(CustomPadding.paddingXL.v),
+              PaddingRow(
+                children: [
+                  ExpandTileContainer(
+                    title: 'Your Services',
+                    children: [
+                      TextFormContainer(labelText: 'Heading/Topic'),
+                      Gap(CustomPadding.paddingLarge.v),
+                      Divider(endIndent: 20, indent: 20, thickness: 1),
+                      Gap(CustomPadding.paddingLarge.v),
 
-              //   },)],
+                      Row(
+                        children: [
+                          Gap(CustomPadding.paddingLarge.v),
+                          AddImageContainer(
+                            imageUrl: null,
+                            initialImage: null,
+                            onImageSelected: (ProductImage? image) {
+                              setState(() {
+                                pickedServiceImage = image;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Gap(CustomPadding.paddingLarge.v),
+                      TextFormContainer(
+                        labelText: 'Heading/Topic',
+                        controller: serviceHeadingController,
+                      ),
+                      TextFormContainer(
+                        labelText: 'Description',
+                        maxline: 7,
+                        controller: serviceDescriptionController,
+                      ),
+                      Gap(CustomPadding.paddingLarge.v),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          MiniLoadingButton(
+                            icon: Icons.save,
+                            text: 'Save',
+                            onPressed: () {},
+                            useGradient: true,
+                            gradientColors: CustomColors.borderGradient.colors,
+                          ),
+                          Gap(CustomPadding.paddingLarge.v),
+                        ],
+                      ),
+                      Gap(CustomPadding.paddingLarge.v),
+                    ],
+                  ),
+                ],
+              ),
+              // PaddingRow(
+              //   children: [
+              //     ServiceContainer(
+              //       isEdited: true,
+              //       user: user,
+              //       serviceHeadingController: serviceHeadingController,
+              //       serviceDescriptionController: serviceDescriptionController,
+              //       saveButton: handleServiceSave,
+              //       onImageSelected: (file) {
+              //         setState(() {
+              //           pickedServiceImage = file;
+              //           previewServiceBytes = file.bytes;
+              //         });
+              //       },
+              //       services: services, // Pass the services list
+              //     ),
+              //   ],
               // ),
               Gap(CustomPadding.paddingXXL.v),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class AddImageContainer extends StatefulWidget {
+  final ProductImage? initialImage;
+  final Function(ProductImage?) onImageSelected;
+  final String? imageUrl;
+  const AddImageContainer({
+    super.key,
+    this.imageUrl,
+    required this.onImageSelected,
+    this.initialImage,
+  });
+
+  @override
+  State<AddImageContainer> createState() => _AddImageContainerState();
+}
+
+class _AddImageContainerState extends State<AddImageContainer> {
+  PlatformFile? pickedFile;
+  Uint8List? previewBytes;
+  bool isUploading = false;
+  ProductImage? currentImage;
+
+  @override
+  void initState() {
+    super.initState();
+    currentImage = widget.initialImage;
+  }
+
+  Future<void> pickFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowedExtensions: ['jpg', 'jpeg', 'png'],
+        withData: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          pickedFile = result.files.first;
+          previewBytes = pickedFile!.bytes;
+          currentImage = null;
+        });
+
+        await uploadFile();
+      }
+    } catch (e) {
+      debugPrint('Error picking image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+      }
+    }
+  }
+
+  Future<void> uploadFile() async {
+    if (pickedFile?.bytes == null) return;
+
+    setState(() {
+      isUploading = true;
+    });
+
+    try {
+      final result = await PortfolioService.uploadImageFile(
+        pickedFile!.bytes!,
+        pickedFile!.name,
+      );
+
+      final productImage = ProductImage(
+        name: pickedFile!.name,
+        key: result['key'],
+        size: pickedFile!.size,
+        mimetype: 'image/${pickedFile!.extension}',
+      );
+
+      setState(() {
+        currentImage = productImage;
+        isUploading = false;
+      });
+
+      widget.onImageSelected(productImage);
+    } catch (e) {
+      setState(() {
+        isUploading = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+      }
+    }
+  }
+
+  Widget _buildPreview() {
+    // Show preview of picked image
+    if (previewBytes != null) {
+      return Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.memory(
+              previewBytes!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+          if (isUploading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
+            ),
+          _buildRemoveButton(),
+        ],
+      );
+    }
+
+    // Show existing image if available
+    if (currentImage != null && widget.imageUrl != null) {
+      return Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.network(
+              widget.imageUrl!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(child: Icon(Icons.error));
+              },
+            ),
+          ),
+          _buildRemoveButton(),
+        ],
+      );
+    }
+
+    // Show add icon if no image
+    return Center(child: SvgPicture.asset(Assets.svg.addround));
+  }
+
+  Widget _buildRemoveButton() {
+    return Positioned(
+      top: 5,
+      right: 5,
+      child: IconButton(
+        icon: const Icon(Icons.close, color: Colors.white),
+        onPressed: () {
+          setState(() {
+            pickedFile = null;
+            previewBytes = null;
+            currentImage = null;
+          });
+          widget.onImageSelected(null);
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: pickFile,
+      child: Container(
+        width: 190.v,
+        height: 160.v,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),
+          color: CustomColors.lightGreen,
+        ),
+        child: _buildPreview(),
       ),
     );
   }
