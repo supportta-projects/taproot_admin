@@ -10,6 +10,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/about_con
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
@@ -306,32 +307,21 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-                    // Padding(
-                    //   padding: EdgeInsets.symmetric(
-                    //     horizontal: CustomPadding.paddingLarge.v,
-                    //   ),
-                    //   child: Row(
-                    //     children: [
-                    //       ServiceContainer(
-                    //         isEdited: false,
-                    //         user: user,
-                    //         portfolio: portfolio,
-                    //         onServiceAdd: () async {
-                    //           // Refresh the portfolio data after adding
-                    //           await fetchPortfolio();
-                    //         },
-                    //         onServiceEdit: (Service service) async {
-                    //           // Refresh the portfolio data after editing
-                    //           await fetchPortfolio();
-                    //         },
-                    //         onServiceDelete: (String serviceId) async {
-                    //           // Refresh the portfolio data after deleting
-                    //           await fetchPortfolio();
-                    //         },
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: CustomPadding.paddingLarge.v,
+                      ),
+                      child: Row(
+                        children: [
+                          ServiceContainer(
+                            saveButton: () {},
+                            isEdited: false,
+                            user: user,
+                            portfolio: portfolio,
+                          ),
+                        ],
+                      ),
+                    ),
                     Gap(CustomPadding.paddingXXL.v),
 
                     // Add your form fields here
