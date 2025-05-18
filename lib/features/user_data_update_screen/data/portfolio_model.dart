@@ -122,15 +122,14 @@ class ProductImage {
     return ProductImage(
       name: json['name'],
       key: json['key'],
-      size: int.tryParse(json['size']?.toString() ?? ''),
-      mimetype: json['mimetype'],
+      size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,      mimetype: json['mimetype'],
     );
   }
 
   Map<String, dynamic> toJson() => {
     'name': name,
     'key': key,
-    'size': size,
+    'size': size?.toString(),
     'mimetype': mimetype,
   };
 

@@ -295,8 +295,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
     }
   }
 
-  
-
   @override
   void dispose() {
     nameController.dispose();
@@ -444,59 +442,59 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                 ],
               ),
               Gap(CustomPadding.paddingXL.v),
-              PaddingRow(
-                children: [
-                  ExpandTileContainer(
-                    title: 'Your Services',
-                    children: [
-                      TextFormContainer(labelText: 'Heading/Topic'),
-                      Gap(CustomPadding.paddingLarge.v),
-                      Divider(endIndent: 20, indent: 20, thickness: 1),
-                      Gap(CustomPadding.paddingLarge.v),
+              // PaddingRow(
+              //   children: [
+              //     ExpandTileContainer(
+              //       title: 'Your Services',
+              //       children: [
+              //         TextFormContainer(labelText: 'Heading/Topic'),
+              //         Gap(CustomPadding.paddingLarge.v),
+              //         Divider(endIndent: 20, indent: 20, thickness: 1),
+              //         Gap(CustomPadding.paddingLarge.v),
 
-                      Row(
-                        children: [
-                          Gap(CustomPadding.paddingLarge.v),
-                          AddImageContainer(
-                            imageUrl: null,
-                            initialImage: null,
-                            onImageSelected: (ProductImage? image) {
-                              setState(() {
-                                pickedServiceImage = image;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Gap(CustomPadding.paddingLarge.v),
-                      TextFormContainer(
-                        labelText: 'Heading/Topic',
-                        controller: serviceHeadingController,
-                      ),
-                      TextFormContainer(
-                        labelText: 'Description',
-                        maxline: 7,
-                        controller: serviceDescriptionController,
-                      ),
-                      Gap(CustomPadding.paddingLarge.v),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          MiniLoadingButton(
-                            icon: Icons.save,
-                            text: 'Save',
-                            onPressed: () {},
-                            useGradient: true,
-                            gradientColors: CustomColors.borderGradient.colors,
-                          ),
-                          Gap(CustomPadding.paddingLarge.v),
-                        ],
-                      ),
-                      Gap(CustomPadding.paddingLarge.v),
-                    ],
-                  ),
-                ],
-              ),
+              //         Row(
+              //           children: [
+              //             Gap(CustomPadding.paddingLarge.v),
+              //             AddImageContainer(
+              //               imageUrl: null,
+              //               initialImage: null,
+              //               onImageSelected: (ProductImage? image) {
+              //                 setState(() {
+              //                   pickedServiceImage = image;
+              //                 });
+              //               },
+              //             ),
+              //           ],
+              //         ),
+              //         Gap(CustomPadding.paddingLarge.v),
+              //         TextFormContainer(
+              //           labelText: 'Heading/Topic',
+              //           controller: serviceHeadingController,
+              //         ),
+              //         TextFormContainer(
+              //           labelText: 'Description',
+              //           maxline: 7,
+              //           controller: serviceDescriptionController,
+              //         ),
+              //         Gap(CustomPadding.paddingLarge.v),
+              //         Row(
+              //           mainAxisAlignment: MainAxisAlignment.end,
+              //           children: [
+              //             MiniLoadingButton(
+              //               icon: Icons.save,
+              //               text: 'Save',
+              //               onPressed: () {},
+              //               useGradient: true,
+              //               gradientColors: CustomColors.borderGradient.colors,
+              //             ),
+              //             Gap(CustomPadding.paddingLarge.v),
+              //           ],
+              //         ),
+              //         Gap(CustomPadding.paddingLarge.v),
+              //       ],
+              //     ),
+              //   ],
+              // ),
               // PaddingRow(
               //   children: [
               //     ServiceContainer(
@@ -528,11 +526,13 @@ class AddImageContainer extends StatefulWidget {
   final ProductImage? initialImage;
   final Function(ProductImage?) onImageSelected;
   final String? imageUrl;
+  final String baseUrl;
   const AddImageContainer({
     super.key,
     this.imageUrl,
     required this.onImageSelected,
     this.initialImage,
+    required this.baseUrl,
   });
 
   @override
@@ -586,7 +586,7 @@ class _AddImageContainerState extends State<AddImageContainer> {
     });
 
     try {
-      final result = await PortfolioService.uploadImageFile(
+      final result = await PortfolioService.uploadServiceImageFile(
         pickedFile!.bytes!,
         pickedFile!.name,
       );
@@ -600,6 +600,8 @@ class _AddImageContainerState extends State<AddImageContainer> {
 
       setState(() {
         currentImage = productImage;
+        pickedFile = null; // Clear picked file
+        previewBytes = null; // Clear preview bytes
         isUploading = false;
       });
 
@@ -617,7 +619,29 @@ class _AddImageContainerState extends State<AddImageContainer> {
   }
 
   Widget _buildPreview() {
-    // Show preview of picked image
+    // Show uploaded image if available
+    if (currentImage != null) {
+      return Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.network(
+              '${widget.baseUrl}/file?key=portfolios/portfolio_services/${currentImage!.key}', // Use direct URL
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              errorBuilder: (context, error, stackTrace) {
+                print('Image Error: $error'); // Debug print
+                return const Center(child: Icon(Icons.error));
+              },
+            ),
+          ),
+          _buildRemoveButton(),
+        ],
+      );
+    }
+
+    // Show preview while uploading
     if (previewBytes != null) {
       return Stack(
         children: [
@@ -637,27 +661,6 @@ class _AddImageContainerState extends State<AddImageContainer> {
                 child: CircularProgressIndicator(color: Colors.white),
               ),
             ),
-          _buildRemoveButton(),
-        ],
-      );
-    }
-
-    // Show existing image if available
-    if (currentImage != null && widget.imageUrl != null) {
-      return Stack(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.network(
-              widget.imageUrl!,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(child: Icon(Icons.error));
-              },
-            ),
-          ),
           _buildRemoveButton(),
         ],
       );

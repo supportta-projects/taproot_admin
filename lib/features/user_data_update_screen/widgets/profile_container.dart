@@ -9,15 +9,13 @@ import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 
 class ProfileContainer extends StatelessWidget {
   final TextEditingController? designationController;
-    final TextEditingController? companyController;
-  final TextEditingController?
-   workEmailController;
-
+  final TextEditingController? companyController;
+  final TextEditingController? workEmailController;
 
   final PortfolioDataModel? portfolio;
 
   final bool isEdit;
-const   ProfileContainer({
+  const ProfileContainer({
     super.key,
     required this.user,
     this.isEdit = false,
@@ -47,9 +45,9 @@ const   ProfileContainer({
               value: portfolio?.workInfo.designation ?? 'loading...',
             ),
         isEdit
-            ? TextFormContainer(  
+            ? TextFormContainer(
               controller: companyController,
-              readonly: true,
+              // readonly: true,
               initialValue: portfolio!.workInfo.companyName,
               labelText: 'Company Name',
               user: user,
