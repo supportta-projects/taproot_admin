@@ -531,7 +531,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               ),
             ),
             Gap(CustomPadding.paddingXL.v),
-
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: CustomPadding.paddingLarge.v,
