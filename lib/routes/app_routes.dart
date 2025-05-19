@@ -2,7 +2,6 @@ import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.da
 import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
-import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/services/connectivity_service.dart';

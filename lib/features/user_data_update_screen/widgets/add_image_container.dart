@@ -11,12 +11,12 @@ class AddImageContainer extends StatelessWidget {
   final bool isImageView; // Add this parameter
 
   const AddImageContainer({
-    Key? key,
+    super.key,
     this.onTapEdit,
     this.imageUrl,
     this.previewBytes,
     this.isImageView = false, // Default to false
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

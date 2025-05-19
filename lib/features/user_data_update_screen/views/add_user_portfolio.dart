@@ -11,18 +11,13 @@ import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_se
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_additional_details.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_basicdetail_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_social_media_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_user_location.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_user_profile.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/expand_tile_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/padding_row.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/service_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
-import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
