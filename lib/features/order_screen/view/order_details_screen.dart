@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -12,11 +11,8 @@ import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/widgets/product_card.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/padding_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
@@ -216,7 +212,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
                                           CardRow(
                                             prefixText: 'Full Name',
-                                            suffixText: order.user.name,
+                                            suffixText:
+                                                orderDetails!.personalInfo.name,
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -229,7 +226,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           CardRow(
                                             prefixText: 'Email',
                                             suffixText:
-                                                orderDetails!.user.email,
+                                                orderDetails?.user.email ??
+                                                'N/A',
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -241,7 +239,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           ),
                                           CardRow(
                                             prefixText: 'Phone Number',
-                                            suffixText: order.address.mobile,
+                                            suffixText:
+                                                orderDetails!
+                                                    .personalInfo
+                                                    .phoneNumber,
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -253,7 +254,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           ),
                                           CardRow(
                                             prefixText: 'WhatsApp Number',
-                                            suffixText: '8976543467',
+                                            suffixText:
+                                                orderDetails!
+                                                    .personalInfo
+                                                    .whatsappNumber,
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -309,7 +313,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           ),
                                           CardRow(
                                             prefixText: 'Order Status',
-                                            suffixText: order.orderStatus,
+                                            suffixText:
+                                                orderDetails!.orderStatus,
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -334,7 +339,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     CommonProductContainer(
                       isAmountContainer: true,
                       title: 'Product Summary',
-                      grandTotal: orderDetails!.totalPrice.toInt(),
+                      grandTotal: orderDetails!.totalPrice,
                       children: [
                         Column(
                           children: [
@@ -342,21 +347,37 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             ...List.generate(
                               orderDetails!.products.length,
                               (index) => ProductCard(
+                                image:
+                                    orderDetails!
+                                        .products[index]
+                                        .product
+                                        .productImages
+                                        .key,
+                                productName:
+                                    orderDetails!.products[index].product.name,
+                                categoryName:
+                                    orderDetails!
+                                        .products[index]
+                                        .product
+                                        .category
+                                        .name,
                                 orderEdit: orderEdit,
-                                price:
-                                    orderDetails!.products[index].actualPrice
-                                        .toInt(),
+                                price: orderDetails!.products[index].salePrice,
+
                                 discountPrice:
                                     orderDetails!
                                         .products[index]
-                                        .discountedPrice
-                                        .toInt(),
+                                        .product
+                                        .discountedPrice,
+                                // orderDetails!
+                                //     .products[index]
+                                //     .discountedPrice
+                                //     .toInt(),
                                 quantity:
                                     orderDetails!.products[index].quantity
                                         .toInt(),
                                 totalPrice:
-                                    orderDetails!.products[index].totalPrice
-                                        .toInt(),
+                                    orderDetails!.products[index].totalPrice,
                               ),
                             ),
 
@@ -385,52 +406,68 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         ),
                         Row(
                           children: [
-                            isEdit
-                                ? ImageContainer(
-                                  selectedFile: selectedImageLoco,
-                                  isEdit: true,
-                                  icon:
-                                      selectedImageLoco == null
-                                          ? LucideIcons.upload
-                                          : LucideIcons.repeat,
-                                  title: 'Loco',
-                                  onTap: () => pickImage(isLogo: true),
-                                  imageState:
-                                      selectedImageLoco == null
-                                          ? 'Upload'
-                                          : 'Replace',
-                                )
-                                : ImageContainer(
-                                  onTap: () {},
-                                  isEdit: false,
-                                  title: 'Loco',
-                                  icon: LucideIcons.upload,
-                                  imageState: 'Upload',
-                                  selectedFile: null,
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  CustomPadding.paddingLarge.v,
                                 ),
-                            isEdit
-                                ? ImageContainer(
-                                  onTap: () => pickImage(isLogo: false),
-                                  isEdit: true,
-                                  title: 'Banner Image',
-                                  icon:
-                                      selectedImageBanner == null
-                                          ? LucideIcons.upload
-                                          : LucideIcons.repeat,
-                                  imageState:
-                                      selectedImageBanner == null
-                                          ? 'Upload'
-                                          : 'Replace',
-                                  selectedFile: selectedImageBanner,
-                                )
-                                : ImageContainer(
-                                  onTap: () {},
-                                  icon: LucideIcons.upload,
-                                  title: 'Banner Image',
-                                  imageState: 'Upload',
-                                  selectedFile: null,
-                                  
+                              ),
+                              width: 200,
+                              height: 150,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                  CustomPadding.paddingLarge.v,
                                 ),
+                                child: Image.network(
+                                  '$baseUrl/file?key=portfolios/${orderDetails!.nfcDetails.customerLogo.image.key}',
+                                ),
+                              ),
+                            ),
+                            // isEdit
+                            //     ? ImageContainer(
+                            //       selectedFile: selectedImageLoco,
+                            //       isEdit: true,
+                            //       icon:
+                            //           selectedImageLoco == null
+                            //               ? LucideIcons.upload
+                            //               : LucideIcons.repeat,
+                            //       title: 'Loco',
+                            //       onTap: () => pickImage(isLogo: true),
+                            //       imageState:
+                            //           selectedImageLoco == null
+                            //               ? 'Upload'
+                            //               : 'Replace',
+                            //     )
+                            //     : ImageContainer(
+                            //       onTap: () {},
+                            //       isEdit: false,
+                            //       title: 'Loco',
+                            //       icon: LucideIcons.upload,
+                            //       imageState: 'Upload',
+                            //       selectedFile: null,
+                            //     ),
+                            // isEdit
+                            //     ? ImageContainer(
+                            //       onTap: () => pickImage(isLogo: false),
+                            //       isEdit: true,
+                            //       title: 'Banner Image',
+                            //       icon:
+                            //           selectedImageBanner == null
+                            //               ? LucideIcons.upload
+                            //               : LucideIcons.repeat,
+                            //       imageState:
+                            //           selectedImageBanner == null
+                            //               ? 'Upload'
+                            //               : 'Replace',
+                            //       selectedFile: selectedImageBanner,
+                            //     )
+                            //     : ImageContainer(
+                            //       onTap: () {},
+                            //       icon: LucideIcons.upload,
+                            //       title: 'Banner Image',
+                            //       imageState: 'Upload',
+                            //       selectedFile: null,
+                            //     ),
                           ],
                         ),
                       ],

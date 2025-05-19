@@ -73,8 +73,24 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             ? TextFormContainer(
               controller: widget.emailController,
               user: widget.user,
-              // initialValue: widget.portfolio!.personalInfo.email,
               labelText: 'Email',
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Email is required';
+                }
+
+                if (RegExp(r'^\d').hasMatch(value)) {
+                  return 'Email should not start with a number';
+                }
+
+                if (!RegExp(
+                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                ).hasMatch(value)) {
+                  return 'Enter a valid email';
+                }
+
+                return null;
+              },
             )
             : DetailRow(
               label: 'Email',

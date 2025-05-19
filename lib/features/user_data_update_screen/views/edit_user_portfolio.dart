@@ -115,6 +115,128 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     }
   }
 
+  // Future<void> editPortfolio() async {
+  //   try {
+  //     final portfolio = widget.portfolio!;
+
+  //     // Keep existing images if no new ones are selected
+  //     ProductImage? updatedProfilePicture =
+  //         portfolio.personalInfo.profilePicture;
+  //     ProductImage? updatedBannerImage = portfolio.personalInfo.bannerImage;
+  //     ProductImage? updatedCompanyLogo = portfolio.workInfo.companyLogo;
+
+  //     // Upload new images only if they are selected
+  //     if (pickedProfileImage?.bytes != null) {
+  //       try {
+  //         final profileUploadResult = await PortfolioService.uploadImageFile(
+  //           pickedProfileImage!.bytes!,
+  //           pickedProfileImage!.name,
+  //         );
+
+  //         updatedProfilePicture = ProductImage(
+  //           name: profileUploadResult['name'] ?? '',
+  //           key: profileUploadResult['key'] ?? '',
+  //           size: int.tryParse(profileUploadResult['size']?.toString() ?? ''),
+  //           mimetype: profileUploadResult['mimetype'] ?? '',
+  //         );
+  //       } catch (e) {
+  //         logError('Error uploading profile: $e');
+  //       }
+  //     }
+
+  //     if (pickedLogoImage?.bytes != null) {
+  //       try {
+  //         final logoUploadResult = await PortfolioService.uploadImageFile(
+  //           pickedLogoImage!.bytes!,
+  //           pickedLogoImage!.name,
+  //         );
+
+  //         updatedCompanyLogo = ProductImage(
+  //           name: logoUploadResult['name'] ?? '',
+  //           key: logoUploadResult['key'] ?? '',
+  //           size: int.tryParse(logoUploadResult['size']?.toString() ?? ''),
+  //           mimetype: logoUploadResult['mimetype'] ?? '',
+  //         );
+  //       } catch (e) {
+  //         logError('Error uploading logo: $e');
+  //       }
+  //     }
+
+  //     if (pickedBannerImage?.bytes != null) {
+  //       try {
+  //         final bannerUploadResult = await PortfolioService.uploadImageFile(
+  //           pickedBannerImage!.bytes!,
+  //           pickedBannerImage!.name,
+  //         );
+
+  //         updatedBannerImage = ProductImage(
+  //           name: bannerUploadResult['name'] ?? '',
+  //           key: bannerUploadResult['key'] ?? '',
+  //           size: int.tryParse(bannerUploadResult['size']?.toString() ?? ''),
+  //           mimetype: bannerUploadResult['mimetype'] ?? '',
+  //         );
+  //       } catch (e) {
+  //         logError('Error uploading banner: $e');
+  //       }
+  //     }
+
+  //     final portfolioEditData = {
+  //       'personalInfo': {
+  //         'profilePicture': updatedProfilePicture?.toJson(),
+  //         'bannerImage': updatedBannerImage?.toJson(),
+  //         'name': nameController.text,
+  //         'email': emailController.text,
+  //         'phoneNumber': phoneNumberController.text,
+  //         'whatsappNumber': whatsappNumberController.text,
+  //       },
+  //       'workInfo': {
+  //         'companyLogo': updatedCompanyLogo?.toJson(),
+  //         'companyName': companyNameController.text,
+  //         'designation': designationcontroller.text,
+  //         'workEmail': workemailController.text,
+  //         'primaryWebsite': primaryWebsiteController.text,
+  //         'secondaryWebsite': secondaryWebsiteController.text,
+  //       },
+  //       'addressInfo': {
+  //         'buildingName': buildingNamecontroller.text,
+  //         'area': areaController.text,
+  //         'pincode': pincodeController.text,
+  //         'district': districtController.text,
+  //         'state': stateController.text,
+  //       },
+  //       'about': {
+  //         'heading': headingcontroller.text,
+  //         'description': descriptioncontroller.text,
+  //       },
+  //       'serviceHeading': serviceHeadController.text,
+  //       'socialMedia':
+  //           theFetchedPortfolio!.socialMedia.map((x) => x.toJson()).toList(),
+  //       'services':
+  //           theFetchedPortfolio!.services.map((x) => x.toJson()).toList(),
+  //     };
+
+  //     print('Sending edit request with data: $portfolioEditData');
+
+  //     await PortfolioService.editPortfolio(
+  //       userid: widget.user.id,
+  //       portfolioEditedData: portfolioEditData,
+  //     );
+
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Portfolio updated successfully')),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     logError('Error editing portfolio: $e');
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Failed to update portfolio: $e')),
+  //       );
+  //     }
+  //   }
+  // }
+
   Future<void> editPortfolio() async {
     try {
       final portfolio = widget.portfolio!;
