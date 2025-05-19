@@ -23,7 +23,14 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   List<Order> allOrder = [];
+  bool isLoading = true;
+  int currentPage = 1;
+  int totalPages = 1;
+  int totalOrder = 0;
+  final int _rowsPerPage = 10;
   OrderDataSource? orderDataSource;
+  final _tableKey = GlobalKey<PaginatedDataTableState>();
+
   void retryOrder(int index) {
     logInfo('Retrying order $index');
   }
@@ -50,22 +57,63 @@ class _OrderScreenState extends State<OrderScreen> {
   // ];
 
   Future<void> fetchAllOrder() async {
+    setState(() => isLoading = true);
+
     try {
-      final response = await OrderService.getAllOrder();
+      logInfo('Fetching page: $currentPage'); // Debug log
+      final response = await OrderService.getAllOrder(page: currentPage);
+
+      if (!mounted) return;
+
       setState(() {
         allOrder = response.results;
-        logSuccess('Number of orders loaded: ${allOrder.length}');
+        totalOrder = response.totalCount;
+        totalPages = (totalOrder / _rowsPerPage).ceil();
+        logInfo('Received ${allOrder.length} orders'); // Debug log
+        logInfo('Total orders: $totalOrder'); // Debug log
+        logInfo('Total pages: $totalPages'); // Debug log
+        orderDataSource?.dispose();
         orderDataSource = OrderDataSource(
-          orderList: allOrder,
-          context: context,
-          navigatorKey: widget.innerNavigatorKey,
+          allOrder,
+          totalOrder,
+          context,
+          widget.innerNavigatorKey,
+          _rowsPerPage,
         );
-        // logSuccess(allOrder);
+        isLoading = false;
       });
+      orderDataSource?.notifyListeners();
     } catch (e) {
-      logError('error $e');
+      logInfo('Error fetching orders: $e'); // Debug log
+      setState(() => isLoading = false);
     }
   }
+
+  // void handlePageChange(int page) {
+  //   if (page <= totalPage && page != currentPage) {
+  //     fetchAllOrder();
+  //   }
+  // }
+  void handlePageChange(int firstRowIndex) {
+    final newPage = (firstRowIndex ~/ _rowsPerPage) + 1;
+    logInfo('Changing to page: $newPage (from index: $firstRowIndex)');
+
+    if (newPage != currentPage && newPage <= totalPages) {
+      setState(() {
+        currentPage = newPage;
+      });
+      fetchAllOrder();
+    }
+  }
+
+  // void handlePageChange(int rowIndex) {
+  //   // Calculate the actual page number
+  //   int newPage = (rowIndex ~/ 10) + 1;
+  //   logInfo('Changing to page: $newPage'); // Add logging
+  //   if (newPage != currentPage && newPage <= totalPage) {
+  //     fetchAllOrder(newPage);
+  //   }
+  // }
 
   @override
   void initState() {
@@ -144,7 +192,8 @@ class _OrderScreenState extends State<OrderScreen> {
                         Tab(text: 'Delivered'),
                       ],
                     ),
-                    Expanded(
+                    SizedBox(
+                      height: SizeUtils.height * 0.75,
                       child: TabBarView(
                         children: [
                           // DataTable(
@@ -294,23 +343,28 @@ class _OrderScreenState extends State<OrderScreen> {
                           //   }),
                           // ),
                           PaginatedDataTable(
-                            dataRowMaxHeight: 80,
-                            rowsPerPage: 8,
-                            columns: [
+                            key: _tableKey,
+                            dataRowMaxHeight: 60,
+                            rowsPerPage: _rowsPerPage,
+                            initialFirstRowIndex:
+                                (currentPage - 1) * _rowsPerPage,
+                            onPageChanged: handlePageChange,
+                            availableRowsPerPage: const [10, 20, 50],
+                            columns: const [
                               DataColumn(label: Text('Order ID')),
                               DataColumn(label: Text('Full Name')),
                               DataColumn(label: Text('Phone')),
                               DataColumn(label: Text('Amount')),
                               DataColumn(label: Text('Order Count')),
-                              // DataColumn(label: Text('Status')),
-                              // DataColumn(label: Text('Action')),
                             ],
                             source:
                                 orderDataSource ??
                                 OrderDataSource(
-                                  orderList: [],
-                                  context: context,
-                                  navigatorKey: widget.innerNavigatorKey,
+                                  [],
+                                  0,
+                                  context,
+                                  widget.innerNavigatorKey,
+                                  _rowsPerPage,
                                 ),
                           ),
                           Center(child: Text('data')),
@@ -335,41 +389,59 @@ class OrderDataSource extends DataTableSource {
   final List<Order> orderList;
   // final List<String> statusList;
   final BuildContext context;
-  final GlobalKey<NavigatorState>? navigatorKey;
-
-  OrderDataSource({
-    required this.context,
-    // required this.statusList,
-    required this.navigatorKey,
-    required this.orderList,
-  });
+  final GlobalKey<NavigatorState>? innerNavigatorKey;
+  final int totalCount;
+  final int rowsPerPage;
+  OrderDataSource(
+    this.orderList,
+    this.totalCount,
+    this.context,
+    this.innerNavigatorKey,
+    this.rowsPerPage,
+  );
 
   @override
-  DataRow? getRow(int index) {
-    if (index >= orderList.length) return null;
-    final order = orderList[index];
+  DataRow getRow(int index) {
+    print('Getting row at index: $index, Total orders: ${orderList.length}');
 
+    // Calculate the actual index within the current page
+    final pageIndex = index % rowsPerPage;
+
+    if (pageIndex >= orderList.length) {
+      return DataRow(
+        cells: List<DataCell>.generate(5, (index) => const DataCell(Text('-'))),
+      );
+    }
+    final order = orderList[index];
     void handleRowTap() {
-      final navigator = navigatorKey?.currentState ?? Navigator.of(context);
-      navigator.push(
+      innerNavigatorKey?.currentState?.push(
         MaterialPageRoute(
           builder:
-              (_) => OrderDetailScreen( order: order,
-                // user: User(
-                //   id: 'm',
-                //   fullName: 'sss',
-                //   userId: 'ss',
-                //   phone: 'ssss',
-                //   whatsapp: 'ssss',
-                //   email: 'ssss',
-                //   website: 'sssss',
-                //   isPremium: false,
-                // ),
-                orderId: order.code,
-              ),
+              (context) => OrderDetailScreen(order: order, orderId: order.code),
         ),
       );
     }
+    // final navigator = navigatorKey?.currentState ?? Navigator.of(context);
+    // navigator.push(
+    //   MaterialPageRoute(
+    //     builder:
+    //         (_) => OrderDetailScreen(
+    //           order: order,
+    //           // user: User(
+    //           //   id: 'm',
+    //           //   fullName: 'sss',
+    //           //   userId: 'ss',
+    //           //   phone: 'ssss',
+    //           //   whatsapp: 'ssss',
+    //           //   email: 'ssss',
+    //           //   website: 'sssss',
+    //           //   isPremium: false,
+    //           // ),
+    //           orderId: order.code,
+    //         ),
+    //   ),
+    //   // );
+    // }
 
     // String status = statusList[index];
     // String? actionLabel;
@@ -464,7 +536,7 @@ class OrderDataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => orderList.length;
+  int get rowCount => totalCount;
 
   @override
   int get selectedRowCount => 0;

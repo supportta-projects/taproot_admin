@@ -95,7 +95,6 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     loadUsers();
   }
 
-
   void _handlePageChange(int firstRowIndex) {
     // if (!mounted) return;
 

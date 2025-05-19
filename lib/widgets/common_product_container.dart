@@ -6,7 +6,7 @@ class CommonProductContainer extends StatefulWidget {
   final bool isAmountContainer;
   final List<Widget>? children;
   final String title;
-  final int? grandTotal;
+  final double? grandTotal;
   const CommonProductContainer({
     required this.title,
     super.key,

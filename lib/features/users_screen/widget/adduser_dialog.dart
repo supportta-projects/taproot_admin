@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
@@ -78,13 +79,28 @@ class _AddUserDialogState extends State<AddUserDialog> {
                   ),
                   color: CustomColors.burgandryRed,
                 ),
-                child: Center(
-                  child: Text(
-                    'Add User',
-                    style: context.inter60014.copyWith(
-                      color: CustomColors.backgroundColor,
+                child: Row(
+                  children: [
+                    Spacer(),
+
+                    Text(
+                      'Add User',
+                      style: context.inter60014.copyWith(
+                        color: CustomColors.backgroundColor,
+                      ),
                     ),
-                  ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        color: CustomColors.backgroundColor,
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
+                  ],
                 ),
               ),
 
@@ -108,11 +124,19 @@ class _AddUserDialogState extends State<AddUserDialog> {
                   if (value == null || value.trim().isEmpty) {
                     return 'Email is required';
                   }
+
+                  // Check if email starts with a number
+                  if (RegExp(r'^\d').hasMatch(value)) {
+                    return 'Email should not start with a number';
+                  }
+
+                  // Validate email format
                   if (!RegExp(
                     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                   ).hasMatch(value)) {
                     return 'Enter a valid email';
                   }
+
                   return null;
                 },
               ),
