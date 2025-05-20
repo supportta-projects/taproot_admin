@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/expand_tile_container.dart';
@@ -29,7 +27,8 @@ class _AddSocialMediaContainerState extends State<AddSocialMediaContainer> {
     return ExpandTileContainer(
       title: 'Social Media',
       children: [
-        LinkContainer(source: socialLinks['Facebook'] ?? '',
+        LinkContainer(
+          source: socialLinks['Facebook'] ?? '',
           user: widget.user,
           name: 'Facebook',
           svg: Assets.svg.facebook,
@@ -40,52 +39,64 @@ class _AddSocialMediaContainerState extends State<AddSocialMediaContainer> {
             ); // Convert map to list and pass it back
           },
         ),
-        LinkContainer( source: socialLinks['Instagram'] ?? '',
+        LinkContainer(
+          source: socialLinks['Instagram'] ?? '',
           user: widget.user,
           name: 'Instagram',
           svg: Assets.svg.instagram,
           onChanged: (link) {
             socialLinks['Instagram'] = link;
+            widget.onLinksChanged(_convertToSocialMediaList(socialLinks));
           },
         ),
-        LinkContainer( source: socialLinks['Twitter'] ?? '',
+        LinkContainer(
+          source: socialLinks['Twitter'] ?? '',
           user: widget.user,
           name: 'Twitter',
           svg: Assets.svg.twitter,
           onChanged: (link) {
             socialLinks['Twitter'] = link;
+            widget.onLinksChanged(_convertToSocialMediaList(socialLinks));
           },
         ),
-        LinkContainer( source: socialLinks['Pinterest'] ?? '',
+        LinkContainer(
+          source: socialLinks['Pinterest'] ?? '',
           user: widget.user,
           name: 'Pinterest',
           onChanged: (link) {
             socialLinks['Pinterest'] = link;
+            widget.onLinksChanged(_convertToSocialMediaList(socialLinks));
           },
           svg: Assets.svg.pinterest,
         ),
-        LinkContainer( source: socialLinks['LinkedIn'] ?? '',
+        LinkContainer(
+          source: socialLinks['LinkedIn'] ?? '',
           user: widget.user,
           name: 'LinkedIn',
           svg: Assets.svg.linkdin,
           onChanged: (link) {
             socialLinks['LinkedIn'] = link;
+            widget.onLinksChanged(_convertToSocialMediaList(socialLinks));
           },
         ),
-        LinkContainer( source: socialLinks['Behance'] ?? '',
+        LinkContainer(
+          source: socialLinks['Behance'] ?? '',
           user: widget.user,
           name: 'Behance',
           svg: Assets.svg.behance,
           onChanged: (link) {
             socialLinks['Behance'] = link;
+            widget.onLinksChanged(_convertToSocialMediaList(socialLinks));
           },
         ),
-        LinkContainer( source: socialLinks['Github'] ?? '',
+        LinkContainer(
+          source: socialLinks['Github'] ?? '',
           user: widget.user,
           name: 'Youtube',
           svg: Assets.svg.youtube,
           onChanged: (link) {
             socialLinks['Youtube'] = link;
+            widget.onLinksChanged(_convertToSocialMediaList(socialLinks));
           },
         ),
       ],

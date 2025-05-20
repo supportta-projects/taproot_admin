@@ -37,7 +37,6 @@ class _SocialContainerState extends State<SocialContainer> {
     'linkedin',
     'behance',
     'youtube',
-    'github',
   ];
 
   late List<SocialMedia> socialLinks;
@@ -146,8 +145,7 @@ String _getSvgForPlatform(String platform) {
       return Assets.svg.behance;
     case 'youtube':
       return Assets.svg.youtube;
-    case 'github':
-      return Assets.svg.github;
+
     default:
       return Assets.svg.link;
   }
