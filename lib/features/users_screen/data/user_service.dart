@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
@@ -27,8 +28,7 @@ class UserService with ErrorExceptionHandler {
       throw UserService().handleError(e);
     }
   }
-
-  static Future<bool> createUser({
+static Future<bool> createUser({
     required Map<String, dynamic> userData,
   }) async {
     try {
@@ -38,12 +38,40 @@ class UserService with ErrorExceptionHandler {
         data: userData,
       );
 
-      // Return true if successful
       return response.statusCode == 201;
     } catch (e) {
-      logError('Error creating user: $e'); 
-      throw UserService().handleError(e);
+      logError('Error creating user: $e');
+
+      if (e is DioError && e.response != null) {
+        // Assuming backend sends error message in 'message' field
+        final errorMessage =
+            e.response?.data['message'] ??
+            e.response?.data['error'] ??
+            'Failed to create user';
+        throw Exception(errorMessage);
+      }
+
+      throw Exception('Failed to create user');
     }
   }
+  // static Future<bool> createUser({
+  //   required Map<String, dynamic> userData,
+  // }) async {
+  //   try {
+  //     final response = await DioHelper().post(
+  //       '/user',
+  //       type: ApiType.baseUrl,
+  //       data: userData,
+  //     );
+
+  //     // Return true if successful
+  //     return response.statusCode == 201;
+      
+  //   } catch (e) {
+      
+  //     logError('Error creating user: $e'); 
+  //     throw UserService().handleError(e);
+  //   }
+  // }
 
 }

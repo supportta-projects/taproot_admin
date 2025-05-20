@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get_navigation/get_navigation.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
@@ -19,7 +18,6 @@ class _AddUserDialogState extends State<AddUserDialog> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   bool isLoading = false;
-
   Future<void> addUser(BuildContext currentContext) async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -53,11 +51,53 @@ class _AddUserDialogState extends State<AddUserDialog> {
         isLoading = false;
       });
 
+      // Show the error message from backend
       ScaffoldMessenger.of(currentContext).showSnackBar(
-        const SnackBar(content: Text('Failed to add user. Please try again.')),
+        SnackBar(
+          content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
+  // Future<void> addUser(BuildContext currentContext) async {
+  //   if (!_formKey.currentState!.validate()) {
+  //     return;
+  //   }
+
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+
+  //   try {
+  //     await UserService.createUser(
+  //       userData: {'name': nameController.text, 'email': emailController.text},
+  //     );
+
+  //     if (!mounted) return;
+
+  //     // Close the dialog first
+  //     Navigator.pop(currentContext);
+
+  //     // Call the refresh function
+  //     widget.onCallFunction();
+
+  //     // Show success message
+  //     ScaffoldMessenger.of(
+  //       currentContext,
+  //     ).showSnackBar(const SnackBar(content: Text('User added successfully!')));
+  //   } catch (e) {
+  //     if (!mounted) return;
+
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+
+  //     ScaffoldMessenger.of(currentContext).showSnackBar(
+  //       const SnackBar(content: Text('Failed to add user. Please try again.')),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
