@@ -11,16 +11,7 @@ import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_se
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 
-
-
-
-
-
-
-
-
 class UserProfileContainer extends StatefulWidget {
-  
   final PortfolioDataModel? portfolio;
   final dynamic user;
   final bool isEdit;
@@ -49,16 +40,15 @@ class _UserProfileContainerState extends State<UserProfileContainer>
   late TabController _tabController;
   late final User user;
   bool isPremiumSelected = false;
-  bool isUserPremium = false ;
+  bool isUserPremium = false;
   String userType = "";
 
   Color chipColor = Colors.transparent;
 
-
-
   @override
   void initState() {
     super.initState();
+    user = widget.user as User;
     isUserPremium = user.isPremium;
     isPremiumSelected = widget.portfolio?.user.isPremium ?? false;
     _tabController =
@@ -75,10 +65,6 @@ class _UserProfileContainerState extends State<UserProfileContainer>
           });
   }
 
-
-
-
-
   @override
   void dispose() {
     super.dispose();
@@ -92,30 +78,23 @@ class _UserProfileContainerState extends State<UserProfileContainer>
     response;
   }
 
-
-
-  void setUserType (){
-
-//TODo: Aswin M
-if(isUserPremium)
-  {  setState(() {
-      userType = "Premium";
-      chipColor =       CustomColors.buttonColor1;
-
-    });}
-
-else{
-  setState(() {
-    userType='Basic';
-  });
-}
-
+  void setUserType() {
+    //TODo: Aswin M
+    if (isUserPremium) {
+      setState(() {
+        userType = "Premium";
+        chipColor = CustomColors.buttonColor1;
+      });
+    } else {
+      setState(() {
+        userType = 'Basic';
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     logError("The user is premium:  $isUserPremium");
-    
 
     return Expanded(
       child: Container(
@@ -127,7 +106,6 @@ else{
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            
             Stack(
               children: [
                 Container(
@@ -157,8 +135,8 @@ else{
                             ? CachedNetworkImage(
                               imageUrl: widget.imageUrl!,
                               fit: BoxFit.cover,
-                              width: 300, 
-                              height: 300, 
+                              width: 300,
+                              height: 300,
                               memCacheWidth: 300,
                               memCacheHeight: 300,
                               maxWidthDiskCache: 300,
@@ -207,27 +185,6 @@ else{
                               ),
                             ),
                   ),
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
                 ),
                 if (widget.isEdit)
                   Positioned(
@@ -261,7 +218,6 @@ else{
               ),
             ),
 
-            
             if (widget.isEdit)
               Container(
                 width: 250,
@@ -298,7 +254,6 @@ else{
                 ),
               )
             else
-              
               Container(
                 width: 150.v,
                 height: 30.h,
@@ -310,15 +265,7 @@ else{
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                  
-
-
-Chip(label: Text(userType ))
-
-
-
-                  ],
+                  children: [Chip(label: Text(userType))],
                 ),
               ),
           ],
@@ -327,293 +274,3 @@ Chip(label: Text(userType ))
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
