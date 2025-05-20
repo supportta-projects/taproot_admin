@@ -59,7 +59,7 @@ class _UserProfileContainerState extends State<UserProfileContainer>
   @override
   void initState() {
     super.initState();
-    isUserPremium = user.isPremium;
+    // isUserPremium = user.isPremium;
     isPremiumSelected = widget.portfolio?.user.isPremium ?? false;
     _tabController =
         TabController(length: 2, vsync: this)
