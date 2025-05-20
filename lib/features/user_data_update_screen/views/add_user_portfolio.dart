@@ -325,6 +325,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   MiniLoadingButton(
+                    isLoading: _isLoading,
                     icon: Icons.add,
                     text: 'Add',
                     onPressed: () {

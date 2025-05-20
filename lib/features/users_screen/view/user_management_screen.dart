@@ -260,7 +260,7 @@ class UserDataTableSource extends DataTableSource {
   @override
   DataRow getRow(int index) {
     // Calculate the actual index within the current page's data
-    final actualIndex = index % (users.length + 1);
+    final actualIndex = index % (users.length);
 
     if (actualIndex >= (users.length)) {
       return DataRow(
