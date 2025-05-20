@@ -222,72 +222,71 @@ class _CreateOrderState extends State<CreateOrder> {
                 if (isLoadingProduct)
                   CircularProgressIndicator()
                 else if (isSearchingProduct && productSearchList.isNotEmpty)
-                  Gap(CustomPadding.paddingLarge.v),
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: CustomPadding.paddingLarge,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                      CustomPadding.padding.v,
+                  Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: CustomPadding.paddingLarge,
                     ),
-                    border: Border.all(color: CustomColors.hintGrey),
-                  ),
-                  height: 300,
-                  child: ListView.builder(
-                    itemCount: productSearchList.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          ListTile(
-                            onTap: () {},
-                            title: Padding(
-                              padding: EdgeInsets.only(
-                                bottom: CustomPadding.paddingLarge.v,
-                              ),
-                              child: Text(
-                                productSearchList[index].name.toString(),
-                              ),
-                            ),
-                            trailing: Column(
-                              children: [
-                                Text(
-                                  ' ₹${productSearchList[index].salePrice.toString()}',
-                                  style: context.inter50014,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(
+                        CustomPadding.padding.v,
+                      ),
+                      border: Border.all(color: CustomColors.hintGrey),
+                    ),
+                    height: 300,
+                    child: ListView.builder(
+                      itemCount: productSearchList.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            ListTile(
+                              onTap: () {},
+                              title: Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: CustomPadding.paddingLarge.v,
                                 ),
-                                Text('Price'),
-                              ],
+                                child: Text(
+                                  productSearchList[index].name.toString(),
+                                ),
+                              ),
+                              trailing: Column(
+                                children: [
+                                  Text(
+                                    ' ₹${productSearchList[index].salePrice.toString()}',
+                                    style: context.inter50014,
+                                  ),
+                                  Text('Price'),
+                                ],
+                              ),
+                              // trailing: Row(
+                              //   children: [
+                              //     Column(
+                              //       children: [
+                              //         Text(
+                              //           productSearchList[index].salePrice
+                              //               .toString(),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ],
+                              // ),
+                              // subtitle: Row(
+                              //   children: [
+                              //     Text(
+                              //       'Phone Number- ${productSearchList[index].salePrice}',
+                              //     ),
+                              //     Gap(CustomPadding.paddingLarge.v),
+                              //     Text(
+                              //       'user ID-${productSearchList[index].discountedPrice}',
+                              //     ),
+                              //   ],
+                              // ),
                             ),
-                            // trailing: Row(
-                            //   children: [
-                            //     Column(
-                            //       children: [
-                            //         Text(
-                            //           productSearchList[index].salePrice
-                            //               .toString(),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ],
-                            // ),
-                            // subtitle: Row(
-                            //   children: [
-                            //     Text(
-                            //       'Phone Number- ${productSearchList[index].salePrice}',
-                            //     ),
-                            //     Gap(CustomPadding.paddingLarge.v),
-                            //     Text(
-                            //       'user ID-${productSearchList[index].discountedPrice}',
-                            //     ),
-                            //   ],
-                            // ),
-                          ),
-                          Divider(),
-                        ],
-                      );
-                    },
+                            Divider(),
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                ),
                 Gap(CustomPadding.paddingLarge.v),
               ],
             ),

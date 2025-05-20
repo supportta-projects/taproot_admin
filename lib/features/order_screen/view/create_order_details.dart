@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
@@ -205,7 +204,10 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                       child: Column(
                         spacing: CustomPadding.paddingLarge.v,
                         children: [
-                          CardRow(prefixText: 'Order ID', suffixText: ''),
+                          CardRow(
+                            prefixText: 'Order ID',
+                            suffixText: '$orderId',
+                          ),
                           CardRow(
                             prefixText: 'Full Name',
                             suffixText: widget.fullName,
