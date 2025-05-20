@@ -30,7 +30,7 @@ class _AuthScreenState extends State<AuthScreen> {
       backgroundColor: Colors.green.shade100,
       body:
           isLoading
-              ? CircularProgressIndicator()
+              ? Center(child: CircularProgressIndicator())
               : Center(
                 child: Container(
                   width: screenWidth * 0.25,
