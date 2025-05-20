@@ -48,7 +48,9 @@ class _UserProfileContainerState extends State<UserProfileContainer>
   @override
   void initState() {
     super.initState();
+
     user = widget.user as User;
+    setUserType();
     isUserPremium = user.isPremium;
     isPremiumSelected = widget.portfolio?.user.isPremium ?? false;
     _tabController =
@@ -79,13 +81,16 @@ class _UserProfileContainerState extends State<UserProfileContainer>
   }
 
   void setUserType() {
+    // logInfo(user.isPremium );
     //TODo: Aswin M
-    if (isUserPremium) {
+    if (user.isPremium) {
+      logSuccess("opted for premium");
       setState(() {
         userType = "Premium";
         chipColor = CustomColors.buttonColor1;
       });
     } else {
+      logError("opted for basic");
       setState(() {
         userType = 'Basic';
       });
@@ -193,7 +198,7 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                     child: Container(
                       padding: EdgeInsets.all(CustomPadding.padding),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: .5),
                         shape: BoxShape.circle,
                       ),
                       child: GestureDetector(
@@ -254,20 +259,31 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                 ),
               )
             else
-              Container(
-                width: 150.v,
-                height: 30.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    CustomPadding.paddingLarge,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Chip(
+                    backgroundColor: chipColor,
+                    label: Row(children: [Text(userType)]),
                   ),
-                  color: CustomColors.lightGreen,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Chip(label: Text(userType))],
-                ),
+                ],
               ),
+            // Container(
+            //   width: 150.v,
+            //   height: 30.h,
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(
+            //       CustomPadding.paddingLarge,
+            //     ),
+            //     color: Colors.red,
+            //   ),
+
+            //   child: Center(),
+            //   // child: Row(
+            //   //   mainAxisAlignment: MainAxisAlignment.center,
+            //   //   children: [Chip(label: Text(userType))],
+            //   // ),
+            // ),
           ],
         ),
       ),
