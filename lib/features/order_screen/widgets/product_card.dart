@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 
 class ProductCard extends StatefulWidget {
-  const ProductCard({
+  ProductCard({
     super.key,
     required this.orderEdit,
     required this.discountPrice,
@@ -21,7 +20,7 @@ class ProductCard extends StatefulWidget {
   final double discountPrice;
   final bool orderEdit;
   final String categoryName;
-  final int quantity;
+  int? quantity;
   final String image;
 
   final double totalPrice;
@@ -116,8 +115,47 @@ class _ProductCardState extends State<ProductCard> {
                   children: [
                     Text('Qty'),
                     Spacer(),
-
-                    Chip(label: Text(widget.quantity.toString())),
+                    widget.orderEdit
+                        ? Row(
+                          children: [
+                            Chip(
+                              label: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (widget.quantity != null &&
+                                        widget.quantity! > 1) {
+                                      widget.quantity = widget.quantity! - 1;
+                                    } else if (widget.quantity == 1) {
+                                      // Handle delete action here
+                                      widget.quantity = 0; // Example: Set to 0
+                                    }
+                                  });
+                                },
+                                child: Icon(
+                                  widget.quantity == 1
+                                      ? Icons.delete
+                                      : Icons.remove,
+                                ),
+                              ),
+                            ),
+                            Gap(CustomPadding.paddingLarge.v),
+                            Text(widget.quantity.toString()),
+                            Gap(CustomPadding.paddingLarge.v),
+                            Chip(
+                              label: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    if (widget.quantity != null) {
+                                      widget.quantity = widget.quantity! + 1;
+                                    }
+                                  });
+                                },
+                                child: Icon(Icons.add),
+                              ),
+                            ),
+                          ],
+                        )
+                        : Chip(label: Text(widget.quantity.toString())),
                   ],
                 ),
                 CardRow(

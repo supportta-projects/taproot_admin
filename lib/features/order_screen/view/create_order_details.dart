@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
@@ -34,6 +35,7 @@ class CreateOrderDetails extends StatefulWidget {
 
 class _CreateOrderDetailsState extends State<CreateOrderDetails> {
   UserSearch? userSearchList;
+  String? orderId;
   bool isLoading = false;
   bool isSearching = false;
   @override
@@ -43,11 +45,19 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
     super.initState();
   }
 
-  Future getOrderId() async {
+  Future<void> getOrderId() async {
     try {
-      final response = await OrderService.getOrderId();
-      logSuccess(response);
+      setState(() => isLoading = true);
+
+      final result = await OrderService.getOrderId();
+      setState(() {
+        orderId = result;
+        isLoading = false;
+      });
+
+      logSuccess("Order ID: $orderId"); // For debugging
     } catch (e) {
+      setState(() => isLoading = false);
       logError('Error fetching order ID: $e');
     }
   }
@@ -79,12 +89,26 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 ),
               ),
               Gap(CustomPadding.padding.v),
-              Text(
-                'Order ID',
-                style: context.inter60016.copyWith(
-                  color: CustomColors.hintGrey,
+              if (isLoading)
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              else if (orderId != null)
+                Text(
+                  orderId!,
+                  style: context.inter60016.copyWith(
+                    color: CustomColors.hintGrey,
+                  ),
+                )
+              else
+                Text(
+                  'No Order ID',
+                  style: context.inter60016.copyWith(
+                    color: CustomColors.hintGrey,
+                  ),
                 ),
-              ),
               Spacer(),
               MiniGradientBorderButton(
                 text: 'Cancel',
@@ -218,6 +242,14 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 ],
               ),
               Gap(CustomPadding.paddingXL.v),
+              CommonProductContainer(
+                title: 'Choose Product',
+                children: [
+                  Gap(CustomPadding.paddingLarge.v),
+                  GradientBorderField(hintText: 'Add Product + '),
+                  Gap(CustomPadding.paddingLarge.v),
+                ],
+              ),
             ],
           ),
         ],

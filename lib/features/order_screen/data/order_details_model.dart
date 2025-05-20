@@ -643,6 +643,19 @@ class Address {
       country: '',
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'mobile': mobile,
+      'address1': address1,
+      'address2': address2,
+      'landmark': landmark,
+      'pincode': pincode,
+      'district': district,
+      'state': state,
+      'country': country,
+    };
+  }
 
   factory Address.fromJson(Map<String, dynamic> json) {
     return Address(

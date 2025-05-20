@@ -281,7 +281,7 @@ class UserInfo {
     return UserInfo(
       id: json['_id'],
       code: json['code'],
-      isPremium: json['isPremium'] == true || json['isPremium'] == 'true',
+      isPremium: json['isPremium'],
     );
   }
 

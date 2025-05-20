@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -101,8 +102,8 @@ class PortfolioService with ErrorExceptionHandler {
       }
     } catch (e) {
       logError('EditPortfolio Error: $e');
-      throw PortfolioService().handleError(e);
     }
+    return null;
   }
 
   static Future<PortfolioDataModel> addService({
@@ -164,7 +165,7 @@ class PortfolioService with ErrorExceptionHandler {
   //     throw PortfolioService().handleError(e);
   //   }
   // }
-static Future<PortfolioDataModel> editService({
+  static Future<PortfolioDataModel> editService({
     required String serviceId,
     required Map<String, dynamic> editServiceData,
     required String userId, // Add this parameter
@@ -225,9 +226,8 @@ static Future<PortfolioDataModel> editService({
         '/portfolio-service/service/$serviceId',
         type: ApiType.baseUrl,
       );
-      if(response.statusCode==200){
+      if (response.statusCode == 200) {
         logSuccess('Deleted successfully');
-        
       }
     } catch (e) {
       throw PortfolioService().handleError('Delete Error $e');
@@ -298,6 +298,14 @@ static Future<PortfolioDataModel> editService({
       logError('Upload failed: $e');
       throw PortfolioService().handleError('Upload failed: $e');
     }
+  }
+
+  static Future<void> isUserPremium({required String userId}) async {
+    await DioHelper().patch(
+      '/user/change-premium-status/$userId',
+      type: ApiType.baseUrl,
+    );
+    
   }
 }
 

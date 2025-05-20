@@ -236,147 +236,184 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   //     }
   //   }
   // }
-
   Future<void> editPortfolio() async {
     try {
       final portfolio = widget.portfolio!;
       final Map<String, dynamic> updateData = {};
 
-      // Check and add personalInfo changes
-      final Map<String, dynamic> personalInfo = {};
-      if (nameController.text != portfolio.personalInfo.name) {
-        personalInfo['name'] = nameController.text;
-      }
-      if (emailController.text != portfolio.personalInfo.email) {
-        personalInfo['email'] = emailController.text;
-      }
-      if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
-        personalInfo['phoneNumber'] = phoneNumberController.text;
-      }
-      if (whatsappNumberController.text !=
-          portfolio.personalInfo.whatsappNumber) {
-        personalInfo['whatsappNumber'] = whatsappNumberController.text;
-      }
-
-      // Handle profile picture if changed
-      if (pickedProfileImage?.bytes != null) {
-        try {
-          final profileUploadResult = await PortfolioService.uploadImageFile(
-            pickedProfileImage!.bytes!,
-            pickedProfileImage!.name,
-          );
-          personalInfo['profilePicture'] = {
-            'name': profileUploadResult['name'],
-            'key': profileUploadResult['key'],
-            'size': profileUploadResult['size'],
-            'mimetype': profileUploadResult['mimetype'],
-          };
-        } catch (e) {
-          logError('Error uploading profile: $e');
+      // Check and add personalInfo changes with null safety
+      try {
+        final Map<String, dynamic> personalInfo = {};
+        if (nameController.text != portfolio.personalInfo.name) {
+          personalInfo['name'] = nameController.text;
         }
-      }
-
-      // Handle banner image if changed
-      if (pickedBannerImage?.bytes != null) {
-        try {
-          final bannerUploadResult = await PortfolioService.uploadImageFile(
-            pickedBannerImage!.bytes!,
-            pickedBannerImage!.name,
-          );
-          personalInfo['bannerImage'] = {
-            'name': bannerUploadResult['name'],
-            'key': bannerUploadResult['key'],
-            'size': bannerUploadResult['size'],
-            'mimetype': bannerUploadResult['mimetype'],
-          };
-        } catch (e) {
-          logError('Error uploading banner: $e');
+        if (emailController.text != portfolio.personalInfo.email) {
+          personalInfo['email'] = emailController.text;
         }
-      }
-
-      if (personalInfo.isNotEmpty) {
-        updateData['personalInfo'] = personalInfo;
-      }
-
-      // Check and add workInfo changes
-      final Map<String, dynamic> workInfo = {};
-      if (companyNameController.text != portfolio.workInfo.companyName) {
-        workInfo['companyName'] = companyNameController.text;
-      }
-      if (designationcontroller.text != portfolio.workInfo.designation) {
-        workInfo['designation'] = designationcontroller.text;
-      }
-      if (workemailController.text != portfolio.workInfo.workEmail) {
-        workInfo['workEmail'] = workemailController.text;
-      }
-      if (primaryWebsiteController.text != portfolio.workInfo.primaryWebsite) {
-        workInfo['primaryWebsite'] = primaryWebsiteController.text;
-      }
-      if (secondaryWebsiteController.text !=
-          portfolio.workInfo.secondaryWebsite) {
-        workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
-      }
-
-      // Handle company logo if changed
-      if (pickedLogoImage?.bytes != null) {
-        try {
-          final logoUploadResult = await PortfolioService.uploadImageFile(
-            pickedLogoImage!.bytes!,
-            pickedLogoImage!.name,
-          );
-          workInfo['companyLogo'] = {
-            'name': logoUploadResult['name'],
-            'key': logoUploadResult['key'],
-            'size': logoUploadResult['size'],
-            'mimetype': logoUploadResult['mimetype'],
-          };
-        } catch (e) {
-          logError('Error uploading logo: $e');
+        if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
+          personalInfo['phoneNumber'] = phoneNumberController.text;
         }
+        if (whatsappNumberController.text !=
+            portfolio.personalInfo.whatsappNumber) {
+          personalInfo['whatsappNumber'] = whatsappNumberController.text;
+        }
+
+        // Handle profile picture if changed
+        if (pickedProfileImage?.bytes != null) {
+          try {
+            final profileUploadResult = await PortfolioService.uploadImageFile(
+              pickedProfileImage!.bytes!,
+              pickedProfileImage!.name,
+            );
+            personalInfo['profilePicture'] = {
+              'name': profileUploadResult['name'] ?? '',
+              'key': profileUploadResult['key'] ?? '',
+              'size': profileUploadResult['size'] ?? 0,
+              'mimetype': profileUploadResult['mimetype'] ?? '',
+            };
+          } catch (e) {
+            logError('Error uploading profile: $e');
+          }
+        }
+
+        // Handle banner image if changed
+        if (pickedBannerImage?.bytes != null) {
+          try {
+            final bannerUploadResult = await PortfolioService.uploadImageFile(
+              pickedBannerImage!.bytes!,
+              pickedBannerImage!.name,
+            );
+            personalInfo['bannerImage'] = {
+              'name': bannerUploadResult['name'] ?? '',
+              'key': bannerUploadResult['key'] ?? '',
+              'size': bannerUploadResult['size'] ?? 0,
+              'mimetype': bannerUploadResult['mimetype'] ?? '',
+            };
+          } catch (e) {
+            logError('Error uploading banner: $e');
+          }
+        }
+
+        if (personalInfo.isNotEmpty) {
+          updateData['personalInfo'] = personalInfo;
+        }
+      } catch (e) {
+        logError('Error processing personalInfo: $e');
       }
 
-      if (workInfo.isNotEmpty) {
-        updateData['workInfo'] = workInfo;
+      // Check and add workInfo changes with null safety
+      try {
+        final Map<String, dynamic> workInfo = {};
+        if (companyNameController.text != portfolio.workInfo.companyName) {
+          workInfo['companyName'] = companyNameController.text;
+        }
+        if (designationcontroller.text != portfolio.workInfo.designation) {
+          workInfo['designation'] = designationcontroller.text;
+        }
+        if (workemailController.text != portfolio.workInfo.workEmail) {
+          workInfo['workEmail'] = workemailController.text;
+        }
+        if (primaryWebsiteController.text !=
+            portfolio.workInfo.primaryWebsite) {
+          workInfo['primaryWebsite'] = primaryWebsiteController.text;
+        }
+        if (secondaryWebsiteController.text !=
+            portfolio.workInfo.secondaryWebsite) {
+          workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
+        }
+
+        // Handle company logo if changed
+        if (pickedLogoImage?.bytes != null) {
+          try {
+            final logoUploadResult = await PortfolioService.uploadImageFile(
+              pickedLogoImage!.bytes!,
+              pickedLogoImage!.name,
+            );
+            workInfo['companyLogo'] = {
+              'name': logoUploadResult['name'] ?? '',
+              'key': logoUploadResult['key'] ?? '',
+              'size': logoUploadResult['size'] ?? 0,
+              'mimetype': logoUploadResult['mimetype'] ?? '',
+            };
+          } catch (e) {
+            logError('Error uploading logo: $e');
+          }
+        }
+
+        if (workInfo.isNotEmpty) {
+          updateData['workInfo'] = workInfo;
+        }
+      } catch (e) {
+        logError('Error processing workInfo: $e');
       }
 
-      // Check and add addressInfo changes
-      final Map<String, dynamic> addressInfo = {};
-      if (buildingNamecontroller.text != portfolio.addressInfo.buildingName) {
-        addressInfo['buildingName'] = buildingNamecontroller.text;
-      }
-      if (areaController.text != portfolio.addressInfo.area) {
-        addressInfo['area'] = areaController.text;
-      }
-      if (pincodeController.text != portfolio.addressInfo.pincode) {
-        addressInfo['pincode'] = pincodeController.text;
-      }
-      if (districtController.text != portfolio.addressInfo.district) {
-        addressInfo['district'] = districtController.text;
-      }
-      if (stateController.text != portfolio.addressInfo.state) {
-        addressInfo['state'] = stateController.text;
+      // Check and add addressInfo changes with null safety
+      try {
+        final Map<String, dynamic> addressInfo = {};
+        if (buildingNamecontroller.text != portfolio.addressInfo.buildingName) {
+          addressInfo['buildingName'] = buildingNamecontroller.text;
+        }
+        if (areaController.text != portfolio.addressInfo.area) {
+          addressInfo['area'] = areaController.text;
+        }
+        if (pincodeController.text != portfolio.addressInfo.pincode) {
+          addressInfo['pincode'] = pincodeController.text;
+        }
+        if (districtController.text != portfolio.addressInfo.district) {
+          addressInfo['district'] = districtController.text;
+        }
+        if (stateController.text != portfolio.addressInfo.state) {
+          addressInfo['state'] = stateController.text;
+        }
+
+        if (addressInfo.isNotEmpty) {
+          updateData['addressInfo'] = addressInfo;
+        }
+      } catch (e) {
+        logError('Error processing addressInfo: $e');
       }
 
-      if (addressInfo.isNotEmpty) {
-        updateData['addressInfo'] = addressInfo;
-      }
+      // Check and add about changes with null safety
+      try {
+        final Map<String, dynamic> about = {};
+        if (headingcontroller.text != portfolio.about.heading) {
+          about['heading'] = headingcontroller.text;
+        }
+        if (descriptioncontroller.text != portfolio.about.description) {
+          about['description'] = descriptioncontroller.text;
+        }
 
-      // Check and add about changes
-      final Map<String, dynamic> about = {};
-      if (headingcontroller.text != portfolio.about.heading) {
-        about['heading'] = headingcontroller.text;
-      }
-      if (descriptioncontroller.text != portfolio.about.description) {
-        about['description'] = descriptioncontroller.text;
-      }
-
-      if (about.isNotEmpty) {
-        updateData['about'] = about;
+        if (about.isNotEmpty) {
+          updateData['about'] = about;
+        }
+      } catch (e) {
+        logError('Error processing about: $e');
       }
 
       // Add service heading if changed
-      if (serviceHeadController.text != portfolio.serviceHeading) {
-        updateData['serviceHeading'] = serviceHeadController.text;
+      try {
+        if (serviceHeadController.text != portfolio.serviceHeading) {
+          updateData['serviceHeading'] = serviceHeadController.text;
+        }
+      } catch (e) {
+        logError('Error processing serviceHeading: $e');
+      }
+
+      // Add social media with null safety
+      try {
+        if (theFetchedPortfolio?.socialMedia != null) {
+          final socialMediaList =
+              theFetchedPortfolio!.socialMedia
+                  .where((social) => social != null)
+                  .map((social) => social.toJson())
+                  .toList();
+
+          if (socialMediaList.isNotEmpty) {
+            updateData['socialMedia'] = socialMediaList;
+          }
+        }
+      } catch (e) {
+        logError('Error processing socialMedia: $e');
       }
 
       // Only send update if there are changes
@@ -390,25 +427,211 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
 
         if (mounted) {
           SnackbarHelper.showSuccess(context, 'Portfolio updated successfully');
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(content: Text('Portfolio updated successfully')),
-          // );
         }
       } else {
         if (mounted) {
           SnackbarHelper.showInfo(context, 'No changes to update');
-          // ScaffoldMessenger.of(
-          //   context,
-          // ).showSnackBar(const SnackBar(content: Text('No changes to update')));
         }
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       logError('Error editing portfolio: $e');
+        logError('Stack trace: $stackTrace');  // This will show where the error occurs
       if (mounted) {
         SnackbarHelper.showError(context, 'Failed to update portfolio: $e');
       }
     }
   }
+
+  // Future<void> editPortfolio() async {
+  //   try {
+  //     final portfolio = widget.portfolio!;
+  //     final Map<String, dynamic> updateData = {};
+
+  //     // Check and add personalInfo changes
+  //     final Map<String, dynamic> personalInfo = {};
+  //     if (nameController.text != portfolio.personalInfo.name) {
+  //       personalInfo['name'] = nameController.text;
+  //     }
+  //     if (emailController.text != portfolio.personalInfo.email) {
+  //       personalInfo['email'] = emailController.text;
+  //     }
+  //     if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
+  //       personalInfo['phoneNumber'] = phoneNumberController.text;
+  //     }
+  //     if (whatsappNumberController.text !=
+  //         portfolio.personalInfo.whatsappNumber) {
+  //       personalInfo['whatsappNumber'] = whatsappNumberController.text;
+  //     }
+
+  //     // Handle profile picture if changed
+  //     if (pickedProfileImage?.bytes != null) {
+  //       try {
+  //         final profileUploadResult = await PortfolioService.uploadImageFile(
+  //           pickedProfileImage!.bytes!,
+  //           pickedProfileImage!.name,
+  //         );
+  //         personalInfo['profilePicture'] = {
+  //           'name': profileUploadResult['name'],
+  //           'key': profileUploadResult['key'],
+  //           'size': profileUploadResult['size'],
+  //           'mimetype': profileUploadResult['mimetype'],
+  //         };
+  //       } catch (e) {
+  //         logError('Error uploading profile: $e');
+  //       }
+  //     }
+
+  //     // Handle banner image if changed
+  //     if (pickedBannerImage?.bytes != null) {
+  //       try {
+  //         final bannerUploadResult = await PortfolioService.uploadImageFile(
+  //           pickedBannerImage!.bytes!,
+  //           pickedBannerImage!.name,
+  //         );
+  //         personalInfo['bannerImage'] = {
+  //           'name': bannerUploadResult['name'],
+  //           'key': bannerUploadResult['key'],
+  //           'size': bannerUploadResult['size'],
+  //           'mimetype': bannerUploadResult['mimetype'],
+  //         };
+  //       } catch (e) {
+  //         logError('Error uploading banner: $e');
+  //       }
+  //     }
+
+  //     if (personalInfo.isNotEmpty) {
+  //       updateData['personalInfo'] = personalInfo;
+  //     }
+
+  //     // Check and add workInfo changes
+  //     final Map<String, dynamic> workInfo = {};
+  //     if (companyNameController.text != portfolio.workInfo.companyName) {
+  //       workInfo['companyName'] = companyNameController.text;
+  //     }
+  //     if (designationcontroller.text != portfolio.workInfo.designation) {
+  //       workInfo['designation'] = designationcontroller.text;
+  //     }
+  //     if (workemailController.text != portfolio.workInfo.workEmail) {
+  //       workInfo['workEmail'] = workemailController.text;
+  //     }
+  //     if (primaryWebsiteController.text != portfolio.workInfo.primaryWebsite) {
+  //       workInfo['primaryWebsite'] = primaryWebsiteController.text;
+  //     }
+  //     if (secondaryWebsiteController.text !=
+  //         portfolio.workInfo.secondaryWebsite) {
+  //       workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
+  //     }
+
+  //     // Handle company logo if changed
+  //     if (pickedLogoImage?.bytes != null) {
+  //       try {
+  //         final logoUploadResult = await PortfolioService.uploadImageFile(
+  //           pickedLogoImage!.bytes!,
+  //           pickedLogoImage!.name,
+  //         );
+  //         workInfo['companyLogo'] = {
+  //           'name': logoUploadResult['name'],
+  //           'key': logoUploadResult['key'],
+  //           'size': logoUploadResult['size'],
+  //           'mimetype': logoUploadResult['mimetype'],
+  //         };
+  //       } catch (e) {
+  //         logError('Error uploading logo: $e');
+  //       }
+  //     }
+
+  //     if (workInfo.isNotEmpty) {
+  //       updateData['workInfo'] = workInfo;
+  //     }
+
+  //     // Check and add addressInfo changes
+  //     final Map<String, dynamic> addressInfo = {};
+  //     if (buildingNamecontroller.text != portfolio.addressInfo.buildingName) {
+  //       addressInfo['buildingName'] = buildingNamecontroller.text;
+  //     }
+  //     if (areaController.text != portfolio.addressInfo.area) {
+  //       addressInfo['area'] = areaController.text;
+  //     }
+  //     if (pincodeController.text != portfolio.addressInfo.pincode) {
+  //       addressInfo['pincode'] = pincodeController.text;
+  //     }
+  //     if (districtController.text != portfolio.addressInfo.district) {
+  //       addressInfo['district'] = districtController.text;
+  //     }
+  //     if (stateController.text != portfolio.addressInfo.state) {
+  //       addressInfo['state'] = stateController.text;
+  //     }
+
+  //     if (addressInfo.isNotEmpty) {
+  //       updateData['addressInfo'] = addressInfo;
+  //     }
+
+  //     // Check and add about changes
+  //     final Map<String, dynamic> about = {};
+  //     if (headingcontroller.text != portfolio.about.heading) {
+  //       about['heading'] = headingcontroller.text;
+  //     }
+  //     if (descriptioncontroller.text != portfolio.about.description) {
+  //       about['description'] = descriptioncontroller.text;
+  //     }
+
+  //     if (about.isNotEmpty) {
+  //       updateData['about'] = about;
+  //     }
+
+  //     // Add service heading if changed
+  //     if (serviceHeadController.text != portfolio.serviceHeading) {
+  //       updateData['serviceHeading'] = serviceHeadController.text;
+  //     }
+  //     try {
+  //       if (theFetchedPortfolio != null) {
+  //         updateData['socialMedia'] =
+  //             theFetchedPortfolio!.socialMedia
+  //                 .map(
+  //                   (social) => {
+  //                     'source': social.source,
+  //                     'link': social.link,
+  //                     if (social.id != null && social.id!.isNotEmpty)
+  //                       '_id': social.id,
+  //                   },
+  //                 )
+  //                 .toList();
+
+  //         print('Social Media Data being sent: ${updateData['socialMedia']}');
+  //       }
+  //     } catch (e) {
+  //       logError('Error processing social media: $e');
+  //     }
+  //     // Only send update if there are changes
+  //     if (updateData.isNotEmpty) {
+  //       logSuccess('Sending update with changed fields: $updateData');
+
+  //       await PortfolioService.editPortfolio(
+  //         userid: widget.user.id,
+  //         portfolioEditedData: updateData,
+  //       );
+
+  //       if (mounted) {
+  //         SnackbarHelper.showSuccess(context, 'Portfolio updated successfully');
+  //         // ScaffoldMessenger.of(context).showSnackBar(
+  //         //   const SnackBar(content: Text('Portfolio updated successfully')),
+  //         // );
+  //       }
+  //     } else {
+  //       if (mounted) {
+  //         SnackbarHelper.showInfo(context, 'No changes to update');
+  //         // ScaffoldMessenger.of(
+  //         //   context,
+  //         // ).showSnackBar(const SnackBar(content: Text('No changes to update')));
+  //       }
+  //     }
+  //   } catch (e) {
+  //     logError('Error editing portfolio: $e');
+  //     if (mounted) {
+  //       SnackbarHelper.showError(context, 'Failed to update portfolio: $e');
+  //     }
+  //   }
+  // }
 
   bool isLoading = false;
 

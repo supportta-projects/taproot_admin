@@ -6,13 +6,14 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/features/order_screen/data/order_details_model.dart';
+import 'package:taproot_admin/features/order_screen/data/order_details_model.dart'
+    as order_details;
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/widgets/product_card.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
@@ -35,18 +36,37 @@ class OrderDetailScreen extends StatefulWidget {
 }
 
 class _OrderDetailScreenState extends State<OrderDetailScreen> {
+  TextEditingController buildingNameController = TextEditingController();
+  TextEditingController areaController = TextEditingController();
+  TextEditingController pincodeController = TextEditingController();
+  TextEditingController stateController = TextEditingController();
+
+  TextEditingController districtController = TextEditingController();
+
   File? selectedImageLoco;
   File? selectedImageBanner;
   bool isEdit = true;
   // var orderDetails;
-  OrderDetails? orderDetails;
+  order_details.OrderDetails? orderDetails;
   late Order order;
   @override
   void initState() {
     order = widget.order;
-    getOrderDetails();
+    getOrderDetails().then((_) {
+      if (orderDetails != null) {
+        fetchShippingAddress();
+      }
+    });
     // TODO: implement initState
     super.initState();
+  }
+
+  void fetchShippingAddress() {
+    buildingNameController.text = orderDetails!.address.address1;
+    areaController.text = orderDetails!.address.address2;
+    pincodeController.text = orderDetails!.address.pincode;
+    stateController.text = orderDetails!.address.state;
+    districtController.text = orderDetails!.address.district;
   }
 
   bool orderEdit = false;
@@ -73,6 +93,24 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         ),
       );
     }
+  }
+
+  Future<void> updateOrder() async {
+    final newAddress = order_details.Address(
+      name: '',
+      mobile: '',
+      address1: buildingNameController.text,
+      address2: areaController.text,
+      landmark: '',
+      pincode: pincodeController.text,
+      district: districtController.text,
+      state: stateController.text,
+      country: 'India',
+    );
+    final Map<String, dynamic> data = {
+      'address': newAddress.toJson(), // Convert address to JSON
+    };
+    await OrderService.editOrder(orderId: widget.order.id, data: data);
   }
 
   @override
@@ -165,7 +203,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             ? MiniLoadingButton(
                               icon: LucideIcons.save,
                               text: 'Save',
-                              onPressed: () {},
+                              onPressed: updateOrder,
                               useGradient: true,
                               gradientColors:
                                   CustomColors.borderGradient.colors,
@@ -404,25 +442,35 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           labelText: 'Designation',
                           initialValue: orderDetails!.nfcDetails.designation,
                         ),
+                        Gap(CustomPadding.paddingXL.v),
+
                         Row(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(
-                                  CustomPadding.paddingLarge.v,
-                                ),
-                              ),
-                              width: 200,
-                              height: 150,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                  CustomPadding.paddingLarge.v,
-                                ),
-                                child: Image.network(
-                                  '$baseUrl/file?key=portfolios/${orderDetails!.nfcDetails.customerLogo.image.key}',
-                                ),
-                              ),
+                            Gap(CustomPadding.paddingXL.v),
+
+                            ImageContainerWithHead(
+                              heading: 'Company Logo',
+                              orderDetails: orderDetails,
+                              imageKey:
+                                  orderDetails!
+                                      .nfcDetails
+                                      .customerLogo
+                                      .image
+                                      .key,
                             ),
+                            Gap(CustomPadding.paddingXL.v),
+
+                            ImageContainerWithHead(
+                              heading: 'Profile Image',
+                              orderDetails: orderDetails,
+                              imageKey:
+                                  orderDetails!
+                                      .nfcDetails
+                                      .customerPhoto
+                                      .image
+                                      .key,
+                            ),
+
                             // isEdit
                             //     ? ImageContainer(
                             //       selectedFile: selectedImageLoco,
@@ -473,75 +521,105 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       ],
                     ),
                     Gap(CustomPadding.paddingXL.v),
-                    CommonProductContainer(
-                      title: 'Shipping Address',
-                      children: [
-                        Row(
+                    orderEdit
+                        ? Row(
                           children: [
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: CustomPadding.paddingLarge.v,
-                                ),
-                                child: Column(
-                                  spacing: CustomPadding.paddingLarge.v,
-                                  children: [
-                                    Gap(CustomPadding.padding.v),
+                            Gap(CustomPadding.paddingLarge.v),
 
-                                    CardRow(
-                                      prefixText: 'Building Name',
-                                      suffixText:
-                                          orderDetails!.address.address1,
-                                    ),
-                                    CardRow(
-                                      prefixText: 'Area',
-                                      suffixText:
-                                          orderDetails!.address.address2,
-                                    ),
-                                    CardRow(
-                                      prefixText: 'PinCode',
-                                      suffixText: orderDetails!.address.pincode,
-                                    ),
-                                    Gap(CustomPadding.padding.v),
-                                  ],
-                                ),
-                              ),
+                            LocationContainer(
+                              isEdit: true,
+                              buildingNamecontroller: buildingNameController,
+                              areaController: areaController,
+                              districtController: districtController,
+                              pincodeController: pincodeController,
+                              stateController: stateController,
                             ),
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: CustomPadding.paddingLarge.v,
-                                ),
-                                child: Column(
-                                  spacing: CustomPadding.paddingLarge.v,
-                                  children: [
-                                    Gap(CustomPadding.padding.v),
+                            Gap(CustomPadding.paddingLarge.v),
+                          ],
+                        )
+                        : CommonProductContainer(
+                          title: 'Shipping Address',
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: CustomPadding.paddingLarge.v,
+                                    ),
+                                    child: Column(
+                                      spacing: CustomPadding.paddingLarge.v,
+                                      children: [
+                                        Gap(CustomPadding.padding.v),
 
-                                    CardRow(
-                                      prefixText: 'District',
-                                      suffixText:
-                                          orderDetails!.address.district,
+                                        CardRow(
+                                          prefixText: 'Building Name',
+                                          suffixText:
+                                              orderDetails!.address.address1,
+                                        ),
+                                        CardRow(
+                                          prefixText: 'Area',
+                                          suffixText:
+                                              orderDetails!.address.address2,
+                                        ),
+                                        CardRow(
+                                          prefixText: 'PinCode',
+                                          suffixText:
+                                              orderDetails!.address.pincode,
+                                        ),
+                                        Gap(CustomPadding.padding.v),
+                                      ],
                                     ),
-                                    CardRow(
-                                      prefixText: 'State',
-                                      suffixText: orderDetails!.address.state,
-                                    ),
-                                    CardRow(
-                                      prefixText: 'Country',
-                                      suffixText: orderDetails!.address.country,
-                                    ),
-                                    Gap(CustomPadding.padding.v),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: CustomPadding.paddingLarge.v,
+                                    ),
+                                    child: Column(
+                                      spacing: CustomPadding.paddingLarge.v,
+                                      children: [
+                                        Gap(CustomPadding.padding.v),
+
+                                        CardRow(
+                                          prefixText: 'District',
+                                          suffixText:
+                                              orderDetails!.address.district,
+                                        ),
+                                        CardRow(
+                                          prefixText: 'State',
+                                          suffixText:
+                                              orderDetails!.address.state,
+                                        ),
+                                        CardRow(
+                                          prefixText: 'Country',
+                                          suffixText:
+                                              orderDetails!.address.country,
+                                        ),
+                                        Gap(CustomPadding.padding.v),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
                     Gap(CustomPadding.paddingXL.v),
                     orderEdit
-                        ? SizedBox()
+                        ? Center(
+                          child: Container(
+                            child: MiniLoadingButton(
+                              needRow: false,
+                              text: 'Cancel Order',
+                              onPressed: () {},
+                              useGradient: true,
+                              gradientColors:
+                                  CustomColors.borderGradient.colors,
+                            ),
+                          ),
+                        )
                         : CommonProductContainer(
                           title: 'Payment Details',
                           children: [
@@ -606,6 +684,52 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   ],
                 ),
               ),
+    );
+  }
+}
+
+class ImageContainerWithHead extends StatelessWidget {
+  const ImageContainerWithHead({
+    super.key,
+    required this.orderDetails,
+    required this.heading,
+    required this.imageKey,
+  });
+
+  final order_details.OrderDetails? orderDetails;
+  final String heading;
+  final String imageKey;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [Text(heading)]),
+        Gap(CustomPadding.paddingLarge.v),
+
+        Row(
+          children: [
+            Gap(CustomPadding.paddingXL.v),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  CustomPadding.paddingLarge.v,
+                ),
+              ),
+              width: 200,
+              height: 150,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  CustomPadding.paddingLarge.v,
+                ),
+                child: Image.network('$baseUrl/file?key=portfolios/$imageKey'),
+              ),
+            ),
+          ],
+        ),
+        Gap(CustomPadding.paddingXL.v),
+      ],
     );
   }
 }

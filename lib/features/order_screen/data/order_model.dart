@@ -189,3 +189,22 @@ class ProductItem {
     if (discountedPrice != null) 'discountedPrice': discountedPrice,
   };
 }
+class OrderIdResponse {
+  final bool success;
+  final String message;
+  final String result;
+
+  OrderIdResponse({
+    required this.success,
+    required this.message,
+    required this.result,
+  });
+
+  factory OrderIdResponse.fromJson(Map<String, dynamic> json) {
+    return OrderIdResponse(
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      result: json['result'] ?? '',
+    );
+  }
+}

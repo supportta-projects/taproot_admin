@@ -1,10 +1,13 @@
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 
@@ -63,6 +66,13 @@ class _UserProfileContainerState extends State<UserProfileContainer>
     _tabController.dispose();
   }
 
+  Future<void> isPremiumm() async {
+    final response = await PortfolioService.isUserPremium(
+      userId: widget.portfolio!.user.id,
+    );
+    response;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -96,10 +106,57 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                             ? Image.memory(
                               widget.previewImageBytes!,
                               fit: BoxFit.cover,
+                              cacheWidth: 300,
+                              cacheHeight: 300,
+                              gaplessPlayback: true,
                             )
                             : (widget.imageUrl != null &&
                                 widget.imageUrl!.isNotEmpty)
-                            ? Image.network(widget.imageUrl!, fit: BoxFit.cover)
+                            ? CachedNetworkImage(
+                              imageUrl: widget.imageUrl!,
+                              fit: BoxFit.cover,
+                              width: 300, // Adjust based on your needs
+                              height: 300, // Adjust based on your needs
+                              memCacheWidth: 300,
+                              memCacheHeight: 300,
+                              maxWidthDiskCache: 300,
+                              maxHeightDiskCache: 300,
+                              fadeInDuration: const Duration(milliseconds: 300),
+                              fadeInCurve: Curves.easeIn,
+                              placeholder:
+                                  (context, url) => Shimmer.fromColors(
+                                    baseColor: Colors.grey[300]!,
+                                    highlightColor: Colors.grey[100]!,
+                                    child: Container(
+                                      width: 300,
+                                      height: 300,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                              errorWidget:
+                                  (context, url, error) => Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.error_outline,
+                                          size: 40.v,
+                                          color: CustomColors.textColorDarkGrey,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Failed to load image',
+                                          style: TextStyle(
+                                            color:
+                                                CustomColors.textColorDarkGrey,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                            )
                             : Center(
                               child: Icon(
                                 Icons.person,
@@ -108,6 +165,27 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                               ),
                             ),
                   ),
+                  //  ClipRRect(
+                  //   borderRadius: BorderRadius.circular(
+                  //     CustomPadding.paddingXXL,
+                  //   ),
+                  //   child:
+                  //       widget.previewImageBytes != null
+                  //           ? Image.memory(
+                  //             widget.previewImageBytes!,
+                  //             fit: BoxFit.cover,
+                  //           )
+                  //           : (widget.imageUrl != null &&
+                  //               widget.imageUrl!.isNotEmpty)
+                  //           ? Image.network(widget.imageUrl!, fit: BoxFit.cover)
+                  //           : Center(
+                  //             child: Icon(
+                  //               Icons.person,
+                  //               size: 80.v,
+                  //               color: CustomColors.textColorDarkGrey,
+                  //             ),
+                  //           ),
+                  // ),
                 ),
                 if (widget.isEdit)
                   Positioned(
@@ -192,9 +270,11 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      (widget.portfolio?.user.isPremium ?? false)
-                          ? 'Premium'
-                          : 'Base',
+                      widget.portfolio?.user.isPremium == true
+                          ?
+                          // (widget.portfolio?.user.isPremium ?? false)
+                          'Premium'
+                          : 'Basee',
                       style: context.inter50014.copyWith(
                         color:
                             (widget.portfolio?.user.isPremium ?? false)

@@ -93,14 +93,19 @@ class ProductResponse {
   final bool success;
   final String message;
   final List<Product> results;
+  final List<ProductSearch> productSearch;
 
   ProductResponse({
     required this.success,
     required this.message,
     required this.results,
+    required this.productSearch
+
   });
 
   factory ProductResponse.fromJson(Map<String, dynamic> json) {
+        final results = json['results'] as List;
+
     return ProductResponse(
       success: json['success'] ?? false,
       message: json['message'] ?? '',
@@ -110,6 +115,8 @@ class ProductResponse {
                 json['results'].map((x) => Product.fromJson(x)),
               )
               : [],
+                    productSearch: results.map((e) => ProductSearch.fromJson(e)).toList(),
+
     );
   }
 }
@@ -272,12 +279,7 @@ class ProductImage {
   final int? size;
   final String? mimetype;
 
-  ProductImage({
-     this.name,
-    required this.key,
-     this.size,
-     this.mimetype,
-  });
+  ProductImage({this.name, required this.key, this.size, this.mimetype});
 
   factory ProductImage.fromJson(Map<String, dynamic> json) {
     return ProductImage(
@@ -294,4 +296,20 @@ class ProductImage {
     'size': size,
     'mimetype': mimetype,
   };
+}
+
+class ProductSearch {
+  final String? name;
+  final double? salePrice;
+  final double? discountedPrice;
+  ProductSearch({this.name, this.salePrice, this.discountedPrice});
+
+  factory ProductSearch.fromJson(Map<String, dynamic> json) {
+    return ProductSearch(
+      name: json['name'] ?? '',
+      salePrice: double.tryParse(json['salePrice'].toString()) ?? 0.0,
+      discountedPrice:
+          double.tryParse(json['discountedPrice'].toString()) ?? 0.0,
+    );
+  }
 }
