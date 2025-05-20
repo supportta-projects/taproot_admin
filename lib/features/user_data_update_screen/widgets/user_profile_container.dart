@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
@@ -40,10 +41,12 @@ class _UserProfileContainerState extends State<UserProfileContainer>
   late TabController _tabController;
   late final User user;
   bool isPremiumSelected = false;
-  bool isUserPremium = false;
-  String userType = "";
 
-  Color chipColor = Colors.transparent;
+  String userType = "";
+  IconData userTypeIcon = Icons.check_circle;
+  Color chipForeGroundColor = Colors.white;
+  Color chipBackgroundColor = Colors.transparent;
+  Color chipBorderColor = Colors.transparent;
 
   @override
   void initState() {
@@ -51,7 +54,7 @@ class _UserProfileContainerState extends State<UserProfileContainer>
 
     user = widget.user as User;
     setUserType();
-    isUserPremium = user.isPremium;
+
     isPremiumSelected = widget.portfolio?.user.isPremium ?? false;
     _tabController =
         TabController(length: 2, vsync: this)
@@ -82,25 +85,30 @@ class _UserProfileContainerState extends State<UserProfileContainer>
 
   void setUserType() {
     // logInfo(user.isPremium );
-    //TODo: Aswin M
+
     if (user.isPremium) {
       logSuccess("opted for premium");
       setState(() {
         userType = "Premium";
-        chipColor = CustomColors.buttonColor1;
+        chipForeGroundColor = Colors.white;
+        chipBorderColor = Colors.transparent;
+        chipBackgroundColor = CustomColors.buttonColor1;
+        userTypeIcon = LucideIcons.crown;
       });
     } else {
       logError("opted for basic");
       setState(() {
         userType = 'Basic';
+        chipForeGroundColor = CustomColors.buttonColor1;
+        chipBorderColor = CustomColors.buttonColor1;
+        chipBackgroundColor = Colors.transparent;
+        userTypeIcon = LucideIcons.circleUserRound;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    logError("The user is premium:  $isUserPremium");
-
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -263,8 +271,30 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Chip(
-                    backgroundColor: chipColor,
-                    label: Row(children: [Text(userType)]),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        CustomPadding.paddingXL.v,
+                      ),
+                      side: BorderSide(color: chipBorderColor, width: 1.0),
+                    ),
+                    backgroundColor: chipBackgroundColor,
+
+                    label: Row(
+                      children: [
+                        Text(
+                          userType,
+                          style: context.inter40016.copyWith(
+                            color: chipForeGroundColor,
+                          ),
+                        ),
+                        CustomGap.gapSmall,
+                        Icon(
+                          userTypeIcon,
+                          color: chipForeGroundColor,
+                          size: 20,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
