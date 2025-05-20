@@ -6,6 +6,7 @@ class PortfolioDataModel {
   final About about;
   final UserInfo user;
   final List<SocialMedia> socialMedia;
+  final String serviceHeading;
   final List<Service> services;
 
   PortfolioDataModel({
@@ -17,6 +18,7 @@ class PortfolioDataModel {
     required this.user,
     required this.socialMedia,
     required this.services,
+    required this.serviceHeading
   });
 
   factory PortfolioDataModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,7 @@ class PortfolioDataModel {
           (portfolio['socialMedia'] as List<dynamic>)
               .map((e) => SocialMedia.fromJson(e))
               .toList(),
+      serviceHeading: portfolio['serviceHeading'],        
       services:
           (json['result']['services'] as List<dynamic>)
               .map((e) => Service.fromJson(e))
@@ -49,6 +52,7 @@ class PortfolioDataModel {
       'about': about.toJson(),
       'user': user.toJson(),
       'socialMedia': socialMedia.map((e) => e.toJson()).toList(),
+      'serviceHeading':serviceHeading,
       'services': services.map((e) => e.toJson()).toList(),
     };
   }
@@ -59,16 +63,16 @@ class PersonalInfo {
   final String email;
   final String phoneNumber;
   final String whatsappNumber;
-  final String? bannerImage;
-  final String? profileImage;
+  final ProductImage? profilePicture;
+  final ProductImage? bannerImage;
 
   PersonalInfo({
     required this.name,
     required this.email,
     required this.phoneNumber,
     required this.whatsappNumber,
+    this.profilePicture,
     this.bannerImage,
-    this.profileImage,
   });
 
   factory PersonalInfo.fromJson(Map<String, dynamic> json) {
@@ -77,6 +81,14 @@ class PersonalInfo {
       email: json['email'],
       phoneNumber: json['phoneNumber'],
       whatsappNumber: json['whatsappNumber'],
+      profilePicture:
+          json['profilePicture'] != null
+              ? ProductImage.fromJson(json['profilePicture'])
+              : null,
+      bannerImage:
+          json['bannerImage'] != null
+              ? ProductImage.fromJson(json['bannerImage'])
+              : null,
     );
   }
 
@@ -85,8 +97,83 @@ class PersonalInfo {
     'email': email,
     'phoneNumber': phoneNumber,
     'whatsappNumber': whatsappNumber,
+    'profilePicture': profilePicture?.toJson(),
+    'bannerImage': bannerImage?.toJson(),
   };
+
+  String? getProfilePictureUrl(String baseUrl) {
+    return profilePicture?.getImageUrl(baseUrl);
+  }
+
+  String? getBannerImageUrl(String baseUrl) {
+    return bannerImage?.getImageUrl(baseUrl);
+  }
 }
+
+class ProductImage {
+  final String? name;
+  final String key;
+  final int? size;
+  final String? mimetype;
+
+  ProductImage({this.name, required this.key, this.size, this.mimetype});
+
+  factory ProductImage.fromJson(Map<String, dynamic> json) {
+    return ProductImage(
+      name: json['name'],
+      key: json['key'],
+      size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,      mimetype: json['mimetype'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'key': key,
+    'size': size?.toString(),
+    'mimetype': mimetype,
+  };
+
+  String? getImageUrl(String baseUrl) {
+    if (key.isNotEmpty) {
+      return '$baseUrl/file?key=portfolios/$key';
+    }
+    return null;
+  }
+}
+
+// class PersonalInfo {
+//   final String name;
+//   final String email;
+//   final String phoneNumber;
+//   final String whatsappNumber;
+//   final String? bannerImage;
+//   final String? profileImage;
+
+//   PersonalInfo({
+//     required this.name,
+//     required this.email,
+//     required this.phoneNumber,
+//     required this.whatsappNumber,
+//     this.bannerImage,
+//     this.profileImage,
+//   });
+
+//   factory PersonalInfo.fromJson(Map<String, dynamic> json) {
+//     return PersonalInfo(
+//       name: json['name'],
+//       email: json['email'],
+//       phoneNumber: json['phoneNumber'],
+//       whatsappNumber: json['whatsappNumber'],
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() => {
+//     'name': name,
+//     'email': email,
+//     'phoneNumber': phoneNumber,
+//     'whatsappNumber': whatsappNumber,
+//   };
+// }
 
 class WorkInfo {
   final String companyName;
@@ -94,6 +181,7 @@ class WorkInfo {
   final String workEmail;
   final String primaryWebsite;
   final String secondaryWebsite;
+  final ProductImage? companyLogo;
 
   WorkInfo({
     required this.companyName,
@@ -101,6 +189,7 @@ class WorkInfo {
     required this.workEmail,
     required this.primaryWebsite,
     required this.secondaryWebsite,
+    this.companyLogo,
   });
 
   factory WorkInfo.fromJson(Map<String, dynamic> json) {
@@ -110,6 +199,10 @@ class WorkInfo {
       workEmail: json['workEmail'],
       primaryWebsite: json['primaryWebsite'],
       secondaryWebsite: json['secondaryWebsite'],
+      companyLogo:
+          json['companyLogo'] != null
+              ? ProductImage.fromJson(json['companyLogo'])
+              : null,
     );
   }
 
@@ -119,7 +212,12 @@ class WorkInfo {
     'workEmail': workEmail,
     'primaryWebsite': primaryWebsite,
     'secondaryWebsite': secondaryWebsite,
+    'companyLogo': companyLogo?.toJson(),
   };
+
+  String? getCompanyLogoUrl(String baseUrl) {
+    return companyLogo?.getImageUrl(baseUrl);
+  }
 }
 
 class AddressInfo {
@@ -183,7 +281,7 @@ class UserInfo {
     return UserInfo(
       id: json['_id'],
       code: json['code'],
-      isPremium: json['isPremium'] == true || json['isPremium'] == 'true',
+      isPremium: json['isPremium'],
     );
   }
 
@@ -219,20 +317,22 @@ class SocialMedia {
 }
 
 class Service {
-  final String ?id;
+  final String? id;
   final String? user;
   final String? portfolio;
   final String heading;
   final String description;
   final DateTime? createdAt;
+  final ProductImage? image;
 
   Service({
-     this.id,
-     this.user,
-     this.portfolio,
+    this.id,
+    this.user,
+    this.portfolio,
     required this.heading,
     required this.description,
-   this.createdAt,
+    this.createdAt,
+     this.image,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -243,6 +343,8 @@ class Service {
       heading: json['heading'],
       description: json['description'],
       createdAt: DateTime.parse(json['createdAt']),
+       image:
+          json['image'] != null ? ProductImage.fromJson(json['image']) : null, 
     );
   }
 
@@ -253,5 +355,12 @@ class Service {
     'heading': heading,
     'description': description,
     'createdAt': createdAt?.toIso8601String(),
+     'image': image?.toJson(),
   };
+   String? getImageUrl(String baseUrl) {
+    if (image?.key != null) {
+      return '$baseUrl/file?key=portfolios/portfolio_services/${image!.key}';
+    }
+    return null;
+  }
 }

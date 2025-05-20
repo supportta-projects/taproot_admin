@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class AddUserDialog extends StatefulWidget {
-  final VoidCallback onCallFunction;
+  final VoidCallback onCallFunction; // Change this line
   const AddUserDialog({super.key, required this.onCallFunction});
 
   @override
@@ -15,22 +16,46 @@ class AddUserDialog extends StatefulWidget {
 
 class _AddUserDialogState extends State<AddUserDialog> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  Future<void> addUser(BuildContext context) async {
+  bool isLoading = false;
+
+  Future<void> addUser(BuildContext currentContext) async {
     if (!_formKey.currentState!.validate()) {
       return;
-    } else {
-      Navigator.pop(context);
-      widget.onCallFunction;
     }
+
+    setState(() {
+      isLoading = true;
+    });
+
     try {
-      final result = await UserService.createUser(
+      await UserService.createUser(
         userData: {'name': nameController.text, 'email': emailController.text},
       );
+
+      if (!mounted) return;
+
+      // Close the dialog first
+      Navigator.pop(currentContext);
+
+      // Call the refresh function
+      widget.onCallFunction();
+
+      // Show success message
+      ScaffoldMessenger.of(
+        currentContext,
+      ).showSnackBar(const SnackBar(content: Text('User added successfully!')));
     } catch (e) {
-      logInfo('Error creating user: $e');
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+      });
+
+      ScaffoldMessenger.of(currentContext).showSnackBar(
+        const SnackBar(content: Text('Failed to add user. Please try again.')),
+      );
     }
   }
 
@@ -54,13 +79,28 @@ class _AddUserDialogState extends State<AddUserDialog> {
                   ),
                   color: CustomColors.burgandryRed,
                 ),
-                child: Center(
-                  child: Text(
-                    'Add User',
-                    style: context.inter60014.copyWith(
-                      color: CustomColors.backgroundColor,
+                child: Row(
+                  children: [
+                    Spacer(),
+
+                    Text(
+                      'Add User',
+                      style: context.inter60014.copyWith(
+                        color: CustomColors.backgroundColor,
+                      ),
                     ),
-                  ),
+                    Spacer(),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: Icon(
+                        Icons.close,
+                        color: CustomColors.backgroundColor,
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
+                  ],
                 ),
               ),
 
@@ -84,11 +124,19 @@ class _AddUserDialogState extends State<AddUserDialog> {
                   if (value == null || value.trim().isEmpty) {
                     return 'Email is required';
                   }
+
+                  // Check if email starts with a number
+                  if (RegExp(r'^\d').hasMatch(value)) {
+                    return 'Email should not start with a number';
+                  }
+
+                  // Validate email format
                   if (!RegExp(
                     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                   ).hasMatch(value)) {
                     return 'Enter a valid email';
                   }
+
                   return null;
                 },
               ),
@@ -97,15 +145,9 @@ class _AddUserDialogState extends State<AddUserDialog> {
               MiniLoadingButton(
                 needRow: false,
                 text: 'Add',
-                onPressed: () {
-                  addUser(context);
-
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   SnackBar(content: Text('Account added successfully!')),
-                  // );
-
-                  // TODO: Handle add action
-                },
+                isLoading: isLoading,
+                enabled: !isLoading, // Add this line
+                onPressed: () => addUser(context),
                 useGradient: true,
                 gradientColors: CustomColors.borderGradient.colors,
               ),

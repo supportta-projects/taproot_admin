@@ -23,6 +23,9 @@ class $AssetsPngGen {
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
+  /// File path: assets/svg/addround.svg
+  String get addround => 'assets/svg/addround.svg';
+
   /// File path: assets/svg/behance.svg
   String get behance => 'assets/svg/behance.svg';
 
@@ -58,6 +61,7 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<String> get values => [
+    addround,
     behance,
     facebook,
     github,

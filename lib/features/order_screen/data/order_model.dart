@@ -40,7 +40,7 @@ class Order {
   final User user;
   final Address address;
   final int totalProducts;
-  final int totalAmount;
+  final double totalAmount;
   final String paymentStatus;
 
   Order({
@@ -52,7 +52,7 @@ class Order {
     required this.address,
     required this.totalProducts,
     required this.totalAmount,
-    required this.paymentStatus
+    required this.paymentStatus,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -67,7 +67,7 @@ class Order {
         address: Address.fromJson(json['address'] ?? {}),
         totalProducts: json['totalProducts'] ?? 0,
         totalAmount: json['totalAmount'] ?? 0,
-        paymentStatus: json['paymentStatus']??''
+        paymentStatus: json['paymentStatus'] ?? '',
       );
     } catch (e, stackTrace) {
       logInfo("Error parsing Order: $e");
@@ -86,7 +86,7 @@ class Order {
     'address': address.toJson(),
     'totalProducts': totalProducts,
     'totalAmount': totalAmount,
-    'paymentStatus':paymentStatus
+    'paymentStatus': paymentStatus,
   };
 }
 
@@ -188,4 +188,23 @@ class ProductItem {
     if (actualPrice != null) 'actualPrice': actualPrice,
     if (discountedPrice != null) 'discountedPrice': discountedPrice,
   };
+}
+class OrderIdResponse {
+  final bool success;
+  final String message;
+  final String result;
+
+  OrderIdResponse({
+    required this.success,
+    required this.message,
+    required this.result,
+  });
+
+  factory OrderIdResponse.fromJson(Map<String, dynamic> json) {
+    return OrderIdResponse(
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      result: json['result'] ?? '',
+    );
+  }
 }

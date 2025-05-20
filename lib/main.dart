@@ -25,6 +25,22 @@ class MyApp extends StatelessWidget {
 
       builder: (context, orientation, deviceType) => 
       MaterialApp(
+
+      builder: (context, child) {
+
+
+
+        // Get the max width and height from MediaQuery
+        final size = MediaQuery.of(context).size;
+        return SizedBox(
+          width: size.width,
+          height: size.height,
+          child: child,
+        );
+      },
+      
+
+        
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         // theme: ThemeData(

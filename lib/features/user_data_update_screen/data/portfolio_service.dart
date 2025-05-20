@@ -1,5 +1,8 @@
+import 'dart:ffi';
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
@@ -99,8 +102,8 @@ class PortfolioService with ErrorExceptionHandler {
       }
     } catch (e) {
       logError('EditPortfolio Error: $e');
-      throw PortfolioService().handleError(e);
     }
+    return null;
   }
 
   static Future<PortfolioDataModel> addService({
@@ -109,14 +112,28 @@ class PortfolioService with ErrorExceptionHandler {
     required Map<String, dynamic> serviceData,
   }) async {
     try {
-      // final formData = FormData.fromMap(serviceData);
+      print('Making API call to add service');
       final response = await DioHelper().post(
         '/portfolio-service/$userId/service/$portfolioId',
         type: ApiType.baseUrl,
         data: serviceData,
       );
+
+      print('API Response status: ${response.statusCode}');
+      print('API Response data: ${response.data}');
+
       if (response.statusCode == 200) {
-        return PortfolioDataModel.fromJson(response.data);
+        // Get updated portfolio in same API call if possible
+        final portfolioResponse = await DioHelper().get(
+          '/portfolio/$userId',
+          type: ApiType.baseUrl,
+        );
+
+        if (portfolioResponse.statusCode == 200) {
+          return PortfolioDataModel.fromJson(portfolioResponse.data);
+        } else {
+          throw Exception('Failed to fetch updated portfolio');
+        }
       } else {
         throw Exception('Failed to add service');
       }
@@ -126,25 +143,169 @@ class PortfolioService with ErrorExceptionHandler {
     }
   }
 
+  // static Future<PortfolioDataModel> addService({
+  //   required String userId,
+  //   required String portfolioId,
+  //   required Map<String, dynamic> serviceData,
+  // }) async {
+  //   try {
+  //     // final formData = FormData.fromMap(serviceData);
+  //     final response = await DioHelper().post(
+  //       '/portfolio-service/$userId/service/$portfolioId',
+  //       type: ApiType.baseUrl,
+  //       data: serviceData,
+  //     );
+  //     if (response.statusCode == 200) {
+  //       return PortfolioDataModel.fromJson(response.data);
+  //     } else {
+  //       throw Exception('Failed to add service');
+  //     }
+  //   } catch (e) {
+  //     logError('AddService Error: $e');
+  //     throw PortfolioService().handleError(e);
+  //   }
+  // }
   static Future<PortfolioDataModel> editService({
     required String serviceId,
     required Map<String, dynamic> editServiceData,
+    required String userId, // Add this parameter
   }) async {
     try {
+      // First, edit the service
       final response = await DioHelper().patch(
         '/portfolio-service/service/$serviceId',
         type: ApiType.baseUrl,
         data: editServiceData,
       );
+
       if (response.statusCode == 200) {
-        return PortfolioDataModel.fromJson(response.data);
+        // Fetch the updated portfolio using the provided userId
+        final portfolioResponse = await DioHelper().get(
+          '/portfolio/$userId',
+          type: ApiType.baseUrl,
+        );
+
+        if (portfolioResponse.statusCode == 200) {
+          return PortfolioDataModel.fromJson(portfolioResponse.data);
+        } else {
+          throw Exception('Failed to fetch updated portfolio');
+        }
       } else {
-        throw Exception('failed');
+        throw Exception('Failed to edit service');
       }
     } catch (e) {
-      logError('Edit service Error:$e');
+      logError('Edit service Error: $e');
       throw Exception('Edit service failed: $e');
     }
+  }
+
+  // static Future<PortfolioDataModel> editService({
+  //   required String serviceId,
+  //   required Map<String, dynamic> editServiceData,
+  // }) async {
+  //   try {
+  //     final response = await DioHelper().patch(
+  //       '/portfolio-service/service/$serviceId',
+  //       type: ApiType.baseUrl,
+  //       data: editServiceData,
+  //     );
+  //     if (response.statusCode == 200) {
+  //       return PortfolioDataModel.fromJson(response.data);
+  //     } else {
+  //       throw Exception('failed');
+  //     }
+  //   } catch (e) {
+  //     logError('Edit service Error:$e');
+  //     throw Exception('Edit service failed: $e');
+  //   }
+  // }
+
+  static Future<void> deleteService({required String serviceId}) async {
+    try {
+      final response = await DioHelper().delete(
+        '/portfolio-service/service/$serviceId',
+        type: ApiType.baseUrl,
+      );
+      if (response.statusCode == 200) {
+        logSuccess('Deleted successfully');
+      }
+    } catch (e) {
+      throw PortfolioService().handleError('Delete Error $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>> uploadImageFile(
+    Uint8List imageBytes,
+    String filename,
+  ) async {
+    try {
+      final formData = FormData.fromMap({
+        'image': MultipartFile.fromBytes(
+          imageBytes,
+          filename: filename,
+          contentType: MediaType('image', 'jpeg'), // adjust if PNG
+        ),
+      });
+
+      final response = await DioHelper().post(
+        '/portfolio/upload',
+        type: ApiType.baseUrl,
+        data: formData,
+        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+      );
+
+      if (response.data != null && response.data['result'] != null) {
+        final result = response.data['result'] as Map<String, dynamic>;
+        logSuccess('Upload success: $result');
+        return result;
+      } else {
+        throw Exception('Invalid upload response');
+      }
+    } catch (e) {
+      logError('Upload failed: $e');
+      throw PortfolioService().handleError('Upload failed: $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>> uploadServiceImageFile(
+    Uint8List imageBytes,
+    String filename,
+  ) async {
+    try {
+      final formData = FormData.fromMap({
+        'image': MultipartFile.fromBytes(
+          imageBytes,
+          filename: filename,
+          contentType: MediaType('image', 'jpeg'), // adjust if PNG
+        ),
+      });
+
+      final response = await DioHelper().post(
+        '/portfolio-service/upload',
+        type: ApiType.baseUrl,
+        data: formData,
+        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+      );
+
+      if (response.data != null && response.data['result'] != null) {
+        final result = response.data['result'] as Map<String, dynamic>;
+        logSuccess('Upload success: $result');
+        return result;
+      } else {
+        throw Exception('Invalid upload response');
+      }
+    } catch (e) {
+      logError('Upload failed: $e');
+      throw PortfolioService().handleError('Upload failed: $e');
+    }
+  }
+
+  static Future<void> isUserPremium({required String userId}) async {
+    await DioHelper().patch(
+      '/user/change-premium-status/$userId',
+      type: ApiType.baseUrl,
+    );
+    
   }
 }
 

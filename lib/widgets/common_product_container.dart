@@ -6,7 +6,8 @@ class CommonProductContainer extends StatefulWidget {
   final bool isAmountContainer;
   final List<Widget>? children;
   final String title;
-  final int? grandTotal;
+  final double? grandTotal;
+
   const CommonProductContainer({
     required this.title,
     super.key,
@@ -51,7 +52,10 @@ class _CommonProductContainerState extends State<CommonProductContainer> {
                 ],
               ),
             ),
-            Column(children: widget.children ?? []),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widget.children ?? [],
+            ),
             widget.isAmountContainer
                 ? Divider(indent: 40, endIndent: 40)
                 : SizedBox(),

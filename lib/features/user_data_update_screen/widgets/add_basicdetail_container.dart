@@ -45,9 +45,15 @@ class AddBasicDetailContainer extends StatelessWidget {
             if (value == null || value.trim().isEmpty) {
               return 'Email is required';
             }
+
+            if (RegExp(r'^\d').hasMatch(value)) {
+              return 'Email should not start with a number';
+            }
+
             if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
               return 'Enter a valid email';
             }
+
             return null;
           },
         ),
