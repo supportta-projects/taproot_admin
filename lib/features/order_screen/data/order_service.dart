@@ -39,7 +39,7 @@ class OrderService with ErrorExceptionHandler {
 
   static Future<String> getOrderId() async {
     try {
-      await DioHelper().get(
+      final response = await DioHelper().get(
         '/order/id',
         type: ApiType.baseUrl,
       );

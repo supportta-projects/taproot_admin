@@ -249,17 +249,13 @@ class _CreateOrderState extends State<CreateOrder> {
                                 productSearchList[index].name.toString(),
                               ),
                             ),
-                            trailing: Row(
+                            trailing: Column(
                               children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      ' ₹${productSearchList[index].salePrice.toString()}',
-                                      style: context.inter50014,
-                                    ),
-                                    Text('Price'),
-                                  ],
+                                Text(
+                                  ' ₹${productSearchList[index].salePrice.toString()}',
+                                  style: context.inter50014,
                                 ),
+                                Text('Price'),
                               ],
                             ),
                             // trailing: Row(
