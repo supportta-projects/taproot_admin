@@ -18,7 +18,7 @@ class PortfolioDataModel {
     required this.user,
     required this.socialMedia,
     required this.services,
-    required this.serviceHeading,
+    required this.serviceHeading
   });
 
   factory PortfolioDataModel.fromJson(Map<String, dynamic> json) {
@@ -35,7 +35,7 @@ class PortfolioDataModel {
           (portfolio['socialMedia'] as List<dynamic>)
               .map((e) => SocialMedia.fromJson(e))
               .toList(),
-      serviceHeading: portfolio['serviceHeading'],
+      serviceHeading: portfolio['serviceHeading'],        
       services:
           (json['result']['services'] as List<dynamic>)
               .map((e) => Service.fromJson(e))
@@ -122,8 +122,7 @@ class ProductImage {
     return ProductImage(
       name: json['name'],
       key: json['key'],
-      size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,
-      mimetype: json['mimetype'],
+      size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,      mimetype: json['mimetype'],
     );
   }
 
@@ -333,7 +332,7 @@ class Service {
     required this.heading,
     required this.description,
     this.createdAt,
-    this.image,
+     this.image,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -344,8 +343,8 @@ class Service {
       heading: json['heading'],
       description: json['description'],
       createdAt: DateTime.parse(json['createdAt']),
-      image:
-          json['image'] != null ? ProductImage.fromJson(json['image']) : null,
+       image:
+          json['image'] != null ? ProductImage.fromJson(json['image']) : null, 
     );
   }
 
@@ -356,9 +355,9 @@ class Service {
     'heading': heading,
     'description': description,
     'createdAt': createdAt?.toIso8601String(),
-    'image': image?.toJson(),
+     'image': image?.toJson(),
   };
-  String? getImageUrl(String baseUrl) {
+   String? getImageUrl(String baseUrl) {
     if (image?.key != null) {
       return '$baseUrl/file?key=portfolios/portfolio_services/${image!.key}';
     }
