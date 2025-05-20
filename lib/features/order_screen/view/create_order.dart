@@ -249,17 +249,42 @@ class _CreateOrderState extends State<CreateOrder> {
                                 productSearchList[index].name.toString(),
                               ),
                             ),
-                            subtitle: Row(
+                            trailing: Row(
                               children: [
-                                Text(
-                                  'Phone Number- ${productSearchList[index].salePrice}',
-                                ),
-                                Gap(CustomPadding.paddingLarge.v),
-                                Text(
-                                  'user ID-${productSearchList[index].discountedPrice}',
+                                Column(
+                                  children: [
+                                    Text(
+                                      ' ₹${productSearchList[index].salePrice.toString()}',
+                                      style: context.inter50014,
+                                    ),
+                                    Text('Price'),
+                                  ],
                                 ),
                               ],
                             ),
+                            // trailing: Row(
+                            //   children: [
+                            //     Column(
+                            //       children: [
+                            //         Text(
+                            //           productSearchList[index].salePrice
+                            //               .toString(),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ],
+                            // ),
+                            // subtitle: Row(
+                            //   children: [
+                            //     Text(
+                            //       'Phone Number- ${productSearchList[index].salePrice}',
+                            //     ),
+                            //     Gap(CustomPadding.paddingLarge.v),
+                            //     Text(
+                            //       'user ID-${productSearchList[index].discountedPrice}',
+                            //     ),
+                            //   ],
+                            // ),
                           ),
                           Divider(),
                         ],
