@@ -363,10 +363,14 @@ class _ProductPageState extends State<ProductPage>
                                                                 .padding
                                                                 .v,
                                                           ),
+
                                                       child: Image.network(
-                                                        '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
+                                                        profileImages[1],
                                                         fit: BoxFit.cover,
                                                       ),
+                                                      // child: Image.network(
+                                                      //   '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
+                                                      // ),
                                                     ),
                                                   ),
                                                 ),

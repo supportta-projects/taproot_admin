@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
@@ -11,16 +12,7 @@ import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_se
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 
-
-
-
-
-
-
-
-
 class UserProfileContainer extends StatefulWidget {
-  
   final PortfolioDataModel? portfolio;
   final dynamic user;
   final bool isEdit;
@@ -49,17 +41,20 @@ class _UserProfileContainerState extends State<UserProfileContainer>
   late TabController _tabController;
   late final User user;
   bool isPremiumSelected = false;
-  bool isUserPremium = false ;
+
   String userType = "";
-
-  Color chipColor = Colors.transparent;
-
-
+  IconData userTypeIcon = Icons.check_circle;
+  Color chipForeGroundColor = Colors.white;
+  Color chipBackgroundColor = Colors.transparent;
+  Color chipBorderColor = Colors.transparent;
 
   @override
   void initState() {
     super.initState();
-    // isUserPremium = user.isPremium;
+
+    user = widget.user as User;
+    setUserType();
+
     isPremiumSelected = widget.portfolio?.user.isPremium ?? false;
     _tabController =
         TabController(length: 2, vsync: this)
@@ -75,10 +70,6 @@ class _UserProfileContainerState extends State<UserProfileContainer>
           });
   }
 
-
-
-
-
   @override
   void dispose() {
     super.dispose();
@@ -92,31 +83,32 @@ class _UserProfileContainerState extends State<UserProfileContainer>
     response;
   }
 
+  void setUserType() {
+    // logInfo(user.isPremium );
 
-
-  void setUserType (){
-
-//TODo: Aswin M
-if(isUserPremium)
-  {  setState(() {
-      userType = "Premium";
-      chipColor =       CustomColors.buttonColor1;
-
-    });}
-
-else{
-  setState(() {
-    userType='Basic';
-  });
-}
-
+    if (user.isPremium) {
+      logSuccess("opted for premium");
+      setState(() {
+        userType = "Premium";
+        chipForeGroundColor = Colors.white;
+        chipBorderColor = Colors.transparent;
+        chipBackgroundColor = CustomColors.buttonColor1;
+        userTypeIcon = LucideIcons.crown;
+      });
+    } else {
+      logError("opted for basic");
+      setState(() {
+        userType = 'Basic';
+        chipForeGroundColor = CustomColors.buttonColor1;
+        chipBorderColor = CustomColors.buttonColor1;
+        chipBackgroundColor = Colors.transparent;
+        userTypeIcon = LucideIcons.circleUserRound;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    logError("The user is premium:  $isUserPremium");
-    
-
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -127,7 +119,6 @@ else{
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            
             Stack(
               children: [
                 Container(
@@ -157,8 +148,8 @@ else{
                             ? CachedNetworkImage(
                               imageUrl: widget.imageUrl!,
                               fit: BoxFit.cover,
-                              width: 300, 
-                              height: 300, 
+                              width: 300,
+                              height: 300,
                               memCacheWidth: 300,
                               memCacheHeight: 300,
                               maxWidthDiskCache: 300,
@@ -207,27 +198,6 @@ else{
                               ),
                             ),
                   ),
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
-                  
                 ),
                 if (widget.isEdit)
                   Positioned(
@@ -236,7 +206,7 @@ else{
                     child: Container(
                       padding: EdgeInsets.all(CustomPadding.padding),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: .5),
                         shape: BoxShape.circle,
                       ),
                       child: GestureDetector(
@@ -261,7 +231,6 @@ else{
               ),
             ),
 
-            
             if (widget.isEdit)
               Container(
                 width: 250,
@@ -298,322 +267,56 @@ else{
                 ),
               )
             else
-              
-              Container(
-                width: 150.v,
-                height: 30.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(
-                    CustomPadding.paddingLarge,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Chip(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        CustomPadding.paddingXL.v,
+                      ),
+                      side: BorderSide(color: chipBorderColor, width: 1.0),
+                    ),
+                    backgroundColor: chipBackgroundColor,
+
+                    label: Row(
+                      children: [
+                        Text(
+                          userType,
+                          style: context.inter40016.copyWith(
+                            color: chipForeGroundColor,
+                          ),
+                        ),
+                        CustomGap.gapSmall,
+                        Icon(
+                          userTypeIcon,
+                          color: chipForeGroundColor,
+                          size: 20,
+                        ),
+                      ],
+                    ),
                   ),
-                  color: CustomColors.lightGreen,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                  
-
-
-Chip(label: Text('' ))
-
-
-
-                  ],
-                ),
+                ],
               ),
+            // Container(
+            //   width: 150.v,
+            //   height: 30.h,
+            //   decoration: BoxDecoration(
+            //     borderRadius: BorderRadius.circular(
+            //       CustomPadding.paddingLarge,
+            //     ),
+            //     color: Colors.red,
+            //   ),
+
+            //   child: Center(),
+            //   // child: Row(
+            //   //   mainAxisAlignment: MainAxisAlignment.center,
+            //   //   children: [Chip(label: Text(userType))],
+            //   // ),
+            // ),
           ],
         ),
       ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

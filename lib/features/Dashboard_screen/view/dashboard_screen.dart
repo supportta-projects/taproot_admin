@@ -115,7 +115,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     decoration: BoxDecoration(
                       color: CustomColors.secondaryColor,
                       borderRadius: BorderRadius.circular(
-                        CustomPadding.paddingLarge.v,
+                        CustomPadding.paddingXL.v + CustomPadding.padding.v,
                       ),
                     ),
                     height: 600,
@@ -161,6 +161,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Gap(CustomPadding.paddingXL.v),
                 Expanded(
                   child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: CustomPadding.padding,
+                    ),
                     height: 600,
                     decoration: BoxDecoration(
                       color: CustomColors.secondaryColor,
@@ -170,7 +173,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: CustomPadding.paddingLarge.v,
+                      spacing: CustomPadding.padding.v,
                       children: [
                         OrderDetailsContainer(
                           title: 'Total Orders',

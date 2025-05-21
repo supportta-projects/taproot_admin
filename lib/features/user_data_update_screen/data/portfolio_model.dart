@@ -45,14 +45,14 @@ class PortfolioDataModel {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      '_id': id,
       'personalInfo': personalInfo.toJson(),
       'workInfo': workInfo.toJson(),
       'addressInfo': addressInfo.toJson(),
       'about': about.toJson(),
       'user': user.toJson(),
       'socialMedia': socialMedia.map((e) => e.toJson()).toList(),
-      'serviceHeading':serviceHeading,
+      'serviceHeading': serviceHeading,
       'services': services.map((e) => e.toJson()).toList(),
     };
   }
