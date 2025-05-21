@@ -38,10 +38,11 @@ class _ConnectionCheckerScreenState extends State<ConnectionCheckerScreen> {
   }
 
   void _updateConnectionStatus(List<ConnectivityResult> results) {
-    bool connected =results.contains(ConnectivityResult.ethernet)||
+    bool connected =
+        results.contains(ConnectivityResult.ethernet) ||
         results.contains(ConnectivityResult.mobile) ||
-        results.contains(ConnectivityResult.wifi); 
-   if (connected && !_isConnected) {
+        results.contains(ConnectivityResult.wifi);
+    if (connected && !_isConnected) {
       _isConnected = true;
       logInfo('Connected to Internet');
 
