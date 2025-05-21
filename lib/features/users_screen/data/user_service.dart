@@ -28,7 +28,8 @@ class UserService with ErrorExceptionHandler {
       throw UserService().handleError(e);
     }
   }
-static Future<bool> createUser({
+
+  static Future<bool> createUser({
     required Map<String, dynamic> userData,
   }) async {
     try {
@@ -42,7 +43,7 @@ static Future<bool> createUser({
     } catch (e) {
       logError('Error creating user: $e');
 
-      if (e is DioError && e.response != null) {
+      if (e is DioException && e.response != null) {
         // Assuming backend sends error message in 'message' field
         final errorMessage =
             e.response?.data['message'] ??
@@ -66,12 +67,11 @@ static Future<bool> createUser({
 
   //     // Return true if successful
   //     return response.statusCode == 201;
-      
+
   //   } catch (e) {
-      
-  //     logError('Error creating user: $e'); 
+
+  //     logError('Error creating user: $e');
   //     throw UserService().handleError(e);
   //   }
   // }
-
 }
