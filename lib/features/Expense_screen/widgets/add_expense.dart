@@ -7,6 +7,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_
 import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 class AddExpense extends StatefulWidget {
   const AddExpense({super.key});
@@ -67,16 +68,13 @@ class _AddExpenseState extends State<AddExpense> {
         );
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Expense added successfully')),
-          );
+          SnackbarHelper.showSuccess(context, 'Expense added successfully');
+
           Navigator.pop(context, true);
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Failed to add expense: $e')));
+          SnackbarHelper.showError(context, 'Failed to add expense: $e');
         }
       } finally {
         if (mounted) {

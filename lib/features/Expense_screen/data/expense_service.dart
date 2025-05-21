@@ -7,6 +7,7 @@ class ExpenseService {
   static Future<ExpenseResponse> getExpense(
     int page, {
     String? category,
+    String? searchQuery,
   }) async {
     try {
       final response = await DioHelper().get(
@@ -16,6 +17,8 @@ class ExpenseService {
           'page': page,
           'limit': 5,
           if (category != null && category != 'All') 'category': category,
+          if (searchQuery != null && searchQuery.isNotEmpty)
+            'search': searchQuery,
         },
       );
 
@@ -65,4 +68,49 @@ class ExpenseService {
       throw Exception('Failed to add expense: $e');
     }
   }
+static Future<ExpenseResponse> editExpense({
+    required Expense expense,
+    String? category,
+    String? name,
+    double? amount,
+    String? description,
+    DateTime? date,
+  }) async {
+    try {
+      
+      final updatedExpense = expense.copyWith(
+        category: category,
+        name: name,
+        amount: amount,
+        description: description,
+        date: date,
+      );
+
+      final data = updatedExpense.toJson();
+      
+      data.remove('_id');
+      data.remove('isDeleted');
+      data.remove('createdAt');
+
+      logInfo('Editing expense: ${expense.id} with data: $data');
+
+      final response = await DioHelper().patch(
+        '/expense/${expense.id}',
+        type: ApiType.baseUrl,
+        data: data,
+      );
+
+      logInfo('Edit expense response: ${response.data}');
+
+      if (response.statusCode == 200) {
+        return ExpenseResponse.fromJson(response.data);
+      } else {
+        throw Exception('Failed to edit expense: ${response.statusMessage}');
+      }
+    } catch (e) {
+      logError('Error editing expense: $e');
+      throw Exception('Failed to edit expense: $e');
+    }
+  }
+
 }

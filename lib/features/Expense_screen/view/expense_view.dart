@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -7,9 +9,9 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Expense_screen/data/expense_model.dart';
 import 'package:taproot_admin/features/Expense_screen/data/expense_service.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/add_expense.dart';
+import 'package:taproot_admin/features/Expense_screen/widgets/edit_expense.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/expense_description_container.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/filter_button.dart';
-import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -28,6 +30,10 @@ class _ExpenseViewState extends State<ExpenseView> {
   late ExpenseResponse _expenseResponse;
   List<Expense> _expenses = [];
   String? _currentCategory;
+  String searchQuery = '';
+  Timer? _debounce;
+  final _tableKey = GlobalKey<PaginatedDataTableState>();
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +47,7 @@ class _ExpenseViewState extends State<ExpenseView> {
       final response = await ExpenseService.getExpense(
         _currentPage,
         category: _currentCategory,
+        searchQuery: searchQuery,
       );
       logInfo(
         'Response received: ${response.results.length} items, Total pages: ${response.totalPages}',
@@ -62,6 +69,13 @@ class _ExpenseViewState extends State<ExpenseView> {
         ).showSnackBar(SnackBar(content: Text('Error loading expenses: $e')));
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -117,7 +131,6 @@ class _ExpenseViewState extends State<ExpenseView> {
                   children: [
                     Row(
                       children: [
-                        SearchWidget(hintText: 'Search Order ID, Username'),
                         Spacer(),
                         SortButton(),
                         Gap(CustomPadding.padding.v),
@@ -161,10 +174,6 @@ class _ExpenseViewState extends State<ExpenseView> {
                           _buildPaginatedDataTable(),
 
                           _buildPaginatedDataTable(),
-
-                          // Center(child: Text('Order')),
-                          // Center(child: Text('Shop')),
-                          // Center(child: Text('other')),
                         ],
                       ),
                     ),
@@ -184,7 +193,12 @@ class _ExpenseViewState extends State<ExpenseView> {
         ? Center(child: CircularProgressIndicator())
         : PaginatedDataTable(
           dataRowMaxHeight: 100,
-          source: ExpenseDataSource(_expenses, _expenseResponse.totalCount),
+          source: ExpenseDataSource(
+            _expenses,
+            _expenseResponse.totalCount,
+            context,
+            _fetchExpenses,
+          ),
           header: null,
           rowsPerPage: _rowsPerPage,
           availableRowsPerPage: [5],
@@ -218,8 +232,15 @@ class _ExpenseViewState extends State<ExpenseView> {
 class ExpenseDataSource extends DataTableSource {
   final List<Expense> _expenses;
   final int totalCount;
+  final BuildContext context;
+  final VoidCallback? onRefresh;
 
-  ExpenseDataSource(this._expenses, this.totalCount);
+  ExpenseDataSource(
+    this._expenses,
+    this.totalCount,
+    this.context,
+    this.onRefresh,
+  );
 
   @override
   DataRow? getRow(int index) {
@@ -245,7 +266,20 @@ class ExpenseDataSource extends DataTableSource {
         ),
         DataCell(
           Center(
-            child: Icon(LucideIcons.edit, color: CustomColors.buttonColor1),
+            child: IconButton(
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditExpense(expense: expense),
+                  ),
+                );
+                if (result == true) {
+                  onRefresh?.call();
+                }
+              },
+              icon: Icon(LucideIcons.edit, color: CustomColors.buttonColor1),
+            ),
           ),
         ),
       ],
