@@ -27,7 +27,7 @@ class _ExpenseViewState extends State<ExpenseView> {
   bool _isLoading = false;
   late ExpenseResponse _expenseResponse;
   List<Expense> _expenses = [];
-
+  String? _currentCategory;
   @override
   void initState() {
     super.initState();
@@ -38,7 +38,10 @@ class _ExpenseViewState extends State<ExpenseView> {
     setState(() => _isLoading = true);
     try {
       logInfo('Fetching page: $_currentPage');
-      final response = await ExpenseService.getExpense(_currentPage);
+      final response = await ExpenseService.getExpense(
+        _currentPage,
+        category: _currentCategory,
+      );
       logInfo(
         'Response received: ${response.results.length} items, Total pages: ${response.totalPages}',
       );
@@ -76,11 +79,11 @@ class _ExpenseViewState extends State<ExpenseView> {
                   MiniLoadingButton(
                     icon: Icons.add,
                     text: 'Add Expense',
-                    onPressed: () async{
-                 final result= await    Navigator.of(context).push(
+                    onPressed: () async {
+                      final result = await Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => AddExpense()),
                       );
-                      if(result==true){
+                      if (result == true) {
                         _fetchExpenses();
                       }
                       // Add expense logic
@@ -131,6 +134,16 @@ class _ExpenseViewState extends State<ExpenseView> {
                       indicatorColor: CustomColors.greenDark,
                       indicatorWeight: 4,
                       dragStartBehavior: DragStartBehavior.start,
+                      onTap: (index) {
+                        setState(() {
+                          _currentPage = 1;
+                          _currentCategory =
+                              index == 0
+                                  ? null
+                                  : ['All', 'Order', 'Shop', 'Other'][index];
+                        });
+                        _fetchExpenses();
+                      },
                       tabs: [
                         Tab(text: 'All'),
                         Tab(text: 'Order'),
@@ -143,10 +156,15 @@ class _ExpenseViewState extends State<ExpenseView> {
                       child: TabBarView(
                         children: [
                           _buildPaginatedDataTable(),
+                          _buildPaginatedDataTable(),
 
-                          Center(child: Text('Order')),
-                          Center(child: Text('Shop')),
-                          Center(child: Text('other')),
+                          _buildPaginatedDataTable(),
+
+                          _buildPaginatedDataTable(),
+
+                          // Center(child: Text('Order')),
+                          // Center(child: Text('Shop')),
+                          // Center(child: Text('other')),
                         ],
                       ),
                     ),

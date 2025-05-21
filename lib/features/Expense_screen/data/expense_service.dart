@@ -4,12 +4,19 @@ import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/Expense_screen/data/expense_model.dart';
 
 class ExpenseService {
-  static Future<ExpenseResponse> getExpense(int page) async {
+  static Future<ExpenseResponse> getExpense(
+    int page, {
+    String? category,
+  }) async {
     try {
       final response = await DioHelper().get(
         '/expense',
         type: ApiType.baseUrl,
-        queryParameters: {'page': page, 'limit': 5},
+        queryParameters: {
+          'page': page,
+          'limit': 5,
+          if (category != null && category != 'All') 'category': category,
+        },
       );
 
       if (response.statusCode == 200) {
@@ -22,7 +29,7 @@ class ExpenseService {
     }
   }
 
- static Future<ExpenseResponse> addExpense({
+  static Future<ExpenseResponse> addExpense({
     required String category,
     required String name,
     required double amount,
@@ -58,5 +65,4 @@ class ExpenseService {
       throw Exception('Failed to add expense: $e');
     }
   }
-
 }
