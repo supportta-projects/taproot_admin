@@ -7,6 +7,7 @@ class CommonProductContainer extends StatefulWidget {
   final List<Widget>? children;
   final String title;
   final double? grandTotal;
+  final bool isOrderDetails;
 
   const CommonProductContainer({
     required this.title,
@@ -14,6 +15,7 @@ class CommonProductContainer extends StatefulWidget {
     this.children,
     this.isAmountContainer = false,
     this.grandTotal,
+    this.isOrderDetails = false,
   });
 
   @override
@@ -37,7 +39,10 @@ class _CommonProductContainerState extends State<CommonProductContainer> {
             Container(
               height: SizeUtils.height * 0.06,
               decoration: BoxDecoration(
-                color: CustomColors.lightGreen,
+                color:
+                    widget.isOrderDetails
+                        ? CustomColors.secondaryColor
+                        : CustomColors.lightGreen,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(CustomPadding.paddingLarge),
                   topRight: Radius.circular(CustomPadding.paddingLarge),

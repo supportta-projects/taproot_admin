@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
 import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
+import 'package:taproot_admin/features/leads_screen.dart/view/leads.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
@@ -95,7 +96,6 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
             ),
             items: [
               SideMenuItem(
-                
                 title: 'Dashboard',
                 iconWidget: SideMenuLucideIcon(
                   icon: LucideIcons.clipboardMinus,
@@ -167,9 +167,9 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 },
               ),
               SideMenuItem(
-                title: 'Settings',
+                title: 'Leads',
                 iconWidget: SideMenuLucideIcon(
-                  icon: LucideIcons.settings,
+                  icon: LucideIcons.briefcaseBusiness,
                   index: 5,
                   currentIndex: _currentIndex,
                 ),
@@ -233,12 +233,13 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     );
                   },
                 ),
-
-                Center(
-                  child: Text(
-                    'Settings Page',
-                    style: TextStyle(fontSize: 14.fSize),
-                  ),
+                Navigator(
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+                      builder: (_) => LeadScreen(),
+                      settings: settings,
+                    );
+                  },
                 ),
               ],
             ),

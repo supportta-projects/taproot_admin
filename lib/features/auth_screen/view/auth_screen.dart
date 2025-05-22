@@ -23,6 +23,9 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    emailController.text = 'admin@supporttacards.com';
+    passwordController.text = 'Admin@Supportta765';
+
     final screenWidth = SizeUtils.width;
     final screenHeight = SizeUtils.height;
 
@@ -51,9 +54,8 @@ class _AuthScreenState extends State<AuthScreen> {
                           Text('LOGO'),
 
                           TextFormField(
-                            initialValue: "admin@supporttacards.com",
-
-                            // controller: emailController,
+                            // initialValue: "admin@supporttacards.com",
+                            controller: emailController,
                             decoration: InputDecoration(
                               labelText: 'Email',
                               labelStyle: TextStyle(
@@ -68,8 +70,8 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           CustomGap.gapLarge,
                           TextFormField(
-                            initialValue: "Admin@Supportta765",
-                            //  controller: passwordController,
+                            // initialValue: "Admin@Supportta765",
+                            controller: passwordController,
                             obscureText: _obsecureText,
                             enableSuggestions: false,
                             autocorrect: false,
@@ -109,10 +111,10 @@ class _AuthScreenState extends State<AuthScreen> {
                                   await AuthService.loginAdmin(
                                     ///
                                     //TODO
-                                    // email: emailController.text.trim(),
-                                    // password: passwordController.text.trim(),
-                                    password: "Admin@Supportta765",
-                                    email: "admin@supporttacards.com",
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text.trim(),
+                                    // password: "Admin@Supportta765",
+                                    // email: "admin@supporttacards.com",
                                   );
 
                                   //TODO : fix context

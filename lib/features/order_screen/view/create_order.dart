@@ -165,6 +165,9 @@ class _CreateOrderState extends State<CreateOrder> {
                                     builder: (context) {
                                       logError(userSearchList.toString());
                                       return CreateOrderDetails(
+                                        userIdCode:
+                                            userSearchList[index].userIdCode,
+                                        userId: userSearchList[index].userId,
                                         email: userSearchList[index].email,
                                         phoneNumber:
                                             userSearchList[index].phone,

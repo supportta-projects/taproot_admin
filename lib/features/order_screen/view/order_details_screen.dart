@@ -87,6 +87,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       });
     } catch (e) {
       logError('Failed to fetch order details: $e');
+
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to fetch order details. Please try again.'),

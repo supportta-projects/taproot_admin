@@ -20,13 +20,15 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  var dashboardData;
   Future<void> _fetchDashboardData() async {
     try {
       final response = await DashboardServices.getDashData();
 
       if (response.success) {
-        logError(response.message);
+        logSuccess(response.message);
         setState(() {
+          dashboardData = response.result;
           // dashboardData = response.result;
         });
       } else {
@@ -42,8 +44,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     _fetchDashboardData();
   }
-
-  List<DashboardData> dashboardData = [];
 
   final List<ChartData> data = [
     ChartData('Jan', 500, 200, 1000),

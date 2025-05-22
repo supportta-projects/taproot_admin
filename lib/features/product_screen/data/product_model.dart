@@ -299,17 +299,30 @@ class ProductImage {
 }
 
 class ProductSearch {
+  final String? id;
   final String? name;
   final double? salePrice;
+  final Category? category; 
   final double? discountedPrice;
-  ProductSearch({this.name, this.salePrice, this.discountedPrice});
+  final List<ProductImage>? productImages;
+   int quantity;
+  ProductSearch({this.name, this.salePrice, this.discountedPrice,this.id,this.category,this.productImages,this.quantity=1 });
 
-  factory ProductSearch.fromJson(Map<String, dynamic> json) {
+factory ProductSearch.fromJson(Map<String, dynamic> json) {
     return ProductSearch(
+      id: json['_id'] ?? '',
       name: json['name'] ?? '',
       salePrice: double.tryParse(json['salePrice'].toString()) ?? 0.0,
       discountedPrice:
           double.tryParse(json['discountedPrice'].toString()) ?? 0.0,
+      category:
+          json['category'] != null ? Category.fromJson(json['category']) : null,
+      productImages:
+          json['productImages'] != null
+              ? (json['productImages'] as List)
+                  .map((imageJson) => ProductImage.fromJson(imageJson))
+                  .toList()
+              : [],
     );
   }
 }

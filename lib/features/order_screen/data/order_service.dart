@@ -1,6 +1,8 @@
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
+import 'package:taproot_admin/core/logger.dart';
+import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_details_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
@@ -29,7 +31,7 @@ class OrderService with ErrorExceptionHandler {
         type: ApiType.baseUrl,
       );
 
-      print('API Response: ${response.data}');
+      logInfo('API Response: ${response.data}');
 
       return OrderDetailsResponse.fromJson(response.data);
     } catch (e) {
@@ -103,6 +105,28 @@ class OrderService with ErrorExceptionHandler {
       return OrderDetailsResponse.fromJson(response.data);
     } catch (e) {
       throw OrderService().handleError(e); // Handle the error properly
+    }
+  }
+
+   static Future<OrderPostModel> createOrder({
+    required String orderId,
+    required OrderPostModel orderData,
+  }) async {
+    try {
+      final response = await DioHelper().post(
+        '/order/$orderId',
+        type: ApiType.baseUrl,
+        data: orderData.toJson(),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return orderData;
+      } else {
+        throw Exception('Failed to create order. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      logError('Error creating order: $e');
+      throw OrderService().handleError(e);
     }
   }
 }

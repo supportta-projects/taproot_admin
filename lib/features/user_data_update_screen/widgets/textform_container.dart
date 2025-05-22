@@ -60,8 +60,8 @@ class _TextFormContainerState extends State<TextFormContainer> {
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
+      firstDate: DateTime.now().subtract(const Duration(days: 365 * 10)),
+      lastDate: DateTime.now(),
     );
 
     if (pickedDate != null) {
