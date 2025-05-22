@@ -28,7 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (response.success) {
         logSuccess(response.message);
         setState(() {
-          dashboardData = response.result;
+          dashboardData = response;
           // dashboardData = response.result;
         });
       } else {
@@ -81,7 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   DashBoardContainer(
                     title: 'Revenue',
-                    amount: '54000',
+                    amount: '500000',
                     percentage: '8',
                     icon: LucideIcons.banknote,
                     iconColor: CustomColors.buttonColor1,
