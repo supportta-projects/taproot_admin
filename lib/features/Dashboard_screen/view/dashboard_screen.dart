@@ -20,7 +20,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  var dashboardData;
+  DashboardModel? dashboardModel;
   Future<void> _fetchDashboardData() async {
     try {
       final response = await DashboardServices.getDashData();
@@ -28,7 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (response.success) {
         logSuccess(response.message);
         setState(() {
-          dashboardData = response;
+          dashboardModel = response;
           // dashboardData = response.result;
         });
       } else {
@@ -81,7 +81,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   DashBoardContainer(
                     title: 'Revenue',
-                    amount: '500000',
+                    amount: dashboardModel!.result.result.revenue.toString(),
                     percentage: '8',
                     icon: LucideIcons.banknote,
                     iconColor: CustomColors.buttonColor1,
@@ -89,14 +89,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   DashBoardContainer(
                     isExpense: true,
                     title: 'Expense',
-                    amount: '16000',
+                    amount: dashboardModel!.result.result.expense.toString(),
                     icon: LucideIcons.banknoteArrowDown,
                     iconColor: CustomColors.red,
                     percentage: '8',
                   ),
                   DashBoardContainer(
                     title: 'Profit',
-                    amount: '48000',
+                    amount: dashboardModel!.result.result.profit.toString(),
                     percentage: '8',
                     icon: LucideIcons.banknoteArrowUp,
                     iconColor: CustomColors.green,
@@ -177,7 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         OrderDetailsContainer(
                           title: 'Total Orders',
-                          totalCount: 60,
+                          totalCount: dashboardModel!.result.result.totalOrder,
                           statusCount: 5,
                           statusTitle: 'New Order',
                         ),
