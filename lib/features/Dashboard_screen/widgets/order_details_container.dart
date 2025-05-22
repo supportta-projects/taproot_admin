@@ -7,11 +7,11 @@ class OrderDetailsContainer extends StatelessWidget {
   final String title;
   final String statusTitle;
   final int totalCount;
-  final int statusCount;
+  final int? statusCount;
   const OrderDetailsContainer({
     super.key,
     required this.totalCount,
-    required this.statusCount,
+    this.statusCount,
     required this.statusTitle,
     required this.title,
   });
@@ -43,10 +43,10 @@ class OrderDetailsContainer extends StatelessWidget {
             children: [
               Text(totalCount.toString(), style: context.inter60024),
               Gap(CustomPadding.paddingXL.v),
-              Text(
-                statusCount.toString(),
-                style: TextStyle(color: CustomColors.green),
-              ),
+              // Text(
+              //   statusCount.toString(),
+              //   style: TextStyle(color: CustomColors.green),
+              // ),
               Gap(CustomPadding.padding.v),
 
               Text(statusTitle),

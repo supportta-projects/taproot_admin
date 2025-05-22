@@ -178,19 +178,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         OrderDetailsContainer(
                           title: 'Total Orders',
                           totalCount: dashboardModel!.result.result.totalOrder,
-                          statusCount: 5,
-                          statusTitle: 'New Order',
+                          // statusCount: 5,
+                          statusTitle: 'Order',
                         ),
                         OrderDetailsContainer(
                           title: 'Total Orders Delivered',
-                          totalCount: 58,
-                          statusCount: 5,
+                          totalCount:
+                              dashboardModel!.result.result.deliveredOrder,
+                          // statusCount: 5,
                           statusTitle: 'Delivered Order',
                         ),
                         RefundOrderContainer(
                           title: 'Refunded Orders',
-                          refundCount: 2,
-                          refundedAmount: 5000,
+                          refundCount:
+                              dashboardModel!.result.result.cancelledOrder,
+
+                          refundedAmount:
+                              dashboardModel!.result.result.refundAmount
+                                  .toInt(),
                         ),
                       ],
                     ),
