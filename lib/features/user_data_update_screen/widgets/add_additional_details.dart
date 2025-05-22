@@ -92,7 +92,9 @@ class _AddAdditionalDetailsState extends State<AddAdditionalDetails> {
                   scrollDirection: Axis.vertical,
                   child: Row(
                     children: [
-                      ImageContainer(
+                      ImageContainer(onTapRemove: () {
+                        
+                      },
                         previewBytes: previewLogoBytes,
                         selectedFile: null,
                         isEdit: true,
@@ -105,7 +107,9 @@ class _AddAdditionalDetailsState extends State<AddAdditionalDetails> {
                         imageState:
                             previewLogoBytes == null ? 'Upload' : 'Replace',
                       ),
-                      ImageContainer(
+                      ImageContainer(onTapRemove: () {
+                        
+                      },
                         previewBytes: previewBannerBytes,
                         onTap: () => _pickImage(isLogo: false),
                         isEdit: true,

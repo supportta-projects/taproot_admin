@@ -430,7 +430,7 @@ class OrderDataSource extends DataTableSource {
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text('₹${order.totalAmount}')),
+              child: Center(child: Text('₹${order.totalAmount}',),),
             ),
           ),
           DataCell(

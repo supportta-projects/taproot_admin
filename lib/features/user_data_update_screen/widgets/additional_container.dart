@@ -173,7 +173,9 @@ void _pickImage({required bool isLogo}) async {
                   child: Row(
                     children: [
                       if (widget.isEdit) ...[
-                        ImageContainer( 
+                        ImageContainer( onTapRemove: () {
+                          
+                        },
                           selectedFile: null,
                           previewBytes: previewLogoBytes,
                           imageUrl: widget.logoImageUrl,
@@ -187,7 +189,9 @@ void _pickImage({required bool isLogo}) async {
                           imageState:
                               previewLogoBytes == null ? 'Upload' : 'Replace',
                         ),
-                        ImageContainer(
+                        ImageContainer(onTapRemove: () {
+                          
+                        },
                           selectedFile: null,
                           previewBytes: previewBannerBytes,
                           imageUrl: widget.bannerImageUrl,
@@ -202,7 +206,9 @@ void _pickImage({required bool isLogo}) async {
                           onTap: () => _pickImage(isLogo: false),
                         ),
                       ] else ...[
-                        ImageContainer(
+                        ImageContainer(onTapRemove: () {
+                          
+                        },
                           selectedFile: null,
                           imageUrl: widget.logoImageUrl,
                           isEdit: false,
@@ -211,7 +217,9 @@ void _pickImage({required bool isLogo}) async {
                           onTap: null,
                           imageState: '',
                         ),
-                        ImageContainer(
+                        ImageContainer(onTapRemove: () {
+                          
+                        },
                           selectedFile: null,
                           imageUrl: widget.bannerImageUrl,
                           isEdit: false,
