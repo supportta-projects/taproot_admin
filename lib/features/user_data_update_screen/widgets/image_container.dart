@@ -28,7 +28,7 @@ class ImageContainer extends StatelessWidget {
     required this.title,
     this.isEdit = false,
     required this.imageState,
-    required this.onTapRemove
+    required this.onTapRemove,
   });
 
   @override
@@ -42,7 +42,7 @@ class ImageContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title),
+          Text(title, style: context.inter60012),
           Gap(CustomPadding.padding.v),
           Center(
             child: Container(
@@ -110,23 +110,16 @@ class ImageContainer extends StatelessWidget {
                               memCacheHeight: 150,
                               fadeInDuration: const Duration(milliseconds: 300),
                             ),
-                            Positioned(
-                              top: 0,
-
-                              right: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                            if (isEdit && onTapRemove != null)
+                              Positioned(
+                                top: 0,
+                                right: 0,
                                 child: IconButton(
-                                  hoverColor: Colors.red,
-                                  color: Colors.red,
+                                  icon: const Icon(Icons.close),
+                                  color: CustomColors.secondaryColor,
                                   onPressed: onTapRemove,
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: CustomColors.secondaryColor,
-                                  ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
@@ -145,8 +138,8 @@ class ImageContainer extends StatelessWidget {
                         height: 30.v,
                         decoration: BoxDecoration(
                           gradient: CustomColors.borderGradient,
-                          borderRadius: BorderRadius.vertical(
-                            bottom: Radius.circular(CustomPadding.padding.v),
+                          borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(CustomPadding.padding),
                           ),
                         ),
                         child: Row(
@@ -158,7 +151,7 @@ class ImageContainer extends StatelessWidget {
                                 color: CustomColors.secondaryColor,
                               ),
                             ),
-                            Gap(CustomPadding.padding.v),
+                            Gap(8.v),
                             Icon(
                               icon,
                               color: CustomColors.secondaryColor,
