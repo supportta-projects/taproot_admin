@@ -9,6 +9,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/widgets/gradient_text.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BasicDetailContainer extends StatefulWidget {
   final TextEditingController? namecontroller;
@@ -130,8 +131,18 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             ? SizedBox()
             : DetailRowCopy(
               label: 'Portfolio Link',
-              value: 'https://docs.google.com',
-              icon: Icons.copy,
+              value:
+                  'https://cards.app.supporttasolutions.com/portfolio/\n${user.id}',
+              icon: Icons.open_in_new,
+              onTap: () async {
+                final url =
+                    'https://cards.app.supporttasolutions.com/portfolio/${user.id}';
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
             ),
         widget.isEdit ? SizedBox() : Gap(CustomPadding.padding.v),
         widget.isEdit

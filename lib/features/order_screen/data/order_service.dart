@@ -1,6 +1,7 @@
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
+import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/order_screen/data/order_details_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
@@ -29,7 +30,7 @@ class OrderService with ErrorExceptionHandler {
         type: ApiType.baseUrl,
       );
 
-      print('API Response: ${response.data}');
+      logInfo('API Response: ${response.data}');
 
       return OrderDetailsResponse.fromJson(response.data);
     } catch (e) {

@@ -1,5 +1,6 @@
 import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
 import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
+import 'package:taproot_admin/features/leads_screen.dart/view/leads.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
@@ -33,7 +34,8 @@ class AppRoutes {
         return pageRoute(settings, DashboardScreen());
       case ConnectionCheckerScreen.path:
         return pageRoute(settings, const ConnectionCheckerScreen());
-
+      case LeadScreen.path:
+        return pageRoute(settings, const LeadScreen());
       case ExpenseView.path:
         return pageRoute(settings, const ExpenseView());
 
@@ -58,10 +60,10 @@ class AppRoutes {
       case AuthScreen.path:
         return pageRoute(settings, const AuthScreen());
 
-        //TODO : navigate to the add user portfolio screen
+      //TODO : navigate to the add user portfolio screen
       case '/addUserPortfolio':
         final user = settings.arguments as User;
-        return pageRoute(settings, AddUserPortfolio(user: user, ));
+        return pageRoute(settings, AddUserPortfolio(user: user));
 
       case LandingPage.path:
         return pageRoute(settings, const LandingPage());

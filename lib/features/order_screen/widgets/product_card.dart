@@ -14,6 +14,8 @@ class ProductCard extends StatefulWidget {
     required this.categoryName,
     required this.productName,
     required this.image,
+     this.onDelete,
+     this.onQuantityChanged,
   });
   final double price;
   final String productName;
@@ -24,6 +26,8 @@ class ProductCard extends StatefulWidget {
   final String image;
 
   final double totalPrice;
+   final VoidCallback? onDelete;
+  final Function(int)? onQuantityChanged;
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -43,6 +47,26 @@ class _ProductCardState extends State<ProductCard> {
       }
     }
     return priceStr;
+  }
+   void handleQuantityChange(bool increase) {
+    if (increase) {
+      setState(() {
+        widget.quantity = (widget.quantity ?? 0) + 1;
+        widget.onQuantityChanged?.call(widget.quantity!);
+      });
+    } else {
+      if (widget.quantity! > 1) {
+        setState(() {
+          if (widget.quantity != null) {
+            widget.quantity = widget.quantity! - 1;
+          }
+          widget.onQuantityChanged?.call(widget.quantity!);
+        });
+      } else if (widget.quantity == 1) {
+        // Call delete when quantity would go below 1
+        widget.onDelete?.call();
+      }
+    }
   }
 
   @override
@@ -120,17 +144,7 @@ class _ProductCardState extends State<ProductCard> {
                           children: [
                             Chip(
                               label: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    if (widget.quantity != null &&
-                                        widget.quantity! > 1) {
-                                      widget.quantity = widget.quantity! - 1;
-                                    } else if (widget.quantity == 1) {
-                                      // Handle delete action here
-                                      widget.quantity = 0; // Example: Set to 0
-                                    }
-                                  });
-                                },
+                                onTap: () => handleQuantityChange(false),
                                 child: Icon(
                                   widget.quantity == 1
                                       ? Icons.delete
@@ -143,13 +157,7 @@ class _ProductCardState extends State<ProductCard> {
                             Gap(CustomPadding.paddingLarge.v),
                             Chip(
                               label: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    if (widget.quantity != null) {
-                                      widget.quantity = widget.quantity! + 1;
-                                    }
-                                  });
-                                },
+                                onTap:() =>  handleQuantityChange(true),
                                 child: Icon(Icons.add),
                               ),
                             ),
