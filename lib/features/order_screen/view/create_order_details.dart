@@ -98,35 +98,35 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
     });
   }
 
-  void _pickAndUploadImage({required bool isCompanyLogo}) async {
-    final picked = await ImagePickerService.pickImage();
-    if (picked != null) {
-      setState(() {
-        if (isCompanyLogo) {
-          companyLogoPreviewBytes = picked.bytes;
+  // void _pickAndUploadImage({required bool isCompanyLogo}) async {
+  //   final picked = await ImagePickerService.pickImage();
+  //   if (picked != null) {
+  //     setState(() {
+  //       if (isCompanyLogo) {
+  //         companyLogoPreviewBytes = picked.bytes;
 
-          companyLogoUploadState = 'Replace';
-        } else {
-          profileImagePreviewBytes = picked.bytes;
-          profileImageUploadState = 'Replace';
-        }
-      });
+  //         companyLogoUploadState = 'Replace';
+  //       } else {
+  //         profileImagePreviewBytes = picked.bytes;
+  //         profileImageUploadState = 'Replace';
+  //       }
+  //     });
 
-      final uploaded = await ImagePickerService.uploadImageFile(
-        picked.bytes,
-        picked.filename,
-      );
-      setState(() {
-        if (isCompanyLogo) {
-          companyLogoImageUrl = uploaded.url;
-          companyLogoUploadState = 'Uploaded';
-        } else {
-          profileImageImageUrl = uploaded.url;
-          profileImageUploadState = 'Uploaded';
-        }
-      });
-    }
-  }
+  //     final uploaded = await ImagePickerService.uploadImageFile(
+  //       picked.bytes,
+  //       picked.filename,
+  //     );
+  //     setState(() {
+  //       if (isCompanyLogo) {
+  //         companyLogoImageUrl = uploaded.url;
+  //         companyLogoUploadState = 'Uploaded';
+  //       } else {
+  //         profileImageImageUrl = uploaded.url;
+  //         profileImageUploadState = 'Uploaded';
+  //       }
+  //     });
+  //   }
+  // }
 
   @override
   void initState() {

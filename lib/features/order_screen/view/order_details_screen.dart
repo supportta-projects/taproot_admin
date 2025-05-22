@@ -127,21 +127,21 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       }
     }
 
-    void pickImage({required bool isLogo}) async {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        allowedExtensions: ['jpg', 'jpeg', 'png'],
-      );
-      if (result != null && result.files.isNotEmpty) {
-        setState(() {
-          if (isLogo) {
-            selectedImageLoco = File(result.files.first.path!);
-          } else {
-            selectedImageBanner = File(result.files.first.path!);
-          }
-        });
-      }
-    }
+    // void pickImage({required bool isLogo}) async {
+    //   final result = await FilePicker.platform.pickFiles(
+    //     type: FileType.image,
+    //     allowedExtensions: ['jpg', 'jpeg', 'png'],
+    //   );
+    //   if (result != null && result.files.isNotEmpty) {
+    //     setState(() {
+    //       if (isLogo) {
+    //         selectedImageLoco = File(result.files.first.path!);
+    //       } else {
+    //         selectedImageBanner = File(result.files.first.path!);
+    //       }
+    //     });
+    //   }
+    // }
 
     // DateTime date = DateTime(now.year, now.month, now.day);
     return Scaffold(
