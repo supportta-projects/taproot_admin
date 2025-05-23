@@ -79,6 +79,14 @@ class _ProductPageState extends State<ProductPage>
 
   Future<void> fetchProduct({int page = 1}) async {
     try {
+      setState(() {
+        if (page == 1) {
+          _isLoadingMore = false;
+          _hasMoreData = true;
+          _currentPage = 1;
+        }
+      });
+
       final response = await ProductService.getProduct(page: page);
       setState(() {
         if (page == 1) {
@@ -96,6 +104,25 @@ class _ProductPageState extends State<ProductPage>
     }
   }
 
+  // Future<void> fetchProduct({int page = 1}) async {
+  //   try {
+  //     final response = await ProductService.getProduct(page: page);
+  //     setState(() {
+  //       if (page == 1) {
+  //         product = response;
+  //       } else {
+  //         product!.results.addAll(response.results);
+  //       }
+  //       _hasMoreData = response.results.isNotEmpty;
+  //       _isLoadingMore = false;
+  //       enabledList = List.generate(product!.results.length, (index) => true);
+  //     });
+  //   } catch (e) {
+  //     logError('Error fetching products: $e');
+  //     _isLoadingMore = false;
+  //   }
+  // }
+
   Future<void> fetchProductCategory() async {
     try {
       final response = await ProductService.getProductCategory();
@@ -105,6 +132,10 @@ class _ProductPageState extends State<ProductPage>
     } catch (e) {
       logError('Error fetching product categories: $e');
     }
+  }
+
+  Future<void> refreshProducts() async {
+    await fetchProduct(page: 1);
   }
 
   @override
@@ -234,89 +265,94 @@ class _ProductPageState extends State<ProductPage>
                                     final productcard = product!.results[index];
                                     return GestureDetector(
                                       onTap: () {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder:
-                                                (context) => ViewProduct(
-                                                  product: productcard,
-                                                  images:
-                                                      productcard.productImages!
-                                                          .map((e) => e.key)
-                                                          .toList(),
+                                        Navigator.of(context)
+                                            .push(
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) => ViewProduct(
+                                                      product: productcard,
+                                                      images:
+                                                          productcard
+                                                              .productImages!
+                                                              .map((e) => e.key)
+                                                              .toList(),
 
-                                                  onBack: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  onEdit: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder:
-                                                            (
-                                                              context,
-                                                            ) => EditProduct(
-                                                              onRefreshProduct:
-                                                                  fetchInitialData,
-                                                              product:
-                                                                  productcard,
-                                                              images:
-                                                                  productcard
-                                                                      .productImages!
-                                                                      .map(
-                                                                        (e) =>
-                                                                            e.key,
-                                                                      )
-                                                                      .toList(),
-                                                              // price:
-                                                              //     product.actualPrice
-                                                              //         .toString(),
+                                                      onBack: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      onEdit: () {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (
+                                                                  context,
+                                                                ) => EditProduct(
+                                                                  onRefreshProduct:
+                                                                      refreshProducts,
+                                                                  product:
+                                                                      productcard,
+                                                                  images:
+                                                                      productcard
+                                                                          .productImages!
+                                                                          .map(
+                                                                            (
+                                                                              e,
+                                                                            ) =>
+                                                                                e.key,
+                                                                          )
+                                                                          .toList(),
+                                                                  // price:
+                                                                  //     product.actualPrice
+                                                                  //         .toString(),
 
-                                                              // offerPrice:
-                                                              //     product
-                                                              //         .discountedPrice
-                                                              //         .toString(),
-                                                              // productName:
-                                                              //     product.name
-                                                              //         .toString(),
-                                                              // cardType:
-                                                              //     product.type
-                                                              //         .toString(),
-                                                              // description:
-                                                              //     product.actualPrice
-                                                              //         .toString(),
-                                                              // images:
-                                                              //     (product['images']
-                                                              //             as List<
-                                                              //               dynamic
-                                                              //             >)
-                                                              //         .map(
-                                                              //           (e) =>
-                                                              //               e.toString(),
-                                                              //         )
-                                                              //         .toList(),
-                                                            ),
-                                                      ),
-                                                    );
-                                                  },
+                                                                  // offerPrice:
+                                                                  //     product
+                                                                  //         .discountedPrice
+                                                                  //         .toString(),
+                                                                  // productName:
+                                                                  //     product.name
+                                                                  //         .toString(),
+                                                                  // cardType:
+                                                                  //     product.type
+                                                                  //         .toString(),
+                                                                  // description:
+                                                                  //     product.actualPrice
+                                                                  //         .toString(),
+                                                                  // images:
+                                                                  //     (product['images']
+                                                                  //             as List<
+                                                                  //               dynamic
+                                                                  //             >)
+                                                                  //         .map(
+                                                                  //           (e) =>
+                                                                  //               e.toString(),
+                                                                  //         )
+                                                                  //         .toList(),
+                                                                ),
+                                                          ),
+                                                        );
+                                                      },
 
-                                                  //   price: product['price'].toString(),
-                                                  //   offerPrice:
-                                                  //       product['discountPrice']
-                                                  //           .toString(),
-                                                  //   productName:
-                                                  //       product['templateName']
-                                                  //           .toString(),
-                                                  //   cardType: product['type'].toString(),
-                                                  //   description:
-                                                  //       product['description'].toString(),
-                                                  //  images:
-                                                  //       (product['images']
-                                                  //               as List<dynamic>)
-                                                  //           .map((e) => e.toString())
-                                                  //           .toList(),
-                                                ),
-                                          ),
-                                        );
+                                                      //   price: product['price'].toString(),
+                                                      //   offerPrice:
+                                                      //       product['discountPrice']
+                                                      //           .toString(),
+                                                      //   productName:
+                                                      //       product['templateName']
+                                                      //           .toString(),
+                                                      //   cardType: product['type'].toString(),
+                                                      //   description:
+                                                      //       product['description'].toString(),
+                                                      //  images:
+                                                      //       (product['images']
+                                                      //               as List<dynamic>)
+                                                      //           .map((e) => e.toString())
+                                                      //           .toList(),
+                                                    ),
+                                              ),
+                                            )
+                                            .then((_) => refreshProducts());
                                         // widget.viewTap();
                                         // setState(() {
                                         //   viewProduct = !viewProduct;
