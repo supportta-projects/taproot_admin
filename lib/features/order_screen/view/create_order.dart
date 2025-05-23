@@ -162,7 +162,6 @@ class _CreateOrderState extends State<CreateOrder> {
                             ListTile(
                               onTap: () async {
                                 try {
-                                  
                                   final hasPortfolio =
                                       await OrderService.checkPortfolio(
                                         userid:
@@ -170,7 +169,6 @@ class _CreateOrderState extends State<CreateOrder> {
                                       );
 
                                   if (hasPortfolio) {
-                                  
                                     if (context.mounted) {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -200,7 +198,6 @@ class _CreateOrderState extends State<CreateOrder> {
                                       );
                                     }
                                   } else {
-                                    
                                     if (context.mounted) {
                                       showDialog(
                                         context: context,
