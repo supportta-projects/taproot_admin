@@ -1,4 +1,4 @@
-import 'dart:io';
+// import 'dart:io';
 import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -14,27 +14,25 @@ class ImageContainer extends StatelessWidget {
   final bool isEdit;
   final String title;
   final IconData icon;
-  final File? selectedFile;
   final String? imageUrl;
   final Uint8List? previewBytes;
 
   const ImageContainer({
     super.key,
     required this.onTap,
-    this.selectedFile,
-    this.imageUrl,
-    this.previewBytes,
     required this.icon,
     required this.title,
-    this.isEdit = false,
     required this.imageState,
     required this.onTapRemove,
+    this.imageUrl,
+    this.previewBytes,
+    this.isEdit = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final hasNetworkImage = imageUrl != null && imageUrl!.isNotEmpty;
-    final hasPreview = previewBytes != null;
+    final hasImage =
+        (previewBytes != null || (imageUrl != null && imageUrl!.isNotEmpty));
 
     return SizedBox(
       width: 160.h,
@@ -56,25 +54,7 @@ class ImageContainer extends StatelessWidget {
                 mainAxisAlignment:
                     isEdit ? MainAxisAlignment.end : MainAxisAlignment.center,
                 children: [
-                  if (hasPreview)
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(CustomPadding.padding.v),
-                          bottom:
-                              isEdit
-                                  ? Radius.zero
-                                  : Radius.circular(CustomPadding.padding.v),
-                        ),
-                        child: Image.memory(
-                          previewBytes!,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                      ),
-                    )
-                  else if (hasNetworkImage)
+                  if (hasImage)
                     Expanded(
                       child: ClipRRect(
                         borderRadius: BorderRadius.vertical(
@@ -86,31 +66,41 @@ class ImageContainer extends StatelessWidget {
                         ),
                         child: Stack(
                           children: [
-                            CachedNetworkImage(
-                              imageUrl: imageUrl!,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                              placeholder:
-                                  (context, url) => Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      color: Colors.white,
+                            if (previewBytes != null)
+                              Image.memory(
+                                previewBytes!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              )
+                            else
+                              CachedNetworkImage(
+                                imageUrl: imageUrl!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                                placeholder:
+                                    (context, url) => Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                              errorWidget:
-                                  (context, url, error) => const Icon(
-                                    LucideIcons.image,
-                                    color: CustomColors.textColorDarkGrey,
-                                  ),
-                              memCacheWidth: 140,
-                              memCacheHeight: 150,
-                              fadeInDuration: const Duration(milliseconds: 300),
-                            ),
-                            if (isEdit && onTapRemove != null)
+                                errorWidget:
+                                    (context, url, error) => const Icon(
+                                      LucideIcons.image,
+                                      color: CustomColors.textColorDarkGrey,
+                                    ),
+                                memCacheWidth: 140,
+                                memCacheHeight: 150,
+                                fadeInDuration: const Duration(
+                                  milliseconds: 300,
+                                ),
+                              ),
+                            if (isEdit && hasImage)
                               Positioned(
                                 top: 0,
                                 right: 0,

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
@@ -13,6 +13,7 @@ class AddAdditionalDetails extends StatefulWidget {
   final TextEditingController secondaryWebsitecontroller;
   final Function(PlatformFile file)? onLogoSelected;
   final Function(PlatformFile file)? onBannerSelected;
+
   const AddAdditionalDetails({
     super.key,
     required this.primaryWebsitecontroller,
@@ -62,6 +63,20 @@ class _AddAdditionalDetailsState extends State<AddAdditionalDetails> {
     }
   }
 
+  void _removeLogoImage() {
+    setState(() {
+      pickedLogoImage = null;
+      previewLogoBytes = null;
+    });
+  }
+
+  void _removeBannerImage() {
+    setState(() {
+      pickedBannerImage = null;
+      previewBannerBytes = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
@@ -75,12 +90,12 @@ class _AddAdditionalDetailsState extends State<AddAdditionalDetails> {
                   TextFormContainer(
                     controller: widget.primaryWebsitecontroller,
                     initialValue: '',
-                    labelText: 'Website Link',
+                    labelText: 'Primary Website Link',
                   ),
                   TextFormContainer(
                     controller: widget.secondaryWebsitecontroller,
                     initialValue: '',
-                    labelText: 'Website Link',
+                    labelText: 'Secondary Website Link',
                   ),
                 ],
               ),
@@ -89,38 +104,37 @@ class _AddAdditionalDetailsState extends State<AddAdditionalDetails> {
               child: Padding(
                 padding: EdgeInsets.only(top: CustomPadding.paddingXL.v),
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
+                  scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      ImageContainer(onTapRemove: () {
-                        
-                      },
+                      ImageContainer(
+                        onTapRemove: _removeLogoImage,
                         previewBytes: previewLogoBytes,
-                        selectedFile: null,
                         isEdit: true,
                         icon:
                             previewLogoBytes == null
                                 ? LucideIcons.upload
                                 : LucideIcons.repeat,
-                        title: 'Loco',
+                        title: 'Logo',
                         onTap: () => _pickImage(isLogo: true),
                         imageState:
                             previewLogoBytes == null ? 'Upload' : 'Replace',
+                        imageUrl: null,
                       ),
-                      ImageContainer(onTapRemove: () {
-                        
-                      },
+                      Gap(16.h),
+                      ImageContainer(
+                        onTapRemove: _removeBannerImage,
                         previewBytes: previewBannerBytes,
-                        onTap: () => _pickImage(isLogo: false),
                         isEdit: true,
-                        title: 'Banner Image',
                         icon:
                             previewBannerBytes == null
                                 ? LucideIcons.upload
                                 : LucideIcons.repeat,
+                        title: 'Banner Image',
+                        onTap: () => _pickImage(isLogo: false),
                         imageState:
                             previewBannerBytes == null ? 'Upload' : 'Replace',
-                        selectedFile: null,
+                        imageUrl: null,
                       ),
                     ],
                   ),
