@@ -15,7 +15,11 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/image_pic
 class ImageRowContainer extends StatefulWidget {
   final String title;
   final String userCode;
-  const ImageRowContainer({super.key, required this.userCode,required this.title});
+  const ImageRowContainer({
+    super.key,
+    required this.userCode,
+    required this.title,
+  });
 
   @override
   State<ImageRowContainer> createState() => _ImageRowContainerState();
@@ -131,7 +135,7 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
                   companyLogoImageUrl != null
               ? LucideIcons.upload
               : LucideIcons.repeat,
-      title:widget.title,
+      title: widget.title,
       imageState: companyLogoUploadState,
       onTapRemove: () {},
     );
