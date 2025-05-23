@@ -98,35 +98,35 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
     });
   }
 
-  // void _pickAndUploadImage({required bool isCompanyLogo}) async {
-  //   final picked = await ImagePickerService.pickImage();
-  //   if (picked != null) {
-  //     setState(() {
-  //       if (isCompanyLogo) {
-  //         companyLogoPreviewBytes = picked.bytes;
+  
+  
+  
+  
+  
+  
 
-  //         companyLogoUploadState = 'Replace';
-  //       } else {
-  //         profileImagePreviewBytes = picked.bytes;
-  //         profileImageUploadState = 'Replace';
-  //       }
-  //     });
+  
+  
+  
+  
+  
+  
 
-  //     final uploaded = await ImagePickerService.uploadImageFile(
-  //       picked.bytes,
-  //       picked.filename,
-  //     );
-  //     setState(() {
-  //       if (isCompanyLogo) {
-  //         companyLogoImageUrl = uploaded.url;
-  //         companyLogoUploadState = 'Uploaded';
-  //       } else {
-  //         profileImageImageUrl = uploaded.url;
-  //         profileImageUploadState = 'Uploaded';
-  //       }
-  //     });
-  //   }
-  // }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
   @override
   void initState() {
@@ -226,7 +226,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
       if (result != null) {
         setState(() {
           portfolio = result;
-          // Update states based on existing images
+          
           if (portfolio?.workInfo.companyLogo?.key != null) {
             companyLogoUploadState = 'Replace';
           }
@@ -242,16 +242,16 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
       });
       if (mounted) {
         if (e is CustomException && e.statusCode == 404) {
-          // Navigate to add user portfolio screen
+          
 
-          // Navigator.pushReplacementNamed(
-          //   context,
-          //   '/addUserPortfolio',
-          //   arguments: user,
-          // );
+          
+          
+          
+          
+          
         } else {
           logError(e.toString());
-          // You can show a Snackbar or AlertDialog to inform the user
+          
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
@@ -272,7 +272,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         child: Column(
           children: [
             Gap(CustomPadding.paddingXL.v),
-            // Header Row
+            
             Row(
               children: [
                 Gap(CustomPadding.paddingXL.v),
@@ -335,7 +335,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
               ],
             ),
             Gap(CustomPadding.paddingLarge.v),
-            // Order Details Container
+            
             CommonProductContainer(
               title: 'Order Details',
               children: [
@@ -446,7 +446,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   ],
                 ),
                 Gap(CustomPadding.paddingXL.v),
-                // Product Selection Container
+                
                 CommonProductContainer(
                   title: 'Choose Product',
                   children: [
@@ -512,7 +512,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   ],
                 ),
 
-                // Product Summary Container
+                
                 if (selectedProducts.isNotEmpty)
                   CommonProductContainer(
                     isOrderDetails: true,
@@ -586,66 +586,66 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                       title: 'Company Logo',
                     ),
 
-                    //                     Builder(
-                    //                       builder: (context) {
+                    
+                    
 
-                    // if(shouldRebuildImageWidget){
-                    // return ImageContainer(onTap: () {
+                    
+                    
 
-                    // }, icon: LucideIcons.upload, title: "Company Logo", imageState: 'Upload', onTapRemove: (){});
-                    // }
+                    
+                    
 
-                    // else
+                    
 
-                    //                       {  return ImageContainer(
-                    //                           onTapRemove: () => removeImage(isCompanyLogo: true),
-                    //                           title: 'Company Logo',
-                    //                           icon:
-                    //                               portfolio?.workInfo.companyLogo?.key != null ||
-                    //                                       companyLogoImageUrl != null
-                    //                                   ? LucideIcons.repeat
-                    //                                   : LucideIcons.upload,
-                    //                           imageState: companyLogoUploadState,
-                    //                           isEdit: true,
-                    //                           onTap: () => _pickAndUploadImage(isCompanyLogo: true),
-                    //                           previewBytes: companyLogoPreviewBytes,
-                    //                           // imageUrl: companyLogoImageUrl,
-                    //                           imageUrl:
-                    //                               companyLogoImageUrl ??
-                    //                               getPortfolioImageUrl(
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
-                    //                                 portfolio?.workInfo.companyLogo?.key,
-                    //                               ),
-                    //                           // (portfolio?.workInfo.companyLogo?.key != null
-                    //                           //     ? '$baseUrl/file?key=portfolios/${portfolio?.workInfo.companyLogo?.key}'
-                    //                           //     : null),
-                    //                         );}
-                    //                       }
-                    //                     ),
-                    //                     Gap(CustomPadding.paddingXL.v),
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
-                    //                     ImageContainer(
-                    //                       onTapRemove: () => removeImage(isCompanyLogo: false),
-                    //                       title: 'Profile Image',
-                    //                       icon:
-                    //                           portfolio?.personalInfo.profilePicture?.key != null ||
-                    //                                   companyLogoImageUrl != null
-                    //                               ? LucideIcons.repeat
-                    //                               : LucideIcons.upload,
-                    //                       imageState: profileImageUploadState,
-                    //                       isEdit: true,
-                    //                       onTap: () => _pickAndUploadImage(isCompanyLogo: false),
-                    //                       previewBytes: profileImagePreviewBytes,
-                    //                       // imageUrl: profileImageImageUrl,
-                    //                       imageUrl:
-                    //                           companyLogoImageUrl ??
-                    //                           getPortfolioImageUrl(
-                    //                             portfolio?.personalInfo.profilePicture?.key,
-                    //                           ),
-                    //                       // (portfolio?.workInfo.companyLogo?.key != null
-                    //                       //     ? '$baseUrl/file?key=portfolios/${portfolio?.personalInfo.profilePicture?.key}'
-                    //                       //     : null),
-                    //                     ),
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                   ],
                 ),
               ],
@@ -662,63 +662,63 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 ),
               ],
             ),
-            // CommonProductContainer(
-            //   title: 'Payment Details',
-            //   children: [
-            //     Gap(CustomPadding.paddingLarge.v),
+            
+            
+            
+            
 
-            //     Row(
-            //       children: [
-            //         Expanded(
-            //           child: Padding(
-            //             padding: EdgeInsets.symmetric(
-            //               horizontal: CustomPadding.paddingLarge.v,
-            //             ),
-            //             child: DropdownButtonFormField<String>(
-            //               decoration: InputDecoration(
-            //                 labelText: 'Payment Mode',
-            //                 labelStyle: context.inter40016,
-            //                 border: OutlineInputBorder(),
-            //               ),
-            //               items:
-            //                   ['Prepaid', 'Postpaid'].map((String payment) {
-            //                     return DropdownMenuItem<String>(
-            //                       value: payment,
-            //                       child: Text(payment),
-            //                     );
-            //                   }).toList(),
-            //               onChanged: (value) {
-            //                 String? payment;
-            //                 setState(() => payment = value);
-            //                 logInfo('Selected: $value');
-            //               },
-            //               validator: (value) {
-            //                 if (value == null || value.isEmpty) {
-            //                   return 'Please select a category';
-            //                 }
-            //                 return null;
-            //               },
-            //             ),
-            //           ),
-            //         ),
-            //         Expanded(
-            //           child: TextFormContainer(labelText: 'Transaction ID'),
-            //         ),
-            //       ],
-            //     ),
-            //     Gap(CustomPadding.paddingLarge.v),
-            //     Row(
-            //       children: [
-            //         Gap(CustomPadding.paddingLarge.v),
-            //         Text('Total Amount'),
-            //         Spacer(),
-            //         Text('₹$grandTotal', style: context.inter50016),
-            //         Gap(CustomPadding.paddingLarge.v),
-            //       ],
-            //     ),
-            //     Gap(CustomPadding.paddingLarge.v),
-            //   ],
-            // ),
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             Gap(CustomPadding.paddingXXL.v),
           ],
         ),

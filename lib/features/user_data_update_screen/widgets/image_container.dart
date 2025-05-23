@@ -132,35 +132,33 @@ class ImageContainer extends StatelessWidget {
                       size: SizeUtils.height * 0.1,
                     ),
                   if (isEdit)
-                    MouseRegion(
-                      child: GestureDetector(
-                        onTap: onTap,
-                        child: Container(
-                          width: 140.h,
-                          height: 30.v,
-                          decoration: BoxDecoration(
-                            gradient: CustomColors.borderGradient,
-                            borderRadius: const BorderRadius.vertical(
-                              bottom: Radius.circular(CustomPadding.padding),
-                            ),
+                    GestureDetector(
+                      onTap: onTap,
+                      child: Container(
+                        width: 140.h,
+                        height: 30.v,
+                        decoration: BoxDecoration(
+                          gradient: CustomColors.borderGradient,
+                          borderRadius: const BorderRadius.vertical(
+                            bottom: Radius.circular(CustomPadding.padding),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                imageState,
-                                style: context.inter60012.copyWith(
-                                  color: CustomColors.secondaryColor,
-                                ),
-                              ),
-                              Gap(8.v),
-                              Icon(
-                                icon,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              imageState,
+                              style: context.inter60012.copyWith(
                                 color: CustomColors.secondaryColor,
-                                size: SizeUtils.height * 0.02,
                               ),
-                            ],
-                          ),
+                            ),
+                            Gap(8.v),
+                            Icon(
+                              icon,
+                              color: CustomColors.secondaryColor,
+                              size: SizeUtils.height * 0.02,
+                            ),
+                          ],
                         ),
                       ),
                     ),

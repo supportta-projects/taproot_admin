@@ -93,10 +93,17 @@ class NavItem extends StatelessWidget {
           // color: isSelected ? CustomColors.primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(CustomPadding.padding.v),
         ),
-        child: LucideIconWidget(
-          icon: icon,
+        child:
+
+
+        Icon(icon,
           color: isSelected ? Colors.white : CustomColors.textColorGrey,
+          size: 20.v,
         ),
+        //  LucideIconWidget(
+        //   // icon: icon,
+        //   color: isSelected ? Colors.white : CustomColors.textColorGrey,
+        // ),
       ),
     );
   }

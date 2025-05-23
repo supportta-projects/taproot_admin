@@ -55,9 +55,7 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
       }
     } catch (e) {
       logError(e.toString());
-      if (mounted &&
-          (e is! CustomException ||
-              (e is CustomException && e.statusCode != 404))) {
+      if (mounted && (e is! CustomException || (e.statusCode != 404))) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
@@ -68,26 +66,74 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
   }
 
   Future<void> _pickAndUploadImage() async {
-    final picked = await ImagePickerService.pickImage();
-    if (picked != null) {
-      setState(() {
-        previewBytes = picked.bytes;
-        imageState = ImageWidgetState.replace;
-      });
+    logWarning('Picking image...');
 
-      final uploaded = await ImagePickerService.uploadImageFile(
-        picked.bytes,
-        picked.filename,
-      );
+    try {
+      final picked = await ImagePickerService.pickImage();
 
-      if (uploaded.url.isNotEmpty) {
+      logWarning('Picked image: ${picked?.filename}');
+
+      if (picked != null) {
         setState(() {
-          imageUrl = uploaded.url;
+          previewBytes = picked.bytes;
           imageState = ImageWidgetState.replace;
         });
+
+        final uploaded = await ImagePickerService.uploadImageFile(
+          picked.bytes,
+          picked.filename,
+        );
+
+        if (uploaded.url.isNotEmpty) {
+          setState(() {
+            imageUrl = uploaded.url;
+            imageState = ImageWidgetState.replace;
+          });
+        } else {
+          logError('Image upload returned empty URL.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to upload image.')),
+          );
+        }
+      } else {
+        logWarning('No image picked.');
+      }
+    } catch (e, stackTrace) {
+      logError('Image picking or upload failed: $e\n$stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
       }
     }
   }
+
+  // Future<void> _pickAndUploadImage() async {
+  //   logWarning('Picking image...');
+
+  //   final picked = await ImagePickerService.pickImage();
+
+  //   logWarning('Picked image: ${picked?.filename}');
+
+  //   if (picked != null) {
+  //     setState(() {
+  //       previewBytes = picked.bytes;
+  //       imageState = ImageWidgetState.replace;
+  //     });
+
+  //     final uploaded = await ImagePickerService.uploadImageFile(
+  //       picked.bytes,
+  //       picked.filename,
+  //     );
+
+  //     if (uploaded.url.isNotEmpty) {
+  //       setState(() {
+  //         imageUrl = uploaded.url;
+  //         imageState = ImageWidgetState.replace;
+  //       });
+  //     }
+  //   }
+  // }
 
   void _removeImage() {
     setState(() {
