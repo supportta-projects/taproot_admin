@@ -21,13 +21,13 @@ class OrderPostModel {
 
 class NfcDetails {
   final String customerName;
-  final String designation;
+  final String? designation;
   final ImageSource customerLogo;
   final ImageSource customerPhoto;
 
   NfcDetails({
     required this.customerName,
-    required this.designation,
+     this.designation,
     required this.customerLogo,
     required this.customerPhoto,
   });
@@ -41,12 +41,12 @@ class NfcDetails {
 }
 
 class ImageSource {
-  final ImageDetails image;
+  final ImageDetails? image;
   final String source;
 
-  ImageSource({required this.image, required this.source});
+  ImageSource({ this.image, required this.source});
 
-  Map<String, dynamic> toJson() => {'image': image.toJson(), 'source': source};
+  Map<String, dynamic> toJson() => {'image': image?.toJson(), 'source': source};
 }
 
 class ImageDetails {

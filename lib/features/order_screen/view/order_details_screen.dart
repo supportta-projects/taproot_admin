@@ -88,7 +88,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     } catch (e) {
       logError('Failed to fetch order details: $e');
 
-      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to fetch order details. Please try again.'),
@@ -664,7 +663,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                       children: [
                                         CardRow(
                                           prefixText: 'Transaction ID',
-                                          suffixText: '#123456789',
+                                          suffixText:
+                                              orderDetails?.razorpayPaymentId ??
+                                              '',
                                           sufixstyle: context.inter50016,
                                         ),
                                         CardRow(

@@ -108,13 +108,13 @@ class OrderService with ErrorExceptionHandler {
     }
   }
 
-   static Future<OrderPostModel> createOrder({
-    required String orderId,
+  static Future<OrderPostModel> createOrder({
+    required String userId,
     required OrderPostModel orderData,
   }) async {
     try {
       final response = await DioHelper().post(
-        '/order/$orderId',
+        '/order/$userId',
         type: ApiType.baseUrl,
         data: orderData.toJson(),
       );
@@ -122,11 +122,33 @@ class OrderService with ErrorExceptionHandler {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return orderData;
       } else {
-        throw Exception('Failed to create order. Status code: ${response.statusCode}');
+        throw Exception(
+          'Failed to create order. Status code: ${response.statusCode}',
+        );
       }
     } catch (e) {
       logError('Error creating order: $e');
       throw OrderService().handleError(e);
+    }
+  }
+
+  static Future<bool> checkPortfolio({required String userid}) async {
+    try {
+      final response = await DioHelper().get(
+        '/portfolio/$userid',
+        type: ApiType.baseUrl,
+      );
+
+      // Check both status code and response data
+      if (response.statusCode == 200) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      logError('Portfolio check error: $e');
+      // Any error (including 404) means no portfolio
+      return false;
     }
   }
 }

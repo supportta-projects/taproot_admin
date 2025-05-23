@@ -122,7 +122,7 @@ class _OrderScreenState extends State<OrderScreen> {
                     text: 'Create Order',
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => CreateOrder()),
+                        MaterialPageRoute(builder: (context) => CreateOrder(refreshOrders: fetchAllOrder,)),
                       );
                     },
                     useGradient: true,

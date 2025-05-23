@@ -54,19 +54,20 @@ class Order {
     required this.totalAmount,
     required this.paymentStatus,
   });
-
-  factory Order.fromJson(Map<String, dynamic> json) {
+factory Order.fromJson(Map<String, dynamic> json) {
     try {
       return Order(
         id: json['_id']?.toString() ?? '',
         code: json['code']?.toString() ?? '',
         orderStatus: json['orderStatus']?.toString() ?? '',
         isDeleted: json['isDeleted'] ?? false,
-        // Create User from userData instead of user
         user: User.fromJson(json['userData'] ?? {'name': ''}),
         address: Address.fromJson(json['address'] ?? {}),
         totalProducts: json['totalProducts'] ?? 0,
-        totalAmount: json['totalAmount'] ?? 0,
+        totalAmount:
+            json['totalAmount'] is int
+                ? (json['totalAmount'] as int).toDouble()
+                : (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
         paymentStatus: json['paymentStatus'] ?? '',
       );
     } catch (e, stackTrace) {
@@ -76,6 +77,28 @@ class Order {
       rethrow;
     }
   }
+
+  // factory Order.fromJson(Map<String, dynamic> json) {
+  //   try {
+  //     return Order(
+  //       id: json['_id']?.toString() ?? '',
+  //       code: json['code']?.toString() ?? '',
+  //       orderStatus: json['orderStatus']?.toString() ?? '',
+  //       isDeleted: json['isDeleted'] ?? false,
+  //       // Create User from userData instead of user
+  //       user: User.fromJson(json['userData'] ?? {'name': ''}),
+  //       address: Address.fromJson(json['address'] ?? {}),
+  //       totalProducts: json['totalProducts'] ?? 0,
+  //       totalAmount: json['totalAmount'] ?? 0,
+  //       paymentStatus: json['paymentStatus'] ?? '',
+  //     );
+  //   } catch (e, stackTrace) {
+  //     logInfo("Error parsing Order: $e");
+  //     logInfo("JSON data: $json");
+  //     logInfo("Stack trace: $stackTrace");
+  //     rethrow;
+  //   }
+  // }
 
   Map<String, dynamic> toJson() => {
     '_id': id,
@@ -152,31 +175,59 @@ class ProductItem {
     this.actualPrice,
     this.discountedPrice,
   });
-
   factory ProductItem.fromJson(Map<String, dynamic> json) {
     return ProductItem(
-      id: json['_id'],
-      product: json['product'],
-      quantity: json['quantity'],
-      totalPrice: (json['totalPrice'] as num).toDouble(),
+      id: json['_id']?.toString() ?? '',
+      product: json['product']?.toString() ?? '',
+      quantity: json['quantity']?.toString() ?? '',
+      totalPrice:
+          json['totalPrice'] is int
+              ? (json['totalPrice'] as int).toDouble()
+              : (json['totalPrice'] as num?)?.toDouble() ?? 0.0,
       salePrice:
-          json['salePrice'] != null
-              ? (json['salePrice'] as num).toDouble()
-              : null,
+          json['salePrice'] is int
+              ? (json['salePrice'] as int).toDouble()
+              : (json['salePrice'] as num?)?.toDouble(),
       discountPercentage:
-          json['discountPercentage'] != null
-              ? (json['discountPercentage'] as num).toDouble()
-              : null,
+          json['discountPercentage'] is int
+              ? (json['discountPercentage'] as int).toDouble()
+              : (json['discountPercentage'] as num?)?.toDouble(),
       actualPrice:
-          json['actualPrice'] != null
-              ? (json['actualPrice'] as num).toDouble()
-              : null,
+          json['actualPrice'] is int
+              ? (json['actualPrice'] as int).toDouble()
+              : (json['actualPrice'] as num?)?.toDouble(),
       discountedPrice:
-          json['discountedPrice'] != null
-              ? (json['discountedPrice'] as num).toDouble()
-              : null,
+          json['discountedPrice'] is int
+              ? (json['discountedPrice'] as int).toDouble()
+              : (json['discountedPrice'] as num?)?.toDouble(),
     );
   }
+
+
+  // factory ProductItem.fromJson(Map<String, dynamic> json) {
+  //   return ProductItem(
+  //     id: json['_id'],
+  //     product: json['product'],
+  //     quantity: json['quantity'],
+  //     totalPrice: (json['totalPrice'] as num).toDouble(),
+  //     salePrice:
+  //         json['salePrice'] != null
+  //             ? (json['salePrice'] as num).toDouble()
+  //             : null,
+  //     discountPercentage:
+  //         json['discountPercentage'] != null
+  //             ? (json['discountPercentage'] as num).toDouble()
+  //             : null,
+  //     actualPrice:
+  //         json['actualPrice'] != null
+  //             ? (json['actualPrice'] as num).toDouble()
+  //             : null,
+  //     discountedPrice:
+  //         json['discountedPrice'] != null
+  //             ? (json['discountedPrice'] as num).toDouble()
+  //             : null,
+  //   );
+  // }
 
   Map<String, dynamic> toJson() => {
     '_id': id,

@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/widgets/image_row_container.dart';
 import 'package:taproot_admin/features/order_screen/widgets/product_card.dart';
@@ -22,6 +23,9 @@ import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/gradient_border_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
+
+typedef RefreshOrdersCallback = Future<void> Function();
 
 class CreateOrderDetails extends StatefulWidget {
   final Future<void> Function(String) fetchUser;
@@ -32,6 +36,7 @@ class CreateOrderDetails extends StatefulWidget {
   final String whatsAppNumber;
   final String userId;
   final String userIdCode;
+  final RefreshOrdersCallback? refreshOrders;
 
   const CreateOrderDetails({
     super.key,
@@ -43,6 +48,7 @@ class CreateOrderDetails extends StatefulWidget {
     required this.whatsAppNumber,
     required this.userId,
     required this.userIdCode,
+    this.refreshOrders,
   });
 
   @override
@@ -265,6 +271,141 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
     return '$baseUrl/file?key=portfolios/$key';
   }
 
+  bool _validateInputs() {
+    // Validate NFC Details
+    if (fullNameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter full name for NFC card')),
+      );
+      return false;
+    }
+
+    // Validate Address
+    if (buildingController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter building/house name')),
+      );
+      return false;
+    }
+
+    if (pincodeController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Please enter pincode')));
+      return false;
+    }
+
+    if (districtController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Please enter district')));
+      return false;
+    }
+
+    if (stateController.text.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Please enter state')));
+      return false;
+    }
+
+    // Validate Products
+    if (selectedProducts.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select at least one product')),
+      );
+      return false;
+    }
+
+    for (var product in selectedProducts) {
+      final quantity = productQuantities[product.id] ?? 0;
+      if (quantity <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please enter valid quantity for ${product.name}'),
+          ),
+        );
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  Future<void> _createOrder() async {
+    if (!_validateInputs()) return;
+    if (orderId == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Order ID not available')));
+      return;
+    }
+
+    try {
+      setState(() => isLoading = true);
+
+      final nfcDetails = NfcDetails(
+        customerName: fullNameController.text,
+        designation:
+            designationController.text.trim().isEmpty
+                ? null
+                : designationController.text,
+        customerLogo: ImageSource(image: null, source: 'none'),
+        customerPhoto: ImageSource(image: null, source: 'none'),
+      );
+
+      final address = Address(
+        name: widget.fullName,
+        mobile: widget.phoneNumber,
+        address1: buildingController.text,
+        address2: areaController.text,
+        pincode: pincodeController.text,
+        district: districtController.text,
+        state: stateController.text,
+        country: 'India',
+      );
+
+      final products =
+          selectedProducts.map((product) {
+            return ProductQuantity(
+              product: product.id ?? '',
+              quantity: productQuantities[product.id] ?? 1,
+            );
+          }).toList();
+
+      final orderData = OrderPostModel(
+        nfcDetails: nfcDetails,
+        totalPrice: grandTotal,
+        products: products,
+        address: address,
+      );
+
+      await OrderService.createOrder(
+        userId: portfolio!.user.id,
+        orderData: orderData,
+      );
+
+      if (mounted) {
+        SnackbarHelper.showSuccess(context, 'Order created successfully!');
+      }
+
+      if (widget.refreshOrders != null) {
+        await widget.refreshOrders!();
+      }
+      if (mounted) {
+        Navigator.pop(context);
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      logError(e);
+      if (mounted) {
+        SnackbarHelper.showError(context, 'Error creating order: $e');
+      }
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -327,7 +468,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 MiniLoadingButton(
                   icon: LucideIcons.save,
                   text: 'Save',
-                  onPressed: () {},
+                  onPressed: _createOrder,
                   useGradient: false,
                   backgroundColor: CustomColors.hintGrey,
                 ),
