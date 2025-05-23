@@ -50,15 +50,79 @@ class _EditProductState extends State<EditProduct> {
   final TextEditingController descriptionController = TextEditingController();
 
   late String dropdownValue;
-  // var items = ['Premium', 'Basic', 'Modern', 'Classic', 'Business'];
+
   List<String> existingImageUrls = [];
   List<File> selectedImages = [];
   List<String> uploadedImageKeys = [];
 
   List<ProductCategory> productCategories = [];
   ProductCategory? selectedCategory;
+  // void _pickImage({required int index, required bool isExistingUrl}) async {
+  //   try {
+  //     final result = await FilePicker.platform.pickFiles(
+  //       type: FileType.image,
+  //       allowedExtensions: ['jpg', 'jpeg', 'png'],
+  //       withData: true,
+  //     );
 
-  //pick image function
+  //     if (result != null && result.files.isNotEmpty) {
+  //       final pickedFile = result.files.first;
+  //       final imageBytes = pickedFile.bytes;
+  //       final filename = pickedFile.name;
+
+  //       if (imageBytes != null) {
+  //         // Upload new image first
+  //         final uploadResult = await ProductService.uploadImageFile(
+  //           imageBytes,
+  //           filename,
+  //         );
+
+  //         logSuccess('Upload Result: $uploadResult');
+
+  //         if (isExistingUrl) {
+  //           // Handle existing image replacement
+  //           if (index < existingImageUrls.length) {
+  //             final oldImageKey = existingImageUrls[index];
+  //             try {
+  //               // Delete old image
+  //               await ProductService.deleteImage(
+  //                 ProductImage(key: oldImageKey),
+  //               );
+  //               logSuccess('Old image deleted: $oldImageKey');
+
+  //               setState(() {
+  //                 // Replace old image with new one at same index
+  //                 existingImageUrls[index] = uploadResult['key'];
+  //               });
+  //             } catch (e) {
+  //               logError('Failed to delete old image: $e');
+  //             }
+  //           }
+  //         } else {
+  //           // Handle new image addition
+  //           setState(() {
+  //             if (index < uploadedImageKeys.length) {
+  //               uploadedImageKeys[index] = uploadResult['key'];
+  //             } else {
+  //               uploadedImageKeys.add(uploadResult['key']);
+  //             }
+  //           });
+  //         }
+
+  //         logSuccess('Uploaded: ${uploadResult['name']}');
+  //         logSuccess('Key: ${uploadResult['key']}');
+  //         logSuccess('Size: ${uploadResult['size']}');
+  //         logSuccess('Mimetype: ${uploadResult['mimetype']}');
+  //       }
+  //     }
+  //   } catch (e) {
+  //     logError('Error in _pickImage: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to process image: ${e.toString()}')),
+  //     );
+  //   }
+  // }
+
   void _pickImage({required int index, required bool isExistingUrl}) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -70,8 +134,7 @@ class _EditProductState extends State<EditProduct> {
       final pickedFile = result.files.first;
       final newImage = File(pickedFile.path!);
 
-      // If replacing an existing image
-      if (isExistingUrl) {
+      if (isExistingUrl && index < existingImageUrls.length) {
         final oldImageKey = existingImageUrls[index];
         try {
           await ProductService.deleteImage(ProductImage(key: oldImageKey));
@@ -137,58 +200,51 @@ class _EditProductState extends State<EditProduct> {
   //   try {
   //     List<ProductImage> productImages = [];
 
-  //     // Handle existing images
-  //     if (existingImageUrls.isNotEmpty) {
-  //       for (String imageUrl in existingImageUrls) {
-  //         String fileName = imageUrl.split('/').last;
-  //         String extension = fileName.split('.').last.toLowerCase();
+  //     // Process existing images
+  //     for (int i = 0; i < existingImageUrls.length; i++) {
+  //       String imageUrl = existingImageUrls[i];
+  //       String fileName = imageUrl.split('/').last;
+  //       String extension = fileName.split('.').last.toLowerCase();
 
-  //         // Find existing image data if available
-  //         ProductImage? existingImage = widget.product?.productImages
-  //             ?.firstWhere(
-  //               (img) => img.key == imageUrl,
-  //               orElse:
-  //                   () => ProductImage(
-  //                     key: imageUrl,
-  //                     name: fileName,
-  //                     size: 0,
-  //                     mimetype: 'image/$extension',
-  //                   ),
-  //             );
+  //       ProductImage? existingImage = widget.product?.productImages?.firstWhere(
+  //         (img) => img.key == imageUrl,
+  //         orElse:
+  //             () => ProductImage(
+  //               key: imageUrl,
+  //               name: fileName,
+  //               size: 0,
+  //               mimetype: 'image/$extension',
+  //             ),
+  //       );
 
-  //         productImages.add(
-  //           existingImage ??
-  //               ProductImage(
-  //                 key: imageUrl,
-  //                 name: fileName,
-  //                 size: 0,
-  //                 mimetype: 'image/$extension',
-  //               ),
-  //         );
+  //       if (existingImage != null) {
+  //         productImages.add(existingImage);
   //       }
   //     }
 
-  //     // Handle newly uploaded images
+  //     // Process newly uploaded images
   //     for (int i = 0; i < uploadedImageKeys.length; i++) {
   //       String key = uploadedImageKeys[i];
   //       String fileName = key.split('-').last;
   //       String extension = fileName.split('.').last.toLowerCase();
-  //       File? file = i < selectedImages.length ? selectedImages[i] : null;
 
   //       productImages.add(
   //         ProductImage(
   //           name: fileName,
   //           key: key,
-  //           size: file?.lengthSync() ?? 0,
+  //           size: 0, // You might want to store the actual size if available
   //           mimetype: 'image/$extension',
   //         ),
   //       );
   //     }
 
-  //     // Ensure productImages is not empty
   //     if (productImages.isEmpty) {
-  //       productImages = widget.product?.productImages ?? [];
+  //       throw Exception('At least one image is required');
   //     }
+
+  //     logSuccess(
+  //       'Updating product with images: ${productImages.map((e) => e.key).toList()}',
+  //     );
 
   //     final response = await ProductService.editProduct(
   //       productId: widget.product!.id.toString(),
@@ -218,11 +274,11 @@ class _EditProductState extends State<EditProduct> {
   //     );
   //   }
   // }
+
   Future<void> updateProduct() async {
     try {
       List<ProductImage> productImages = [];
 
-      // Handle existing images
       for (String imageUrl in existingImageUrls) {
         String fileName = imageUrl.split('/').last;
         String extension = fileName.split('.').last.toLowerCase();
@@ -238,12 +294,9 @@ class _EditProductState extends State<EditProduct> {
               ),
         );
 
-        if (existingImage != null) {
-          productImages.add(existingImage);
-        }
+        productImages.add(existingImage!);
       }
 
-      // Handle newly uploaded images
       for (int i = 0; i < uploadedImageKeys.length; i++) {
         String key = uploadedImageKeys[i];
         String fileName = key.split('-').last;
@@ -258,6 +311,10 @@ class _EditProductState extends State<EditProduct> {
             mimetype: 'image/$extension',
           ),
         );
+      }
+
+      if (productImages.isEmpty) {
+        throw Exception('At least one image is required');
       }
 
       final response = await ProductService.editProduct(
@@ -288,95 +345,19 @@ class _EditProductState extends State<EditProduct> {
       );
     }
   }
-  // Future<void> updateProduct() async {
-  //   try {
-  //     List<ProductImage> productImages = [];
-
-  //     // Add existing images with complete information
-  //     for (String imageUrl in existingImageUrls) {
-  //       String fileName = imageUrl.split('-').last;
-  //       String extension = fileName.split('.').last.toLowerCase();
-  //       int? existingSize;
-  //       if (widget.product?.productImages != null) {
-  //         final existingImage = widget.product!.productImages!.firstWhere(
-  //           (img) => img.key == imageUrl,
-  //           orElse: () => ProductImage(key: imageUrl, size: 0),
-  //         );
-  //         existingSize = existingImage.size;
-  //       }
-
-  //       if (existingSize == null || existingSize == 0) {
-  //         // If size is not available in existing data, throw an error
-  //         throw Exception('Size is required for existing image: $fileName');
-  //       }
-  //       productImages.add(
-  //         ProductImage(
-  //           name: fileName,
-  //           key: imageUrl,
-  //           size: existingSize,
-  //           // You might want to store the actual size if available
-  //           mimetype: 'image/$extension',
-  //         ),
-  //       );
-  //     }
-
-  //     // Add newly uploaded images
-  //     for (int i = 0; i < uploadedImageKeys.length; i++) {
-  //       String key = uploadedImageKeys[i];
-  //       String fileName = key.split('-').last;
-  //       String extension = fileName.split('.').last.toLowerCase();
-
-  //       File? file = i < selectedImages.length ? selectedImages[i] : null;
-
-  //       productImages.add(
-  //         ProductImage(
-  //           name: fileName,
-  //           key: key,
-  //           size: file?.lengthSync() ?? 0,
-  //           mimetype: 'image/$extension',
-  //         ),
-  //       );
-  //     }
-
-  //     logSuccess(
-  //       'Product Images to send: ${productImages.map((img) => img.toJson()).toList()}',
-  //     );
-
-  //     final response = await ProductService.editProduct(
-  //       productId: widget.product!.id.toString(),
-  //       name: nameController.text.trim(),
-  //       actualPrice: double.parse(priceController.text.trim()),
-  //       discountPrice: double.parse(discountController.text.trim()),
-  //       productImages: productImages,
-  //       description: descriptionController.text.trim(),
-  //       categoryId: selectedCategory?.id,
-  //     );
-
-  //     if (response.success) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('Product updated successfully')),
-  //       );
-  //       Navigator.pop(context);
-  //       widget.onRefreshProduct();
-  //     } else {
-  //       throw Exception(response.message);
-  //     }
-  //   } catch (e) {
-  //     logError('Error updating product: $e');
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(e.toString().replaceAll('Exception:', '').trim()),
-  //       ),
-  //     );
-  //   }
-  // }
 
   void removeImage({required int index, required bool isExistingUrl}) {
     setState(() {
-      if (isExistingUrl) {
+      if (isExistingUrl && index < existingImageUrls.length) {
         existingImageUrls.removeAt(index);
-      } else {
-        selectedImages.removeAt(index - existingImageUrls.length);
+      } else if (!isExistingUrl) {
+        final newIndex = index - existingImageUrls.length;
+        if (newIndex < selectedImages.length) {
+          selectedImages.removeAt(newIndex);
+          if (newIndex < uploadedImageKeys.length) {
+            uploadedImageKeys.removeAt(newIndex);
+          }
+        }
       }
     });
   }
@@ -386,9 +367,9 @@ class _EditProductState extends State<EditProduct> {
     super.initState();
     fetchTextFieldValue();
     fetchProductCategories();
-    if (widget.images != null) {
-      existingImageUrls = List.from(widget.images!); // clone the list
-    }
+    existingImageUrls = widget.images != null ? List.from(widget.images!) : [];
+    selectedImages = [];
+    uploadedImageKeys = [];
   }
 
   void fetchTextFieldValue() {
@@ -490,6 +471,7 @@ class _EditProductState extends State<EditProduct> {
                 children: [
                   ProductIdContainer(),
                   Gap(CustomPadding.paddingXL.v),
+
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -498,7 +480,6 @@ class _EditProductState extends State<EditProduct> {
                         return SizedBox(
                           width: SizeUtils.width / 5,
                           child: AddImageContainer(
-                            // imagekey: imageKey,
                             pickImage:
                                 () => _pickImage(
                                   index: index,
@@ -510,48 +491,48 @@ class _EditProductState extends State<EditProduct> {
                                   isExistingUrl: true,
                                 ),
                             isImageView: true,
-                            path: existingImageUrls[index], // URL
-                          ),
-                        );
-                      } else if (index <
-                          existingImageUrls.length + selectedImages.length) {
-                        int fileIndex = index - existingImageUrls.length;
-                        return SizedBox(
-                          width: SizeUtils.width / 5,
-                          child: AddImageContainer(
-                            imagekey: uploadedImageKeys[fileIndex],
-                            pickImage:
-                                () => _pickImage(
-                                  index: fileIndex,
-                                  isExistingUrl: false,
-                                ),
-                            removeImage:
-                                () => removeImage(
-                                  index: index,
-                                  isExistingUrl: false,
-                                ),
-                            isImageView: true,
-                            path: uploadedImageKeys[fileIndex],
-                          ),
-                        );
-                      } else {
-                        return SizedBox(
-                          width: SizeUtils.width / 5,
-                          child: AddImageContainer(
-                            pickImage:
-                                () => _pickImage(
-                                  index: index,
-                                  isExistingUrl: false,
-                                ),
-                            removeImage: () {},
-                            isImageView: false,
-                            path: null,
+                            path: existingImageUrls[index],
                           ),
                         );
                       }
+
+                      final newImageIndex = index - existingImageUrls.length;
+                      if (newImageIndex < uploadedImageKeys.length) {
+                        return SizedBox(
+                          width: SizeUtils.width / 5,
+                          child: AddImageContainer(
+                            imagekey: uploadedImageKeys[newImageIndex],
+                            pickImage:
+                                () => _pickImage(
+                                  index: newImageIndex,
+                                  isExistingUrl: false,
+                                ),
+                            removeImage:
+                                () => removeImage(
+                                  index: index,
+                                  isExistingUrl: false,
+                                ),
+                            isImageView: true,
+                            path: uploadedImageKeys[newImageIndex],
+                          ),
+                        );
+                      }
+
+                      return SizedBox(
+                        width: SizeUtils.width / 5,
+                        child: AddImageContainer(
+                          pickImage:
+                              () => _pickImage(
+                                index: index,
+                                isExistingUrl: false,
+                              ),
+                          removeImage: () {},
+                          isImageView: false,
+                          path: null,
+                        ),
+                      );
                     }),
                   ),
-
                   Gap(CustomPadding.paddingLarge.v),
 
                   Gap(CustomPadding.paddingLarge.v),
@@ -567,7 +548,7 @@ class _EditProductState extends State<EditProduct> {
                       Expanded(
                         child: TextFormContainer(
                           controller: discountController,
-                          // initialValue: "₹${widget.offerPrice} / \$5.00",
+
                           labelText: 'Discount',
                         ),
                       ),
@@ -580,7 +561,7 @@ class _EditProductState extends State<EditProduct> {
                           children: [
                             TextFormContainer(
                               controller: priceController,
-                              // initialValue: '₹${widget.price} / \$5.00',
+
                               labelText: 'Price',
                             ),
                             Row(

@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/data/product_category_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
@@ -28,6 +30,7 @@ class _ProductPageState extends State<ProductPage>
   int _currentPage = 1;
   bool _isLoadingMore = false;
   bool _hasMoreData = true;
+  bool _isLoading = false;
 
   List<Map<String, Object>> products = [];
   ProductResponse? product;
@@ -78,29 +81,41 @@ class _ProductPageState extends State<ProductPage>
   }
 
   Future<void> fetchProduct({int page = 1}) async {
+    if (_isLoading) return; // Prevent multiple simultaneous calls
+
     try {
-      setState(() {
-        if (page == 1) {
+      if (page == 1) {
+        setState(() {
+          _isLoading = true;
           _isLoadingMore = false;
           _hasMoreData = true;
           _currentPage = 1;
-        }
-      });
+        });
+      }
 
       final response = await ProductService.getProduct(page: page);
-      setState(() {
-        if (page == 1) {
-          product = response;
-        } else {
-          product!.results.addAll(response.results);
-        }
-        _hasMoreData = response.results.isNotEmpty;
-        _isLoadingMore = false;
-        enabledList = List.generate(product!.results.length, (index) => true);
-      });
+
+      if (mounted) {
+        setState(() {
+          if (page == 1) {
+            product = response;
+          } else {
+            product!.results.addAll(response.results);
+          }
+          _hasMoreData = response.results.isNotEmpty;
+          _isLoadingMore = false;
+          enabledList = List.generate(product!.results.length, (index) => true);
+          _isLoading = false;
+        });
+      }
     } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isLoadingMore = false;
+        });
+      }
       logError('Error fetching products: $e');
-      _isLoadingMore = false;
     }
   }
 
@@ -399,17 +414,40 @@ class _ProductPageState extends State<ProductPage>
                                                                 .padding
                                                                 .v,
                                                           ),
-
-                                                      child: Image.network(
-                                                        profileImages[1],
+                                                      child: CachedNetworkImage(
+                                                        imageUrl:
+                                                            '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
                                                         fit: BoxFit.cover,
+                                                        placeholder:
+                                                            (
+                                                              context,
+                                                              url,
+                                                            ) => Shimmer.fromColors(
+                                                              baseColor:
+                                                                  Colors
+                                                                      .grey[300]!,
+                                                              highlightColor:
+                                                                  Colors
+                                                                      .grey[100]!,
+                                                              child: Container(
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                            ),
+                                                        errorWidget:
+                                                            (
+                                                              context,
+                                                              url,
+                                                              error,
+                                                            ) => Icon(
+                                                              Icons.error,
+                                                              color: Colors.red,
+                                                            ),
                                                       ),
-                                                      // child: Image.network(
-                                                      //   '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
-                                                      // ),
                                                     ),
                                                   ),
                                                 ),
+
                                                 Gap(
                                                   CustomPadding.paddingLarge.v,
                                                 ),
