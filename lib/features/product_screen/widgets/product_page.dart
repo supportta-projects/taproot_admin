@@ -307,16 +307,16 @@ class _ProductPageState extends State<ProductPage>
                                                                       refreshProducts,
                                                                   product:
                                                                       productcard,
-                                                                  images:
-                                                                      productcard
-                                                                          .productImages!
-                                                                          .map(
-                                                                            (
-                                                                              e,
-                                                                            ) =>
-                                                                                e.key,
-                                                                          )
-                                                                          .toList(),
+                                                                  // images:
+                                                                  //     productcard
+                                                                  //         .productImages!
+                                                                  //         .map(
+                                                                  //           (
+                                                                  //             e,
+                                                                  //           ) =>
+                                                                  //               e.key,
+                                                                  //         )
+                                                                  //         .toList(),
                                                                   // price:
                                                                   //     product.actualPrice
                                                                   //         .toString(),
