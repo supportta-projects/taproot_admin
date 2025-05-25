@@ -23,26 +23,27 @@ class UploadedFileInfo {
   final String name;
   final String mimeType;
   final int size;
-  final String url;
+  final String? url; // Made optional since it's not in the API response
 
   UploadedFileInfo({
     required this.key,
     required this.name,
     required this.mimeType,
     required this.size,
-    required this.url,
+    this.url, // Made optional
   });
 
   factory UploadedFileInfo.fromJson(Map<String, dynamic> json) {
     return UploadedFileInfo(
-      key: json['key'],
-      name: json['name'],
-      mimeType: json['mimeType'],
-      size: json['size'],
-      url: json['url'],
+      key: json['key'] as String,
+      name: json['name'] as String,
+      mimeType: json['mimetype'] as String, // Changed to match API response
+      size: json['size'] as int,
+      url: json['url'] as String?, // Made optional
     );
   }
 }
+
 
 class ImagePickerService {
   static Future<PickedImage?> pickImage() async {
@@ -61,6 +62,52 @@ class ImagePickerService {
     }
     return null;
   }
+
+  // static Future<UploadedFileInfo> uploadImageFile(
+  //   Uint8List imageBytes,
+  //   String filename, {
+  //   bool isOrder = false,
+  // }) async {
+  //   try {
+  //     final String fileExtension = filename.split('.').last.toLowerCase();
+  //     final String mimeType = (fileExtension == 'png') ? 'png' : 'jpeg';
+
+  //     final formData = FormData.fromMap({
+  //       'file': MultipartFile.fromBytes(
+  //         imageBytes,
+  //         filename: filename,
+  //         contentType: MediaType('image', mimeType),
+  //       ),
+  //     });
+
+  //     final endpoint = isOrder ? '/order/upload' : '/portfolio/upload';
+
+  //     logWarning('Uploading to endpoint: $endpoint');
+
+  //     final response = await DioHelper().post(
+  //       endpoint,
+  //       type: ApiType.baseUrl,
+  //       data: formData,
+  //       options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+  //     );
+
+  //     if (response.data != null && response.data['result'] != null) {
+  //       final result = response.data['result'] as Map<String, dynamic>;
+  //       logSuccess('Upload success: $result');
+  //       return UploadedFileInfo.fromJson(result);
+  //     } else {
+  //       throw Exception('Invalid upload response');
+  //     }
+  //   } catch (e) {
+  //     logError('Upload failed: $e');
+  //     if (e is DioException) {
+  //       logError('Request data: ${e.requestOptions.data}');
+  //       logError('Response data: ${e.response?.data}');
+  //     }
+  //     rethrow;
+  //   }
+  // }
+
 
   static Future<UploadedFileInfo> uploadImageFile(
     Uint8List imageBytes,

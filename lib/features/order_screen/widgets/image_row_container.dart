@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/constants/constants.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/core/logger.dart';
+import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
@@ -14,11 +15,15 @@ enum ImageWidgetState { upload, replace, delete }
 class ImageRowContainer extends StatefulWidget {
   final String title;
   final String userCode;
+  final String imageType;
+  final Function(ImageSource imageSource) onImageChanged;
 
   const ImageRowContainer({
     super.key,
     required this.userCode,
     required this.title,
+    required this.imageType,
+    required this.onImageChanged,
   });
 
   @override
@@ -47,10 +52,41 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
       );
       if (result != null) {
         portfolio = result;
-        final imageKey = portfolio?.workInfo.companyLogo?.key;
-        if (imageKey != null) {
-          imageUrl = getPortfolioImageUrl(imageKey);
+        ImageDetails? imageDetails;
+        String? imageKey;
+        switch (widget.imageType) {
+          case 'companyLogo':
+            if (portfolio?.workInfo.companyLogo != null) {
+              imageDetails = ImageDetails(
+                key: portfolio!.workInfo.companyLogo!.key,
+                name: portfolio!.workInfo.companyLogo!.name.toString(),
+                mimetype: portfolio!.workInfo.companyLogo!.mimetype.toString(),
+                size: portfolio!.workInfo.companyLogo!.size!.toInt(),
+              );
+            }
+            break;
+          case 'profilePicture':
+            if (portfolio?.personalInfo.profilePicture != null) {
+              imageDetails = ImageDetails(
+                key: portfolio!.personalInfo.profilePicture!.key,
+                name: portfolio!.personalInfo.profilePicture!.name.toString(),
+                mimetype:
+                    portfolio!.personalInfo.profilePicture!.mimetype.toString(),
+                size: portfolio!.personalInfo.profilePicture!.size!.toInt(),
+              );
+            }
+            break;
+        }
+        // final imageKey = portfolio?.workInfo.companyLogo?.key;
+        if (imageDetails != null) {
+          imageUrl = getPortfolioImageUrl(imageDetails.key);
           imageState = ImageWidgetState.replace;
+
+          widget.onImageChanged(
+            ImageSource(image: imageDetails, source: 'portfolio'),
+          );
+        } else {
+          widget.onImageChanged(ImageSource(source: 'none'));
         }
       }
     } catch (e) {
@@ -76,8 +112,6 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
         return;
       }
 
-      logWarning('Picked image: ${picked.filename}');
-
       setState(() {
         previewBytes = picked.bytes;
         imageState = ImageWidgetState.replace;
@@ -88,19 +122,22 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
         picked.filename,
       );
 
-      if (uploaded.url.isNotEmpty) {
-        setState(() {
-          imageUrl = uploaded.url;
-          imageState = ImageWidgetState.replace;
-        });
-      } else {
-        logError('Image upload returned empty URL.');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to upload image.')),
-          );
-        }
-      }
+      // Convert UploadedFileInfo to ImageDetails
+      final imageDetails = ImageDetails(
+        key: uploaded.key,
+        name: uploaded.name,
+        mimetype: uploaded.mimeType,
+        size: uploaded.size,
+      );
+
+      final newImageUrl = getPortfolioImageUrl(imageDetails.key);
+
+      setState(() {
+        imageUrl = newImageUrl;
+        imageState = ImageWidgetState.replace;
+      });
+
+      widget.onImageChanged(ImageSource(image: imageDetails, source: 'order'));
     } catch (e, stackTrace) {
       logError('Image picking or upload failed: $e\n$stackTrace');
       if (mounted) {
@@ -110,6 +147,52 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
       }
     }
   }
+
+  // Future<void> _pickAndUploadImage() async {
+  //   logWarning('Picking image...');
+
+  //   try {
+  //     final picked = await ImagePickerService.pickImage();
+
+  //     if (picked == null) {
+  //       logWarning('No image picked or incomplete image data.');
+  //       return;
+  //     }
+
+  //     logWarning('Picked image: ${picked.filename}');
+
+  //     setState(() {
+  //       previewBytes = picked.bytes;
+  //       imageState = ImageWidgetState.replace;
+  //     });
+
+  //     final uploaded = await ImagePickerService.uploadImageFile(
+  //       picked.bytes,
+  //       picked.filename,
+  //     );
+
+  //     if (uploaded.url.isNotEmpty) {
+  //       setState(() {
+  //         imageUrl = uploaded.url;
+  //         imageState = ImageWidgetState.replace;
+  //       });
+  //     } else {
+  //       logError('Image upload returned empty URL.');
+  //       if (mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text('Failed to upload image.')),
+  //         );
+  //       }
+  //     }
+  //   } catch (e, stackTrace) {
+  //     logError('Image picking or upload failed: $e\n$stackTrace');
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(
+  //         context,
+  //       ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+  //     }
+  //   }
+  // }
 
   // Future<void> _pickAndUploadImage() async {
   //   logWarning('Picking image...');
@@ -180,14 +263,24 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
   //     }
   //   }
   // }
-
   void _removeImage() {
     setState(() {
       previewBytes = null;
       imageUrl = null;
       imageState = ImageWidgetState.upload;
     });
+
+    // Notify parent that image was removed
+    widget.onImageChanged(ImageSource(source: 'none'));
   }
+
+  // void _removeImage() {
+  //   setState(() {
+  //     previewBytes = null;
+  //     imageUrl = null;
+  //     imageState = ImageWidgetState.upload;
+  //   });
+  // }
 
   String? getPortfolioImageUrl(String? key) {
     if (key == null) return null;

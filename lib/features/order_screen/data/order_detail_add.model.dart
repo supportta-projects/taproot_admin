@@ -27,7 +27,7 @@ class NfcDetails {
 
   NfcDetails({
     required this.customerName,
-     this.designation,
+    this.designation,
     required this.customerLogo,
     required this.customerPhoto,
   });
@@ -44,7 +44,7 @@ class ImageSource {
   final ImageDetails? image;
   final String source;
 
-  ImageSource({ this.image, required this.source});
+  ImageSource({this.image, required this.source});
 
   Map<String, dynamic> toJson() => {'image': image?.toJson(), 'source': source};
 }
@@ -61,6 +61,20 @@ class ImageDetails {
     required this.mimetype,
     required this.size,
   });
+
+  factory ImageDetails.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> data =
+        json.containsKey('result')
+            ? json['result'] as Map<String, dynamic>
+            : json;
+
+    return ImageDetails(
+      key: data['key'] as String,
+      name: data['name'] as String,
+      mimetype: data['mimetype'] as String,
+      size: data['size'] as int,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'key': key,

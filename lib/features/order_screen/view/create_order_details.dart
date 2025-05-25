@@ -87,6 +87,21 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
   bool isUploading = false;
   PortfolioDataModel? portfolio;
   Map<String, String> labelImageMap = {'company logo': ''};
+  ImageSource? companyLogoSource;
+  ImageSource? profileImageSource;
+
+  // Add callback handlers
+  void handleCompanyLogoChange(ImageSource imageSource) {
+    setState(() {
+      companyLogoSource = imageSource;
+    });
+  }
+
+  void handleProfileImageChange(ImageSource imageSource) {
+    setState(() {
+      profileImageSource = imageSource;
+    });
+  }
 
   void removeImage({required bool isCompanyLogo}) {
     setState(() {
@@ -103,36 +118,6 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
       shouldRebuildImageWidget = true;
     });
   }
-
-  
-  
-  
-  
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
   @override
   void initState() {
@@ -232,7 +217,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
       if (result != null) {
         setState(() {
           portfolio = result;
-          
+
           if (portfolio?.workInfo.companyLogo?.key != null) {
             companyLogoUploadState = 'Replace';
           }
@@ -248,16 +233,9 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
       });
       if (mounted) {
         if (e is CustomException && e.statusCode == 404) {
-          
-
-          
-          
-          
-          
-          
         } else {
           logError(e.toString());
-          
+
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
@@ -350,8 +328,10 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
             designationController.text.trim().isEmpty
                 ? null
                 : designationController.text,
-        customerLogo: ImageSource(image: null, source: 'none'),
-        customerPhoto: ImageSource(image: null, source: 'none'),
+        // customerLogo: ImageSource(image: null, source: 'none'),
+        // customerPhoto: ImageSource(image: null, source: 'none'),
+        customerLogo: companyLogoSource ?? ImageSource(source: 'none'),
+        customerPhoto: profileImageSource ?? ImageSource(source: 'none'),
       );
 
       final address = Address(
@@ -413,7 +393,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         child: Column(
           children: [
             Gap(CustomPadding.paddingXL.v),
-            
+
             Row(
               children: [
                 Gap(CustomPadding.paddingXL.v),
@@ -476,7 +456,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
               ],
             ),
             Gap(CustomPadding.paddingLarge.v),
-            
+
             CommonProductContainer(
               title: 'Order Details',
               children: [
@@ -587,7 +567,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   ],
                 ),
                 Gap(CustomPadding.paddingXL.v),
-                
+
                 CommonProductContainer(
                   title: 'Choose Product',
                   children: [
@@ -653,7 +633,6 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   ],
                 ),
 
-                
                 if (selectedProducts.isNotEmpty)
                   CommonProductContainer(
                     isOrderDetails: true,
@@ -722,71 +701,19 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 Row(
                   children: [
                     Gap(CustomPadding.paddingXL.v),
+                    
                     ImageRowContainer(
                       userCode: widget.userIdCode,
                       title: 'Company Logo',
+                      imageType: 'companyLogo',
+                      onImageChanged: handleCompanyLogoChange,
                     ),
-
-                    
-                    
-
-                    
-                    
-
-                    
-                    
-
-                    
-
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
+                    ImageRowContainer(
+                      userCode: widget.userIdCode,
+                      title: 'Profile Image',
+                      imageType: 'profilePicture',
+                      onImageChanged: handleProfileImageChange,
+                    ),
                   ],
                 ),
               ],
@@ -803,63 +730,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 ),
               ],
             ),
-            
-            
-            
-            
 
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
             Gap(CustomPadding.paddingXXL.v),
           ],
         ),

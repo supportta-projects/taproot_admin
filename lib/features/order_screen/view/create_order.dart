@@ -22,7 +22,6 @@ class CreateOrder extends StatefulWidget {
 class _CreateOrderState extends State<CreateOrder> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchUser('');
   }
@@ -44,9 +43,7 @@ class _CreateOrderState extends State<CreateOrder> {
       setState(() {
         userSearchList = response.userSearchList;
         isLoading = false;
-        // logWarning(userSearchList);
       });
-      // logError(userSearchList);
     } catch (e) {
       logError('Error fetching user: $e');
     }
@@ -264,65 +261,6 @@ class _CreateOrderState extends State<CreateOrder> {
                               ),
                             ),
 
-                            // ListTile(
-                            //   onTap: () {
-                            //     //                           try{
-                            //     //                             showDialog(
-                            //     //   context: context,
-                            //     //   barrierDismissible: false,
-                            //     //   builder: (BuildContext context) {
-                            //     //     return Center(
-                            //     //       child: CircularProgressIndicator(),
-                            //     //     );
-                            //     //   },
-                            //     // );
-                            //     //  final hasPortfolio = await OrderService.checkPortfolio(
-                            //     //   userid: userSearchList[index].userIdCode,
-                            //     // ); if (context.mounted) {
-                            //     //   Navigator.pop(context);
-                            //     // }
-                            //     //                           }catch(e){}
-                            //     Navigator.of(context).push(
-                            //       MaterialPageRoute(
-                            //         builder: (context) {
-                            //           logError(userSearchList.toString());
-                            //           return CreateOrderDetails(
-                            //             refreshOrders: widget.refreshOrders,
-                            //             userIdCode:
-                            //                 userSearchList[index].userIdCode,
-                            //             userId: userSearchList[index].userId,
-                            //             email: userSearchList[index].email,
-                            //             phoneNumber:
-                            //                 userSearchList[index].phone,
-                            //             whatsAppNumber:
-                            //                 userSearchList[index].phone,
-                            //             fullName:
-                            //                 userSearchList[index].fullName,
-                            //             fetchUser: fetchUser,
-                            //             userSearchList: userSearchList,
-                            //           );
-                            //         },
-                            //       ),
-                            //     );
-                            //   },
-                            //   title: Padding(
-                            //     padding: EdgeInsets.only(
-                            //       bottom: CustomPadding.paddingLarge.v,
-                            //     ),
-                            //     child: Text(userSearchList[index].fullName),
-                            //   ),
-                            //   subtitle: Row(
-                            //     children: [
-                            //       Text(
-                            //         'Phone Number- ${userSearchList[index].phone}',
-                            //       ),
-                            //       Gap(CustomPadding.paddingLarge.v),
-                            //       Text(
-                            //         'user ID-${userSearchList[index].userId}',
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
                             Divider(),
                           ],
                         );
@@ -383,29 +321,6 @@ class _CreateOrderState extends State<CreateOrder> {
                                   Text('Price'),
                                 ],
                               ),
-                              // trailing: Row(
-                              //   children: [
-                              //     Column(
-                              //       children: [
-                              //         Text(
-                              //           productSearchList[index].salePrice
-                              //               .toString(),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //   ],
-                              // ),
-                              // subtitle: Row(
-                              //   children: [
-                              //     Text(
-                              //       'Phone Number- ${productSearchList[index].salePrice}',
-                              //     ),
-                              //     Gap(CustomPadding.paddingLarge.v),
-                              //     Text(
-                              //       'user ID-${productSearchList[index].discountedPrice}',
-                              //     ),
-                              //   ],
-                              // ),
                             ),
                             Divider(),
                           ],
