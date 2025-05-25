@@ -43,18 +43,6 @@ class _OrderScreenState extends State<OrderScreen> {
     logInfo('Completing order $index');
   }
 
-  // List<String> statusList = [
-  //   'pending',
-  //   'failed',
-  //   'placed',
-  //   'shipped',
-  //   'order completed',
-  //   'failed',
-  //   'placed',
-  //   'shipped',
-  //   'pending',
-  //   'order completed',
-  // ];
   Future<void> fetchAllOrder() async {
     setState(() => isLoading = true);
 
@@ -100,7 +88,6 @@ class _OrderScreenState extends State<OrderScreen> {
   void initState() {
     fetchAllOrder();
 
-    // TODO: implement initState
     super.initState();
   }
 
@@ -177,152 +164,6 @@ class _OrderScreenState extends State<OrderScreen> {
                       height: SizeUtils.height * 0.75,
                       child: TabBarView(
                         children: [
-                          // DataTable(
-                          //   dataRowMaxHeight: 80,
-                          //   columns: [
-                          //     DataColumn(label: Text('Order ID')),
-                          //     DataColumn(label: Text('Full Name')),
-                          //     DataColumn(label: Text('Phone')),
-                          //     DataColumn(label: Text('Amount')),
-                          //     DataColumn(label: Text('Order Count')),
-                          //     DataColumn(label: Text('Status')),
-                          //     DataColumn(label: Text('Action')),
-                          //   ],
-                          //   rows: List.generate(10, (index) {
-                          //     void handleRowTap() {
-                          //       final navigator =
-                          //           widget.innerNavigatorKey?.currentState ??
-                          //           Navigator.of(context);
-                          //       navigator.push(
-                          //         MaterialPageRoute(
-                          //           builder:
-                          //               (_) => OrderDetailScreen(
-                          //                 user: User(
-                          //                   id: 'm',
-                          //                   fullName: 'sss',
-                          //                   userId: 'ss',
-                          //                   phone: 'ssss',
-                          //                   whatsapp: 'ssss',
-                          //                   email: 'ssss',
-                          //                   website: 'sssss',
-                          //                   isPremium: false,
-                          //                 ),
-                          //                 orderId: 'OrderID$index',
-                          //               ),
-                          //         ),
-                          //       );
-                          //     }
-
-                          //     String status = statusList[index];
-                          //     String? actionLabel;
-
-                          //     switch (status) {
-                          //       case 'failed':
-                          //         actionLabel = 'Retry';
-                          //         break;
-                          //       case 'placed':
-                          //         actionLabel = 'Dispatch';
-                          //         break;
-                          //       case 'shipped':
-                          //         actionLabel = 'Complete Order';
-                          //         break;
-                          //       default:
-                          //         actionLabel = null;
-                          //     }
-
-                          //     return DataRow(
-                          //       cells: [
-                          //         DataCell(
-                          //           InkWell(
-                          //             onTap: handleRowTap,
-                          //             child: Center(
-                          //               child: Text(
-                          //                 'OrderID$index',
-                          //                 style: context.inter60016.copyWith(
-                          //                   color: CustomColors.green,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //         DataCell(
-                          //           InkWell(
-                          //             onTap: handleRowTap,
-                          //             child: Center(
-                          //               child: Text('shahil $index'),
-                          //             ),
-                          //           ),
-                          //         ),
-
-                          //         DataCell(
-                          //           InkWell(
-                          //             onTap: handleRowTap,
-                          //             child: Center(child: Text('9234567890')),
-                          //           ),
-                          //         ),
-                          //         DataCell(
-                          //           InkWell(
-                          //             onTap: handleRowTap,
-                          //             child: Center(
-                          //               child: Text('₹${(index + 1) * 1000}'),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //         DataCell(
-                          //           InkWell(
-                          //             onTap: handleRowTap,
-                          //             child: Center(
-                          //               child: Text('${index + 1}'),
-                          //             ),
-                          //           ),
-                          //         ),
-
-                          //         DataCell(
-                          //           Center(
-                          //             child: GradientText(
-                          //               status,
-                          //               gradient: CustomColors.borderGradient,
-                          //               style: context.inter50016,
-                          //             ),
-                          //           ),
-                          //         ),
-                          //         DataCell(
-                          //           actionLabel == null
-                          //               ? SizedBox()
-                          //               : MiniLoadingButton(
-                          //                 needRow: false,
-
-                          //                 text: actionLabel,
-                          //                 onPressed: () {
-                          //                   setState(() {
-                          //                     switch (actionLabel) {
-                          //                       case 'Retry':
-                          //                         statusList[index] = 'placed';
-                          //                         break;
-                          //                       case 'Dispatch':
-                          //                         statusList[index] = 'shipped';
-                          //                         break;
-                          //                       case 'Complete Order':
-                          //                         statusList[index] =
-                          //                             'order completed';
-                          //                         break;
-                          //                     }
-                          //                   });
-                          //                   logInfo(
-                          //                     'Order $index action "$actionLabel" performed',
-                          //                   );
-                          //                 },
-                          //                 useGradient: true,
-                          //                 gradientColors:
-                          //                     CustomColors
-                          //                         .borderGradient
-                          //                         .colors,
-                          //               ),
-                          //         ),
-                          //       ],
-                          //     );
-                          //   }),
-                          // ),
                           PaginatedDataTable(
                             key: _tableKey,
                             dataRowMaxHeight: 60,
@@ -385,12 +226,10 @@ class OrderDataSource extends DataTableSource {
   DataRow getRow(int index) {
     logInfo('Getting row at index: $index, Total orders: ${orderList.length}');
 
-    // Calculate the index within the current page
     final pageIndex = index % rowsPerPage;
 
-    // Check if we have data for this page index
     if (pageIndex < orderList.length) {
-      final order = orderList[pageIndex]; // Use pageIndex instead of index
+      final order = orderList[pageIndex];
 
       void handleRowTap() {
         innerNavigatorKey?.currentState?.push(
@@ -430,7 +269,7 @@ class OrderDataSource extends DataTableSource {
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text('₹${order.totalAmount}',),),
+              child: Center(child: Text('₹${order.totalAmount}')),
             ),
           ),
           DataCell(
@@ -443,7 +282,6 @@ class OrderDataSource extends DataTableSource {
       );
     }
 
-    // Return empty row if no data available
     return DataRow(
       cells: List<DataCell>.generate(5, (index) => const DataCell(Text('-'))),
     );
@@ -453,165 +291,8 @@ class OrderDataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => totalCount; // This should be the total count across all pages
+  int get rowCount => totalCount;
 
   @override
   int get selectedRowCount => 0;
 }
-
-// class OrderDataSource extends DataTableSource {
-//   final List<Order> orderList;
-//   // final List<String> statusList;
-//   final BuildContext context;
-//   final GlobalKey<NavigatorState>? innerNavigatorKey;
-//   final int totalCount;
-//   final int rowsPerPage;
-//   OrderDataSource(
-//     this.orderList,
-//     this.totalCount,
-//     this.context,
-//     this.innerNavigatorKey,
-//     this.rowsPerPage,
-//   );
-
-//   @override
-//   DataRow getRow(int index) {
-//     print('Getting row at index: $index, Total orders: ${orderList.length}');
-
-//     // Calculate the actual index within the current page
-//     final pageIndex = index % rowsPerPage;
-
-//     if (pageIndex >= orderList.length) {
-//       return DataRow(
-//         cells: List<DataCell>.generate(5, (index) => const DataCell(Text('-'))),
-//       );
-//     }
-//     final order = orderList[index];
-//     void handleRowTap() {
-//       innerNavigatorKey?.currentState?.push(
-//         MaterialPageRoute(
-//           builder:
-//               (context) => OrderDetailScreen(order: order, orderId: order.code),
-//         ),
-//       );
-//     }
-//     // final navigator = navigatorKey?.currentState ?? Navigator.of(context);
-//     // navigator.push(
-//     //   MaterialPageRoute(
-//     //     builder:
-//     //         (_) => OrderDetailScreen(
-//     //           order: order,
-//     //           // user: User(
-//     //           //   id: 'm',
-//     //           //   fullName: 'sss',
-//     //           //   userId: 'ss',
-//     //           //   phone: 'ssss',
-//     //           //   whatsapp: 'ssss',
-//     //           //   email: 'ssss',
-//     //           //   website: 'sssss',
-//     //           //   isPremium: false,
-//     //           // ),
-//     //           orderId: order.code,
-//     //         ),
-//     //   ),
-//     //   // );
-//     // }
-
-//     // String status = statusList[index];
-//     // String? actionLabel;
-//     // switch (status) {
-//     //   case 'failed':
-//     //     actionLabel = 'Retry';
-//     //     break;
-//     //   case 'placed':
-//     //     actionLabel = 'Dispatch';
-//     //     break;
-//     //   case 'shipped':
-//     //     actionLabel = 'Complete Order';
-//     //     break;
-//     // }
-
-//     return DataRow(
-//       cells: [
-//         DataCell(
-//           InkWell(
-//             onTap: handleRowTap,
-//             child: Center(
-//               child: Text(
-//                 order.code,
-//                 style: context.inter60016.copyWith(color: CustomColors.green),
-//               ),
-//             ),
-//           ),
-//         ),
-//         DataCell(
-//           InkWell(
-//             onTap: handleRowTap,
-//             child: Center(child: Text(order.user.name)),
-//           ),
-//         ),
-//         DataCell(
-//           InkWell(
-//             onTap: handleRowTap,
-//             child: Center(child: Text(order.address.mobile)),
-//           ),
-//         ),
-//         DataCell(
-//           InkWell(
-//             onTap: handleRowTap,
-//             child: Center(child: Text('₹${order.totalAmount}')),
-//           ),
-//         ),
-//         DataCell(
-//           InkWell(
-//             onTap: handleRowTap,
-//             child: Center(child: Text(order.totalProducts.toString())),
-//           ),
-//         ),
-//         // DataCell(
-//         //   Center(
-//         //     child: GradientText(
-//         //       status,
-//         //       gradient: CustomColors.borderGradient,
-//         //       style: context.inter50016,
-//         //     ),
-//         //   ),
-//         // ),
-//         // DataCell(
-//         //   actionLabel == null
-//         //       ? const SizedBox()
-//         //       : MiniLoadingButton(
-//         //         needRow: false,
-//         //         text: actionLabel,
-//         //         onPressed: () {
-//         //           switch (actionLabel) {
-//         //             case 'Retry':
-//         //               statusList[index] = 'placed';
-//         //               break;
-//         //             case 'Dispatch':
-//         //               statusList[index] = 'shipped';
-//         //               break;
-//         //             case 'Complete Order':
-//         //               statusList[index] = 'order completed';
-//         //               break;
-//         //           }
-//         //           logInfo('Order $index action "$actionLabel" performed');
-//         //           notifyParent(); // refresh widget
-//         //         },
-//         //         useGradient: true,
-//         //         gradientColors: CustomColors.borderGradient.colors,
-//         //       ),
-//         // ),
-//       ],
-//     );
-//   }
-
-//   @override
-//   bool get isRowCountApproximate => false;
-
-//   @override
-//   int get rowCount => totalCount;
-
-//   @override
-//   int get selectedRowCount => 0;
-// }

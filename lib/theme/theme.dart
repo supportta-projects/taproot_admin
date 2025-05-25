@@ -51,7 +51,6 @@ class AppTheme {
     // cardColor: Colors.yellow,
     // dialogBackgroundColor: Colors.white,
     // dialogTheme: ,
-    //
     cardTheme: CardThemeData(
       color: Colors.white,
       // color: CustomColors.borderGradient.colors.last.withValues(alpha: 0.1),
