@@ -33,6 +33,7 @@ class User {
 }
 
 class UserSearch {
+  final String userIdCode;
   final String fullName;
   final String userId;
   final String phone;
@@ -45,6 +46,7 @@ class UserSearch {
     required this.phone,
     required this.whatsapp,
     required this.email,
+    required this.userIdCode
   });
 
   factory UserSearch.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,7 @@ class UserSearch {
       phone: json['phoneNumber'] ?? '',
       whatsapp: json['whatsappNumber'] ?? '',
       email: json['email'] ?? '',
+      userIdCode: json['_id']??'',
     );
   }
 }

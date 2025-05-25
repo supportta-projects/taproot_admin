@@ -122,7 +122,7 @@ class _OrderScreenState extends State<OrderScreen> {
                     text: 'Create Order',
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => CreateOrder()),
+                        MaterialPageRoute(builder: (context) => CreateOrder(refreshOrders: fetchAllOrder,)),
                       );
                     },
                     useGradient: true,
@@ -430,7 +430,7 @@ class OrderDataSource extends DataTableSource {
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text('₹${order.totalAmount}')),
+              child: Center(child: Text('₹${order.totalAmount}',),),
             ),
           ),
           DataCell(

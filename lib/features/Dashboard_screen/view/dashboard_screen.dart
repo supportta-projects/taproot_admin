@@ -20,13 +20,15 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  DashboardModel? dashboardModel;
   Future<void> _fetchDashboardData() async {
     try {
       final response = await DashboardServices.getDashData();
 
       if (response.success) {
-        logError(response.message);
+        logSuccess(response.message);
         setState(() {
+          dashboardModel = response;
           // dashboardData = response.result;
         });
       } else {
@@ -43,8 +45,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchDashboardData();
   }
 
-  List<DashboardData> dashboardData = [];
-
   final List<ChartData> data = [
     ChartData('Jan', 500, 200, 1000),
     ChartData('Feb', 700, 250, 1200),
@@ -56,6 +56,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (dashboardModel == null) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -81,7 +84,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   DashBoardContainer(
                     title: 'Revenue',
-                    amount: '54000',
+                    amount: dashboardModel!.result.result.revenue.toString(),
                     percentage: '8',
                     icon: LucideIcons.banknote,
                     iconColor: CustomColors.buttonColor1,
@@ -89,14 +92,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   DashBoardContainer(
                     isExpense: true,
                     title: 'Expense',
-                    amount: '16000',
+                    amount: dashboardModel!.result.result.expense.toString(),
                     icon: LucideIcons.banknoteArrowDown,
                     iconColor: CustomColors.red,
                     percentage: '8',
                   ),
                   DashBoardContainer(
                     title: 'Profit',
-                    amount: '48000',
+                    amount: dashboardModel!.result.result.profit.toString(),
                     percentage: '8',
                     icon: LucideIcons.banknoteArrowUp,
                     iconColor: CustomColors.green,
@@ -177,20 +180,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         OrderDetailsContainer(
                           title: 'Total Orders',
-                          totalCount: 60,
-                          statusCount: 5,
-                          statusTitle: 'New Order',
+                          totalCount: dashboardModel!.result.result.totalOrder,
+                          // statusCount: 5,
+                          statusTitle: 'Order',
                         ),
                         OrderDetailsContainer(
                           title: 'Total Orders Delivered',
-                          totalCount: 58,
-                          statusCount: 5,
+                          totalCount:
+                              dashboardModel!.result.result.deliveredOrder,
+                          // statusCount: 5,
                           statusTitle: 'Delivered Order',
                         ),
                         RefundOrderContainer(
                           title: 'Refunded Orders',
-                          refundCount: 2,
-                          refundedAmount: 5000,
+                          refundCount:
+                              dashboardModel!.result.result.cancelledOrder,
+
+                          refundedAmount:
+                              dashboardModel!.result.result.refundAmount
+                                  .toInt(),
                         ),
                       ],
                     ),

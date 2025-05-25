@@ -12,7 +12,8 @@ import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class CreateOrder extends StatefulWidget {
-  const CreateOrder({super.key});
+  final RefreshOrdersCallback? refreshOrders;
+  const CreateOrder({super.key, this.refreshOrders});
 
   @override
   State<CreateOrder> createState() => _CreateOrderState();
@@ -159,25 +160,90 @@ class _CreateOrderState extends State<CreateOrder> {
                         return Column(
                           children: [
                             ListTile(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      logError(userSearchList.toString());
-                                      return CreateOrderDetails(
-                                        email: userSearchList[index].email,
-                                        phoneNumber:
-                                            userSearchList[index].phone,
-                                        whatsAppNumber:
-                                            userSearchList[index].phone,
-                                        fullName:
-                                            userSearchList[index].fullName,
-                                        fetchUser: fetchUser,
-                                        userSearchList: userSearchList,
+                              onTap: () async {
+                                try {
+                                  final hasPortfolio =
+                                      await OrderService.checkPortfolio(
+                                        userid:
+                                            userSearchList[index].userIdCode,
                                       );
-                                    },
-                                  ),
-                                );
+
+                                  if (hasPortfolio) {
+                                    if (context.mounted) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            return CreateOrderDetails(
+                                              refreshOrders:
+                                                  widget.refreshOrders,
+                                              userIdCode:
+                                                  userSearchList[index]
+                                                      .userIdCode,
+                                              userId:
+                                                  userSearchList[index].userId,
+                                              email:
+                                                  userSearchList[index].email,
+                                              phoneNumber:
+                                                  userSearchList[index].phone,
+                                              whatsAppNumber:
+                                                  userSearchList[index].phone,
+                                              fullName:
+                                                  userSearchList[index]
+                                                      .fullName,
+                                              fetchUser: fetchUser,
+                                              userSearchList: userSearchList,
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    if (context.mounted) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              'Portfolio Required',
+                                              style: context.inter60016,
+                                            ),
+                                            content: Text(
+                                              'This user needs to create a portfolio before an order can be created',
+                                              style: context.inter50014,
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  'OK',
+                                                  style: context.inter50014
+                                                      .copyWith(
+                                                        color:
+                                                            CustomColors
+                                                                .greenDark,
+                                                      ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    }
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Unable to check user portfolio. Please try again.',
+                                        ),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
                               },
                               title: Padding(
                                 padding: EdgeInsets.only(
@@ -197,6 +263,66 @@ class _CreateOrderState extends State<CreateOrder> {
                                 ],
                               ),
                             ),
+
+                            // ListTile(
+                            //   onTap: () {
+                            //     //                           try{
+                            //     //                             showDialog(
+                            //     //   context: context,
+                            //     //   barrierDismissible: false,
+                            //     //   builder: (BuildContext context) {
+                            //     //     return Center(
+                            //     //       child: CircularProgressIndicator(),
+                            //     //     );
+                            //     //   },
+                            //     // );
+                            //     //  final hasPortfolio = await OrderService.checkPortfolio(
+                            //     //   userid: userSearchList[index].userIdCode,
+                            //     // ); if (context.mounted) {
+                            //     //   Navigator.pop(context);
+                            //     // }
+                            //     //                           }catch(e){}
+                            //     Navigator.of(context).push(
+                            //       MaterialPageRoute(
+                            //         builder: (context) {
+                            //           logError(userSearchList.toString());
+                            //           return CreateOrderDetails(
+                            //             refreshOrders: widget.refreshOrders,
+                            //             userIdCode:
+                            //                 userSearchList[index].userIdCode,
+                            //             userId: userSearchList[index].userId,
+                            //             email: userSearchList[index].email,
+                            //             phoneNumber:
+                            //                 userSearchList[index].phone,
+                            //             whatsAppNumber:
+                            //                 userSearchList[index].phone,
+                            //             fullName:
+                            //                 userSearchList[index].fullName,
+                            //             fetchUser: fetchUser,
+                            //             userSearchList: userSearchList,
+                            //           );
+                            //         },
+                            //       ),
+                            //     );
+                            //   },
+                            //   title: Padding(
+                            //     padding: EdgeInsets.only(
+                            //       bottom: CustomPadding.paddingLarge.v,
+                            //     ),
+                            //     child: Text(userSearchList[index].fullName),
+                            //   ),
+                            //   subtitle: Row(
+                            //     children: [
+                            //       Text(
+                            //         'Phone Number- ${userSearchList[index].phone}',
+                            //       ),
+                            //       Gap(CustomPadding.paddingLarge.v),
+                            //       Text(
+                            //         'user ID-${userSearchList[index].userId}',
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
                             Divider(),
                           ],
                         );

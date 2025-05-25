@@ -13,7 +13,7 @@ class ExpenseDescriptionContainer extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: CustomPadding.padding.v),
           width: 250,
-          height: 100,
+          height: 200,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(CustomPadding.padding.v),
             border: Border.all(color: CustomColors.textColorLightGrey),

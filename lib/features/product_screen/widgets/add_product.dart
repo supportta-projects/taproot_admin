@@ -404,6 +404,7 @@ class AddImageContainer extends StatelessWidget {
   final File? selectedImage;
   final bool isImageView;
   final String? path;
+  final File? file; 
   final String? imagekey;
 
   const AddImageContainer({
@@ -413,6 +414,7 @@ class AddImageContainer extends StatelessWidget {
     this.selectedImage,
     this.isImageView = false,
     this.path,
+      this.file,
     this.imagekey,
   });
 

@@ -17,7 +17,7 @@ class AddUserLocation extends StatefulWidget {
   final TextEditingController statecontroller;
   const AddUserLocation({
     super.key,
-    required this.user,
+     this.user,
     required this.buildingcontroller,
     required this.areacontroller,
     required this.pincodecontroller,
@@ -25,7 +25,7 @@ class AddUserLocation extends StatefulWidget {
     required this.statecontroller,
   });
 
-  final User user;
+  final User? user;
 
   @override
   State<AddUserLocation> createState() => _AddUserLocationState();
