@@ -31,7 +31,7 @@ class _ProductPageState extends State<ProductPage>
   bool _isLoadingMore = false;
   bool _hasMoreData = true;
   bool _isLoading = false;
-  String _searchQuery = '';
+
   final TextEditingController _searchController = TextEditingController();
   List<Product> _filteredProducts = [];
 
@@ -102,11 +102,10 @@ class _ProductPageState extends State<ProductPage>
         setState(() {
           if (page == 1) {
             product = response;
-            _filteredProducts =
-                response.results; // Initialize filtered products
+            _filteredProducts = response.results;
           } else {
             product!.results.addAll(response.results);
-            _filteredProducts = product!.results; // Update filtered products
+            _filteredProducts = product!.results;
           }
           _hasMoreData = response.results.isNotEmpty;
           _isLoadingMore = false;
@@ -125,45 +124,6 @@ class _ProductPageState extends State<ProductPage>
     }
   }
 
-  // Future<void> fetchProduct({int page = 1}) async {
-  //   if (_isLoading) return;
-
-  //   try {
-  //     if (page == 1) {
-  //       setState(() {
-  //         _isLoading = true;
-  //         _isLoadingMore = false;
-  //         _hasMoreData = true;
-  //         _currentPage = 1;
-  //       });
-  //     }
-
-  //     final response = await ProductService.getProduct(page: page);
-
-  //     if (mounted) {
-  //       setState(() {
-  //         if (page == 1) {
-  //           product = response;
-  //         } else {
-  //           product!.results.addAll(response.results);
-  //         }
-  //         _hasMoreData = response.results.isNotEmpty;
-  //         _isLoadingMore = false;
-  //         enabledList = List.generate(product!.results.length, (index) => true);
-  //         _isLoading = false;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     if (mounted) {
-  //       setState(() {
-  //         _isLoading = false;
-  //         _isLoadingMore = false;
-  //       });
-  //     }
-  //     logError('Error fetching products: $e');
-  //   }
-  // }
-
   Future<void> fetchProductCategory() async {
     try {
       final response = await ProductService.getProductCategory();
@@ -181,14 +141,15 @@ class _ProductPageState extends State<ProductPage>
 
   void _filterProducts(String query) {
     setState(() {
-      _searchQuery = query.toLowerCase();
-      if (_searchQuery.isEmpty) {
+      if (query.isEmpty) {
         _filteredProducts = product!.results;
       } else {
         _filteredProducts =
             product!.results.where((product) {
-              return product.name!.toLowerCase().contains(_searchQuery) ||
-                  product.category!.name!.toLowerCase().contains(_searchQuery);
+              final name = product.name?.toLowerCase() ?? '';
+              final category = product.category?.name?.toLowerCase() ?? '';
+              return name.contains(query.toLowerCase()) ||
+                  category.contains(query.toLowerCase());
             }).toList();
       }
     });
@@ -198,6 +159,7 @@ class _ProductPageState extends State<ProductPage>
   void dispose() {
     _tabController.dispose();
     _scrollController.dispose();
+    _searchController.dispose();
 
     super.dispose();
   }
@@ -256,7 +218,10 @@ class _ProductPageState extends State<ProductPage>
                         children: [
                           Row(
                             children: [
-                              SearchWidget(hintText: 'Search Template Name'),
+                              SearchWidget(
+                                hintText: 'Search Template Name',
+                                onChanged: _filterProducts,
+                              ),
                               Spacer(),
                               SortButton(),
                             ],
@@ -286,18 +251,20 @@ class _ProductPageState extends State<ProductPage>
                             child: TabBarView(
                               controller: _tabController,
                               children: [
-                                buildProductGrid(product!.results),
+                                buildProductGrid(_filteredProducts),
 
                                 ...productCategory.map((category) {
-                                  final filteredProducts =
-                                      product!.results
+                                  final categoryFilteredProducts =
+                                      _filteredProducts
                                           .where(
                                             (product) =>
                                                 product.category?.id ==
                                                 category.id,
                                           )
                                           .toList();
-                                  return buildProductGrid(filteredProducts);
+                                  return buildProductGrid(
+                                    categoryFilteredProducts,
+                                  );
                                 }),
                               ],
                             ),

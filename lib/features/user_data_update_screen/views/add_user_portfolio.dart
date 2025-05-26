@@ -26,8 +26,6 @@ class AddUserPortfolio extends StatefulWidget {
   const AddUserPortfolio({super.key, required this.user});
   final User user;
 
-  // final dynamic user;
-
   @override
   State<AddUserPortfolio> createState() => _AddUserPortfolioState();
 }
@@ -73,7 +71,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   Uint8List? previewBannerBytes;
 
   List<Service> services = [];
-  // PlatformFile? pickedServiceImage;
+
   Uint8List? previewServiceBytes;
   ProductImage? pickedServiceImage;
   String? imageUrl;
@@ -82,7 +80,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   void initState() {
     user = widget.user;
     _isPremium = user.isPremium;
-    // TODO: implement initState
+
     super.initState();
   }
 
@@ -98,7 +96,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
       ProductImage? profilePicture;
       ProductImage? bannerImage;
       ProductImage? companyLogo;
-      // Upload profile image if selected
+
       if (pickedProfileImage?.bytes != null) {
         final profileUploadResult = await PortfolioService.uploadImageFile(
           pickedProfileImage!.bytes!,
@@ -113,7 +111,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
         );
       }
 
-      // Upload logo if selected
       if (pickedLogoImage?.bytes != null) {
         final logoUploadResult = await PortfolioService.uploadImageFile(
           pickedLogoImage!.bytes!,
@@ -128,7 +125,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
         );
       }
 
-      // Upload banner if selected
       if (pickedBannerImage?.bytes != null) {
         final bannerUploadResult = await PortfolioService.uploadImageFile(
           pickedBannerImage!.bytes!,
@@ -185,7 +181,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
       );
       if (mounted) {
         if (result != null) {
-          // Show success message, or navigate to another screen
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Portfolio added successfully!')),
           );
@@ -215,49 +210,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
     }
   }
 
-  // void handleServiceSave() async {
-  //   if (serviceHeadingController.text.isEmpty ||
-  //       serviceDescriptionController.text.isEmpty) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Please fill all service details')),
-  //     );
-  //     return;
-  //   }
-
-  //   ProductImage? serviceImage;
-  //   if (pickedServiceImage?.bytes != null) {
-  //     try {
-  //       final uploadResult = await PortfolioService.uploadImageFile(
-  //         pickedServiceImage!.bytes!,
-  //         pickedServiceImage!.name,
-  //       );
-
-  //       serviceImage = ProductImage(
-  //         name: uploadResult['name'],
-  //         key: uploadResult['key'],
-  //         size: int.tryParse(uploadResult['size'].toString()),
-  //         mimetype: uploadResult['mimetype'],
-  //       );
-  //     } catch (e) {
-  //       logError('Error uploading service image: $e');
-  //     }
-  //   }
-
-  //   setState(() {
-  //     services.add(
-  //       Service(
-  //         heading: serviceHeadingController.text,
-  //         description: serviceDescriptionController.text,
-  //         image: serviceImage,
-  //       ),
-  //     );
-  //     serviceHeadingController.clear();
-  //     serviceDescriptionController.clear();
-  //     pickedServiceImage = pickedServiceImage;
-  //     previewServiceBytes = previewServiceBytes;
-  //   });
-  // }
-
   void pickProfileImage() async {
     try {
       final result = await FilePicker.platform.pickFiles(
@@ -271,14 +223,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
           pickedProfileImage = result.files.first;
           previewProfileBytes = pickedProfileImage!.bytes;
         });
-
-        // if (pickedProfileImage?.bytes != null) {
-        //   final uploadResult = await PortfolioService.uploadImageFile(
-        //     pickedProfileImage!.bytes!,
-        //     pickedProfileImage!.name,
-        //   );
-        //   logInfo('Upload success: $uploadResult');
-        // }
       }
     } catch (e) {
       logError('Error picking or uploading profile image: $e');
@@ -421,7 +365,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                     user: user,
                     onLinksChanged: (newLinks) {
                       setState(() {
-                        socialLinks = newLinks; // Update the social media list
+                        socialLinks = newLinks;
                       });
                     },
                   ),
@@ -438,77 +382,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                 ],
               ),
               Gap(CustomPadding.paddingXL.v),
-              // PaddingRow(
-              //   children: [
-              //     ExpandTileContainer(
-              //       title: 'Your Services',
-              //       children: [
-              //         TextFormContainer(labelText: 'Heading/Topic'),
-              //         Gap(CustomPadding.paddingLarge.v),
-              //         Divider(endIndent: 20, indent: 20, thickness: 1),
-              //         Gap(CustomPadding.paddingLarge.v),
 
-              //         Row(
-              //           children: [
-              //             Gap(CustomPadding.paddingLarge.v),
-              //             AddImageContainer(
-              //               imageUrl: null,
-              //               initialImage: null,
-              //               onImageSelected: (ProductImage? image) {
-              //                 setState(() {
-              //                   pickedServiceImage = image;
-              //                 });
-              //               },
-              //             ),
-              //           ],
-              //         ),
-              //         Gap(CustomPadding.paddingLarge.v),
-              //         TextFormContainer(
-              //           labelText: 'Heading/Topic',
-              //           controller: serviceHeadingController,
-              //         ),
-              //         TextFormContainer(
-              //           labelText: 'Description',
-              //           maxline: 7,
-              //           controller: serviceDescriptionController,
-              //         ),
-              //         Gap(CustomPadding.paddingLarge.v),
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.end,
-              //           children: [
-              //             MiniLoadingButton(
-              //               icon: Icons.save,
-              //               text: 'Save',
-              //               onPressed: () {},
-              //               useGradient: true,
-              //               gradientColors: CustomColors.borderGradient.colors,
-              //             ),
-              //             Gap(CustomPadding.paddingLarge.v),
-              //           ],
-              //         ),
-              //         Gap(CustomPadding.paddingLarge.v),
-              //       ],
-              //     ),
-              //   ],
-              // ),
-              // PaddingRow(
-              //   children: [
-              //     ServiceContainer(
-              //       isEdited: true,
-              //       user: user,
-              //       serviceHeadingController: serviceHeadingController,
-              //       serviceDescriptionController: serviceDescriptionController,
-              //       saveButton: handleServiceSave,
-              //       onImageSelected: (file) {
-              //         setState(() {
-              //           pickedServiceImage = file;
-              //           previewServiceBytes = file.bytes;
-              //         });
-              //       },
-              //       services: services, // Pass the services list
-              //     ),
-              //   ],
-              // ),
               Gap(CustomPadding.paddingXXL.v),
             ],
           ),
@@ -596,8 +470,8 @@ class _AddImageContainerState extends State<AddImageContainer> {
 
       setState(() {
         currentImage = productImage;
-        pickedFile = null; // Clear picked file
-        previewBytes = null; // Clear preview bytes
+        pickedFile = null;
+        previewBytes = null;
         isUploading = false;
       });
 
@@ -615,19 +489,18 @@ class _AddImageContainerState extends State<AddImageContainer> {
   }
 
   Widget _buildPreview() {
-    // Show uploaded image if available
     if (currentImage != null) {
       return Stack(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Image.network(
-              '${widget.baseUrl}/file?key=portfolios/portfolio_services/${currentImage!.key}', // Use direct URL
+              '${widget.baseUrl}/file?key=portfolios/portfolio_services/${currentImage!.key}',
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
               errorBuilder: (context, error, stackTrace) {
-                print('Image Error: $error'); // Debug print
+                print('Image Error: $error');
                 return const Center(child: Icon(Icons.error));
               },
             ),
@@ -637,7 +510,6 @@ class _AddImageContainerState extends State<AddImageContainer> {
       );
     }
 
-    // Show preview while uploading
     if (previewBytes != null) {
       return Stack(
         children: [
@@ -662,7 +534,6 @@ class _AddImageContainerState extends State<AddImageContainer> {
       );
     }
 
-    // Show add icon if no image
     return Center(child: SvgPicture.asset(Assets.svg.addround));
   }
 
