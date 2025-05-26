@@ -1,5 +1,7 @@
 import 'dart:typed_data';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart' as picker;
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/constants/constants.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
@@ -53,35 +55,38 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
       if (result != null) {
         portfolio = result;
         ImageDetails? imageDetails;
-        String? imageKey;
+
         switch (widget.imageType) {
           case 'companyLogo':
-            if (portfolio?.workInfo.companyLogo != null) {
+            final logo = portfolio?.workInfo.companyLogo;
+            if (logo != null) {
               imageDetails = ImageDetails(
-                key: portfolio!.workInfo.companyLogo!.key,
-                name: portfolio!.workInfo.companyLogo!.name.toString(),
-                mimetype: portfolio!.workInfo.companyLogo!.mimetype.toString(),
-                size: portfolio!.workInfo.companyLogo!.size!.toInt(),
+                key: logo.key,
+                name: logo.name ?? '',
+                mimetype: logo.mimetype ?? '',
+                size: logo.size?.toInt() ?? 0,
               );
             }
             break;
+
           case 'profilePicture':
-            if (portfolio?.personalInfo.profilePicture != null) {
+            final picture = portfolio?.personalInfo.profilePicture;
+            if (picture != null) {
               imageDetails = ImageDetails(
-                key: portfolio!.personalInfo.profilePicture!.key,
-                name: portfolio!.personalInfo.profilePicture!.name.toString(),
-                mimetype:
-                    portfolio!.personalInfo.profilePicture!.mimetype.toString(),
-                size: portfolio!.personalInfo.profilePicture!.size!.toInt(),
+                key: picture.key,
+                name: picture.name ?? '',
+                mimetype: picture.mimetype ?? '',
+                size: picture.size?.toInt() ?? 0,
               );
             }
             break;
         }
-        // final imageKey = portfolio?.workInfo.companyLogo?.key;
-        if (imageDetails != null) {
-          imageUrl = getPortfolioImageUrl(imageDetails.key);
-          imageState = ImageWidgetState.replace;
 
+        if (imageDetails != null) {
+          setState(() {
+            imageUrl = getPortfolioImageUrl(imageDetails?.key);
+            imageState = ImageWidgetState.replace;
+          });
           widget.onImageChanged(
             ImageSource(image: imageDetails, source: 'portfolio'),
           );
@@ -103,26 +108,34 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
 
   Future<void> _pickAndUploadImage() async {
     logWarning('Picking image...');
-
     try {
-      final picked = await ImagePickerService.pickImage();
+      final pickerInstance = picker.ImagePicker();
+      final pickedFile = await pickerInstance.pickImage(
+        source: picker.ImageSource.gallery,
+      );
 
-      if (picked == null) {
-        logWarning('No image picked or incomplete image data.');
+      if (pickedFile == null) {
+        logWarning('No image picked.');
+        return;
+      }
+
+      final bytes = await pickedFile.readAsBytes();
+
+      if (bytes.isEmpty) {
+        logWarning('Image picked but no data found.');
         return;
       }
 
       setState(() {
-        previewBytes = picked.bytes;
+        previewBytes = bytes;
         imageState = ImageWidgetState.replace;
       });
 
       final uploaded = await ImagePickerService.uploadImageFile(
-        picked.bytes,
-        picked.filename,
+        bytes,
+        pickedFile.name,
       );
 
-      // Convert UploadedFileInfo to ImageDetails
       final imageDetails = ImageDetails(
         key: uploaded.key,
         name: uploaded.name,
@@ -148,121 +161,6 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
     }
   }
 
-  // Future<void> _pickAndUploadImage() async {
-  //   logWarning('Picking image...');
-
-  //   try {
-  //     final picked = await ImagePickerService.pickImage();
-
-  //     if (picked == null) {
-  //       logWarning('No image picked or incomplete image data.');
-  //       return;
-  //     }
-
-  //     logWarning('Picked image: ${picked.filename}');
-
-  //     setState(() {
-  //       previewBytes = picked.bytes;
-  //       imageState = ImageWidgetState.replace;
-  //     });
-
-  //     final uploaded = await ImagePickerService.uploadImageFile(
-  //       picked.bytes,
-  //       picked.filename,
-  //     );
-
-  //     if (uploaded.url.isNotEmpty) {
-  //       setState(() {
-  //         imageUrl = uploaded.url;
-  //         imageState = ImageWidgetState.replace;
-  //       });
-  //     } else {
-  //       logError('Image upload returned empty URL.');
-  //       if (mounted) {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(content: Text('Failed to upload image.')),
-  //         );
-  //       }
-  //     }
-  //   } catch (e, stackTrace) {
-  //     logError('Image picking or upload failed: $e\n$stackTrace');
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(
-  //         context,
-  //       ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
-  //     }
-  //   }
-  // }
-
-  // Future<void> _pickAndUploadImage() async {
-  //   logWarning('Picking image...');
-
-  //   try {
-  //     final picked = await ImagePickerService.pickImage();
-
-  //     logWarning('Picked image: ${picked?.filename}');
-
-  //     if (picked != null) {
-  //       setState(() {
-  //         previewBytes = picked.bytes;
-  //         imageState = ImageWidgetState.replace;
-  //       });
-
-  //       final uploaded = await ImagePickerService.uploadImageFile(
-  //         picked.bytes,
-  //         picked.filename,
-  //       );
-
-  //       if (uploaded.url.isNotEmpty) {
-  //         setState(() {
-  //           imageUrl = uploaded.url;
-  //           imageState = ImageWidgetState.replace;
-  //         });
-  //       } else {
-  //         logError('Image upload returned empty URL.');
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(content: Text('Failed to upload image.')),
-  //         );
-  //       }
-  //     } else {
-  //       logWarning('No image picked.');
-  //     }
-  //   } catch (e, stackTrace) {
-  //     logError('Image picking or upload failed: $e\n$stackTrace');
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(
-  //         context,
-  //       ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
-  //     }
-  //   }
-  // }
-
-  // Future<void> _pickAndUploadImage() async {
-  //   logWarning('Picking image...');
-
-  //   final picked = await ImagePickerService.pickImage();
-
-  //   logWarning('Picked image: ${picked?.filename}');
-
-  //   if (picked != null) {
-  //     setState(() {
-  //       previewBytes = picked.bytes;
-  //       imageState = ImageWidgetState.replace;
-  //     });
-
-  //     final uploaded = await ImagePickerService.uploadImageFile(
-  //       picked.bytes,
-  //       picked.filename,
-  //     );
-
-  //     if (uploaded.url.isNotEmpty) {
-  //       setState(() {
-  //         imageUrl = uploaded.url;
-  //         imageState = ImageWidgetState.replace;
-  //       });
-  //     }
-  //   }
-  // }
   void _removeImage() {
     setState(() {
       previewBytes = null;
@@ -270,17 +168,8 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
       imageState = ImageWidgetState.upload;
     });
 
-    // Notify parent that image was removed
     widget.onImageChanged(ImageSource(source: 'none'));
   }
-
-  // void _removeImage() {
-  //   setState(() {
-  //     previewBytes = null;
-  //     imageUrl = null;
-  //     imageState = ImageWidgetState.upload;
-  //   });
-  // }
 
   String? getPortfolioImageUrl(String? key) {
     if (key == null) return null;
@@ -291,20 +180,12 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
   Widget build(BuildContext context) {
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
-    String label;
-    IconData icon;
-
-    switch (imageState) {
-      case ImageWidgetState.upload:
-      case ImageWidgetState.delete:
-        label = 'Upload';
-        icon = LucideIcons.upload;
-        break;
-      case ImageWidgetState.replace:
-        label = 'Replace';
-        icon = LucideIcons.repeat;
-        break;
-    }
+    final label =
+        (imageState == ImageWidgetState.replace) ? 'Replace' : 'Upload';
+    final icon =
+        (imageState == ImageWidgetState.replace)
+            ? LucideIcons.repeat
+            : LucideIcons.upload;
 
     return ImageContainer(
       title: widget.title,
