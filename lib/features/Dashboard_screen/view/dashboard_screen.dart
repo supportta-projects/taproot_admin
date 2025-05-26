@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -10,7 +11,6 @@ import 'package:taproot_admin/features/Dashboard_screen/widgets/financial_return
 import 'package:taproot_admin/features/Dashboard_screen/widgets/line_graph_widget.dart';
 
 import '../data/dashboard_services.dart';
-
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -54,6 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double normalPadding = CustomPadding.padding;
     double tileWidgetBorderRadius = CustomPadding.padding;
     if (dashboardModel == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -72,10 +73,103 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Gap(CustomPadding.paddingLarge),
             Row(
               children: [
-                Gap(CustomPadding.paddingLarge),
+                Gap(normalPadding),
 
-                Expanded(child: LineGraphWidget(data: data)),
-                Gap(CustomPadding.paddingXL),
+                SizedBox(
+                  width: (620 / 1440) * MediaQuery.of(context).size.width,
+
+                  child: Expanded(
+                    child: Column(children: [LineGraphWidget(data: data)]),
+                  ),
+                ),
+                Spacer(),
+                Container(
+                  width: (620 / 1440) * MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.all(CustomPadding.paddingXL),
+                  decoration: BoxDecoration(
+                    color: CustomColors.secondaryColor,
+                    borderRadius: BorderRadius.circular(
+                      normalPadding + tileWidgetBorderRadius,
+                      // CustomPadding.paddingXL + CustomPadding.padding,
+                    ),
+                  ),
+
+                  child: Expanded(
+                    child: Column(
+                      children: [
+                        Card(
+                          color: Colors.amber,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              tileWidgetBorderRadius,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(normalPadding),
+                            child: Row(
+                              children: [
+                                // Left side: Text content
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize:
+                                        MainAxisSize
+                                            .min, // Important to prevent overflow
+                                    children: const [
+                                      Text(
+                                        'Total Orders',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        '60',
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Orders',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                // Right side: Icon
+                                const Icon(
+                                  Icons.inventory_2_rounded,
+                                  color: Colors.brown,
+                                  size: 28,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        Gap(CustomPadding.paddingXL),
+
+                        // ListTile(
+                        //   contentPadding: EdgeInsets.zero,
+                        //   leading: Icon(LucideIcons.mapPin),
+                        //   title: Text('Taproot Admin Office'),
+                        //   subtitle: Text('123 Main St, City, Country'),
+                        //   trailing: Icon(LucideIcons.chevronRight),
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Gap(CustomPadding.paddingXL),
 
                 // Expanded(
                 //   child: Container(
