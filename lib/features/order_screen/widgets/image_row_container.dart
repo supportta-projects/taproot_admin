@@ -77,7 +77,7 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
             }
             break;
         }
-        // final imageKey = portfolio?.workInfo.companyLogo?.key;
+
         if (imageDetails != null) {
           imageUrl = getPortfolioImageUrl(imageDetails.key);
           imageState = ImageWidgetState.replace;
@@ -122,7 +122,6 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
         picked.filename,
       );
 
-      // Convert UploadedFileInfo to ImageDetails
       final imageDetails = ImageDetails(
         key: uploaded.key,
         name: uploaded.name,
@@ -148,121 +147,6 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
     }
   }
 
-  // Future<void> _pickAndUploadImage() async {
-  //   logWarning('Picking image...');
-
-  //   try {
-  //     final picked = await ImagePickerService.pickImage();
-
-  //     if (picked == null) {
-  //       logWarning('No image picked or incomplete image data.');
-  //       return;
-  //     }
-
-  //     logWarning('Picked image: ${picked.filename}');
-
-  //     setState(() {
-  //       previewBytes = picked.bytes;
-  //       imageState = ImageWidgetState.replace;
-  //     });
-
-  //     final uploaded = await ImagePickerService.uploadImageFile(
-  //       picked.bytes,
-  //       picked.filename,
-  //     );
-
-  //     if (uploaded.url.isNotEmpty) {
-  //       setState(() {
-  //         imageUrl = uploaded.url;
-  //         imageState = ImageWidgetState.replace;
-  //       });
-  //     } else {
-  //       logError('Image upload returned empty URL.');
-  //       if (mounted) {
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(content: Text('Failed to upload image.')),
-  //         );
-  //       }
-  //     }
-  //   } catch (e, stackTrace) {
-  //     logError('Image picking or upload failed: $e\n$stackTrace');
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(
-  //         context,
-  //       ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
-  //     }
-  //   }
-  // }
-
-  // Future<void> _pickAndUploadImage() async {
-  //   logWarning('Picking image...');
-
-  //   try {
-  //     final picked = await ImagePickerService.pickImage();
-
-  //     logWarning('Picked image: ${picked?.filename}');
-
-  //     if (picked != null) {
-  //       setState(() {
-  //         previewBytes = picked.bytes;
-  //         imageState = ImageWidgetState.replace;
-  //       });
-
-  //       final uploaded = await ImagePickerService.uploadImageFile(
-  //         picked.bytes,
-  //         picked.filename,
-  //       );
-
-  //       if (uploaded.url.isNotEmpty) {
-  //         setState(() {
-  //           imageUrl = uploaded.url;
-  //           imageState = ImageWidgetState.replace;
-  //         });
-  //       } else {
-  //         logError('Image upload returned empty URL.');
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(content: Text('Failed to upload image.')),
-  //         );
-  //       }
-  //     } else {
-  //       logWarning('No image picked.');
-  //     }
-  //   } catch (e, stackTrace) {
-  //     logError('Image picking or upload failed: $e\n$stackTrace');
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(
-  //         context,
-  //       ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
-  //     }
-  //   }
-  // }
-
-  // Future<void> _pickAndUploadImage() async {
-  //   logWarning('Picking image...');
-
-  //   final picked = await ImagePickerService.pickImage();
-
-  //   logWarning('Picked image: ${picked?.filename}');
-
-  //   if (picked != null) {
-  //     setState(() {
-  //       previewBytes = picked.bytes;
-  //       imageState = ImageWidgetState.replace;
-  //     });
-
-  //     final uploaded = await ImagePickerService.uploadImageFile(
-  //       picked.bytes,
-  //       picked.filename,
-  //     );
-
-  //     if (uploaded.url.isNotEmpty) {
-  //       setState(() {
-  //         imageUrl = uploaded.url;
-  //         imageState = ImageWidgetState.replace;
-  //       });
-  //     }
-  //   }
-  // }
   void _removeImage() {
     setState(() {
       previewBytes = null;
@@ -270,17 +154,8 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
       imageState = ImageWidgetState.upload;
     });
 
-    // Notify parent that image was removed
     widget.onImageChanged(ImageSource(source: 'none'));
   }
-
-  // void _removeImage() {
-  //   setState(() {
-  //     previewBytes = null;
-  //     imageUrl = null;
-  //     imageState = ImageWidgetState.upload;
-  //   });
-  // }
 
   String? getPortfolioImageUrl(String? key) {
     if (key == null) return null;
