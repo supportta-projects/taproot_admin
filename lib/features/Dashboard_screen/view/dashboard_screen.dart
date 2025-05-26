@@ -11,6 +11,7 @@ import 'package:taproot_admin/features/Dashboard_screen/widgets/financial_return
 import 'package:taproot_admin/features/Dashboard_screen/widgets/line_graph_widget.dart';
 
 import '../data/dashboard_services.dart';
+import '../widgets/logistic_data_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -83,90 +84,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 Spacer(),
-                Container(
-                  width: (620 / 1440) * MediaQuery.of(context).size.width,
-                  padding: EdgeInsets.all(CustomPadding.paddingXL),
-                  decoration: BoxDecoration(
-                    color: CustomColors.secondaryColor,
-                    borderRadius: BorderRadius.circular(
-                      normalPadding + tileWidgetBorderRadius,
-                      // CustomPadding.paddingXL + CustomPadding.padding,
-                    ),
-                  ),
-
-                  child: Expanded(
-                    child: Column(
-                      children: [
-                        Card(
-                          color: Colors.amber,
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              tileWidgetBorderRadius,
-                            ),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(normalPadding),
-                            child: Row(
-                              children: [
-                                // Left side: Text content
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize:
-                                        MainAxisSize
-                                            .min, // Important to prevent overflow
-                                    children: const [
-                                      Text(
-                                        'Total Orders',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '60',
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Orders',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                // Right side: Icon
-                                const Icon(
-                                  Icons.inventory_2_rounded,
-                                  color: Colors.brown,
-                                  size: 28,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        Gap(CustomPadding.paddingXL),
-
-                        // ListTile(
-                        //   contentPadding: EdgeInsets.zero,
-                        //   leading: Icon(LucideIcons.mapPin),
-                        //   title: Text('Taproot Admin Office'),
-                        //   subtitle: Text('123 Main St, City, Country'),
-                        //   trailing: Icon(LucideIcons.chevronRight),
-                        // ),
-                      ],
-                    ),
-                  ),
+                LogisticDataWidget(
+                  data: dashboardModel!,
+                  normalPadding: normalPadding,
+                  tileWidgetBorderRadius: tileWidgetBorderRadius,
                 ),
 
                 // Gap(CustomPadding.paddingXL),
