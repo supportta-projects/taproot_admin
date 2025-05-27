@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' as BorderType;
 
 // import 'package:constants/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
