@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' as picker;
 import 'package:lucide_icons_flutter/lucide_icons.dart';

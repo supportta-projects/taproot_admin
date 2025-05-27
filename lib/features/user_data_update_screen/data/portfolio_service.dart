@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -314,7 +313,7 @@ static Future<bool> isUserPremium({required String userId}) async {
       return false;
     } catch (e) {
       logError('Premium status update failed: $e');
-      throw e;
+      rethrow;
     }
   }
 }

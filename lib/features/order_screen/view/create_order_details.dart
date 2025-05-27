@@ -14,7 +14,6 @@ import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_user_location.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_pick_upload_preview.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/padding_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
