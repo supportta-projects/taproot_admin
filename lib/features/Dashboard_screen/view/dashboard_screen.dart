@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/chart_data.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/dashboard_model.dart';
 import 'package:taproot_admin/features/Dashboard_screen/widgets/dashboard_container.dart';
-import 'package:taproot_admin/features/Dashboard_screen/widgets/order_details_container.dart';
-import 'package:taproot_admin/features/Dashboard_screen/widgets/refund_order_container.dart';
+import 'package:taproot_admin/features/Dashboard_screen/widgets/financial_returns_widget.dart';
+import 'package:taproot_admin/features/Dashboard_screen/widgets/line_graph_widget.dart';
 
 import '../data/dashboard_services.dart';
+import '../widgets/logistic_data_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -29,13 +31,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         logSuccess(response.message);
         setState(() {
           dashboardModel = response;
-          // dashboardData = response.result;
         });
-      } else {
-        // Handle error
-      }
+      } else {}
     } catch (e) {
-      // Handle error
+      logError('Error fetching dashboard data: $e');
     }
   }
 
@@ -56,6 +55,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double normalPadding = CustomPadding.padding * 2.2;
+    double tileWidgetBorderRadius = CustomPadding.padding * 2.5;
     if (dashboardModel == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -65,146 +66,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.only(left: CustomPadding.paddingLarge.v),
+              padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
               child: Text('Dashboard', style: context.inter60024),
             ),
-            Gap(CustomPadding.paddingLarge.v),
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-              ),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: CustomColors.secondaryColor,
-                borderRadius: BorderRadius.circular(
-                  CustomPadding.padding.v + CustomPadding.paddingLarge.v,
-                ),
-              ),
-              child: Row(
-                children: [
-                  DashBoardContainer(
-                    title: 'Revenue',
-                    amount: dashboardModel!.result.result.revenue.toString(),
-                    percentage: '8',
-                    icon: LucideIcons.banknote,
-                    iconColor: CustomColors.buttonColor1,
-                  ),
-                  DashBoardContainer(
-                    isExpense: true,
-                    title: 'Expense',
-                    amount: dashboardModel!.result.result.expense.toString(),
-                    icon: LucideIcons.banknoteArrowDown,
-                    iconColor: CustomColors.red,
-                    percentage: '8',
-                  ),
-                  DashBoardContainer(
-                    title: 'Profit',
-                    amount: dashboardModel!.result.result.profit.toString(),
-                    percentage: '8',
-                    icon: LucideIcons.banknoteArrowUp,
-                    iconColor: CustomColors.green,
-                  ),
-                ],
-              ),
-            ),
-            Gap(CustomPadding.paddingLarge.v),
+            Gap(CustomPadding.paddingLarge),
+            FinancialReturnsWidget(dashboardModel: dashboardModel),
+            Gap(CustomPadding.paddingLarge),
             Row(
               children: [
-                Gap(CustomPadding.paddingLarge.v),
+                Gap(normalPadding),
 
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(CustomPadding.paddingXL.v),
-                    decoration: BoxDecoration(
-                      color: CustomColors.secondaryColor,
-                      borderRadius: BorderRadius.circular(
-                        CustomPadding.paddingXL.v + CustomPadding.padding.v,
-                      ),
-                    ),
-                    height: 600,
-                    child: SfCartesianChart(
-                      legend: Legend(
-                        isVisible: true,
-                        position: LegendPosition.bottom,
-                      ),
-                      tooltipBehavior: TooltipBehavior(enable: true),
-                      primaryXAxis: CategoryAxis(
-                        labelPlacement: LabelPlacement.onTicks,
-                      ),
-                      primaryYAxis: NumericAxis(),
-                      series: <CartesianSeries>[
-                        LineSeries<ChartData, String>(
-                          color: CustomColors.red,
-                          name: 'Expense',
-                          dataSource: data,
-                          xValueMapper: (ChartData d, _) => d.month,
-                          yValueMapper: (ChartData d, _) => d.expense,
-                          markerSettings: MarkerSettings(isVisible: true),
-                        ),
-                        LineSeries<ChartData, String>(
-                          color: CustomColors.green,
-                          name: 'Profit',
-                          dataSource: data,
-                          xValueMapper: (ChartData d, _) => d.month,
-                          yValueMapper: (ChartData d, _) => d.profit,
-                          markerSettings: MarkerSettings(isVisible: true),
-                        ),
-                        LineSeries<ChartData, String>(
-                          color: CustomColors.buttonColor1,
-                          name: 'Revenue',
-                          dataSource: data,
-                          xValueMapper: (ChartData d, _) => d.month,
-                          yValueMapper: (ChartData d, _) => d.revenue,
-                          markerSettings: MarkerSettings(isVisible: true),
-                        ),
-                      ],
-                    ),
+                SizedBox(
+                  width: (620 / 1440) * MediaQuery.of(context).size.width,
+
+                  child: Expanded(
+                    child: Column(children: [LineGraphWidget(data: data)]),
                   ),
                 ),
-                Gap(CustomPadding.paddingXL.v),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: CustomPadding.padding,
-                    ),
-                    height: 600,
-                    decoration: BoxDecoration(
-                      color: CustomColors.secondaryColor,
-                      borderRadius: BorderRadius.circular(
-                        CustomPadding.paddingLarge.v,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: CustomPadding.padding.v,
-                      children: [
-                        OrderDetailsContainer(
-                          title: 'Total Orders',
-                          totalCount: dashboardModel!.result.result.totalOrder,
-                          // statusCount: 5,
-                          statusTitle: 'Order',
-                        ),
-                        OrderDetailsContainer(
-                          title: 'Total Orders Delivered',
-                          totalCount:
-                              dashboardModel!.result.result.deliveredOrder,
-                          // statusCount: 5,
-                          statusTitle: 'Delivered Order',
-                        ),
-                        RefundOrderContainer(
-                          title: 'Refunded Orders',
-                          refundCount:
-                              dashboardModel!.result.result.cancelledOrder,
-
-                          refundedAmount:
-                              dashboardModel!.result.result.refundAmount
-                                  .toInt(),
-                        ),
-                      ],
-                    ),
-                  ),
+                Spacer(),
+                LogisticDataWidget(
+                  data: dashboardModel!,
+                  normalPadding: normalPadding,
+                  tileWidgetBorderRadius: tileWidgetBorderRadius,
                 ),
-                Gap(CustomPadding.paddingLarge.v),
+
+                Gap(CustomPadding.paddingLarge),
               ],
             ),
           ],
