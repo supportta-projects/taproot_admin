@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/dashboard_model.dart';
 import 'package:taproot_admin/features/Dashboard_screen/widgets/logistic_tile_widget.dart';
 
@@ -14,6 +15,7 @@ class LogisticDataWidget extends StatelessWidget {
   });
   final DashboardModel data;
   final double normalPadding;
+
   final double tileWidgetBorderRadius;
 
   @override
@@ -29,30 +31,22 @@ class LogisticDataWidget extends StatelessWidget {
         color: CustomColors.secondaryColor,
         borderRadius: BorderRadius.circular(
           normalPadding + tileWidgetBorderRadius,
-          // CustomPadding.paddingXL + CustomPadding.padding,
         ),
       ),
 
       child: Expanded(
         child: Column(
+          spacing: normalPadding,
           children: [
             LogisticTileWidget(
+              trailingIcon: Icon(LucideIcons.box),
               numericaldata: totalOrders,
               tileWidgetBorderRadius: tileWidgetBorderRadius,
               normalPadding: normalPadding,
 
               supportingWidget: Text('orders'),
+              title: 'Total Orders',
             ),
-
-            Gap(CustomPadding.paddingXL),
-
-            // ListTile(
-            //   contentPadding: EdgeInsets.zero,
-            //   leading: Icon(LucideIcons.mapPin),
-            //   title: Text('Taproot Admin Office'),
-            //   subtitle: Text('123 Main St, City, Country'),
-            //   trailing: Icon(LucideIcons.chevronRight),
-            // ),
           ],
         ),
       ),

@@ -56,7 +56,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     double normalPadding = CustomPadding.padding;
-    double tileWidgetBorderRadius = CustomPadding.padding;
+    double tileWidgetBorderRadius = CustomPadding.padding * 1.5;
     if (dashboardModel == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -90,52 +90,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   tileWidgetBorderRadius: tileWidgetBorderRadius,
                 ),
 
-                // Gap(CustomPadding.paddingXL),
-
-                // Expanded(
-                //   child: Container(
-                //     decoration: BoxDecoration(
-                //       color: Colors.red,
-                //       borderRadius: BorderRadius.circular(
-                //         CustomPadding.padding,
-                //       ),
-                //     ),
-                //     child: Expanded(
-                //       child: Column(
-                //         mainAxisAlignment: MainAxisAlignment.center,
-                //         spacing: CustomPadding.padding,
-                //         children: [
-                //           OrderDetailsContainer(
-                //             borderRadius: tileWidgetBorderRadius,
-                //             title: 'Total Orders',
-                //             totalCount:
-                //                 dashboardModel!.result.result.totalOrder,
-
-                //             statusTitle: 'Order',
-                //           ),
-                //           OrderDetailsContainer(
-                //             borderRadius: tileWidgetBorderRadius,
-                //             title: 'Total Orders Delivered',
-                //             totalCount:
-                //                 dashboardModel!.result.result.deliveredOrder,
-
-                //             statusTitle: 'Delivered Order',
-                //           ),
-                //           RefundOrderContainer(
-                //             borderRadius: tileWidgetBorderRadius,
-                //             title: 'Refunded Orders',
-                //             refundCount:
-                //                 dashboardModel!.result.result.cancelledOrder,
-
-                //             refundedAmount:
-                //                 dashboardModel!.result.result.refundAmount
-                //                     .toInt(),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
                 Gap(CustomPadding.paddingLarge),
               ],
             ),

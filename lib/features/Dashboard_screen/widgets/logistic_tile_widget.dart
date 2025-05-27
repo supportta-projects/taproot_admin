@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class LogisticTileWidget extends StatelessWidget {
+  final Color? tileColor;
+  final String title;
   final double tileWidgetBorderRadius;
   final int numericaldata;
   final double normalPadding;
@@ -14,12 +16,14 @@ class LogisticTileWidget extends StatelessWidget {
     this.supportingWidget,
     required this.numericaldata,
     this.trailingIcon,
+    required this.title,
+    this.tileColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.amber,
+      color: tileColor ?? Colors.amber,
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(tileWidgetBorderRadius),
@@ -35,7 +39,7 @@ class LogisticTileWidget extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min, // Important to prevent overflow
                 children: [
                   Text(
-                    'Total Orders',
+                    title,
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   SizedBox(height: 8),
