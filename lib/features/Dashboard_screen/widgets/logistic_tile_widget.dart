@@ -12,6 +12,7 @@ class LogisticTileWidget extends StatelessWidget {
   final Widget? supportingWidget;
   final Icon? trailingIcon;
   final Color? numericalColor;
+  final Widget? notifyTrailingWidget;
 
   const LogisticTileWidget({
     super.key,
@@ -24,6 +25,7 @@ class LogisticTileWidget extends StatelessWidget {
     this.tileColor,
     this.isGapExist = false,
     this.numericalColor,
+    this.notifyTrailingWidget,
   });
 
   @override
@@ -69,13 +71,13 @@ class LogisticTileWidget extends StatelessWidget {
                 ),
               ],
             ),
+            Positioned(top: 0, right: 0, child: trailingIcon ?? SizedBox()),
+
             Positioned(
-              top: 0,
+              bottom: 0,
               right: 0,
 
-              child:
-                  trailingIcon ??
-                  Icon(Icons.arrow_forward_ios, color: Colors.grey),
+              child: notifyTrailingWidget ?? SizedBox(),
             ),
           ],
         ),

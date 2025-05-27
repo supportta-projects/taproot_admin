@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/dashboard_model.dart';
 import 'package:taproot_admin/features/Dashboard_screen/widgets/logistic_tile_widget.dart';
+import 'package:taproot_admin/features/Dashboard_screen/widgets/notify_chip_widget.dart';
 
 import '../../../exporter/exporter.dart';
 
@@ -48,7 +49,7 @@ class LogisticDataWidget extends StatelessWidget {
                 color: CustomColors.totalOrderColor,
                 size: iconSize,
               ),
-
+              numericalColor: CustomColors.totalOrderColor,
               numericaldata: totalOrders,
               tileWidgetBorderRadius: tileWidgetBorderRadius,
               normalPadding: normalPadding,
@@ -76,8 +77,10 @@ class LogisticDataWidget extends StatelessWidget {
               normalPadding: normalPadding,
 
               supportingWidget: Text(
-                'Completed Orders',
-                style: supportingTextStyle,
+                'Orders Completed',
+                style: supportingTextStyle.copyWith(
+                  color: CustomColors.totalOrdersCompleted,
+                ),
               ),
               title: 'Total Orders Completed',
             ),
@@ -94,10 +97,13 @@ class LogisticDataWidget extends StatelessWidget {
               numericaldata: cancelledOrders,
               tileWidgetBorderRadius: tileWidgetBorderRadius,
               normalPadding: normalPadding,
-
+              numericalColor: CustomColors.totalOrdersCancelled,
+              notifyTrailingWidget: NotifyChipWidget(refundStatusValue: refundStatusValue),
               supportingWidget: Text(
                 'Cancelled Orders',
-                style: supportingTextStyle,
+                style: supportingTextStyle.copyWith(
+                  color: CustomColors.totalOrdersCancelled,
+                ),
               ),
               title: 'Total Orders Cancelled',
             ),
