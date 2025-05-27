@@ -40,23 +40,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
       logError('Error fetching dashboard data: $e');
     }
   }
-Future<void> _refreshData() async {
+
+  Future<void> _refreshData() async {
     await _fetchDashboardData();
   }
+
   @override
   void initState() {
     super.initState();
     _fetchDashboardData();
   }
-
-  // final List<ChartData> data = [
-  //   ChartData('Jan', 500, 200, 1000),
-  //   ChartData('Feb', 700, 250, 1200),
-  //   ChartData('March', 600, 300, 1100),
-  //   ChartData('April', 800, 350, 1300),
-  //   ChartData('May', 750, 300, 1250),
-  //   ChartData('June', 900, 400, 1400),
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +58,8 @@ Future<void> _refreshData() async {
     if (dashboardModel == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    return RefreshIndicator(onRefresh: _refreshData,
+    return RefreshIndicator(
+      onRefresh: _refreshData,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
@@ -81,13 +75,18 @@ Future<void> _refreshData() async {
               Row(
                 children: [
                   Gap(normalPadding),
-      
+
                   SizedBox(
                     width: (620 / 1440) * MediaQuery.of(context).size.width,
-      
+
                     child: Expanded(
-                      child: Column(children: [LineGraphWidget(data: chartData!.result!.lastSixMonthsData!,
-                          )]),
+                      child: Column(
+                        children: [
+                          LineGraphWidget(
+                            data: chartData!.result!.lastSixMonthsData!,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Spacer(),
@@ -96,7 +95,7 @@ Future<void> _refreshData() async {
                     normalPadding: normalPadding,
                     tileWidgetBorderRadius: tileWidgetBorderRadius,
                   ),
-      
+
                   Gap(CustomPadding.paddingLarge),
                 ],
               ),
