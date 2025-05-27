@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:taproot_admin/exporter/exporter.dart';
 
 class LogisticTileWidget extends StatelessWidget {
+  final bool isGapExist;
   final Color? tileColor;
   final String title;
   final double tileWidgetBorderRadius;
@@ -9,6 +11,8 @@ class LogisticTileWidget extends StatelessWidget {
   final double normalPadding;
   final Widget? supportingWidget;
   final Icon? trailingIcon;
+  final Color? numericalColor;
+
   const LogisticTileWidget({
     super.key,
     required this.tileWidgetBorderRadius,
@@ -18,10 +22,20 @@ class LogisticTileWidget extends StatelessWidget {
     this.trailingIcon,
     required this.title,
     this.tileColor,
+    this.isGapExist = false,
+    this.numericalColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    TextStyle numericalStyle = context.inter60024.copyWith(
+      color: numericalColor ?? Colors.black,
+    );
+
+    TextStyle titleStyle = context.inter50014.copyWith(
+      color: CustomColors.hintGrey,
+      fontSize: 20,
+    );
     return Card(
       color: tileColor ?? Colors.amber,
       elevation: 2,
@@ -30,38 +44,39 @@ class LogisticTileWidget extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsets.all(normalPadding * 2),
-        child: Row(
+        child: Stack(
           children: [
-            // Left side: Text content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min, // Important to prevent overflow
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        '$numericaldata',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Text(title, style: titleStyle),
+
+                      // SizedBox(height: 8),
+                      CustomGap.gapXL,
+                      Row(
+                        children: [
+                          Text('$numericaldata', style: numericalStyle),
+                          isGapExist ? Spacer() : Gap(normalPadding * 2),
+                          supportingWidget ?? SizedBox(),
+                        ],
                       ),
-                      Gap(normalPadding),
-                      supportingWidget ?? SizedBox(),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
+            Positioned(
+              top: 0,
+              right: 0,
 
-            // Right side: Icon
-            trailingIcon ?? Icon(Icons.arrow_forward_ios, color: Colors.grey),
+              child:
+                  trailingIcon ??
+                  Icon(Icons.arrow_forward_ios, color: Colors.grey),
+            ),
           ],
         ),
       ),

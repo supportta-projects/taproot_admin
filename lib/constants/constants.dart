@@ -41,6 +41,10 @@ class CustomColors {
 
   static Color hoverColor = borderGradient.colors.last.withValues(alpha: 0.15);
 
+
+static const Color totalOrderColor = Colors.indigo;
+static const Color totalOrdersCompleted = Colors.green;
+static const Color totalOrdersCancelled = Color(0xFFF44336);
   static const Color burgandryRed = Color(0xFF800020);
   static const Color hintGrey = Color(0xff7F6E72);
   static const secondaryColor = Colors.white;

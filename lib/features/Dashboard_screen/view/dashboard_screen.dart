@@ -55,8 +55,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double normalPadding = CustomPadding.padding;
-    double tileWidgetBorderRadius = CustomPadding.padding * 1.5;
+    double normalPadding = CustomPadding.padding * 2.2;
+    double tileWidgetBorderRadius = CustomPadding.padding * 2.5;
     if (dashboardModel == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
