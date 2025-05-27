@@ -71,7 +71,7 @@ class _LeadScreenState extends State<LeadScreen> {
                 height: SizeUtils.height * 0.75,
                 child: SingleChildScrollView(
                   child: PaginatedDataTable(
-                    columnSpacing: 260,
+                    // columnSpacing: 260,
                     dataRowMaxHeight: 100,
                     columns: const [
                       DataColumn(
