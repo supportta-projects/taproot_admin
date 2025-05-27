@@ -20,35 +20,43 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   DashboardModel? dashboardModel;
+  ChartData? chartData;
+  bool isLoading = true;
+  String? error;
   Future<void> _fetchDashboardData() async {
     try {
       final response = await DashboardServices.getDashData();
+      final chartResponse = await DashboardServices.getChartData();
 
-      if (response.success) {
+      if (response.success && chartResponse.success!) {
         logSuccess(response.message);
         setState(() {
+          chartData = chartResponse;
           dashboardModel = response;
+          isLoading = false;
         });
       } else {}
     } catch (e) {
       logError('Error fetching dashboard data: $e');
     }
   }
-
+Future<void> _refreshData() async {
+    await _fetchDashboardData();
+  }
   @override
   void initState() {
     super.initState();
     _fetchDashboardData();
   }
 
-  final List<ChartData> data = [
-    ChartData('Jan', 500, 200, 1000),
-    ChartData('Feb', 700, 250, 1200),
-    ChartData('March', 600, 300, 1100),
-    ChartData('April', 800, 350, 1300),
-    ChartData('May', 750, 300, 1250),
-    ChartData('June', 900, 400, 1400),
-  ];
+  // final List<ChartData> data = [
+  //   ChartData('Jan', 500, 200, 1000),
+  //   ChartData('Feb', 700, 250, 1200),
+  //   ChartData('March', 600, 300, 1100),
+  //   ChartData('April', 800, 350, 1300),
+  //   ChartData('May', 750, 300, 1250),
+  //   ChartData('June', 900, 400, 1400),
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -57,40 +65,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (dashboardModel == null) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
-              child: Text('Dashboard', style: context.inter60024),
-            ),
-            Gap(CustomPadding.paddingLarge),
-            FinancialReturnsWidget(dashboardModel: dashboardModel),
-            Gap(CustomPadding.paddingLarge),
-            Row(
-              children: [
-                Gap(normalPadding),
-
-                SizedBox(
-                  width: (620 / 1440) * MediaQuery.of(context).size.width,
-
-                  child: Expanded(
-                    child: Column(children: [LineGraphWidget(data: data)]),
+    return RefreshIndicator(onRefresh: _refreshData,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
+                child: Text('Dashboard', style: context.inter60024),
+              ),
+              Gap(CustomPadding.paddingLarge),
+              FinancialReturnsWidget(dashboardModel: dashboardModel),
+              Gap(CustomPadding.paddingLarge),
+              Row(
+                children: [
+                  Gap(normalPadding),
+      
+                  SizedBox(
+                    width: (620 / 1440) * MediaQuery.of(context).size.width,
+      
+                    child: Expanded(
+                      child: Column(children: [LineGraphWidget(data: chartData!.result!.lastSixMonthsData!,
+                          )]),
+                    ),
                   ),
-                ),
-                Spacer(),
-                LogisticDataWidget(
-                  data: dashboardModel!,
-                  normalPadding: normalPadding,
-                  tileWidgetBorderRadius: tileWidgetBorderRadius,
-                ),
-
-                Gap(CustomPadding.paddingLarge),
-              ],
-            ),
-          ],
+                  Spacer(),
+                  LogisticDataWidget(
+                    data: dashboardModel!,
+                    normalPadding: normalPadding,
+                    tileWidgetBorderRadius: tileWidgetBorderRadius,
+                  ),
+      
+                  Gap(CustomPadding.paddingLarge),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

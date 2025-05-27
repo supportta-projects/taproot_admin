@@ -1,3 +1,4 @@
+import 'package:taproot_admin/features/Dashboard_screen/data/chart_data.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/dashboard_model.dart';
 
 import '../../../core/api/base_url_constant.dart';
@@ -12,6 +13,17 @@ class DashboardServices with ErrorExceptionHandler {
         type: ApiType.baseUrl,
       );
       return DashboardModel.fromJson(response.data);
+    } catch (e) {
+      throw DashboardServices().handleError(e);
+    }
+  }
+  static Future<ChartData> getChartData() async {
+    try {
+      final response = await DioHelper().get(
+        '/dashboard/graph',
+        type: ApiType.baseUrl,
+      );
+      return ChartData.fromJson(response.data);
     } catch (e) {
       throw DashboardServices().handleError(e);
     }

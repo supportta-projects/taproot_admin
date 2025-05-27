@@ -265,16 +265,24 @@ class _AddProductState extends State<AddProduct> {
                           child: TextFormContainer(
                             inputFormatters: [
                               FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(2),
                             ],
                             controller: _discountPriceController,
+                            suffixText: '%',
                             initialValue: '',
-                            labelText: 'Discount',
+                            labelText: 'Discount Percentage',
                             onChanged: (value) {
                               discountPrice = value;
                             },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter a discount price';
+                                return 'Please enter a discount percentage';
+                              }
+                              final percentage = int.tryParse(value);
+                              if (percentage == null ||
+                                  percentage < 1 ||
+                                  percentage > 99) {
+                                return 'Please enter a percentage between 1 and 99';
                               }
                               return null;
                             },
@@ -404,7 +412,7 @@ class AddImageContainer extends StatelessWidget {
   final File? selectedImage;
   final bool isImageView;
   final String? path;
-  final File? file; 
+  final File? file;
   final String? imagekey;
 
   const AddImageContainer({
@@ -414,7 +422,7 @@ class AddImageContainer extends StatelessWidget {
     this.selectedImage,
     this.isImageView = false,
     this.path,
-      this.file,
+    this.file,
     this.imagekey,
   });
 
