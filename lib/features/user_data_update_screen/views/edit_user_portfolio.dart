@@ -428,7 +428,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                   text: 'Back',
                   icon: Icons.arrow_back,
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
 
                   gradient: LinearGradient(
