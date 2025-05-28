@@ -36,7 +36,6 @@ class _ProductPageState extends State<ProductPage>
   Timer? _searchDebounce;
   String _currentSearchQuery = '';
 
-  // final TextEditingController _searchController = TextEditingController();
   List<Product> _filteredProducts = [];
 
   List<Map<String, Object>> products = [];
@@ -136,53 +135,10 @@ class _ProductPageState extends State<ProductPage>
   void _handleSort(SortOption sortOption) {
     setState(() {
       _currentSort = sortOption;
-      _currentPage = 1; // Reset to first page when sorting changes
+      _currentPage = 1;
     });
-    fetchProduct(page: 1); // Fetch products with new sort
+    fetchProduct(page: 1);
   }
-  // Future<void> fetchProduct({int page = 1}) async {
-  //   if (_isLoading) return;
-
-  //   try {
-  //     if (page == 1) {
-  //       setState(() {
-  //         _isLoading = true;
-  //         _isLoadingMore = false;
-  //         _hasMoreData = true;
-  //         _currentPage = 1;
-  //       });
-  //     }
-
-  //     final response = await ProductService.getProduct(
-  //       page: page,
-  //       searchQuery: _currentSearchQuery,
-  //     );
-
-  //     if (mounted) {
-  //       setState(() {
-  //         if (page == 1) {
-  //           product = response;
-  //           _filteredProducts = response.results;
-  //         } else {
-  //           product!.results.addAll(response.results);
-  //           _filteredProducts = product!.results;
-  //         }
-  //         _hasMoreData = response.results.isNotEmpty;
-  //         _isLoadingMore = false;
-  //         enabledList = List.generate(product!.results.length, (index) => true);
-  //         _isLoading = false;
-  //       });
-  //     }
-  //   } catch (e) {
-  //     if (mounted) {
-  //       setState(() {
-  //         _isLoading = false;
-  //         _isLoadingMore = false;
-  //       });
-  //     }
-  //     logError('Error fetching products: $e');
-  //   }
-  // }
 
   Future<void> fetchProductCategory() async {
     try {
@@ -232,7 +188,6 @@ class _ProductPageState extends State<ProductPage>
     _searchDebounce?.cancel();
     _tabController.dispose();
     _scrollController.dispose();
-    // _searchController.dispose();
 
     super.dispose();
   }
@@ -293,7 +248,7 @@ class _ProductPageState extends State<ProductPage>
                             children: [
                               SearchWidget(
                                 hintText: 'Search Template Name',
-                                // controller: _searchController,
+
                                 onChanged: _handleSearch,
                               ),
                               Spacer(),
