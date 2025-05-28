@@ -54,6 +54,7 @@ class _ProductPageState extends State<ProductPage>
   List<bool> enabledList = [];
 
   bool viewProduct = false;
+  SortOption _currentSort = SortOption.all;
   @override
   void initState() {
     super.initState();
@@ -103,6 +104,7 @@ class _ProductPageState extends State<ProductPage>
       final response = await ProductService.getProduct(
         page: page,
         searchQuery: _currentSearchQuery,
+        sort: _currentSort.apiParameter,
       );
 
       if (mounted) {
@@ -130,6 +132,57 @@ class _ProductPageState extends State<ProductPage>
       logError('Error fetching products: $e');
     }
   }
+
+  void _handleSort(SortOption sortOption) {
+    setState(() {
+      _currentSort = sortOption;
+      _currentPage = 1; // Reset to first page when sorting changes
+    });
+    fetchProduct(page: 1); // Fetch products with new sort
+  }
+  // Future<void> fetchProduct({int page = 1}) async {
+  //   if (_isLoading) return;
+
+  //   try {
+  //     if (page == 1) {
+  //       setState(() {
+  //         _isLoading = true;
+  //         _isLoadingMore = false;
+  //         _hasMoreData = true;
+  //         _currentPage = 1;
+  //       });
+  //     }
+
+  //     final response = await ProductService.getProduct(
+  //       page: page,
+  //       searchQuery: _currentSearchQuery,
+  //     );
+
+  //     if (mounted) {
+  //       setState(() {
+  //         if (page == 1) {
+  //           product = response;
+  //           _filteredProducts = response.results;
+  //         } else {
+  //           product!.results.addAll(response.results);
+  //           _filteredProducts = product!.results;
+  //         }
+  //         _hasMoreData = response.results.isNotEmpty;
+  //         _isLoadingMore = false;
+  //         enabledList = List.generate(product!.results.length, (index) => true);
+  //         _isLoading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       setState(() {
+  //         _isLoading = false;
+  //         _isLoadingMore = false;
+  //       });
+  //     }
+  //     logError('Error fetching products: $e');
+  //   }
+  // }
 
   Future<void> fetchProductCategory() async {
     try {
@@ -244,7 +297,10 @@ class _ProductPageState extends State<ProductPage>
                                 onChanged: _handleSearch,
                               ),
                               Spacer(),
-                              SortButton(),
+                              SortButton(
+                                currentSort: _currentSort,
+                                onSortChanged: _handleSort,
+                              ),
                             ],
                           ),
                           Gap(CustomPadding.paddingLarge.v),
@@ -407,7 +463,7 @@ class _ProductPageState extends State<ProductPage>
                           ProductDetaileRow(
                             cardType: productcard.category!.name ?? '',
                             price: productcard.actualPrice.toString(),
-                            offerPrice: productcard.discountedPrice.toString(),
+                            offerPrice: productcard.salePrice.toString(),
                           ),
                         ],
                       ),

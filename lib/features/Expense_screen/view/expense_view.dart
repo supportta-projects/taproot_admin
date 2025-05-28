@@ -132,7 +132,7 @@ class _ExpenseViewState extends State<ExpenseView> {
                     Row(
                       children: [
                         Spacer(),
-                        SortButton(),
+                        // SortButton(),
                         Gap(CustomPadding.padding.v),
                         FilterButton(),
                       ],

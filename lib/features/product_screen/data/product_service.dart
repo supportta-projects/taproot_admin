@@ -13,13 +13,21 @@ class ProductService with ErrorExceptionHandler {
   static Future<ProductResponse> getProduct({
     required int page,
     String? searchQuery,
+    String? sort,
   }) async {
     try {
       final Map<String, dynamic> queryParameters = {
         'page': page,
         if (searchQuery != null && searchQuery.isNotEmpty)
           'search': searchQuery,
+        if (sort != null &&
+            sort != 'all') // Only add sort parameter if it's not 'all'
+          'sort': sort,
       };
+
+      logSuccess(
+        "Query Parameters: $queryParameters",
+      ); // Log the query parameters
 
       final response = await DioHelper().get(
         '/product',
@@ -37,6 +45,35 @@ class ProductService with ErrorExceptionHandler {
       throw ProductService().handleError('Failed to load products, $e');
     }
   }
+
+  // static Future<ProductResponse> getProduct({
+  //   required int page,
+  //   String? searchQuery,
+  //   String? sort,
+  // }) async {
+  //   try {
+  //     final Map<String, dynamic> queryParameters = {
+  //       'page': page,
+  //       if (searchQuery != null && searchQuery.isNotEmpty)
+  //         'search': searchQuery,
+  //     };
+
+  //     final response = await DioHelper().get(
+  //       '/product',
+  //       type: ApiType.baseUrl,
+  //       queryParameters: queryParameters,
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       logSuccess("Response Data: ${response.data}");
+  //       return ProductResponse.fromJson(response.data);
+  //     } else {
+  //       throw Exception('Failed to load products');
+  //     }
+  //   } catch (e) {
+  //     throw ProductService().handleError('Failed to load products, $e');
+  //   }
+  // }
 
   // static Future<ProductResponse> getProduct({required int page}) async {
   //   try {
