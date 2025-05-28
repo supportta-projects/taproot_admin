@@ -269,12 +269,11 @@ class OrderProduct {
     );
   }
 }
-
 class ProductDetails {
   final String id;
   final String name;
   final Category category;
-  final ProductImages productImages;
+  final List<ProductImages> productImages;
   final double actualPrice;
   final double salePrice;
   final double discountPercentage;
@@ -293,6 +292,10 @@ class ProductDetails {
     required this.code,
   });
 
+  // Add a getter to easily access the first image
+  ProductImages? get firstImage =>
+      productImages.isNotEmpty ? productImages.first : null;
+
   factory ProductDetails.fromJson(Map<String, dynamic> json) {
     return ProductDetails(
       id: json['_id']?.toString() ?? '',
@@ -300,9 +303,11 @@ class ProductDetails {
       category: Category.fromJson(
         json['category'] as Map<String, dynamic>? ?? {},
       ),
-      productImages: ProductImages.fromJson(
-        json['productImages'] as Map<String, dynamic>? ?? {},
-      ),
+      productImages:
+          (json['productImages'] as List<dynamic>?)
+              ?.map((e) => ProductImages.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       actualPrice:
           double.tryParse(json['actualPrice']?.toString() ?? '0') ?? 0.0,
       salePrice: double.tryParse(json['salePrice']?.toString() ?? '0') ?? 0.0,
@@ -314,6 +319,52 @@ class ProductDetails {
     );
   }
 }
+
+
+// class ProductDetails {
+//   final String id;
+//   final String name;
+//   final Category category;
+//   final ProductImages productImages;
+//   final double actualPrice;
+//   final double salePrice;
+//   final double discountPercentage;
+//   final double discountedPrice;
+//   final String code;
+
+//   ProductDetails({
+//     required this.id,
+//     required this.name,
+//     required this.category,
+//     required this.productImages,
+//     required this.actualPrice,
+//     required this.salePrice,
+//     required this.discountPercentage,
+//     required this.discountedPrice,
+//     required this.code,
+//   });
+
+//   factory ProductDetails.fromJson(Map<String, dynamic> json) {
+//     return ProductDetails(
+//       id: json['_id']?.toString() ?? '',
+//       name: json['name']?.toString() ?? '',
+//       category: Category.fromJson(
+//         json['category'] as Map<String, dynamic>? ?? {},
+//       ),
+//       productImages: ProductImages.fromJson(
+//         json['productImages'] as Map<String, dynamic>? ?? {},
+//       ),
+//       actualPrice:
+//           double.tryParse(json['actualPrice']?.toString() ?? '0') ?? 0.0,
+//       salePrice: double.tryParse(json['salePrice']?.toString() ?? '0') ?? 0.0,
+//       discountPercentage:
+//           double.tryParse(json['discountPercentage']?.toString() ?? '0') ?? 0.0,
+//       discountedPrice:
+//           double.tryParse(json['discountedPrice']?.toString() ?? '0') ?? 0.0,
+//       code: json['code']?.toString() ?? '',
+//     );
+//   }
+// }
 
 class Category {
   final String id;

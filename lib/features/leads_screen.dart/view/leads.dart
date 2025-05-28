@@ -6,6 +6,8 @@ import 'package:taproot_admin/features/leads_screen.dart/data/leads_model.dart';
 import 'package:taproot_admin/features/leads_screen.dart/data/leads_service.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/services/size_utils.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LeadScreen extends StatefulWidget {
   const LeadScreen({super.key});
@@ -67,61 +69,65 @@ class _LeadScreenState extends State<LeadScreen> {
                   ],
                 ),
               )
-              : SizedBox(
-                height: SizeUtils.height * 0.75,
-                child: SingleChildScrollView(
-                  child: PaginatedDataTable(
-                    // columnSpacing: 260,
-                    dataRowMaxHeight: 100,
-                    columns: const [
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Full Name',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: CustomColors.hintGrey),
+              : Padding(
+                padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: SizeUtils.height * 0.75,
+                  child: SingleChildScrollView(
+                    child: PaginatedDataTable(
+                      // columnSpacing: 260,
+                      dataRowMaxHeight: 100,
+                      columns: const [
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Full Name',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: CustomColors.hintGrey),
+                            ),
                           ),
                         ),
-                      ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Phone Number',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: CustomColors.hintGrey),
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Phone Number',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: CustomColors.hintGrey),
+                            ),
                           ),
                         ),
-                      ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Email',
-                            style: TextStyle(color: CustomColors.hintGrey),
-                            textAlign: TextAlign.center,
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Email',
+                              style: TextStyle(color: CustomColors.hintGrey),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
-                      ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            'Description',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: CustomColors.hintGrey),
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Description',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: CustomColors.hintGrey),
+                            ),
                           ),
                         ),
-                      ),
-                      DataColumn(
-                        label: Expanded(
-                          child: Text(
-                            ' ',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: CustomColors.hintGrey),
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              ' ',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: CustomColors.hintGrey),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                    source: _LeadsDataSource(_leads),
-                    rowsPerPage: 5,
+                      ],
+                      source: _LeadsDataSource(_leads, context),
+                      rowsPerPage: 6,
+                    ),
                   ),
                 ),
               ),
@@ -131,8 +137,9 @@ class _LeadScreenState extends State<LeadScreen> {
 
 class _LeadsDataSource extends DataTableSource {
   final List<Lead> leads;
+  final BuildContext context;
 
-  _LeadsDataSource(this.leads);
+  _LeadsDataSource(this.leads, this.context);
 
   @override
   DataRow? getRow(int index) {
@@ -141,28 +148,60 @@ class _LeadsDataSource extends DataTableSource {
     return DataRow(
       cells: [
         DataCell(
-          Text(
-            lead.name[0].toUpperCase() + lead.name.substring(1),
-            style: TextStyle(
-              color: CustomColors.greenDark,
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
+          Center(
+            child: Text(
+              lead.name[0].toUpperCase() + lead.name.substring(1),
+              style: TextStyle(
+                color: CustomColors.greenDark,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
             ),
           ),
         ),
-        DataCell(Text(lead.number)),
-        DataCell(Text(lead.email)),
+        DataCell(Center(child: Text(lead.number))),
+        DataCell(Center(child: Text(lead.email))),
         DataCell(
           ExpenseDescriptionContainer(
             children: [
-              Text(
-                lead.description,
-                style: TextStyle(color: CustomColors.hintGrey),
+              Center(
+                child: Text(
+                  lead.description,
+                  style: TextStyle(color: CustomColors.hintGrey),
+                ),
               ),
             ],
           ),
         ),
-        DataCell(SvgPicture.asset(Assets.svg.whatsapp)),
+        DataCell(
+          InkWell(
+            onTap: () async {
+              final phoneNumber = lead.number.replaceAll(RegExp(r'[^\d+]'), '');
+              final uri = Uri.parse('https://wa.me/$phoneNumber');
+
+              try {
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(
+                    uri,
+                    //  mode: LaunchMode.externalApplication
+                  );
+                } else {
+                  if (context.mounted) {
+                    SnackbarHelper.showError(
+                      context,
+                      'Could not open WhatsApp',
+                    );
+                  }
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  SnackbarHelper.showError(context, 'Error: ${e.toString()}');
+                }
+              }
+            },
+            child: SvgPicture.asset(Assets.svg.whatsapp),
+          ),
+        ),
       ],
     );
   }

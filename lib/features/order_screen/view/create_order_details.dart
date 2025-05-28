@@ -448,7 +448,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   icon: LucideIcons.save,
                   text: 'Save',
                   onPressed: _createOrder,
-                  useGradient: false,
+                  useGradient: selectedProducts.isNotEmpty,
                   backgroundColor: CustomColors.hintGrey,
                 ),
                 Gap(CustomPadding.paddingLarge.v),
@@ -700,7 +700,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 Row(
                   children: [
                     Gap(CustomPadding.paddingXL.v),
-                    
+
                     ImageRowContainer(
                       userCode: widget.userIdCode,
                       title: 'Company Logo',

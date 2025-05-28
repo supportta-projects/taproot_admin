@@ -9,18 +9,74 @@ import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_paginated_model.dart';
 
 class OrderService with ErrorExceptionHandler {
-  static Future<OrderResponse> getAllOrder({int page = 1}) async {
+  static Future<OrderResponse> getAllOrder({
+    int page = 1,
+    String? search,
+  }) async {
     try {
+      final queryParameters = {
+        'page': page,
+        if (search != null && search.isNotEmpty) 'search': search,
+      };
+
       final response = await DioHelper().get(
         '/order/all',
         type: ApiType.baseUrl,
-        queryParameters: {'page': page},
+        queryParameters: queryParameters,
       );
       return OrderResponse.fromJson(response.data);
     } catch (e) {
       throw OrderService().handleError(e);
     }
   }
+  // static Future<OrderResponse> getAllOrder({int page = 1,}) async {
+  //   try {
+  //     final response = await DioHelper().get(
+  //       '/order/all',
+  //       type: ApiType.baseUrl,
+  //       queryParameters: {'page': page},
+  //     );
+  //     return OrderResponse.fromJson(response.data);
+  //   } catch (e) {
+  //     throw OrderService().handleError(e);
+  //   }
+  // }
+  // static Future<OrderDetailsResponse> getOrderDetails({
+  //     required String orderId,
+  //   }) async {
+  //     try {
+  //       // Validate orderId format before making the request
+  //       if (orderId.isEmpty || orderId.length != 24) {
+  //         throw Exception('Invalid order ID format');
+  //       }
+
+  //       final response = await DioHelper().get(
+  //         '/order/order-details/$orderId',
+  //         type: ApiType.baseUrl,
+  //       );
+
+  //       logInfo('API Response: ${response.data}');
+
+  //       // Check if response.data is not null and has the expected structure
+  //       if (response.data == null) {
+  //         throw Exception('Empty response received');
+  //       }
+
+  //       final orderDetailsResponse = OrderDetailsResponse.fromJson(response.data);
+
+  //       // Validate the response
+  //       if (!orderDetailsResponse.success) {
+  //         throw Exception(
+  //           orderDetailsResponse.message ?? 'Failed to fetch order details',
+  //         );
+  //       }
+
+  //       return orderDetailsResponse;
+  //     } catch (e) {
+  //       logError('OrderService error: $e');
+  //       throw OrderService().handleError(e);
+  //     }
+  //   }
 
   static Future<OrderDetailsResponse> getOrderDetails({
     required String orderId,
