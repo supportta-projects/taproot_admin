@@ -46,9 +46,7 @@ class _RefundDialogState extends State<RefundDialog> {
       }
     } catch (e) {
       SnackbarHelper.showError(context, '$e');
-      // ScaffoldMessenger.of(
-      //   context,
-      // ).showSnackBar(SnackBar(content: Text(e.toString())));
+    
     }
   }
 

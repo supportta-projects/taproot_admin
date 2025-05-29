@@ -79,14 +79,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(
                     width: (620 / 1440) * MediaQuery.of(context).size.width,
 
-                  child: Column(children: [LineGraphWidget(data: data)]),
-                ),
-                Spacer(),
-                LogisticDataWidget(
-                  data: dashboardModel!,
-                  normalPadding: normalPadding,
-                  tileWidgetBorderRadius: tileWidgetBorderRadius,
-                ),
+                    child: Expanded(
+                      child: Column(
+                        children: [
+                          //TODO data
+                          LineGraphWidget(
+                            data: chartData!.result!.lastSixMonthsData!,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Spacer(),
+                  LogisticDataWidget(
+                    data: dashboardModel!,
+                    normalPadding: normalPadding,
+                    tileWidgetBorderRadius: tileWidgetBorderRadius,
+                  ),
 
                   Gap(CustomPadding.paddingLarge),
                 ],
