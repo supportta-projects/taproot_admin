@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
@@ -68,6 +69,40 @@ class _OrderScreenState extends State<OrderScreen> {
 
   void completeOrder(int index) {
     logInfo('Completing order $index');
+  }
+
+  Future<void> fetchDateFilteredOrder(String pickedDate) async {
+    setState(() => isLoading = true);
+
+    try {
+      logInfo('Fetching page: $currentPage');
+      final response = await OrderService.getAllOrder(
+        page: currentPage,
+        search: _searchQuery,
+        orderStatus: getOrderStatusForTab(_currentTabIndex),
+        startDate: pickedDate,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        allOrder = response.results;
+        totalOrder = response.totalCount;
+        totalPages = (totalOrder / _rowsPerPage).ceil();
+        orderDataSource?.dispose();
+        orderDataSource = OrderDataSource(
+          allOrder,
+          totalOrder,
+          context,
+          widget.innerNavigatorKey,
+          _rowsPerPage,
+        );
+        isLoading = false;
+      });
+    } catch (e) {
+      logInfo('Error fetching orders: $e');
+      setState(() => isLoading = false);
+    }
   }
 
   Future<void> fetchAllOrder() async {
@@ -155,7 +190,7 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 8,
+      length: 7,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
@@ -211,6 +246,46 @@ class _OrderScreenState extends State<OrderScreen> {
                           onChanged: handleSearch,
                         ),
                         Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            showDatePicker(
+                              
+                              context: context,
+                              firstDate: DateTime.utc(2024),
+                              lastDate: DateTime.now(),
+                            ).then((selectedDate) {
+                              fetchDateFilteredOrder(selectedDate.toString());
+
+                              if (selectedDate != null) {
+                                // Handle the selected date here
+                                logInfo('Selected date: $selectedDate');
+                              }
+                            });
+                          },
+                          child: Container(
+                            width: 110.v,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                CustomPadding.paddingXXL.v,
+                              ),
+                              border: Border.all(
+                                color: CustomColors.textColorLightGrey,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Filter', style: context.inter50014),
+                                Gap(CustomPadding.padding.v),
+                                Icon(
+                                  LucideIcons.funnel,
+                                  color: CustomColors.textColorGrey,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     TabBar(

@@ -13,13 +13,15 @@ class OrderService with ErrorExceptionHandler {
     int page = 1,
     String? search,
     String? orderStatus,
+    String? startDate,
   }) async {
     try {
       final queryParameters = {
         'page': page,
         if (search != null && search.isNotEmpty) 'search': search,
-         if (orderStatus != null && orderStatus.isNotEmpty)
+        if (orderStatus != null && orderStatus.isNotEmpty)
           'orderStatus': orderStatus,
+        if (startDate != null && startDate.isNotEmpty) 'startDate': startDate,
       };
 
       final response = await DioHelper().get(
@@ -228,5 +230,4 @@ class OrderService with ErrorExceptionHandler {
       throw OrderService().handleError(e);
     }
   }
-
 }
