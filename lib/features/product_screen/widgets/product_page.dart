@@ -365,15 +365,21 @@ class _ProductPageState extends State<ProductPage>
                 )
                 .then((_) => refreshProducts());
           },
-          child: Container(
-            decoration: BoxDecoration(
-              boxShadow: floatingShadow,
-              borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),
-              // border: Border.all(
-              //   width: 2,
-              //   color: CustomColors.textColorLightGrey,
-              // ),
-            ),
+          child: Card(
+            color: Colors.white,
+            elevation: 8,
+            // shadowColor: ,
+            shadowColor: Colors.black.withValues(alpha: 0.6),
+            // decoration: BoxDecoration(
+
+            //   color: Colors.white,
+            //   // boxShadow: floatingShadow,
+            //   borderRadius: BorderRadius.circular(CustomPadding.padding * 3 ),
+            //   // border: Border.all(
+            //   //   width: 2,
+            //   //   color: CustomColors.textColorLightGrey,
+            //   // ),
+            // ),
             child: Column(
               children: [
                 Gap(CustomPadding.paddingLarge.v),

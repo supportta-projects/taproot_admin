@@ -8,6 +8,7 @@ import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/view/create_order.dart';
 import 'package:taproot_admin/features/order_screen/view/order_details_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
+import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
 
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
@@ -209,6 +210,7 @@ class _OrderScreenState extends State<OrderScreen> {
                           controller: _searchController,
                           onChanged: handleSearch,
                         ),
+                        Spacer(),
                       ],
                     ),
                     TabBar(
@@ -284,8 +286,6 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 }
-
-
 
 class OrderDataSource extends DataTableSource {
   final List<Order> orderList;
