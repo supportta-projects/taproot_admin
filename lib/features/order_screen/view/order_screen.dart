@@ -10,6 +10,7 @@ import 'package:taproot_admin/features/order_screen/view/order_details_screen.da
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/not_found_widget.dart';
 
 class OrderScreen extends StatefulWidget {
   final GlobalKey<NavigatorState>? innerNavigatorKey;
@@ -40,7 +41,7 @@ class _OrderScreenState extends State<OrderScreen> {
       case 0:
         return '';
       case 1:
-        return 'Order Placed';
+        return 'Placed';
       case 2:
         return 'Shipped';
       case 3:
@@ -51,8 +52,6 @@ class _OrderScreenState extends State<OrderScreen> {
         return 'Confirmed';
       case 6:
         return 'Failed';
-      case 7:
-        return 'Delivered';
       default:
         return '';
     }
@@ -120,10 +119,9 @@ class _OrderScreenState extends State<OrderScreen> {
     _debounceTimer = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         _searchQuery = value;
-        currentPage = 1; // Reset to first page when searching
+        currentPage = 1;
       });
 
-      // Reset the PaginatedDataTable's first row index
       _tableKey.currentState?.pageTo(0);
 
       fetchAllOrder();
@@ -149,7 +147,7 @@ class _OrderScreenState extends State<OrderScreen> {
   void dispose() {
     _searchController.dispose();
     _debounceTimer?.cancel();
-    // TODO: implement dispose
+
     super.dispose();
   }
 
@@ -232,82 +230,49 @@ class _OrderScreenState extends State<OrderScreen> {
                         Tab(text: 'Pending'),
                         Tab(text: 'Confirmed'),
                         Tab(text: 'Failed'),
-                        Tab(text: 'Delivered'),
                       ],
                     ),
                     SizedBox(
                       height: SizeUtils.height * 0.75,
                       child: TabBarView(
-                        children: List.generate(8, (index) {
-                          return isLoading
-                              ? const Center(child: CircularProgressIndicator())
-                              : PaginatedDataTable(
-                                key: index == 0 ? _tableKey : null,
-                                dataRowMaxHeight: 60,
-                                rowsPerPage: _rowsPerPage,
-                                initialFirstRowIndex:
-                                    (currentPage - 1) * _rowsPerPage,
-                                onPageChanged: handlePageChange,
-                                availableRowsPerPage: const [10, 20, 50],
-                                columns: const [
-                                  DataColumn(label: Text('Order ID')),
-                                  DataColumn(label: Text('Full Name')),
-                                  DataColumn(label: Text('Phone')),
-                                  DataColumn(label: Text('Amount')),
-                                  DataColumn(label: Text('Order Count')),
-                                ],
-                                source:
-                                    orderDataSource ??
-                                    OrderDataSource(
-                                      [],
-                                      0,
-                                      context,
-                                      widget.innerNavigatorKey,
-                                      _rowsPerPage,
-                                    ),
-                              );
+                        children: List.generate(7, (index) {
+                          if (isLoading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (allOrder.isEmpty) {
+                            return NotFoundWidget();
+                          }
+
+                          return PaginatedDataTable(
+                            key: index == 0 ? _tableKey : null,
+                            dataRowMaxHeight: 60,
+                            rowsPerPage: _rowsPerPage,
+                            initialFirstRowIndex:
+                                (currentPage - 1) * _rowsPerPage,
+                            onPageChanged: handlePageChange,
+                            availableRowsPerPage: const [10, 20, 50],
+                            columns: const [
+                              DataColumn(label: Text('Order ID')),
+                              DataColumn(label: Text('Full Name')),
+                              DataColumn(label: Text('Phone')),
+                              DataColumn(label: Text('Amount')),
+                              DataColumn(label: Text('Order Count')),
+                            ],
+                            source:
+                                orderDataSource ??
+                                OrderDataSource(
+                                  [],
+                                  0,
+                                  context,
+                                  widget.innerNavigatorKey,
+                                  _rowsPerPage,
+                                ),
+                          );
                         }),
                       ),
-
-                      //  TabBarView(
-                      //   children: [
-                      //     PaginatedDataTable(
-                      //       key: _tableKey,
-                      //       dataRowMaxHeight: 60,
-                      //       rowsPerPage: _rowsPerPage,
-                      //       initialFirstRowIndex:
-                      //           (currentPage - 1) * _rowsPerPage,
-                      //       onPageChanged: handlePageChange,
-                      //       availableRowsPerPage: const [10, 20, 50],
-                      //       columns: const [
-                      //         DataColumn(label: Text('Order ID')),
-                      //         DataColumn(label: Text('Full Name')),
-                      //         DataColumn(label: Text('Phone')),
-                      //         DataColumn(label: Text('Amount')),
-                      //         DataColumn(label: Text('Order Count')),
-                      //       ],
-                      //       source:
-                      //           orderDataSource ??
-                      //           OrderDataSource(
-                      //             [],
-                      //             0,
-                      //             context,
-                      //             widget.innerNavigatorKey,
-                      //             _rowsPerPage,
-                      //           ),
-                      //     ),
-                      //     Center(child: Text('data')),
-
-                      //     Center(child: Text('data')),
-                      //     Center(child: Text('data')),
-                      //     Center(child: Text('data')),
-                      //     Center(child: Text('data')),
-
-                      //     Center(child: Text('data')),
-
-                      //     Center(child: Text('data')),
-                      //   ],
-                      // ),
                     ),
                   ],
                 ),
@@ -319,6 +284,8 @@ class _OrderScreenState extends State<OrderScreen> {
     );
   }
 }
+
+
 
 class OrderDataSource extends DataTableSource {
   final List<Order> orderList;

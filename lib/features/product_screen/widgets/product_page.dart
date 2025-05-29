@@ -155,21 +155,21 @@ class _ProductPageState extends State<ProductPage>
     await fetchProduct(page: 1);
   }
 
-  void _filterProducts(String query) {
-    setState(() {
-      if (query.isEmpty) {
-        _filteredProducts = product!.results;
-      } else {
-        _filteredProducts =
-            product!.results.where((product) {
-              final name = product.name?.toLowerCase() ?? '';
-              final category = product.category?.name?.toLowerCase() ?? '';
-              return name.contains(query.toLowerCase()) ||
-                  category.contains(query.toLowerCase());
-            }).toList();
-      }
-    });
-  }
+  // void _filterProducts(String query) {
+  //   setState(() {
+  //     if (query.isEmpty) {
+  //       _filteredProducts = product!.results;
+  //     } else {
+  //       _filteredProducts =
+  //           product!.results.where((product) {
+  //             final name = product.name?.toLowerCase() ?? '';
+  //             final category = product.category?.name?.toLowerCase() ?? '';
+  //             return name.contains(query.toLowerCase()) ||
+  //                 category.contains(query.toLowerCase());
+  //           }).toList();
+  //     }
+  //   });
+  // }
 
   void _handleSearch(String query) {
     _searchDebounce?.cancel();

@@ -62,43 +62,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onRefresh: _refreshData,
       child: Scaffold(
         body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
-                child: Text('Dashboard', style: context.inter60024),
-              ),
-              Gap(CustomPadding.paddingLarge),
-              FinancialReturnsWidget(dashboardModel: dashboardModel),
-              Gap(CustomPadding.paddingLarge),
-              Row(
-                children: [
-                  Gap(normalPadding),
+          child: Padding(
+            padding: EdgeInsets.all(normalPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
+                  child: Text('Dashboard', style: context.inter60024),
+                ),
+                Gap(CustomPadding.paddingLarge),
+                FinancialReturnsWidget(dashboardModel: dashboardModel),
+                Gap(normalPadding),
+                Row(
+                  children: [
+                    Gap(normalPadding),
+                    SizedBox(
+                      width: (620 / 1440) * MediaQuery.of(context).size.width,
 
-                  SizedBox(
-                    width: (620 / 1440) * MediaQuery.of(context).size.width,
-
-                    child: Column(
-                      children: [
-                        //TODO data
-                        LineGraphWidget(
-                          data: chartData!.result!.lastSixMonthsData!,
-                        ),
-                      ],
+                      child: Column(
+                        children: [
+                          //TODO data
+                          LineGraphWidget(
+                            data: chartData!.result!.lastSixMonthsData!,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  // Spacer(),
-                  LogisticDataWidget(
-                    data: dashboardModel!,
-                    normalPadding: normalPadding,
-                    tileWidgetBorderRadius: tileWidgetBorderRadius,
-                  ),
+                    // Spacer(),
+                    Gap(normalPadding),
+                    LogisticDataWidget(
+                      data: dashboardModel!,
+                      normalPadding: normalPadding,
+                      tileWidgetBorderRadius: tileWidgetBorderRadius,
+                    ),
 
-                  Gap(CustomPadding.paddingLarge),
-                ],
-              ),
-            ],
+                    Gap(CustomPadding.paddingLarge),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
