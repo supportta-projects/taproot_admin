@@ -76,9 +76,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 SizedBox(
                   width: (620 / 1440) * MediaQuery.of(context).size.width,
 
-                  child: Expanded(
-                    child: Column(children: [LineGraphWidget(data: data)]),
-                  ),
+                  child: Column(children: [LineGraphWidget(data: data)]),
                 ),
                 Spacer(),
                 LogisticDataWidget(
