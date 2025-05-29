@@ -79,15 +79,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SizedBox(
                     width: (620 / 1440) * MediaQuery.of(context).size.width,
 
-                    child: Expanded(
-                      child: Column(
-                        children: [
-                          //TODO data
-                          LineGraphWidget(
-                            data: chartData!.result!.lastSixMonthsData!,
-                          ),
-                        ],
-                      ),
+                    child: Column(
+                      children: [
+                        //TODO data
+                        LineGraphWidget(
+                          data: chartData!.result!.lastSixMonthsData!,
+                        ),
+                      ],
                     ),
                   ),
                   // Spacer(),
