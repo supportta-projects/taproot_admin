@@ -5,7 +5,6 @@ import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_details_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
-import 'package:taproot_admin/features/order_screen/data/order_refund_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_paginated_model.dart';
 
@@ -13,11 +12,14 @@ class OrderService with ErrorExceptionHandler {
   static Future<OrderResponse> getAllOrder({
     int page = 1,
     String? search,
+    String? orderStatus,
   }) async {
     try {
       final queryParameters = {
         'page': page,
         if (search != null && search.isNotEmpty) 'search': search,
+         if (orderStatus != null && orderStatus.isNotEmpty)
+          'orderStatus': orderStatus,
       };
 
       final response = await DioHelper().get(
@@ -209,7 +211,7 @@ class OrderService with ErrorExceptionHandler {
     }
   }
 
-  static Future<RefundResponse> cancelOrder({
+  static Future<Map<String, dynamic>> cancelOrder({
     required String orderId,
     required int refundPercentage,
   }) async {
@@ -220,11 +222,11 @@ class OrderService with ErrorExceptionHandler {
         data: {'refundPercentage': refundPercentage},
       );
 
-      return RefundResponse.fromJson(response.data);
-     
+      return response.data; // This should be the JSON response
     } catch (e) {
       logError('Error canceling order: $e');
       throw OrderService().handleError(e);
     }
   }
+
 }

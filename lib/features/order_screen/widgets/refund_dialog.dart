@@ -10,11 +10,13 @@ import 'package:taproot_admin/widgets/snakbar_helper.dart';
 class RefundDialog extends StatefulWidget {
   final double totalAmount;
   final String orderId;
+  final VoidCallback? onRefresh;
 
   const RefundDialog({
     super.key,
     required this.totalAmount,
     required this.orderId,
+    this.onRefresh,
   });
 
   @override
@@ -26,27 +28,47 @@ class _RefundDialogState extends State<RefundDialog> {
   String selectedRefundType = 'partial';
   double calculatedAmount = 0.0;
   double remainingAmount = 0.0;
-  // Future<void> orderRefund() async {
-  //   final response = await OrderService.cancelOrder(
-  //     orderId: widget.orderId,
-  //     refundPercentage: int.parse(percentageController.text),
-  //   );
-  // }
+  bool isLoading = false;
+
   Future<void> orderRefund() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final response = await OrderService.cancelOrder(
         orderId: widget.orderId,
         refundPercentage: int.parse(percentageController.text),
       );
 
-      if (response.status == true) {
-        SnackbarHelper.showSuccess(context, 'Order cancelled successfully');
-        Navigator.of(context).pop();
-        // widget.onRefresh?.call();
+      if (response['success'] == true) {
+        if (mounted && context.mounted) {
+          SnackbarHelper.showSuccess(
+            context,
+            response['message'] ?? 'Order cancelled successfully.',
+          );
+          SnackbarHelper.showInfo(
+            context,
+            'Amount will be credited to customer’s bank account within 5-7 working days after the refund has processed.',
+          );
+
+          await Future.delayed(const Duration(milliseconds: 500));
+
+          if (mounted && context.mounted) {
+            Navigator.of(context).pop(true);
+            widget.onRefresh?.call();
+          }
+        }
       }
     } catch (e) {
-      SnackbarHelper.showError(context, '$e');
-    
+      if (mounted && context.mounted) {
+        SnackbarHelper.showError(context, e.toString());
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false; // Stop loading regardless of success/failure
+        });
+      }
     }
   }
 
@@ -192,6 +214,7 @@ class _RefundDialogState extends State<RefundDialog> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             MiniLoadingButton(
+              isLoading: isLoading,
               needRow: false,
               useGradient: true,
               text: 'Submit Refund',

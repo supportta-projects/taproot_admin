@@ -34,6 +34,29 @@ class _OrderScreenState extends State<OrderScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   Timer? _debounceTimer;
+  int _currentTabIndex = 0;
+  String getOrderStatusForTab(int tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        return '';
+      case 1:
+        return 'Order Placed';
+      case 2:
+        return 'Shipped';
+      case 3:
+        return 'Completed';
+      case 4:
+        return 'Pending';
+      case 5:
+        return 'Confirmed';
+      case 6:
+        return 'Failed';
+      case 7:
+        return 'Delivered';
+      default:
+        return '';
+    }
+  }
 
   void retryOrder(int index) {
     logInfo('Retrying order $index');
@@ -55,6 +78,7 @@ class _OrderScreenState extends State<OrderScreen> {
       final response = await OrderService.getAllOrder(
         page: currentPage,
         search: _searchQuery,
+        orderStatus: getOrderStatusForTab(_currentTabIndex),
       );
 
       if (!mounted) return;
@@ -106,6 +130,14 @@ class _OrderScreenState extends State<OrderScreen> {
     });
   }
 
+  void handleTabChange(int index) {
+    setState(() {
+      _currentTabIndex = index;
+      currentPage = 1;
+    });
+    fetchAllOrder();
+  }
+
   @override
   void initState() {
     fetchAllOrder();
@@ -124,7 +156,7 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 8,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
@@ -182,6 +214,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       ],
                     ),
                     TabBar(
+                      onTap: handleTabChange,
                       unselectedLabelColor: CustomColors.hintGrey,
 
                       unselectedLabelStyle: context.inter50016,
@@ -195,44 +228,86 @@ class _OrderScreenState extends State<OrderScreen> {
                         Tab(text: 'All'),
                         Tab(text: 'Order Placed'),
                         Tab(text: 'Shipped'),
+                        Tab(text: 'Completed'),
+                        Tab(text: 'Pending'),
+                        Tab(text: 'Confirmed'),
+                        Tab(text: 'Failed'),
                         Tab(text: 'Delivered'),
                       ],
                     ),
                     SizedBox(
                       height: SizeUtils.height * 0.75,
                       child: TabBarView(
-                        children: [
-                          PaginatedDataTable(
-                            key: _tableKey,
-                            dataRowMaxHeight: 60,
-                            rowsPerPage: _rowsPerPage,
-                            initialFirstRowIndex:
-                                (currentPage - 1) * _rowsPerPage,
-                            onPageChanged: handlePageChange,
-                            availableRowsPerPage: const [10, 20, 50],
-                            columns: const [
-                              DataColumn(label: Text('Order ID')),
-                              DataColumn(label: Text('Full Name')),
-                              DataColumn(label: Text('Phone')),
-                              DataColumn(label: Text('Amount')),
-                              DataColumn(label: Text('Order Count')),
-                            ],
-                            source:
-                                orderDataSource ??
-                                OrderDataSource(
-                                  [],
-                                  0,
-                                  context,
-                                  widget.innerNavigatorKey,
-                                  _rowsPerPage,
-                                ),
-                          ),
-                          Center(child: Text('data')),
-
-                          Center(child: Text('data')),
-                          Center(child: Text('data')),
-                        ],
+                        children: List.generate(8, (index) {
+                          return isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : PaginatedDataTable(
+                                key: index == 0 ? _tableKey : null,
+                                dataRowMaxHeight: 60,
+                                rowsPerPage: _rowsPerPage,
+                                initialFirstRowIndex:
+                                    (currentPage - 1) * _rowsPerPage,
+                                onPageChanged: handlePageChange,
+                                availableRowsPerPage: const [10, 20, 50],
+                                columns: const [
+                                  DataColumn(label: Text('Order ID')),
+                                  DataColumn(label: Text('Full Name')),
+                                  DataColumn(label: Text('Phone')),
+                                  DataColumn(label: Text('Amount')),
+                                  DataColumn(label: Text('Order Count')),
+                                ],
+                                source:
+                                    orderDataSource ??
+                                    OrderDataSource(
+                                      [],
+                                      0,
+                                      context,
+                                      widget.innerNavigatorKey,
+                                      _rowsPerPage,
+                                    ),
+                              );
+                        }),
                       ),
+
+                      //  TabBarView(
+                      //   children: [
+                      //     PaginatedDataTable(
+                      //       key: _tableKey,
+                      //       dataRowMaxHeight: 60,
+                      //       rowsPerPage: _rowsPerPage,
+                      //       initialFirstRowIndex:
+                      //           (currentPage - 1) * _rowsPerPage,
+                      //       onPageChanged: handlePageChange,
+                      //       availableRowsPerPage: const [10, 20, 50],
+                      //       columns: const [
+                      //         DataColumn(label: Text('Order ID')),
+                      //         DataColumn(label: Text('Full Name')),
+                      //         DataColumn(label: Text('Phone')),
+                      //         DataColumn(label: Text('Amount')),
+                      //         DataColumn(label: Text('Order Count')),
+                      //       ],
+                      //       source:
+                      //           orderDataSource ??
+                      //           OrderDataSource(
+                      //             [],
+                      //             0,
+                      //             context,
+                      //             widget.innerNavigatorKey,
+                      //             _rowsPerPage,
+                      //           ),
+                      //     ),
+                      //     Center(child: Text('data')),
+
+                      //     Center(child: Text('data')),
+                      //     Center(child: Text('data')),
+                      //     Center(child: Text('data')),
+                      //     Center(child: Text('data')),
+
+                      //     Center(child: Text('data')),
+
+                      //     Center(child: Text('data')),
+                      //   ],
+                      // ),
                     ),
                   ],
                 ),

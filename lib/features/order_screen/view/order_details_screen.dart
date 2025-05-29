@@ -24,6 +24,7 @@ import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/gradient_border_button.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   final dynamic user;
@@ -204,18 +205,20 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         });
 
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(editResponse.message)));
+          SnackbarHelper.showInfo(context, editResponse.message);
+          // ScaffoldMessenger.of(
+          //   context,
+          // ).showSnackBar(SnackBar(content: Text(editResponse.message)));
         }
       }
     } catch (e) {
       logError('Update failed: $e');
       if (mounted) {
         setState(() => isUpdating = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to update order: $e')));
+        SnackbarHelper.showInfo(context, 'Failed to update order: $e');
+        // ScaffoldMessenger.of(
+        //   context,
+        // ).showSnackBar(SnackBar(content: Text('Failed to update order: $e')));
       }
     }
   }
@@ -905,27 +908,32 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           ],
                         ),
                     Gap(CustomPadding.paddingXL.v),
+
                     orderEdit
-                        ? Center(
-                          child: MiniLoadingButton(
-                            needRow: false,
-                            text: 'Cancel Order',
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return RefundDialog(
-                                    orderId: orderDetails!.id,
-                                    totalAmount: calculateGrandTotal(),
+                        ? orderDetails?.paymentStatus.toLowerCase() == 'success'
+                            ? Center(
+                              child: MiniLoadingButton(
+                                needRow: false,
+                                text: 'Cancel Order',
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return RefundDialog(
+                                        onRefresh: getOrderDetails,
+                                        orderId: orderDetails!.id,
+                                        totalAmount: calculateGrandTotal(),
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
 
-                            useGradient: true,
-                            gradientColors: CustomColors.borderGradient.colors,
-                          ),
-                        )
+                                useGradient: true,
+                                gradientColors:
+                                    CustomColors.borderGradient.colors,
+                              ),
+                            )
+                            : SizedBox()
                         : CommonProductContainer(
                           title: 'Payment Details',
                           children: [
