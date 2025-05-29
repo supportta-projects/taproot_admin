@@ -16,6 +16,7 @@ import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart
 import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
 import 'package:taproot_admin/features/product_screen/widgets/view_product.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/not_found_widget.dart';
 
 class ProductPage extends StatefulWidget {
   final VoidCallback addTap;
@@ -274,7 +275,7 @@ class _ProductPageState extends State<ProductPage>
                             tabs: [
                               const Tab(text: 'All'),
                               ...productCategory.map(
-                                (category) => Tab(text: category.name ?? ''),
+                                (category) => Tab(text: category.name),
                               ),
                             ],
                           ),
@@ -311,6 +312,10 @@ class _ProductPageState extends State<ProductPage>
   }
 
   Widget buildProductGrid(List<Product> products) {
+    if (products.isEmpty) {
+      return NotFoundWidget();
+    }
+
     return GridView.builder(
       controller: _scrollController,
       itemCount: products.length + (_hasMoreData ? 1 : 0),
@@ -362,11 +367,12 @@ class _ProductPageState extends State<ProductPage>
           },
           child: Container(
             decoration: BoxDecoration(
+              boxShadow: floatingShadow,
               borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),
-              border: Border.all(
-                width: 2,
-                color: CustomColors.textColorLightGrey,
-              ),
+              // border: Border.all(
+              //   width: 2,
+              //   color: CustomColors.textColorLightGrey,
+              // ),
             ),
             child: Column(
               children: [
@@ -449,4 +455,144 @@ class _ProductPageState extends State<ProductPage>
       },
     );
   }
+
+  // Widget buildProductGrid(List<Product> products) {
+  //   return GridView.builder(
+  //     controller: _scrollController,
+  //     itemCount: products.length + (_hasMoreData ? 1 : 0),
+  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //       childAspectRatio: 2.8,
+  //       crossAxisCount: 2,
+  //       mainAxisSpacing: CustomPadding.paddingXL.v,
+  //       crossAxisSpacing: CustomPadding.paddingXL.v,
+  //     ),
+  //     itemBuilder: (context, index) {
+  //       if (index == products.length) {
+  //         return _isLoadingMore
+  //             ? Center(child: CircularProgressIndicator())
+  //             : SizedBox.shrink();
+  //       }
+
+  //       final productcard = products[index];
+  //       return GestureDetector(
+  //         onTap: () {
+  //           Navigator.of(context)
+  //               .push(
+  //                 MaterialPageRoute(
+  //                   builder:
+  //                       (context) => ViewProduct(
+  //                         product: productcard,
+  //                         images:
+  //                             productcard.productImages!
+  //                                 .map((e) => e.key)
+  //                                 .toList(),
+  //                         onBack: () {
+  //                           Navigator.pop(context);
+  //                         },
+  //                         onEdit: () {
+  //                           Navigator.push(
+  //                             context,
+  //                             MaterialPageRoute(
+  //                               builder:
+  //                                   (context) => EditProduct(
+  //                                     onRefreshProduct: refreshProducts,
+  //                                     product: productcard,
+  //                                   ),
+  //                             ),
+  //                           );
+  //                         },
+  //                       ),
+  //                 ),
+  //               )
+  //               .then((_) => refreshProducts());
+  //         },
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),
+  //             border: Border.all(
+  //               width: 2,
+  //               color: CustomColors.textColorLightGrey,
+  //             ),
+  //           ),
+  //           child: Column(
+  //             children: [
+  //               Gap(CustomPadding.paddingLarge.v),
+  //               Row(
+  //                 children: [
+  //                   Gap(CustomPadding.paddingLarge.v),
+  //                   Expanded(
+  //                     child: Container(
+  //                       decoration: BoxDecoration(
+  //                         color: CustomColors.lightGreen,
+  //                         borderRadius: BorderRadius.circular(
+  //                           CustomPadding.padding.v,
+  //                         ),
+  //                       ),
+  //                       height: 170.v,
+  //                       width: 200.v,
+  //                       child: ClipRRect(
+  //                         borderRadius: BorderRadius.circular(
+  //                           CustomPadding.padding.v,
+  //                         ),
+  //                         child: CachedNetworkImage(
+  //                           imageUrl:
+  //                               '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
+  //                           fit: BoxFit.cover,
+  //                           placeholder:
+  //                               (context, url) => Shimmer.fromColors(
+  //                                 baseColor: Colors.grey[300]!,
+  //                                 highlightColor: Colors.grey[100]!,
+  //                                 child: Container(color: Colors.grey),
+  //                               ),
+  //                           errorWidget:
+  //                               (context, url, error) =>
+  //                                   Icon(Icons.error, color: Colors.red),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Gap(CustomPadding.paddingLarge.v),
+  //                   Expanded(
+  //                     child: Column(
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Text(
+  //                           productcard.name.toString(),
+  //                           style: context.inter50014,
+  //                         ),
+  //                         Gap(CustomPadding.paddingLarge.v),
+  //                         ProductDetaileRow(
+  //                           cardType: productcard.category!.name ?? '',
+  //                           price: productcard.actualPrice.toString(),
+  //                           offerPrice: productcard.salePrice.toString(),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   Gap(CustomPadding.paddingLarge.v),
+  //                 ],
+  //               ),
+  //               Gap(CustomPadding.paddingLarge.v),
+  //               Row(
+  //                 children: [
+  //                   Gap(CustomPadding.paddingLarge.v),
+  //                   Switch(
+  //                     value: enabledList[index],
+  //                     onChanged: (value) {
+  //                       setState(() {
+  //                         enabledList[index] = value;
+  //                       });
+  //                     },
+  //                   ),
+  //                   Gap(CustomPadding.padding.v),
+  //                   enabledList[index] ? Text('Enable') : Text('Disabled'),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }

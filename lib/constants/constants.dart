@@ -157,3 +157,14 @@ String get randomName {
 
 const dummyProfile =
     "https://t3.ftcdn.net/jpg/05/16/27/58/240_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg";
+
+
+
+final List<BoxShadow> floatingShadow = [
+  BoxShadow(
+    color: Colors.black.withValues(alpha: .5),
+    spreadRadius: 1,
+    blurRadius: 10,
+    offset: Offset(0, 6), // Vertical shadow
+  ),
+];
