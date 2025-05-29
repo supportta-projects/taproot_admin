@@ -89,7 +89,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ),
                   ),
-                  Spacer(),
+                  // Spacer(),
                   LogisticDataWidget(
                     data: dashboardModel!,
                     normalPadding: normalPadding,

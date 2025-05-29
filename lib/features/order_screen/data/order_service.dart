@@ -5,6 +5,7 @@ import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_details_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
+import 'package:taproot_admin/features/order_screen/data/order_refund_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_paginated_model.dart';
 
@@ -205,6 +206,25 @@ class OrderService with ErrorExceptionHandler {
       logError('Portfolio check error: $e');
       // Any error (including 404) means no portfolio
       return false;
+    }
+  }
+
+  static Future<RefundResponse> cancelOrder({
+    required String orderId,
+    required int refundPercentage,
+  }) async {
+    try {
+      final response = await DioHelper().patch(
+        '/order/cancel-order/$orderId',
+        type: ApiType.baseUrl,
+        data: {'refundPercentage': refundPercentage},
+      );
+
+      return RefundResponse.fromJson(response.data);
+     
+    } catch (e) {
+      logError('Error canceling order: $e');
+      throw OrderService().handleError(e);
     }
   }
 }

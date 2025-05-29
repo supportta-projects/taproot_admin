@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:intl/intl.dart';
@@ -14,6 +15,7 @@ import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/widgets/image_container_with_head.dart';
 import 'package:taproot_admin/features/order_screen/widgets/image_row_container.dart';
 import 'package:taproot_admin/features/order_screen/widgets/product_card.dart';
+import 'package:taproot_admin/features/order_screen/widgets/refund_dialog.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
@@ -58,6 +60,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   String selectedRefundType = 'full';
   order_details.OrderDetails? orderDetails;
   late Order order;
+  final TextEditingController percentageController = TextEditingController();
+  double calculatedAmount = 0.0;
+  double remainingAmount = 0.0;
   @override
   void initState() {
     order = widget.order;
@@ -908,231 +913,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                             onPressed: () {
                               showDialog(
                                 context: context,
-                                builder: (BuildContext dialogContext) {
-                                  // Use a separate context for dialog
-                                  return StatefulBuilder(
-                                    // Wrap Dialog with StatefulBuilder
-                                    builder: (
-                                      BuildContext context,
-                                      StateSetter setDialogState,
-                                    ) {
-                                      return Dialog(
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                                CustomPadding.paddingXL.v,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: CustomColors.secondaryColor,
-                                            borderRadius: BorderRadius.circular(
-                                              CustomPadding.paddingLarge.v,
-                                            ),
-                                          ),
-                                          width: 700.h,
-                                          height: 400.h,
-                                          child: Column(
-                                            children: [
-                                              Gap(CustomPadding.paddingLarge.v),
-                                              Text(
-                                                'Cancel Order & Initiate Refund',
-                                                style: context.inter60022,
-                                              ),
-                                              Gap(CustomPadding.paddingLarge.v),
-                                              Divider(
-                                                thickness: 1,
-                                                color: CustomColors.textColor,
-                                              ),
-                                              Gap(CustomPadding.paddingLarge.v),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    'You are about to cancel this order. Please choose a refund method below.',
-                                                  ),
-                                                ],
-                                              ),
-                                              Gap(CustomPadding.paddingLarge.v),
-                                              Row(
-                                                children: [
-                                                  // First Radio Group
-                                                  Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Radio<String>(
-                                                            value: 'full',
-                                                            groupValue:
-                                                                selectedRefundType,
-                                                            onChanged: (value) {
-                                                              setDialogState(() {
-                                                                selectedRefundType =
-                                                                    value!;
-                                                              });
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            'Refund Full Amount',
-                                                          ),
-                                                          Gap(
-                                                            CustomPadding
-                                                                .paddingLarge
-                                                                .v,
-                                                          ),
-                                                          Text(
-                                                            '₹1000',
-                                                            style: context
-                                                                .inter50014
-                                                                .copyWith(
-                                                                  color:
-                                                                      CustomColors
-                                                                          .hintGrey,
-                                                                ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-
-                                                  SizedBox(
-                                                    width: 40.v,
-                                                  ), // Increased spacing between radio groups
-                                                  // Second Radio Group
-                                                  Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Radio<String>(
-                                                            value: 'partial',
-                                                            groupValue:
-                                                                selectedRefundType,
-                                                            onChanged: (value) {
-                                                              setDialogState(() {
-                                                                selectedRefundType =
-                                                                    value!;
-                                                              });
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            'Refund Partial Amount',
-                                                          ),
-                                                          Gap(
-                                                            CustomPadding
-                                                                .paddingLarge
-                                                                .v,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Container(
-                                                                width:
-                                                                    50.v, // Adjust width as needed
-                                                                height:
-                                                                    30.v, // Adjust height as needed
-                                                                decoration: BoxDecoration(
-                                                                  color:
-                                                                      CustomColors
-                                                                          .greylight,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                        4.v,
-                                                                      ),
-                                                                ),
-                                                                child: TextFormField(
-                                                                  decoration: InputDecoration(
-                                                                    contentPadding: EdgeInsets.symmetric(
-                                                                      horizontal:
-                                                                          8.v,
-                                                                      vertical:
-                                                                          4.v,
-                                                                    ),
-                                                                    border:
-                                                                        InputBorder
-                                                                            .none,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                ' % of total amount',
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              Spacer(),
-                                              Row(
-                                                children: [
-                                                  Text(' Refund to be sent: ₹'),
-                                                ],
-                                              ),
-
-                                              // Add confirm and cancel buttons
-                                              Gap(CustomPadding.paddingXXL.v),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  MiniLoadingButton(
-                                                    needRow: false,
-                                                    useGradient: true,
-                                                    text: 'Submit Refund',
-                                                    onPressed: () {},
-                                                  ),
-                                                  Gap(
-                                                    CustomPadding.paddingXL.v,
-                                                  ),
-                                                  MiniGradientBorderButton(
-                                                    text: 'Cancel',
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-
-                                                    gradient: LinearGradient(
-                                                      colors:
-                                                          CustomColors
-                                                              .borderGradient
-                                                              .colors,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Gap(CustomPadding.paddingXL.v),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                builder: (BuildContext context) {
+                                  return RefundDialog(
+                                    orderId: orderDetails!.id,
+                                    totalAmount: calculateGrandTotal(),
                                   );
                                 },
                               );
                             },
+
                             useGradient: true,
                             gradientColors: CustomColors.borderGradient.colors,
                           ),
