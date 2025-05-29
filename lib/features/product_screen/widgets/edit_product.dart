@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -51,7 +50,7 @@ class _EditProductState extends State<EditProduct> {
   late String dropdownValue;
 
   List<String> existingImageUrls = [];
-  List<File> selectedImages = [];
+  List<File?> selectedImages = [];
   List<String> uploadedImageKeys = [];
 
   List<ProductCategory> productCategories = [];
@@ -59,6 +58,21 @@ class _EditProductState extends State<EditProduct> {
   final Map<int, String> oldImageKeys = {};
   final Map<int, String> tempUploadedKeys = {};
   void _pickImage({required int index, required bool isExistingUrl}) async {
+    logSuccess('Starting _pickImage:');
+    logSuccess('Index: $index');
+    logSuccess('Is existing: $isExistingUrl');
+    logSuccess(
+      'Current counts - Existing: ${existingImageUrls.length}, New: ${uploadedImageKeys.length}',
+    );
+
+    final totalImages = existingImageUrls.length + uploadedImageKeys.length;
+    if (!isExistingUrl && totalImages >= 4) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Maximum 4 images allowed')));
+      return;
+    }
+
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       allowedExtensions: ['jpg', 'jpeg', 'png'],
@@ -67,54 +81,51 @@ class _EditProductState extends State<EditProduct> {
 
     if (result != null && result.files.isNotEmpty) {
       final pickedFile = result.files.first;
-      final newImage = File(pickedFile.path!);
-      final imageBytes = pickedFile.bytes;
-      final filename = pickedFile.name;
+      if (pickedFile.path != null) {
+        final newImage = File(pickedFile.path!);
+        final imageBytes = pickedFile.bytes;
+        final filename = pickedFile.name;
 
-      if (imageBytes != null) {
-        try {
-          final uploadResult = await ProductService.uploadImageFile(
-            imageBytes,
-            filename,
-          );
+        if (imageBytes != null) {
+          try {
+            final uploadResult = await ProductService.uploadImageFile(
+              imageBytes,
+              filename,
+            );
 
-          setState(() {
-            if (isExistingUrl && index < existingImageUrls.length) {
-              oldImageKeys[index] = existingImageUrls[index];
-              tempUploadedKeys[index] = uploadResult['key'];
+            if (uploadResult['key'] != null) {
+              setState(() {
+                if (isExistingUrl) {
+                  if (index < existingImageUrls.length) {
+                    oldImageKeys[index] = existingImageUrls[index];
+                    tempUploadedKeys[index] = uploadResult['key'];
 
-              if (index >= selectedImages.length) {
-                selectedImages.add(newImage);
-              } else {
-                selectedImages[index] = newImage;
-              }
-            } else {
-              if (index < uploadedImageKeys.length) {
-                uploadedImageKeys[index] = uploadResult['key'];
-              } else {
-                uploadedImageKeys.add(uploadResult['key']);
-              }
+                    while (selectedImages.length <= index) {
+                      selectedImages.add(null);
+                    }
+                    selectedImages[index] = newImage;
+                  }
+                } else {
+                  final newIndex = uploadedImageKeys.length;
+                  uploadedImageKeys.add(uploadResult['key']);
 
-              if (index >= selectedImages.length) {
-                selectedImages.add(newImage);
-              } else {
-                selectedImages[index] = newImage;
-              }
+                  while (selectedImages.length <=
+                      existingImageUrls.length + newIndex) {
+                    selectedImages.add(null);
+                  }
+                  selectedImages[existingImageUrls.length + newIndex] =
+                      newImage;
+                }
+
+                logSuccess('After image pick:');
+                logSuccess('Existing URLs: ${existingImageUrls.length}');
+                logSuccess('Uploaded Keys: ${uploadedImageKeys.length}');
+                logSuccess('Selected Images: ${selectedImages.length}');
+              });
             }
-          });
-
-          logSuccess('Upload successful:');
-          logSuccess('Key: ${uploadResult['key']}');
-          logSuccess('Name: ${uploadResult['name']}');
-          logSuccess('Size: ${uploadResult['size']}');
-          logSuccess('Mimetype: ${uploadResult['mimetype']}');
-        } catch (e) {
-          logError('Image upload failed: $e');
-          setState(() {
-            if (index < selectedImages.length) {
-              selectedImages.removeAt(index);
-            }
-          });
+          } catch (e) {
+            logError('Image upload failed: $e');
+          }
         }
       }
     }
@@ -131,6 +142,10 @@ class _EditProductState extends State<EditProduct> {
   Future<void> updateProduct() async {
     try {
       List<ProductImage> productImages = [];
+      logSuccess('Preparing images for update:');
+      logSuccess('Existing URLs: ${existingImageUrls.length}');
+      logSuccess('Uploaded Keys: ${uploadedImageKeys.length}');
+      logSuccess('Selected Images: ${selectedImages.length}');
 
       for (int i = 0; i < existingImageUrls.length; i++) {
         if (!oldImageKeys.containsKey(i)) {
@@ -139,55 +154,63 @@ class _EditProductState extends State<EditProduct> {
               ?.firstWhere((img) => img.key == imageUrl);
           if (existingImage != null) {
             productImages.add(existingImage);
+            logSuccess('Added existing image: ${existingImage.key}');
           }
         } else {
           String newKey = tempUploadedKeys[i] ?? '';
+          if (newKey.isNotEmpty && selectedImages[i] != null) {
+            int fileSize = selectedImages[i]!.lengthSync();
+            String fileName = newKey.split('/').last;
+            String extension = fileName.split('.').last.toLowerCase();
 
-          int fileSize = selectedImages[i].lengthSync();
-          String fileName = newKey.split('/').last;
+            productImages.add(
+              ProductImage(
+                key: newKey,
+                name: fileName,
+                size: fileSize,
+                mimetype: 'image/$extension',
+              ),
+            );
+            logSuccess('Added replaced image: $newKey');
+          }
+        }
+      }
+
+      for (int i = 0; i < uploadedImageKeys.length; i++) {
+        String key = uploadedImageKeys[i];
+        final actualIndex = existingImageUrls.length + i;
+
+        if (actualIndex < selectedImages.length &&
+            selectedImages[actualIndex] != null) {
+          int fileSize = selectedImages[actualIndex]!.lengthSync();
+          String fileName = key.split('/').last;
           String extension = fileName.split('.').last.toLowerCase();
 
           productImages.add(
             ProductImage(
-              key: newKey,
+              key: key,
               name: fileName,
               size: fileSize,
               mimetype: 'image/$extension',
             ),
           );
+          logSuccess('Added new image: $key');
         }
       }
 
-      for (
-        int i = existingImageUrls.length;
-        i < uploadedImageKeys.length;
-        i++
-      ) {
-        String key = uploadedImageKeys[i];
-
-        int fileSize = selectedImages[i].lengthSync();
-        String fileName = key.split('/').last;
-        String extension = fileName.split('.').last.toLowerCase();
-
-        productImages.add(
-          ProductImage(
-            key: key,
-            name: fileName,
-            size: fileSize,
-            mimetype: 'image/$extension',
-          ),
-        );
-      }
-
-      logSuccess('Final Product Images to be sent:');
+      logSuccess('Total images to be sent: ${productImages.length}');
       for (var img in productImages) {
         logSuccess('''
-          Image ${productImages.indexOf(img)}:
-          - key: ${img.key}
-          - name: ${img.name}
-          - size: ${img.size}
-          - mimetype: ${img.mimetype}
-        ''');
+        Image ${productImages.indexOf(img)}:
+        - key: ${img.key}
+        - name: ${img.name}
+        - size: ${img.size}
+        - mimetype: ${img.mimetype}
+      ''');
+      }
+
+      if (productImages.isEmpty) {
+        throw Exception('At least one image is required');
       }
 
       final response = await ProductService.editProduct(
@@ -232,18 +255,37 @@ class _EditProductState extends State<EditProduct> {
   }
 
   void removeImage({required int index, required bool isExistingUrl}) {
+    logSuccess('Removing image:');
+    logSuccess('Index: $index');
+    logSuccess('Is existing: $isExistingUrl');
+
     setState(() {
-      if (isExistingUrl && index < existingImageUrls.length) {
-        existingImageUrls.removeAt(index);
-      } else if (!isExistingUrl) {
+      if (isExistingUrl) {
+        if (index < existingImageUrls.length) {
+          existingImageUrls.removeAt(index);
+          if (oldImageKeys.containsKey(index)) {
+            oldImageKeys.remove(index);
+            tempUploadedKeys.remove(index);
+          }
+          if (index < selectedImages.length) {
+            selectedImages.removeAt(index);
+          }
+        }
+      } else {
         final newIndex = index - existingImageUrls.length;
-        if (newIndex < selectedImages.length) {
-          selectedImages.removeAt(newIndex);
-          if (newIndex < uploadedImageKeys.length) {
-            uploadedImageKeys.removeAt(newIndex);
+        if (newIndex >= 0 && newIndex < uploadedImageKeys.length) {
+          uploadedImageKeys.removeAt(newIndex);
+          final actualIndex = existingImageUrls.length + newIndex;
+          if (actualIndex < selectedImages.length) {
+            selectedImages.removeAt(actualIndex);
           }
         }
       }
+
+      logSuccess('After removal:');
+      logSuccess('Existing URLs: ${existingImageUrls.length}');
+      logSuccess('Uploaded Keys: ${uploadedImageKeys.length}');
+      logSuccess('Selected Images: ${selectedImages.length}');
     });
   }
 
@@ -279,12 +321,13 @@ class _EditProductState extends State<EditProduct> {
     super.initState();
     fetchTextFieldValue();
     fetchProductCategories();
+    selectedImages = [];
+    existingImageUrls = [];
+    uploadedImageKeys = [];
     if (widget.product?.productImages != null) {
       existingImageUrls =
           widget.product!.productImages!.map((image) => image.key).toList();
     }
-    selectedImages = [];
-    uploadedImageKeys = [];
   }
 
   void fetchTextFieldValue() {
@@ -389,68 +432,102 @@ class _EditProductState extends State<EditProduct> {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: List.generate(4, (index) {
-                      if (index < existingImageUrls.length) {
-                        if (oldImageKeys.containsKey(index)) {
+                    children: [
+                      Builder(
+                        builder: (context) {
+                          logSuccess('Building image grid:');
+                          logSuccess(
+                            'Existing images: ${existingImageUrls.length}',
+                          );
+                          logSuccess(
+                            'Uploaded keys: ${uploadedImageKeys.length}',
+                          );
+                          logSuccess(
+                            'Selected images: ${selectedImages.length}',
+                          );
+                          return const SizedBox.shrink();
+                        },
+                      ),
+
+                      ...List.generate(4, (index) {
+                        if (index < existingImageUrls.length) {
+                          if (oldImageKeys.containsKey(index)) {
+                            return AddImageContainer(
+                              removeImage:
+                                  () => removeImage(
+                                    index: index,
+                                    isExistingUrl: true,
+                                  ),
+                              pickImage:
+                                  () => _pickImage(
+                                    index: index,
+                                    isExistingUrl: true,
+                                  ),
+                              isImageView: true,
+                              selectedImage: selectedImages[index],
+                              imagekey: tempUploadedKeys[index],
+                              path: tempUploadedKeys[index],
+                            );
+                          } else {
+                            return AddImageContainer(
+                              removeImage:
+                                  () => removeImage(
+                                    index: index,
+                                    isExistingUrl: true,
+                                  ),
+                              pickImage:
+                                  () => _pickImage(
+                                    index: index,
+                                    isExistingUrl: true,
+                                  ),
+                              isImageView: true,
+                              path: existingImageUrls[index],
+                            );
+                          }
+                        }
+
+                        final newIndex = index - existingImageUrls.length;
+                        if (newIndex < uploadedImageKeys.length) {
                           return AddImageContainer(
                             removeImage:
                                 () => removeImage(
                                   index: index,
-                                  isExistingUrl: true,
+                                  isExistingUrl: false,
                                 ),
                             pickImage:
                                 () => _pickImage(
                                   index: index,
-                                  isExistingUrl: true,
+                                  isExistingUrl: false,
                                 ),
                             isImageView: true,
-                            selectedImage: selectedImages[index],
-                            imagekey: tempUploadedKeys[index],
-                            path: tempUploadedKeys[index],
+                            selectedImage:
+                                index < selectedImages.length
+                                    ? selectedImages[index]
+                                    : null,
+                            imagekey: uploadedImageKeys[newIndex],
+                            path: uploadedImageKeys[newIndex],
                           );
                         }
 
-                        return AddImageContainer(
-                          removeImage:
-                              () => removeImage(
-                                index: index,
-                                isExistingUrl: true,
-                              ),
-                          pickImage:
-                              () =>
-                                  _pickImage(index: index, isExistingUrl: true),
-                          isImageView: true,
-                          path: existingImageUrls[index],
-                        );
-                      }
+                        if (index < 4 &&
+                            (existingImageUrls.length +
+                                    uploadedImageKeys.length) <
+                                4) {
+                          return AddImageContainer(
+                            removeImage: () {},
+                            pickImage:
+                                () => _pickImage(
+                                  index: index,
+                                  isExistingUrl: false,
+                                ),
+                            isImageView: false,
+                            path: '',
+                          );
+                        }
 
-                      final newImageIndex = index - existingImageUrls.length;
-                      if (newImageIndex < uploadedImageKeys.length) {
-                        return AddImageContainer(
-                          removeImage:
-                              () => removeImage(
-                                index: index,
-                                isExistingUrl: false,
-                              ),
-                          pickImage:
-                              () => _pickImage(
-                                index: index,
-                                isExistingUrl: false,
-                              ),
-                          isImageView: false,
-                          selectedImage: selectedImages[newImageIndex],
-                          imagekey: uploadedImageKeys[newImageIndex],
-                        );
-                      }
-
-                      return AddImageContainer(
-                        removeImage: () {},
-                        pickImage:
-                            () =>
-                                _pickImage(index: index, isExistingUrl: false),
-                        isImageView: false,
-                      );
-                    }),
+                        return const SizedBox.shrink();
+                      }),
+                    ],
                   ),
 
                   Gap(CustomPadding.paddingLarge.v),

@@ -27,17 +27,17 @@ class LogisticDataWidget extends StatelessWidget {
     int completedOrders = data.result.result.deliveredOrder;
     double refundStatusValue = data.result.result.refundAmount;
 
-    return Container(
-      width: (620 / 1440) * MediaQuery.of(context).size.width,
-      padding: EdgeInsets.all(normalPadding),
-      decoration: BoxDecoration(
-        color: CustomColors.secondaryColor,
-        borderRadius: BorderRadius.circular(
-          tileWidgetBorderRadius + normalPadding,
+    return Expanded(
+      child: Container(
+        width: (620 / 1440) * MediaQuery.of(context).size.width,
+        padding: EdgeInsets.all(normalPadding),
+        decoration: BoxDecoration(
+          color: CustomColors.secondaryColor,
+          borderRadius: BorderRadius.circular(
+            tileWidgetBorderRadius + normalPadding,
+          ),
         ),
-      ),
 
-      child: Expanded(
         child: Column(
           spacing: normalPadding,
           children: [
@@ -97,7 +97,9 @@ class LogisticDataWidget extends StatelessWidget {
               tileWidgetBorderRadius: tileWidgetBorderRadius,
               normalPadding: normalPadding,
               numericalColor: CustomColors.totalOrdersCancelled,
-              notifyTrailingWidget: NotifyChipWidget(refundStatusValue: refundStatusValue),
+              notifyTrailingWidget: NotifyChipWidget(
+                refundStatusValue: refundStatusValue,
+              ),
               supportingWidget: Text(
                 'Cancelled Orders',
                 style: supportingTextStyle.copyWith(

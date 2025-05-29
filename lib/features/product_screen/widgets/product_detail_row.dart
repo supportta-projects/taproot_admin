@@ -21,7 +21,7 @@ class ProductDetaileRow extends StatelessWidget {
         Gap(CustomPadding.padding.v),
         Row(children: [Text('Price'), Spacer(), Text('₹$price')]),
         Gap(CustomPadding.padding.v),
-        Row(children: [Text('Discount Price'), Spacer(), Text('₹$offerPrice')]),
+        Row(children: [Text('Discounted Price'), Spacer(), Text('₹$offerPrice')]),
       ],
     );
   }

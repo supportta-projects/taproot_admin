@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -30,6 +31,9 @@ class _OrderScreenState extends State<OrderScreen> {
   final int _rowsPerPage = 10;
   OrderDataSource? orderDataSource;
   final _tableKey = GlobalKey<PaginatedDataTableState>();
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  Timer? _debounceTimer;
 
   void retryOrder(int index) {
     logInfo('Retrying order $index');
@@ -48,7 +52,10 @@ class _OrderScreenState extends State<OrderScreen> {
 
     try {
       logInfo('Fetching page: $currentPage');
-      final response = await OrderService.getAllOrder(page: currentPage);
+      final response = await OrderService.getAllOrder(
+        page: currentPage,
+        search: _searchQuery,
+      );
 
       if (!mounted) return;
 
@@ -84,11 +91,34 @@ class _OrderScreenState extends State<OrderScreen> {
     }
   }
 
+  void handleSearch(String value) {
+    if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        _searchQuery = value;
+        currentPage = 1; // Reset to first page when searching
+      });
+
+      // Reset the PaginatedDataTable's first row index
+      _tableKey.currentState?.pageTo(0);
+
+      fetchAllOrder();
+    });
+  }
+
   @override
   void initState() {
     fetchAllOrder();
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _debounceTimer?.cancel();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -109,7 +139,11 @@ class _OrderScreenState extends State<OrderScreen> {
                     text: 'Create Order',
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => CreateOrder(refreshOrders: fetchAllOrder,)),
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  CreateOrder(refreshOrders: fetchAllOrder),
+                        ),
                       );
                     },
                     useGradient: true,
@@ -140,7 +174,11 @@ class _OrderScreenState extends State<OrderScreen> {
                   children: [
                     Row(
                       children: [
-                        SearchWidget(hintText: 'Search Order ID, Username'),
+                        SearchWidget(
+                          hintText: 'Search Order ID, Username',
+                          controller: _searchController,
+                          onChanged: handleSearch,
+                        ),
                       ],
                     ),
                     TabBar(

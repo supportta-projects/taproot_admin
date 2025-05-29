@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -13,11 +15,13 @@ import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/widgets/image_container_with_head.dart';
 import 'package:taproot_admin/features/order_screen/widgets/image_row_container.dart';
 import 'package:taproot_admin/features/order_screen/widgets/product_card.dart';
+import 'package:taproot_admin/features/order_screen/widgets/refund_dialog.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
+import 'package:taproot_admin/widgets/gradient_border_button.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -53,9 +57,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   Map<String, int> editedQuantities = {};
   add_model.ImageSource? newCompanyLogo;
   add_model.ImageSource? newProfilePhoto;
-
+  String selectedRefundType = 'full';
   order_details.OrderDetails? orderDetails;
   late Order order;
+  final TextEditingController percentageController = TextEditingController();
+  double calculatedAmount = 0.0;
+  double remainingAmount = 0.0;
   @override
   void initState() {
     order = widget.order;
@@ -102,7 +109,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         orderDetails = response.result;
       });
     } catch (e) {
-      logError('Failed to fetch order details: $e');
+      logError(
+        'Failed to fetch order details: $e \nStack Trace: ${StackTrace.current}',
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -480,10 +489,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     orderDetails!.products[index].product
                                             is String
                                         ? ''
-                                        : (orderDetails!.products[index].product
-                                                as order_details.ProductDetails)
-                                            .productImages
-                                            .key,
+                                        : ((orderDetails!
+                                                        .products[index]
+                                                        .product
+                                                    as order_details.ProductDetails)
+                                                .firstImage
+                                                ?.key ??
+                                            ''),
                                 productName:
                                     orderDetails!.products[index].product
                                             is String
@@ -521,6 +533,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     orderDetails!.products[index].quantity,
                                 totalPrice:
                                     orderDetails!.products[index].totalPrice,
+
                                 onQuantityChanged:
                                     orderEdit
                                         ? (newQuantity) {
@@ -557,6 +570,89 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                         }
                                         : null,
                               ),
+
+                              // ProductCard(
+                              //   image:
+                              //       orderDetails!.products[index].product
+                              //               is String
+                              //           ? ''
+                              //           : (orderDetails!.products[index].product
+                              //                   as order_details.ProductDetails)
+                              //               .productImages
+                              //               .key,
+                              //   productName:
+                              //       orderDetails!.products[index].product
+                              //               is String
+                              //           ? 'Product'
+                              //           : (orderDetails!.products[index].product
+                              //                   as order_details.ProductDetails)
+                              //               .name,
+                              //   categoryName:
+                              //       orderDetails!.products[index].product
+                              //               is String
+                              //           ? ''
+                              //           : (orderDetails!.products[index].product
+                              //                   as order_details.ProductDetails)
+                              //               .category
+                              //               .name,
+                              //   orderEdit: orderEdit,
+                              //   price: orderDetails!.products[index].salePrice,
+                              //   discountPrice:
+                              //       orderDetails!.products[index].product
+                              //               is String
+                              //           ? 0
+                              //           : (orderDetails!.products[index].product
+                              //                   as order_details.ProductDetails)
+                              //               .discountedPrice,
+                              //   quantity:
+                              //       editedQuantities[orderDetails!
+                              //                   .products[index]
+                              //                   .product
+                              //               is String
+                              //           ? orderDetails!.products[index].product
+                              //               .toString()
+                              //           : (orderDetails!.products[index].product
+                              //                   as order_details.ProductDetails)
+                              //               .id] ??
+                              //       orderDetails!.products[index].quantity,
+                              //   totalPrice:
+                              //       orderDetails!.products[index].totalPrice,
+                              //   onQuantityChanged:
+                              //       orderEdit
+                              //           ? (newQuantity) {
+                              //             setState(() {
+                              //               String productId =
+                              //                   orderDetails!
+                              //                               .products[index]
+                              //                               .product
+                              //                           is String
+                              //                       ? orderDetails!
+                              //                           .products[index]
+                              //                           .product
+                              //                           .toString()
+                              //                       : (orderDetails!
+                              //                                   .products[index]
+                              //                                   .product
+                              //                               as order_details.ProductDetails)
+                              //                           .id;
+                              //               editedQuantities[productId] =
+                              //                   newQuantity;
+
+                              //               orderDetails!
+                              //                   .products[index] = orderDetails!
+                              //                   .products[index]
+                              //                   .copyWith(
+                              //                     quantity: newQuantity,
+                              //                     totalPrice:
+                              //                         orderDetails!
+                              //                             .products[index]
+                              //                             .salePrice *
+                              //                         newQuantity,
+                              //                   );
+                              //             });
+                              //           }
+                              //           : null,
+                              // ),
                             ),
                           ],
                         ),
@@ -567,7 +663,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       title: 'NFC Card Details',
                       children: [
                         Gap(CustomPadding.paddingLarge.v),
-
                         TextFormContainer(
                           readonly: isEdit ? false : true,
                           labelText: 'Full Name',
@@ -581,54 +676,148 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         ),
                         Gap(CustomPadding.paddingXL.v),
 
-                        Row(
-                          children: [
-                            Gap(CustomPadding.paddingXL.v),
-                            if (orderEdit)
-                              ImageRowContainer(
-                                userCode: orderDetails!.user.id,
-                                title: 'Company Logo',
-                                imageType: 'companyLogo',
-                                onImageChanged: (imageSource) {
-                                  setState(() => newCompanyLogo = imageSource);
-                                },
-                              )
-                            else
-                              ImageContainerWithHead(
-                                heading: 'Company Logo',
-                                orderDetails: orderDetails,
-                                imageKey:
-                                    orderDetails!
-                                        .nfcDetails
-                                        .customerLogo
-                                        .image
-                                        .key,
-                              ),
-                            Gap(CustomPadding.paddingXL.v),
-                            if (orderEdit)
-                              ImageRowContainer(
-                                userCode: orderDetails!.user.id,
-                                title: 'Profile Image',
-                                imageType: 'profilePicture',
-                                onImageChanged: (imageSource) {
-                                  setState(() => newProfilePhoto = imageSource);
-                                },
-                              )
-                            else
-                              ImageContainerWithHead(
-                                heading: 'Profile Image',
-                                orderDetails: orderDetails,
-                                imageKey:
-                                    orderDetails!
-                                        .nfcDetails
-                                        .customerPhoto
-                                        .image
-                                        .key,
-                              ),
-                          ],
-                        ),
+                        // Only show the Row if either editing is enabled or there are images to display
+                        if (orderEdit ||
+                            orderDetails!
+                                .nfcDetails
+                                .customerLogo
+                                .image
+                                .key
+                                .isNotEmpty ||
+                            orderDetails!
+                                .nfcDetails
+                                .customerPhoto
+                                .image
+                                .key
+                                .isNotEmpty)
+                          Row(
+                            children: [
+                              Gap(CustomPadding.paddingXL.v),
+                              if (orderEdit)
+                                ImageRowContainer(
+                                  userCode: orderDetails!.user.id,
+                                  title: 'Company Logo',
+                                  imageType: 'companyLogo',
+                                  onImageChanged: (imageSource) {
+                                    setState(
+                                      () => newCompanyLogo = imageSource,
+                                    );
+                                  },
+                                )
+                              else if (orderDetails!
+                                  .nfcDetails
+                                  .customerLogo
+                                  .image
+                                  .key
+                                  .isNotEmpty)
+                                ImageContainerWithHead(
+                                  heading: 'Company Logo',
+                                  orderDetails: orderDetails,
+                                  imageKey:
+                                      orderDetails!
+                                          .nfcDetails
+                                          .customerLogo
+                                          .image
+                                          .key,
+                                ),
+                              Gap(CustomPadding.paddingXL.v),
+                              if (orderEdit)
+                                ImageRowContainer(
+                                  userCode: orderDetails!.user.id,
+                                  title: 'Profile Image',
+                                  imageType: 'profilePicture',
+                                  onImageChanged: (imageSource) {
+                                    setState(
+                                      () => newProfilePhoto = imageSource,
+                                    );
+                                  },
+                                )
+                              else if (orderDetails!
+                                  .nfcDetails
+                                  .customerPhoto
+                                  .image
+                                  .key
+                                  .isNotEmpty)
+                                ImageContainerWithHead(
+                                  heading: 'Profile Image',
+                                  orderDetails: orderDetails,
+                                  imageKey:
+                                      orderDetails!
+                                          .nfcDetails
+                                          .customerPhoto
+                                          .image
+                                          .key,
+                                ),
+                            ],
+                          ),
                       ],
                     ),
+                    // CommonProductContainer(
+                    //   title: 'NFC Card Details',
+                    //   children: [
+                    //     Gap(CustomPadding.paddingLarge.v),
+
+                    //     TextFormContainer(
+                    //       readonly: isEdit ? false : true,
+                    //       labelText: 'Full Name',
+                    //       initialValue: orderDetails!.nfcDetails.customerName,
+                    //     ),
+                    //     Gap(CustomPadding.paddingLarge.v),
+                    //     TextFormContainer(
+                    //       readonly: isEdit ? false : true,
+                    //       labelText: 'Designation',
+                    //       initialValue: orderDetails!.nfcDetails.designation,
+                    //     ),
+                    //     Gap(CustomPadding.paddingXL.v),
+
+                    //     Row(
+                    //       children: [
+                    //         Gap(CustomPadding.paddingXL.v),
+                    //         if (orderEdit)
+                    //           ImageRowContainer(
+                    //             userCode: orderDetails!.user.id,
+                    //             title: 'Company Logo',
+                    //             imageType: 'companyLogo',
+                    //             onImageChanged: (imageSource) {
+                    //               setState(() => newCompanyLogo = imageSource);
+                    //             },
+                    //           )
+                    //         else
+                    //           ImageContainerWithHead(
+                    //             heading: 'Company Logo',
+                    //             orderDetails: orderDetails,
+                    //             imageKey:
+                    //                 orderDetails!
+                    //                     .nfcDetails
+                    //                     .customerLogo
+                    //                     .image
+                    //                     .key,
+                    //           ),
+                    //         Gap(CustomPadding.paddingXL.v),
+                    //         if (orderEdit)
+                    //           ImageRowContainer(
+                    //             userCode: orderDetails!.user.id,
+                    //             title: 'Profile Image',
+                    //             imageType: 'profilePicture',
+                    //             onImageChanged: (imageSource) {
+                    //               setState(() => newProfilePhoto = imageSource);
+                    //             },
+                    //           )
+                    //         else
+                    //           ImageContainerWithHead(
+                    //             heading: 'Profile Image',
+                    //             orderDetails: orderDetails,
+                    //             imageKey:
+                    //                 orderDetails!
+                    //                     .nfcDetails
+                    //                     .customerPhoto
+                    //                     .image
+                    //                     .key,
+                    //           ),
+                    //       ],
+                    //     ),
+                    //   ],
+                    // ),
                     Gap(CustomPadding.paddingXL.v),
                     orderEdit
                         ? Row(
@@ -718,15 +907,23 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     Gap(CustomPadding.paddingXL.v),
                     orderEdit
                         ? Center(
-                          child: Container(
-                            child: MiniLoadingButton(
-                              needRow: false,
-                              text: 'Cancel Order',
-                              onPressed: () {},
-                              useGradient: true,
-                              gradientColors:
-                                  CustomColors.borderGradient.colors,
-                            ),
+                          child: MiniLoadingButton(
+                            needRow: false,
+                            text: 'Cancel Order',
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return RefundDialog(
+                                    orderId: orderDetails!.id,
+                                    totalAmount: calculateGrandTotal(),
+                                  );
+                                },
+                              );
+                            },
+
+                            useGradient: true,
+                            gradientColors: CustomColors.borderGradient.colors,
                           ),
                         )
                         : CommonProductContainer(

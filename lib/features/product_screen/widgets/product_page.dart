@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +33,9 @@ class _ProductPageState extends State<ProductPage>
   bool _isLoadingMore = false;
   bool _hasMoreData = true;
   bool _isLoading = false;
+  Timer? _searchDebounce;
+  String _currentSearchQuery = '';
 
-  final TextEditingController _searchController = TextEditingController();
   List<Product> _filteredProducts = [];
 
   List<Map<String, Object>> products = [];
@@ -50,6 +53,7 @@ class _ProductPageState extends State<ProductPage>
   List<bool> enabledList = [];
 
   bool viewProduct = false;
+  SortOption _currentSort = SortOption.all;
   @override
   void initState() {
     super.initState();
@@ -96,7 +100,11 @@ class _ProductPageState extends State<ProductPage>
         });
       }
 
-      final response = await ProductService.getProduct(page: page);
+      final response = await ProductService.getProduct(
+        page: page,
+        searchQuery: _currentSearchQuery,
+        sort: _currentSort.apiParameter,
+      );
 
       if (mounted) {
         setState(() {
@@ -122,6 +130,14 @@ class _ProductPageState extends State<ProductPage>
       }
       logError('Error fetching products: $e');
     }
+  }
+
+  void _handleSort(SortOption sortOption) {
+    setState(() {
+      _currentSort = sortOption;
+      _currentPage = 1;
+    });
+    fetchProduct(page: 1);
   }
 
   Future<void> fetchProductCategory() async {
@@ -155,11 +171,23 @@ class _ProductPageState extends State<ProductPage>
     });
   }
 
+  void _handleSearch(String query) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        _currentSearchQuery = query;
+        _currentPage = 1;
+        _hasMoreData = true;
+      });
+      fetchProduct(page: 1);
+    });
+  }
+
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _tabController.dispose();
     _scrollController.dispose();
-    _searchController.dispose();
 
     super.dispose();
   }
@@ -220,10 +248,14 @@ class _ProductPageState extends State<ProductPage>
                             children: [
                               SearchWidget(
                                 hintText: 'Search Template Name',
-                                onChanged: _filterProducts,
+
+                                onChanged: _handleSearch,
                               ),
                               Spacer(),
-                              SortButton(),
+                              SortButton(
+                                currentSort: _currentSort,
+                                onSortChanged: _handleSort,
+                              ),
                             ],
                           ),
                           Gap(CustomPadding.paddingLarge.v),
@@ -386,7 +418,7 @@ class _ProductPageState extends State<ProductPage>
                           ProductDetaileRow(
                             cardType: productcard.category!.name ?? '',
                             price: productcard.actualPrice.toString(),
-                            offerPrice: productcard.discountedPrice.toString(),
+                            offerPrice: productcard.salePrice.toString(),
                           ),
                         ],
                       ),

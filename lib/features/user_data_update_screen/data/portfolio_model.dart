@@ -18,30 +18,66 @@ class PortfolioDataModel {
     required this.user,
     required this.socialMedia,
     required this.services,
-    required this.serviceHeading
+    required this.serviceHeading,
   });
-
   factory PortfolioDataModel.fromJson(Map<String, dynamic> json) {
     final portfolio = json['result']['portfolio'];
 
     return PortfolioDataModel(
-      id: portfolio['_id'],
-      personalInfo: PersonalInfo.fromJson(portfolio['personalInfo']),
-      workInfo: WorkInfo.fromJson(portfolio['workInfo']),
-      addressInfo: AddressInfo.fromJson(portfolio['addressInfo']),
-      about: About.fromJson(portfolio['about']),
-      user: UserInfo.fromJson(portfolio['user']),
+      id: portfolio['_id'] ?? '',
+      personalInfo: PersonalInfo.fromJson(portfolio['personalInfo'] ?? {}),
+      // Add default empty objects for missing fields
+      workInfo: WorkInfo.fromJson(
+        portfolio['workInfo'] ??
+            {
+              'companyName': '',
+              'designation': '',
+              'workEmail': '',
+              'primaryWebsite': '',
+              'secondaryWebsite': '',
+              'companyLogo': null,
+            },
+      ),
+      addressInfo: AddressInfo.fromJson(portfolio['addressInfo'] ?? {}),
+      about: About.fromJson(
+        portfolio['about'] ?? {'heading': '', 'description': ''},
+      ),
+      user: UserInfo.fromJson(portfolio['user'] ?? {}),
       socialMedia:
-          (portfolio['socialMedia'] as List<dynamic>)
-              .map((e) => SocialMedia.fromJson(e))
-              .toList(),
-      serviceHeading: portfolio['serviceHeading'],        
+          (portfolio['socialMedia'] as List<dynamic>?)
+              ?.map((e) => SocialMedia.fromJson(e))
+              .toList() ??
+          [],
+      serviceHeading: portfolio['serviceHeading'] ?? '',
       services:
-          (json['result']['services'] as List<dynamic>)
-              .map((e) => Service.fromJson(e))
-              .toList(),
+          (json['result']['services'] as List<dynamic>?)
+              ?.map((e) => Service.fromJson(e))
+              .toList() ??
+          [],
     );
   }
+
+  // factory PortfolioDataModel.fromJson(Map<String, dynamic> json) {
+  //   final portfolio = json['result']['portfolio'];
+
+  //   return PortfolioDataModel(
+  //     id: portfolio['_id'],
+  //     personalInfo: PersonalInfo.fromJson(portfolio['personalInfo']),
+  //     workInfo: WorkInfo.fromJson(portfolio['workInfo']),
+  //     addressInfo: AddressInfo.fromJson(portfolio['addressInfo']),
+  //     about: About.fromJson(portfolio['about']),
+  //     user: UserInfo.fromJson(portfolio['user']),
+  //     socialMedia:
+  //         (portfolio['socialMedia'] as List<dynamic>)
+  //             .map((e) => SocialMedia.fromJson(e))
+  //             .toList(),
+  //     serviceHeading: portfolio['serviceHeading'],
+  //     services:
+  //         (json['result']['services'] as List<dynamic>)
+  //             .map((e) => Service.fromJson(e))
+  //             .toList(),
+  //   );
+  // }
 
   Map<String, dynamic> toJson() {
     return {
@@ -74,13 +110,12 @@ class PersonalInfo {
     this.profilePicture,
     this.bannerImage,
   });
-
   factory PersonalInfo.fromJson(Map<String, dynamic> json) {
     return PersonalInfo(
-      name: json['name'],
-      email: json['email'],
-      phoneNumber: json['phoneNumber'],
-      whatsappNumber: json['whatsappNumber'],
+      name: json['name'] ?? '',
+      email: json['email'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      whatsappNumber: json['whatsappNumber'] ?? '',
       profilePicture:
           json['profilePicture'] != null
               ? ProductImage.fromJson(json['profilePicture'])
@@ -91,6 +126,23 @@ class PersonalInfo {
               : null,
     );
   }
+
+  // factory PersonalInfo.fromJson(Map<String, dynamic> json) {
+  //   return PersonalInfo(
+  //     name: json['name'],
+  //     email: json['email'],
+  //     phoneNumber: json['phoneNumber'],
+  //     whatsappNumber: json['whatsappNumber'],
+  //     profilePicture:
+  //         json['profilePicture'] != null
+  //             ? ProductImage.fromJson(json['profilePicture'])
+  //             : null,
+  //     bannerImage:
+  //         json['bannerImage'] != null
+  //             ? ProductImage.fromJson(json['bannerImage'])
+  //             : null,
+  //   );
+  // }
 
   Map<String, dynamic> toJson() => {
     'name': name,
@@ -121,8 +173,9 @@ class ProductImage {
   factory ProductImage.fromJson(Map<String, dynamic> json) {
     return ProductImage(
       name: json['name'],
-      key: json['key'],
-      size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,      mimetype: json['mimetype'],
+      key: json['key'] ?? '', // Provide empty string as default
+      size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,
+      mimetype: json['mimetype'],
     );
   }
 
@@ -140,6 +193,37 @@ class ProductImage {
     return null;
   }
 }
+
+// class ProductImage {
+//   final String? name;
+//   final String key;
+//   final int? size;
+//   final String? mimetype;
+
+//   ProductImage({this.name, required this.key, this.size, this.mimetype});
+
+//   factory ProductImage.fromJson(Map<String, dynamic> json) {
+//     return ProductImage(
+//       name: json['name'],
+//       key: json['key'],
+//       size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,      mimetype: json['mimetype'],
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() => {
+//     'name': name,
+//     'key': key,
+//     'size': size?.toString(),
+//     'mimetype': mimetype,
+//   };
+
+//   String? getImageUrl(String baseUrl) {
+//     if (key.isNotEmpty) {
+//       return '$baseUrl/file?key=portfolios/$key';
+//     }
+//     return null;
+//   }
+// }
 
 // class PersonalInfo {
 //   final String name;
@@ -191,20 +275,33 @@ class WorkInfo {
     required this.secondaryWebsite,
     this.companyLogo,
   });
-
   factory WorkInfo.fromJson(Map<String, dynamic> json) {
     return WorkInfo(
-      companyName: json['companyName'],
-      designation: json['designation'],
-      workEmail: json['workEmail'],
-      primaryWebsite: json['primaryWebsite'],
-      secondaryWebsite: json['secondaryWebsite'],
+      companyName: json['companyName'] ?? '',
+      designation: json['designation'] ?? '',
+      workEmail: json['workEmail'] ?? '',
+      primaryWebsite: json['primaryWebsite'] ?? '',
+      secondaryWebsite: json['secondaryWebsite'] ?? '',
       companyLogo:
           json['companyLogo'] != null
               ? ProductImage.fromJson(json['companyLogo'])
               : null,
     );
   }
+
+  // factory WorkInfo.fromJson(Map<String, dynamic> json) {
+  //   return WorkInfo(
+  //     companyName: json['companyName'],
+  //     designation: json['designation'],
+  //     workEmail: json['workEmail'],
+  //     primaryWebsite: json['primaryWebsite'],
+  //     secondaryWebsite: json['secondaryWebsite'],
+  //     companyLogo:
+  //         json['companyLogo'] != null
+  //             ? ProductImage.fromJson(json['companyLogo'])
+  //             : null,
+  //   );
+  // }
 
   Map<String, dynamic> toJson() => {
     'companyName': companyName,
@@ -332,7 +429,7 @@ class Service {
     required this.heading,
     required this.description,
     this.createdAt,
-     this.image,
+    this.image,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -343,8 +440,8 @@ class Service {
       heading: json['heading'],
       description: json['description'],
       createdAt: DateTime.parse(json['createdAt']),
-       image:
-          json['image'] != null ? ProductImage.fromJson(json['image']) : null, 
+      image:
+          json['image'] != null ? ProductImage.fromJson(json['image']) : null,
     );
   }
 
@@ -355,9 +452,9 @@ class Service {
     'heading': heading,
     'description': description,
     'createdAt': createdAt?.toIso8601String(),
-     'image': image?.toJson(),
+    'image': image?.toJson(),
   };
-   String? getImageUrl(String baseUrl) {
+  String? getImageUrl(String baseUrl) {
     if (image?.key != null) {
       return '$baseUrl/file?key=portfolios/portfolio_services/${image!.key}';
     }
