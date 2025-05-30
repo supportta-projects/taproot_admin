@@ -54,7 +54,7 @@ class _ProductPageState extends State<ProductPage>
   List<bool> enabledList = [];
 
   bool viewProduct = false;
-  SortOption _currentSort = SortOption.all;
+  SortOption _currentSort = SortOption.newItem;
   @override
   void initState() {
     super.initState();

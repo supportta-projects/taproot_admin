@@ -3,36 +3,35 @@ import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
-enum SortOption { all, priceAsc, priceDsc, popular, newItem }
+enum SortOption { priceAsc, priceDsc, popular, newItem }
 
 extension SortOptionExtension on SortOption {
   String get apiParameter {
     switch (this) {
-      case SortOption.all:
-        return 'all';
+      case SortOption.newItem:
+        return 'new';
       case SortOption.priceAsc:
         return 'priceAsc';
       case SortOption.priceDsc:
         return 'priceDsc';
       case SortOption.popular:
         return 'popular';
-      case SortOption.newItem:
-        return 'new';
+      // case SortOption.newItem:
+      //   return 'new';
     }
   }
 
   String get displayName {
     switch (this) {
-      case SortOption.all:
-        return 'All';
+      case SortOption.newItem:
+        return 'Newest';
       case SortOption.priceAsc:
         return 'Price: Low to High';
       case SortOption.priceDsc:
         return 'Price: High to Low';
       case SortOption.popular:
         return 'Popular';
-      case SortOption.newItem:
-        return 'Newest';
+      
     }
   }
 }

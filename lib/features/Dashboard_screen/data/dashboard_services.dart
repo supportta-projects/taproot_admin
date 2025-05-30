@@ -6,11 +6,14 @@ import '../../../core/api/dio_helper.dart';
 import '../../../core/api/error_exception_handler.dart';
 
 class DashboardServices with ErrorExceptionHandler {
-  static Future<DashboardModel> getDashData() async {
+  static Future<DashboardModel> getDashData(String? period) async {
     try {
       final response = await DioHelper().get(
         '/dashboard',
         type: ApiType.baseUrl,
+        queryParameters: {
+          'period':period
+        }
       );
       return DashboardModel.fromJson(response.data);
     } catch (e) {

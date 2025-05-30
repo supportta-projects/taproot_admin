@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:taproot_admin/features/users_screen/data/user_data_model.dart'
+    as user_model;
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart'
     as add_model;
@@ -12,16 +13,18 @@ import 'package:taproot_admin/features/order_screen/data/order_details_model.dar
     as order_details;
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
+import 'package:taproot_admin/features/order_screen/data/order_user_model.dart';
 import 'package:taproot_admin/features/order_screen/widgets/image_container_with_head.dart';
 import 'package:taproot_admin/features/order_screen/widgets/image_row_container.dart';
 import 'package:taproot_admin/features/order_screen/widgets/product_card.dart';
 import 'package:taproot_admin/features/order_screen/widgets/refund_dialog.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
+import 'package:taproot_admin/features/user_data_update_screen/views/user_data_update_screen.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
+import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
-import 'package:taproot_admin/widgets/gradient_border_button.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/snakbar_helper.dart';
@@ -60,17 +63,34 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   add_model.ImageSource? newProfilePhoto;
   String selectedRefundType = 'full';
   order_details.OrderDetails? orderDetails;
+  OrderResponseUser? orderUserDetail;
   late Order order;
   final TextEditingController percentageController = TextEditingController();
   double calculatedAmount = 0.0;
   double remainingAmount = 0.0;
+
+  user_model.User convertOrderUserToUser(OrderResponseUser orderUser) {
+    return user_model.User(
+      id: orderUser.result.user.id,
+      fullName: orderUser.result.personalInfo.name, // for display name
+      userId: orderUser.result.user.code ?? '',
+      phone: orderUser.result.personalInfo.phoneNumber,
+      whatsapp: orderUser.result.personalInfo.whatsappNumber,
+      email: orderUser.result.personalInfo.email ?? '',
+      website: '', // Default empty string since it's not in OrderResponseUser
+      isPremium: orderUser.result.user.isPremium,
+    );
+  }
+
   @override
   void initState() {
     order = widget.order;
+
     getOrderDetails().then((_) {
       if (orderDetails != null) {
         fetchExistingData();
         initializeQuantities();
+        getUserData();
       }
     });
 
@@ -113,12 +133,46 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       logError(
         'Failed to fetch order details: $e \nStack Trace: ${StackTrace.current}',
       );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to fetch order details. Please try again.'),
-        ),
+      SnackbarHelper.showError(
+        context,
+        'Failed to fetch order details. Please try again.',
       );
+    }
+  }
+
+  bool isLoadingUser = false;
+
+  Future<void> getUserData() async {
+    try {
+      setState(() => isLoadingUser = true);
+      final response = await OrderService.getOrderedUser(
+        orderId: widget.order.id,
+      );
+
+      if (response != null) {
+        setState(() {
+          orderUserDetail = response;
+        });
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to load user details')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred while loading user details'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isLoadingUser = false);
+      }
     }
   }
 
@@ -352,20 +406,103 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                         spacing: CustomPadding.paddingLarge.v,
                                         children: [
                                           Gap(CustomPadding.padding.v),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Full Name',
+                                                style: context.inter50014
+                                                    .copyWith(
+                                                      color:
+                                                          CustomColors.hintGrey,
+                                                    ),
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                orderUserDetail
+                                                        ?.result
+                                                        .personalInfo
+                                                        .name ??
+                                                    'N/A',
+                                                style: context.inter50014
+                                                    .copyWith(
+                                                      color: CustomColors.green,
+                                                    ),
+                                              ),
+                                              // Text(
+                                              //   orderUserDetail!
+                                              //       .result
+                                              //       .personalInfo
+                                              //       .name,
+                                              //   style: context.inter50014
+                                              //       .copyWith(
+                                              //         color: CustomColors.green,
+                                              //       ),
+                                              // ),
+                                              Gap(CustomPadding.padding.v),
 
-                                          CardRow(
-                                            prefixText: 'Full Name',
-                                            suffixText:
-                                                orderDetails!.personalInfo.name,
-                                            prefixstyle: context.inter50014
-                                                .copyWith(
-                                                  color: CustomColors.hintGrey,
+                                              GestureDetector(
+                                                onTap: () {
+                                                  if (orderUserDetail != null) {
+                                                    try {
+                                                      final userForNavigation =
+                                                          convertOrderUserToUser(
+                                                            orderUserDetail!,
+                                                          );
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (
+                                                                context,
+                                                              ) => UserDataUpdateScreen(
+                                                                user:
+                                                                    userForNavigation,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    } catch (e) {
+                                                      logError(
+                                                        'Navigation error: $e',
+                                                      );
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            'Error navigating to user details: $e',
+                                                          ),
+                                                          duration:
+                                                              const Duration(
+                                                                seconds: 3,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  }
+                                                },
+                                                child: SvgPicture.asset(
+                                                  Assets.svg.link,
                                                 ),
-                                            sufixstyle: context.inter50014
-                                                .copyWith(
-                                                  color: CustomColors.green,
-                                                ),
+                                              ),
+                                            ],
                                           ),
+                                          // CardRow(
+                                          //   prefixText: 'Full Name',
+                                          //   suffixText:
+                                          //       orderUserDetail!
+                                          //           .result
+                                          //           .personalInfo
+                                          //           .name,
+                                          //   // orderDetails!.personalInfo.name,
+                                          //   prefixstyle: context.inter50014
+                                          //       .copyWith(
+                                          //         color: CustomColors.hintGrey,
+                                          //       ),
+                                          // sufixstyle: context.inter50014
+                                          //     .copyWith(
+                                          //       color: CustomColors.green,
+                                          //     ),
+                                          // ),
                                           CardRow(
                                             prefixText: 'Email',
                                             suffixText:
@@ -383,9 +520,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           CardRow(
                                             prefixText: 'Phone Number',
                                             suffixText:
-                                                orderDetails!
+                                                orderUserDetail
+                                                    ?.result
                                                     .personalInfo
-                                                    .phoneNumber,
+                                                    .phoneNumber ??
+                                                'N/A',
+                                            // orderUserDetail!
+                                            //     .result
+                                            //     .personalInfo
+                                            //     .phoneNumber,
+                                            // orderDetails!
+                                            //     .personalInfo
+                                            //     .phoneNumber,
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -398,9 +544,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           CardRow(
                                             prefixText: 'WhatsApp Number',
                                             suffixText:
-                                                orderDetails!
+                                                orderUserDetail
+                                                    ?.result
                                                     .personalInfo
-                                                    .whatsappNumber,
+                                                    .whatsappNumber ??
+                                                'N/A',
+                                            // orderUserDetail!
+                                            //     .result
+                                            //     .personalInfo
+                                            //     .whatsappNumber,
+                                            // orderDetails!
+                                            //     .personalInfo
+                                            //     .whatsappNumber,
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,

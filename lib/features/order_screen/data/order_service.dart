@@ -5,6 +5,7 @@ import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_details_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
+import 'package:taproot_admin/features/order_screen/data/order_user_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_paginated_model.dart';
 
@@ -97,6 +98,25 @@ class OrderService with ErrorExceptionHandler {
       return OrderDetailsResponse.fromJson(response.data);
     } catch (e) {
       throw OrderService().handleError(e);
+    }
+  }
+
+  static Future<OrderResponseUser?> getOrderedUser({
+    required String orderId,
+  }) async {
+    try {
+      final response = await DioHelper().get(
+        '/order/userdetails/$orderId',
+        type: ApiType.baseUrl,
+      );
+
+      if (response.statusCode == 200) {
+        return OrderResponseUser.fromJson(response.data);
+      }
+      return null;
+    } catch (e) {
+      logError('Error in getOrderedUser: $e');
+      return null;
     }
   }
 
