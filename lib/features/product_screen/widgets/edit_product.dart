@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -46,13 +47,14 @@ class _EditProductState extends State<EditProduct> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController discountController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController discountPriceController = TextEditingController();
 
   late String dropdownValue;
 
   List<String> existingImageUrls = [];
   List<File?> selectedImages = [];
   List<String> uploadedImageKeys = [];
-
+  String discountPrice = '';
   List<ProductCategory> productCategories = [];
   ProductCategory? selectedCategory;
   final Map<int, String> oldImageKeys = {};
@@ -139,14 +141,51 @@ class _EditProductState extends State<EditProduct> {
     }
   }
 
-  Future<void> updateProduct() async {
+ Future<void> updateProduct() async {
     try {
+      // Validate inputs
+      if (nameController.text.isEmpty) {
+        throw Exception('Product name is required');
+      }
+      if (priceController.text.isEmpty) {
+        throw Exception('Price is required');
+      }
+      if (discountPriceController.text.isEmpty) {
+        throw Exception('Discount percentage is required');
+      }
+      if (descriptionController.text.isEmpty) {
+        throw Exception('Description is required');
+      }
+      if (selectedCategory == null) {
+        throw Exception('Please select a category');
+      }
+
+      // Parse the actual price and discount percentage
+      final actualPrice = double.parse(priceController.text.trim());
+      final discountPercentage = double.parse(
+        discountPriceController.text.trim(),
+      );
+
+      // Validate price and discount
+      if (actualPrice <= 0) {
+        throw Exception('Price must be greater than 0');
+      }
+      if (discountPercentage < 0 || discountPercentage > 99) {
+        throw Exception('Discount percentage must be between 0 and 99');
+      }
+
+      // Calculate the discount amount and sale price
+      final discountAmount = (actualPrice * discountPercentage) / 100;
+      final salePrice = actualPrice - discountAmount;
+
+      // Prepare product images
       List<ProductImage> productImages = [];
       logSuccess('Preparing images for update:');
       logSuccess('Existing URLs: ${existingImageUrls.length}');
       logSuccess('Uploaded Keys: ${uploadedImageKeys.length}');
       logSuccess('Selected Images: ${selectedImages.length}');
 
+      // Handle existing images
       for (int i = 0; i < existingImageUrls.length; i++) {
         if (!oldImageKeys.containsKey(i)) {
           String imageUrl = existingImageUrls[i];
@@ -176,6 +215,7 @@ class _EditProductState extends State<EditProduct> {
         }
       }
 
+      // Handle new images
       for (int i = 0; i < uploadedImageKeys.length; i++) {
         String key = uploadedImageKeys[i];
         final actualIndex = existingImageUrls.length + i;
@@ -198,32 +238,35 @@ class _EditProductState extends State<EditProduct> {
         }
       }
 
-      logSuccess('Total images to be sent: ${productImages.length}');
-      for (var img in productImages) {
-        logSuccess('''
-        Image ${productImages.indexOf(img)}:
-        - key: ${img.key}
-        - name: ${img.name}
-        - size: ${img.size}
-        - mimetype: ${img.mimetype}
-      ''');
-      }
-
+      // Validate images
       if (productImages.isEmpty) {
         throw Exception('At least one image is required');
       }
 
+      // Log the update request details
+      logSuccess('Updating product with:');
+      logSuccess('Name: ${nameController.text.trim()}');
+      logSuccess('Price: $actualPrice');
+      logSuccess('Discount Percentage: $discountPercentage');
+      logSuccess('Discount Amount: $discountAmount');
+      logSuccess('Sale Price: $salePrice');
+      logSuccess('Category: ${selectedCategory?.id}');
+      logSuccess('Images count: ${productImages.length}');
+
+      // Make the API call
       final response = await ProductService.editProduct(
         productId: widget.product!.id.toString(),
         name: nameController.text.trim(),
-        actualPrice: double.parse(priceController.text.trim()),
-        discountPrice: double.parse(discountController.text.trim()),
+        actualPrice: actualPrice,
+        discountPrice: salePrice, // Send the sale price as discountPrice
+        discountPercentage: discountPercentage, // Add this parameter
         productImages: productImages,
         description: descriptionController.text.trim(),
         categoryId: selectedCategory?.id,
       );
 
       if (response.success) {
+        // Clean up old images
         for (var oldKey in oldImageKeys.values) {
           try {
             await ProductService.deleteImage(ProductImage(key: oldKey));
@@ -253,6 +296,391 @@ class _EditProductState extends State<EditProduct> {
       );
     }
   }
+
+
+  // Future<void> updateProduct() async {
+  //   try {
+  //     // Validate inputs
+  //     if (nameController.text.isEmpty) {
+  //       throw Exception('Product name is required');
+  //     }
+  //     if (priceController.text.isEmpty) {
+  //       throw Exception('Price is required');
+  //     }
+  //     if (discountPriceController.text.isEmpty) {
+  //       throw Exception('Discount percentage is required');
+  //     }
+  //     if (descriptionController.text.isEmpty) {
+  //       throw Exception('Description is required');
+  //     }
+  //     if (selectedCategory == null) {
+  //       throw Exception('Please select a category');
+  //     }
+
+  //     // Parse the actual price and discount percentage
+  //     final actualPrice = double.parse(priceController.text.trim());
+  //     final discountPercentage = double.parse(
+  //       discountPriceController.text.trim(),
+  //     );
+
+  //     // Validate price and discount
+  //     if (actualPrice <= 0) {
+  //       throw Exception('Price must be greater than 0');
+  //     }
+  //     if (discountPercentage < 0 || discountPercentage > 99) {
+  //       throw Exception('Discount percentage must be between 0 and 99');
+  //     }
+
+  //     // Prepare product images
+  //     List<ProductImage> productImages = [];
+
+  //     // Handle existing images
+  //     for (int i = 0; i < existingImageUrls.length; i++) {
+  //       if (!oldImageKeys.containsKey(i)) {
+  //         String imageUrl = existingImageUrls[i];
+  //         ProductImage? existingImage = widget.product?.productImages
+  //             ?.firstWhere((img) => img.key == imageUrl);
+  //         if (existingImage != null) {
+  //           productImages.add(existingImage);
+  //           logSuccess('Added existing image: ${existingImage.key}');
+  //         }
+  //       } else {
+  //         String newKey = tempUploadedKeys[i] ?? '';
+  //         if (newKey.isNotEmpty && selectedImages[i] != null) {
+  //           int fileSize = selectedImages[i]!.lengthSync();
+  //           String fileName = newKey.split('/').last;
+  //           String extension = fileName.split('.').last.toLowerCase();
+
+  //           productImages.add(
+  //             ProductImage(
+  //               key: newKey,
+  //               name: fileName,
+  //               size: fileSize,
+  //               mimetype: 'image/$extension',
+  //             ),
+  //           );
+  //           logSuccess('Added replaced image: $newKey');
+  //         }
+  //       }
+  //     }
+
+  //     // Handle new images
+  //     for (int i = 0; i < uploadedImageKeys.length; i++) {
+  //       String key = uploadedImageKeys[i];
+  //       final actualIndex = existingImageUrls.length + i;
+
+  //       if (actualIndex < selectedImages.length &&
+  //           selectedImages[actualIndex] != null) {
+  //         int fileSize = selectedImages[actualIndex]!.lengthSync();
+  //         String fileName = key.split('/').last;
+  //         String extension = fileName.split('.').last.toLowerCase();
+
+  //         productImages.add(
+  //           ProductImage(
+  //             key: key,
+  //             name: fileName,
+  //             size: fileSize,
+  //             mimetype: 'image/$extension',
+  //           ),
+  //         );
+  //         logSuccess('Added new image: $key');
+  //       }
+  //     }
+
+  //     // Validate images
+  //     if (productImages.isEmpty) {
+  //       throw Exception('At least one image is required');
+  //     }
+
+  //     // Log the update request details
+  //     logSuccess('Updating product with:');
+  //     logSuccess('Name: ${nameController.text.trim()}');
+  //     logSuccess('Price: $actualPrice');
+  //     logSuccess('Discount Percentage: $discountPercentage');
+  //     logSuccess('Category: ${selectedCategory?.id}');
+  //     logSuccess('Images count: ${productImages.length}');
+
+  //     // Make the API call
+  //     final response = await ProductService.editProduct(
+  //       productId: widget.product!.id.toString(),
+  //       name: nameController.text.trim(),
+  //       actualPrice: actualPrice,
+  //       discountPrice: discountPercentage, // Sending percentage directly
+  //       productImages: productImages,
+  //       description: descriptionController.text.trim(),
+  //       categoryId: selectedCategory?.id,
+  //     );
+
+  //     if (response.success) {
+  //       // Clean up old images
+  //       for (var oldKey in oldImageKeys.values) {
+  //         try {
+  //           await ProductService.deleteImage(ProductImage(key: oldKey));
+  //           logSuccess('Old image deleted: $oldKey');
+  //         } catch (e) {
+  //           logError('Failed to delete old image: $e');
+  //           // Continue with the process even if image deletion fails
+  //         }
+  //       }
+
+  //       // Clear temporary storage
+  //       oldImageKeys.clear();
+  //       tempUploadedKeys.clear();
+
+  //       // Show success message
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Product updated successfully')),
+  //       );
+
+  //       // Navigate back and refresh product list
+  //       Navigator.pop(context);
+  //       widget.onRefreshProduct();
+  //     } else {
+  //       throw Exception(response.message);
+  //     }
+  //   } catch (e) {
+  //     // Handle errors
+  //     logError('Error updating product: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(e.toString().replaceAll('Exception:', '').trim()),
+  //       ),
+  //     );
+  //   }
+  // }
+
+  // Future<void> updateProduct() async {
+  //   try {
+  //     // Validate inputs
+  //     if (priceController.text.isEmpty ||
+  //         discountPriceController.text.isEmpty) {
+  //       throw Exception('Price and discount percentage are required');
+  //     }
+
+  //     // Parse the actual price and discount percentage
+  //     final actualPrice = double.parse(priceController.text.trim());
+  //     final discountPercentage = double.parse(
+  //       discountPriceController.text.trim(),
+  //     );
+
+  //     // Calculate the discounted price
+  //     final calculatedDiscountPrice = actualPrice * (discountPercentage / 100);
+
+  //     List<ProductImage> productImages = [];
+  //     logSuccess('Preparing images for update:');
+  //     logSuccess('Existing URLs: ${existingImageUrls.length}');
+  //     logSuccess('Uploaded Keys: ${uploadedImageKeys.length}');
+  //     logSuccess('Selected Images: ${selectedImages.length}');
+
+  //     for (int i = 0; i < existingImageUrls.length; i++) {
+  //       if (!oldImageKeys.containsKey(i)) {
+  //         String imageUrl = existingImageUrls[i];
+  //         ProductImage? existingImage = widget.product?.productImages
+  //             ?.firstWhere((img) => img.key == imageUrl);
+  //         if (existingImage != null) {
+  //           productImages.add(existingImage);
+  //           logSuccess('Added existing image: ${existingImage.key}');
+  //         }
+  //       } else {
+  //         String newKey = tempUploadedKeys[i] ?? '';
+  //         if (newKey.isNotEmpty && selectedImages[i] != null) {
+  //           int fileSize = selectedImages[i]!.lengthSync();
+  //           String fileName = newKey.split('/').last;
+  //           String extension = fileName.split('.').last.toLowerCase();
+
+  //           productImages.add(
+  //             ProductImage(
+  //               key: newKey,
+  //               name: fileName,
+  //               size: fileSize,
+  //               mimetype: 'image/$extension',
+  //             ),
+  //           );
+  //           logSuccess('Added replaced image: $newKey');
+  //         }
+  //       }
+  //     }
+
+  //     for (int i = 0; i < uploadedImageKeys.length; i++) {
+  //       String key = uploadedImageKeys[i];
+  //       final actualIndex = existingImageUrls.length + i;
+
+  //       if (actualIndex < selectedImages.length &&
+  //           selectedImages[actualIndex] != null) {
+  //         int fileSize = selectedImages[actualIndex]!.lengthSync();
+  //         String fileName = key.split('/').last;
+  //         String extension = fileName.split('.').last.toLowerCase();
+
+  //         productImages.add(
+  //           ProductImage(
+  //             key: key,
+  //             name: fileName,
+  //             size: fileSize,
+  //             mimetype: 'image/$extension',
+  //           ),
+  //         );
+  //         logSuccess('Added new image: $key');
+  //       }
+  //     }
+
+  //     if (productImages.isEmpty) {
+  //       throw Exception('At least one image is required');
+  //     }
+
+  //     final response = await ProductService.editProduct(
+  //       productId: widget.product!.id.toString(),
+  //       name: nameController.text.trim(),
+  //       actualPrice: actualPrice,
+  //       discountPrice: calculatedDiscountPrice,
+  //       productImages: productImages,
+  //       description: descriptionController.text.trim(),
+  //       categoryId: selectedCategory?.id,
+  //     );
+
+  //     if (response.success) {
+  //       for (var oldKey in oldImageKeys.values) {
+  //         try {
+  //           await ProductService.deleteImage(ProductImage(key: oldKey));
+  //           logSuccess('Old image deleted: $oldKey');
+  //         } catch (e) {
+  //           logError('Failed to delete old image: $e');
+  //         }
+  //       }
+
+  //       oldImageKeys.clear();
+  //       tempUploadedKeys.clear();
+
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Product updated successfully')),
+  //       );
+  //       Navigator.pop(context);
+  //       widget.onRefreshProduct();
+  //     } else {
+  //       throw Exception(response.message);
+  //     }
+  //   } catch (e) {
+  //     logError('Error updating product: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(e.toString().replaceAll('Exception:', '').trim()),
+  //       ),
+  //     );
+  //   }
+  // }
+  // Future<void> updateProduct() async {
+  //   try {
+  //     List<ProductImage> productImages = [];
+  //     logSuccess('Preparing images for update:');
+  //     logSuccess('Existing URLs: ${existingImageUrls.length}');
+  //     logSuccess('Uploaded Keys: ${uploadedImageKeys.length}');
+  //     logSuccess('Selected Images: ${selectedImages.length}');
+
+  //     for (int i = 0; i < existingImageUrls.length; i++) {
+  //       if (!oldImageKeys.containsKey(i)) {
+  //         String imageUrl = existingImageUrls[i];
+  //         ProductImage? existingImage = widget.product?.productImages
+  //             ?.firstWhere((img) => img.key == imageUrl);
+  //         if (existingImage != null) {
+  //           productImages.add(existingImage);
+  //           logSuccess('Added existing image: ${existingImage.key}');
+  //         }
+  //       } else {
+  //         String newKey = tempUploadedKeys[i] ?? '';
+  //         if (newKey.isNotEmpty && selectedImages[i] != null) {
+  //           int fileSize = selectedImages[i]!.lengthSync();
+  //           String fileName = newKey.split('/').last;
+  //           String extension = fileName.split('.').last.toLowerCase();
+
+  //           productImages.add(
+  //             ProductImage(
+  //               key: newKey,
+  //               name: fileName,
+  //               size: fileSize,
+  //               mimetype: 'image/$extension',
+  //             ),
+  //           );
+  //           logSuccess('Added replaced image: $newKey');
+  //         }
+  //       }
+  //     }
+
+  //     for (int i = 0; i < uploadedImageKeys.length; i++) {
+  //       String key = uploadedImageKeys[i];
+  //       final actualIndex = existingImageUrls.length + i;
+
+  //       if (actualIndex < selectedImages.length &&
+  //           selectedImages[actualIndex] != null) {
+  //         int fileSize = selectedImages[actualIndex]!.lengthSync();
+  //         String fileName = key.split('/').last;
+  //         String extension = fileName.split('.').last.toLowerCase();
+
+  //         productImages.add(
+  //           ProductImage(
+  //             key: key,
+  //             name: fileName,
+  //             size: fileSize,
+  //             mimetype: 'image/$extension',
+  //           ),
+  //         );
+  //         logSuccess('Added new image: $key');
+  //       }
+  //     }
+
+  //     logSuccess('Total images to be sent: ${productImages.length}');
+  //     for (var img in productImages) {
+  //       logSuccess('''
+  //       Image ${productImages.indexOf(img)}:
+  //       - key: ${img.key}
+  //       - name: ${img.name}
+  //       - size: ${img.size}
+  //       - mimetype: ${img.mimetype}
+  //     ''');
+  //     }
+
+  //     if (productImages.isEmpty) {
+  //       throw Exception('At least one image is required');
+  //     }
+
+  //     final response = await ProductService.editProduct(
+  //       productId: widget.product!.id.toString(),
+  //       name: nameController.text.trim(),
+  //       actualPrice: double.parse(priceController.text.trim()),
+  //       discountPrice: double.parse(discountPriceController.text.trim()),
+  //       productImages: productImages,
+  //       description: descriptionController.text.trim(),
+  //       categoryId: selectedCategory?.id,
+  //     );
+
+  //     if (response.success) {
+  //       for (var oldKey in oldImageKeys.values) {
+  //         try {
+  //           await ProductService.deleteImage(ProductImage(key: oldKey));
+  //           logSuccess('Old image deleted: $oldKey');
+  //         } catch (e) {
+  //           logError('Failed to delete old image: $e');
+  //         }
+  //       }
+
+  //       oldImageKeys.clear();
+  //       tempUploadedKeys.clear();
+
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Product updated successfully')),
+  //       );
+  //       Navigator.pop(context);
+  //       widget.onRefreshProduct();
+  //     } else {
+  //       throw Exception(response.message);
+  //     }
+  //   } catch (e) {
+  //     logError('Error updating product: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text(e.toString().replaceAll('Exception:', '').trim()),
+  //       ),
+  //     );
+  //   }
+  // }
 
   void removeImage({required int index, required bool isExistingUrl}) {
     logSuccess('Removing image:');
@@ -333,7 +761,8 @@ class _EditProductState extends State<EditProduct> {
   void fetchTextFieldValue() {
     nameController.text = widget.product!.name.toString();
     priceController.text = widget.product!.actualPrice.toString();
-    discountController.text = widget.product!.discountedPrice.toString();
+    discountPriceController.text =
+        widget.product!.discountPercentage.toString();
     descriptionController.text = widget.product!.description.toString();
   }
 
@@ -544,11 +973,73 @@ class _EditProductState extends State<EditProduct> {
                       ),
                       Expanded(
                         child: TextFormContainer(
-                          controller: discountController,
-
-                          labelText: 'Discount',
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(2),
+                          ],
+                          controller: discountPriceController,
+                          suffixText: '%',
+                          labelText: 'Discount Percentage',
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              final percentage = int.tryParse(value);
+                              if (percentage != null &&
+                                  percentage >= 0 &&
+                                  percentage <= 99) {
+                                setState(() {
+                                  discountPrice = value;
+                                });
+                              }
+                            }
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a discount percentage';
+                            }
+                            final percentage = int.tryParse(value);
+                            if (percentage == null ||
+                                percentage < 0 ||
+                                percentage > 99) {
+                              return 'Please enter a percentage between 0 and 99';
+                            }
+                            return null;
+                          },
                         ),
                       ),
+                      // Expanded(
+                      //   child: TextFormContainer(
+                      //     inputFormatters: [
+                      //       FilteringTextInputFormatter.digitsOnly,
+                      //       LengthLimitingTextInputFormatter(2),
+                      //     ],
+                      //     controller: discountPriceController,
+                      //     suffixText: '%',
+                      //     initialValue: '',
+                      //     labelText: 'Discount Percentage',
+                      //     onChanged: (value) {
+                      //       discountPrice = value;
+                      //     },
+                      //     validator: (value) {
+                      //       if (value == null || value.isEmpty) {
+                      //         return 'Please enter a discount percentage';
+                      //       }
+                      //       final percentage = int.tryParse(value);
+                      //       if (percentage == null ||
+                      //           percentage < 1 ||
+                      //           percentage > 99) {
+                      //         return 'Please enter a percentage between 1 and 99';
+                      //       }
+                      //       return null;
+                      //     },
+                      //   ),
+                      // ),
+                      // Expanded(
+                      //   child: TextFormContainer(
+                      //     controller: discountController,
+
+                      //     labelText: 'Discount',
+                      //   ),
+                      // ),
                     ],
                   ),
                   Row(

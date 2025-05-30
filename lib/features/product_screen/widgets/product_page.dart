@@ -348,17 +348,21 @@ class _ProductPageState extends State<ProductPage>
                           onBack: () {
                             Navigator.pop(context);
                           },
-                          onEdit: () {
+                          onEdit: () async {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder:
                                     (context) => EditProduct(
-                                      onRefreshProduct: refreshProducts,
+                                      onRefreshProduct: () async {
+                                        await refreshProducts();
+                                      },
+                                      // onRefreshProduct: refreshProducts,
                                       product: productcard,
                                     ),
                               ),
                             );
+                            await refreshProducts();
                           },
                         ),
                   ),

@@ -189,6 +189,7 @@ class ProductService with ErrorExceptionHandler {
     String? description,
     double? actualPrice,
     double? discountPrice,
+    double? discountPercentage,
     List<ProductImage>? productImages,
     required String productId,
   }) async {
@@ -199,6 +200,8 @@ class ProductService with ErrorExceptionHandler {
         if (description != null) 'description': description,
         if (actualPrice != null) 'actualPrice': actualPrice,
         if (discountPrice != null) 'discountPrice': discountPrice,
+          if (discountPercentage != null)
+          'discountPercentage': discountPercentage,
         if (productImages != null && productImages.isNotEmpty)
           'productImages':
               productImages

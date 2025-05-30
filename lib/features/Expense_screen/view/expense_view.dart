@@ -40,6 +40,38 @@ class _ExpenseViewState extends State<ExpenseView> {
     _fetchExpenses();
   }
 
+  Future<void> _fetchExpensesWithDate(String? pickedDate) async {
+    setState(() => _isLoading = true);
+    try {
+      logInfo('Fetching page: $_currentPage');
+      final response = await ExpenseService.getExpense(
+        _currentPage,
+        category: _currentCategory,
+        searchQuery: searchQuery,
+        startDate: pickedDate,
+      );
+      logInfo(
+        'Response received: ${response.results.length} items, Total pages: ${response.totalPages}',
+      );
+
+      if (mounted) {
+        setState(() {
+          _expenseResponse = response;
+          _expenses = response.results;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      logError('Error fetching expenses: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error loading expenses: $e')));
+      }
+    }
+  }
+
   Future<void> _fetchExpenses() async {
     setState(() => _isLoading = true);
     try {
@@ -134,7 +166,45 @@ class _ExpenseViewState extends State<ExpenseView> {
                         Spacer(),
                         // SortButton(),
                         Gap(CustomPadding.padding.v),
-                        FilterButton(),
+                        GestureDetector(
+                          onTap: () {
+                            showDatePicker(
+                              context: context,
+                              firstDate: DateTime.utc(2024),
+                              lastDate: DateTime.now(),
+                            ).then((selectedDate) {
+                              _fetchExpensesWithDate(selectedDate.toString());
+
+                              if (selectedDate != null) {
+                                // Handle the selected date here
+                                logInfo('Selected date: $selectedDate');
+                              }
+                            });
+                          },
+                          child: Container(
+                            width: 110.v,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                CustomPadding.paddingXXL.v,
+                              ),
+                              border: Border.all(
+                                color: CustomColors.textColorLightGrey,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Filter', style: context.inter50014),
+                                Gap(CustomPadding.padding.v),
+                                Icon(
+                                  LucideIcons.filter,
+                                  color: CustomColors.textColorGrey,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
 

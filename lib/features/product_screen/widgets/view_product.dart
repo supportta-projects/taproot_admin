@@ -16,6 +16,7 @@ class ViewProduct extends StatefulWidget {
   final String? description;
   final String? cardType;
   final List<String>? images;
+  //  final Future<void> Function() onRefresh;
   final VoidCallback onBack;
   final VoidCallback onEdit;
   const ViewProduct({
@@ -25,6 +26,7 @@ class ViewProduct extends StatefulWidget {
     this.images,
     this.productName,
     this.price,
+    // required this.onRefresh,
     this.offerPrice,
     this.description,
     this.cardType,
@@ -37,7 +39,22 @@ class ViewProduct extends StatefulWidget {
 
 class _ViewProductState extends State<ViewProduct> {
   bool isEdit = false;
+    // Product? currentProduct;
   // bool viewProduct=false;
+
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//         currentProduct = widget.product;
+// refreshProduct();
+//     super.initState();
+//   }
+//   Future<void> refreshProduct() async {
+//     await widget.onRefresh();
+//     setState(() {
+//       // Update the current product if needed
+//     });
+//   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,12 +156,11 @@ class _ViewProductState extends State<ViewProduct> {
                       ),
                       CardRow(
                         prefixText: 'Price',
-                        suffixText: "₹${widget.product!.actualPrice} / \$5.00",
+                        suffixText: "₹${widget.product!.actualPrice}",
                       ),
                       CardRow(
-                        prefixText: 'Discount Price',
-                        suffixText:
-                            "₹${widget.product!.discountedPrice} / \$4.00",
+                        prefixText: 'Discounted Price',
+                        suffixText: "₹${widget.product!.salePrice} ",
                       ),
                       CardRow(
                         prefixText: 'Design Type',
