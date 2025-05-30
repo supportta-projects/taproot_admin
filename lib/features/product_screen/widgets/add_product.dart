@@ -214,7 +214,7 @@ class _AddProductState extends State<AddProduct> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ProductIdContainer(),
+                    ProductIdContainer(productId: 'Product ID'),
                     Gap(CustomPadding.paddingXL.v),
                     Row(
                       children: List.generate(4, (index) {

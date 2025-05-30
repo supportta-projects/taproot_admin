@@ -391,7 +391,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
     );
   }
 }
-
 class AddImageContainer extends StatefulWidget {
   final ProductImage? initialImage;
   final Function(ProductImage?) onImageSelected;
@@ -419,6 +418,18 @@ class _AddImageContainerState extends State<AddImageContainer> {
   void initState() {
     super.initState();
     currentImage = widget.initialImage;
+    print('InitState - Current Image Key: ${currentImage?.key}');
+  }
+
+  @override
+  void didUpdateWidget(AddImageContainer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialImage?.key != oldWidget.initialImage?.key) {
+      setState(() {
+        currentImage = widget.initialImage;
+        print('DidUpdateWidget - New Image Key: ${currentImage?.key}');
+      });
+    }
   }
 
   Future<void> pickFile() async {
@@ -490,18 +501,34 @@ class _AddImageContainerState extends State<AddImageContainer> {
 
   Widget _buildPreview() {
     if (currentImage != null) {
+      final imageUrl =
+          '${widget.baseUrl}/file?key=portfolios/portfolio_services/${currentImage!.key}';
+      print('Building preview with URL: $imageUrl');
+
       return Stack(
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(16),
             child: Image.network(
-              '${widget.baseUrl}/file?key=portfolios/portfolio_services/${currentImage!.key}',
+              imageUrl,
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
               errorBuilder: (context, error, stackTrace) {
                 print('Image Error: $error');
                 return const Center(child: Icon(Icons.error));
+              },
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value:
+                        loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                  ),
+                );
               },
             ),
           ),
@@ -571,3 +598,183 @@ class _AddImageContainerState extends State<AddImageContainer> {
     );
   }
 }
+
+// class AddImageContainer extends StatefulWidget {
+//   final ProductImage? initialImage;
+//   final Function(ProductImage?) onImageSelected;
+//   final String? imageUrl;
+//   final String baseUrl;
+//   const AddImageContainer({
+//     super.key,
+//     this.imageUrl,
+//     required this.onImageSelected,
+//     this.initialImage,
+//     required this.baseUrl,
+//   });
+
+//   @override
+//   State<AddImageContainer> createState() => _AddImageContainerState();
+// }
+
+// class _AddImageContainerState extends State<AddImageContainer> {
+//   PlatformFile? pickedFile;
+//   Uint8List? previewBytes;
+//   bool isUploading = false;
+//   ProductImage? currentImage;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     currentImage = widget.initialImage;
+//   }
+
+//   Future<void> pickFile() async {
+//     try {
+//       final result = await FilePicker.platform.pickFiles(
+//         type: FileType.image,
+//         allowedExtensions: ['jpg', 'jpeg', 'png'],
+//         withData: true,
+//       );
+
+//       if (result != null && result.files.isNotEmpty) {
+//         setState(() {
+//           pickedFile = result.files.first;
+//           previewBytes = pickedFile!.bytes;
+//           currentImage = null;
+//         });
+
+//         await uploadFile();
+//       }
+//     } catch (e) {
+//       debugPrint('Error picking image: $e');
+//       if (mounted) {
+//         ScaffoldMessenger.of(
+//           context,
+//         ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+//       }
+//     }
+//   }
+
+//   Future<void> uploadFile() async {
+//     if (pickedFile?.bytes == null) return;
+
+//     setState(() {
+//       isUploading = true;
+//     });
+
+//     try {
+//       final result = await PortfolioService.uploadServiceImageFile(
+//         pickedFile!.bytes!,
+//         pickedFile!.name,
+//       );
+
+//       final productImage = ProductImage(
+//         name: pickedFile!.name,
+//         key: result['key'],
+//         size: pickedFile!.size,
+//         mimetype: 'image/${pickedFile!.extension}',
+//       );
+
+//       setState(() {
+//         currentImage = productImage;
+//         pickedFile = null;
+//         previewBytes = null;
+//         isUploading = false;
+//       });
+
+//       widget.onImageSelected(productImage);
+//     } catch (e) {
+//       setState(() {
+//         isUploading = false;
+//       });
+//       if (mounted) {
+//         ScaffoldMessenger.of(
+//           context,
+//         ).showSnackBar(SnackBar(content: Text('Upload failed: $e')));
+//       }
+//     }
+//   }
+
+//   Widget _buildPreview() {
+//     if (currentImage != null) {
+//       return Stack(
+//         children: [
+//           ClipRRect(
+//             borderRadius: BorderRadius.circular(16),
+//             child: Image.network(
+//               '${widget.baseUrl}/file?key=portfolios/portfolio_services/${currentImage!.key}',
+//               fit: BoxFit.cover,
+//               width: double.infinity,
+//               height: double.infinity,
+//               errorBuilder: (context, error, stackTrace) {
+//                 print('Image Error: $error');
+//                 return const Center(child: Icon(Icons.error));
+//               },
+//             ),
+//           ),
+//           _buildRemoveButton(),
+//         ],
+//       );
+//     }
+
+//     if (previewBytes != null) {
+//       return Stack(
+//         children: [
+//           ClipRRect(
+//             borderRadius: BorderRadius.circular(16),
+//             child: Image.memory(
+//               previewBytes!,
+//               fit: BoxFit.cover,
+//               width: double.infinity,
+//               height: double.infinity,
+//             ),
+//           ),
+//           if (isUploading)
+//             Container(
+//               color: Colors.black.withOpacity(0.5),
+//               child: const Center(
+//                 child: CircularProgressIndicator(color: Colors.white),
+//               ),
+//             ),
+//           _buildRemoveButton(),
+//         ],
+//       );
+//     }
+
+//     return Center(child: SvgPicture.asset(Assets.svg.addround));
+//   }
+
+//   Widget _buildRemoveButton() {
+//     return Positioned(
+//       top: 5,
+//       right: 5,
+//       child: IconButton(
+//         icon: const Icon(Icons.close, color: Colors.white),
+//         onPressed: () {
+//           setState(() {
+//             pickedFile = null;
+//             previewBytes = null;
+//             currentImage = null;
+//           });
+//           widget.onImageSelected(null);
+//         },
+//       ),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: pickFile,
+//       child: Container(
+//         width: 190.v,
+//         height: 160.v,
+//         decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),
+//           color: CustomColors.lightGreen,
+//         ),
+//         child: _buildPreview(),
+//       ),
+//     );
+//   }
+// }

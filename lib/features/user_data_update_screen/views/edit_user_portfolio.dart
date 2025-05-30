@@ -399,6 +399,8 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     }
   }
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -612,6 +614,9 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                     service: service,
                                     isEditMode: true,
                                     onEdit: () async {
+                                      logError(
+                                        'Service image before edit: ${service.image?.key}',
+                                      );
                                       setState(() {
                                         editingServiceId = service.id;
                                         _showAddServiceUI = true;
@@ -620,7 +625,20 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                             service.heading;
                                         serviceDescriptionController.text =
                                             service.description;
-                                        pickedServiceImage = service.image;
+                                        if (service.image != null) {
+                                          pickedServiceImage = ProductImage(
+                                            key: service.image!.key,
+                                            name: service.image!.name,
+                                            size: service.image!.size,
+                                            mimetype: service.image!.mimetype,
+                                          );
+                                          logError(
+                                            'Picked image after set: ${pickedServiceImage?.key}',
+                                          );
+                                        } else {
+                                          pickedServiceImage = null;
+                                        }
+                                        // pickedServiceImage = service.image;
                                       });
                                     },
                                     onDelete: () async {
@@ -810,7 +828,10 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                 ),
               ],
             ),
-            Gap(CustomPadding.paddingXL.v),
+            Gap(CustomPadding.paddingXXL.v),
+            Gap(CustomPadding.paddingXXL.v),
+
+            Gap(CustomPadding.paddingXXL.v),
           ],
         ),
       ),

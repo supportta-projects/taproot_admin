@@ -72,7 +72,7 @@ class _CommonProductContainerState extends State<CommonProductContainer> {
                   ),
                   child: Row(
                     children: [
-                      Text('Total Amount'),
+                      Text('Total Amount', style: context.inter50024),
                       Spacer(),
                       Text('₹${widget.grandTotal}', style: context.inter50024),
                     ],

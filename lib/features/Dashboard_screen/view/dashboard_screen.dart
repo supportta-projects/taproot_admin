@@ -25,7 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isLoading = true;
   bool isFieldsLoading = false;
   String? error;
-  String selectedValue = 'today';
+  String selectedValue = 'thisMonth';
 
   final Map<String, String> dateFilters = {
     'Today': 'today',
@@ -181,9 +181,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 // Shimmer widgets
 class ShimmerDashboard extends StatelessWidget {
+  const ShimmerDashboard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
+      enabled: true,
+      period: Duration(seconds: 2),
+      direction: ShimmerDirection.ltr,
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
       child: Column(
@@ -196,6 +201,8 @@ class ShimmerDashboard extends StatelessWidget {
 }
 
 class ShimmerFields extends StatelessWidget {
+  const ShimmerFields({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
@@ -224,6 +231,8 @@ class ShimmerFields extends StatelessWidget {
 }
 
 class ShimmerLogisticData extends StatelessWidget {
+  const ShimmerLogisticData({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
@@ -240,7 +249,6 @@ class ShimmerLogisticData extends StatelessWidget {
     );
   }
 }
-
 
 // class _DashboardScreenState extends State<DashboardScreen> {
 //   DashboardModel? dashboardModel;

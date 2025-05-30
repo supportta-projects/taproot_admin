@@ -112,13 +112,18 @@ class _ProductPageState extends State<ProductPage>
           if (page == 1) {
             product = response;
             _filteredProducts = response.results;
+
+            enabledList =
+                response.results.map((p) => p.status == "Active").toList();
           } else {
             product!.results.addAll(response.results);
             _filteredProducts = product!.results;
+
+            enabledList =
+                product!.results.map((p) => p.status == "Active").toList();
           }
           _hasMoreData = response.results.isNotEmpty;
           _isLoadingMore = false;
-          enabledList = List.generate(product!.results.length, (index) => true);
           _isLoading = false;
         });
       }
@@ -155,22 +160,6 @@ class _ProductPageState extends State<ProductPage>
   Future<void> refreshProducts() async {
     await fetchProduct(page: 1);
   }
-
-  // void _filterProducts(String query) {
-  //   setState(() {
-  //     if (query.isEmpty) {
-  //       _filteredProducts = product!.results;
-  //     } else {
-  //       _filteredProducts =
-  //           product!.results.where((product) {
-  //             final name = product.name?.toLowerCase() ?? '';
-  //             final category = product.category?.name?.toLowerCase() ?? '';
-  //             return name.contains(query.toLowerCase()) ||
-  //                 category.contains(query.toLowerCase());
-  //           }).toList();
-  //     }
-  //   });
-  // }
 
   void _handleSearch(String query) {
     _searchDebounce?.cancel();
@@ -357,7 +346,7 @@ class _ProductPageState extends State<ProductPage>
                                       onRefreshProduct: () async {
                                         await refreshProducts();
                                       },
-                                      // onRefreshProduct: refreshProducts,
+
                                       product: productcard,
                                     ),
                               ),
@@ -372,18 +361,9 @@ class _ProductPageState extends State<ProductPage>
           child: Card(
             color: Colors.white,
             elevation: 8,
-            // shadowColor: ,
-            shadowColor: Colors.black.withValues(alpha: 0.6),
-            // decoration: BoxDecoration(
 
-            //   color: Colors.white,
-            //   // boxShadow: floatingShadow,
-            //   borderRadius: BorderRadius.circular(CustomPadding.padding * 3 ),
-            //   // border: Border.all(
-            //   //   width: 2,
-            //   //   color: CustomColors.textColorLightGrey,
-            //   // ),
-            // ),
+            shadowColor: Colors.black.withValues(alpha: 0.6),
+
             child: Column(
               children: [
                 Gap(CustomPadding.paddingLarge.v),
@@ -448,14 +428,74 @@ class _ProductPageState extends State<ProductPage>
                     Gap(CustomPadding.paddingLarge.v),
                     Switch(
                       value: enabledList[index],
-                      onChanged: (value) {
-                        setState(() {
-                          enabledList[index] = value;
-                        });
+                      onChanged: (value) async {
+                        if (!mounted) return;
+
+                        try {
+                          BuildContext? dialogContext;
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext ctx) {
+                              dialogContext = ctx;
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          );
+
+                          final success = await ProductService.isProductEnable(
+                            productId: productcard.id ?? '',
+                          );
+
+                          if (dialogContext != null && mounted) {
+                            Navigator.of(dialogContext!).pop();
+                          }
+
+                          if (!mounted) return;
+
+                          if (success) {
+                            setState(() {
+                              enabledList[index] = value;
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Product status updated successfully',
+                                ),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+
+                            await refreshProducts();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Failed to update product status',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Error updating product status: $e',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
                       },
                     ),
                     Gap(CustomPadding.padding.v),
-                    enabledList[index] ? Text('Enable') : Text('Disabled'),
+                    Text(enabledList[index] ? 'Enable' : 'Disabled'),
                   ],
                 ),
               ],
@@ -465,144 +505,4 @@ class _ProductPageState extends State<ProductPage>
       },
     );
   }
-
-  // Widget buildProductGrid(List<Product> products) {
-  //   return GridView.builder(
-  //     controller: _scrollController,
-  //     itemCount: products.length + (_hasMoreData ? 1 : 0),
-  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //       childAspectRatio: 2.8,
-  //       crossAxisCount: 2,
-  //       mainAxisSpacing: CustomPadding.paddingXL.v,
-  //       crossAxisSpacing: CustomPadding.paddingXL.v,
-  //     ),
-  //     itemBuilder: (context, index) {
-  //       if (index == products.length) {
-  //         return _isLoadingMore
-  //             ? Center(child: CircularProgressIndicator())
-  //             : SizedBox.shrink();
-  //       }
-
-  //       final productcard = products[index];
-  //       return GestureDetector(
-  //         onTap: () {
-  //           Navigator.of(context)
-  //               .push(
-  //                 MaterialPageRoute(
-  //                   builder:
-  //                       (context) => ViewProduct(
-  //                         product: productcard,
-  //                         images:
-  //                             productcard.productImages!
-  //                                 .map((e) => e.key)
-  //                                 .toList(),
-  //                         onBack: () {
-  //                           Navigator.pop(context);
-  //                         },
-  //                         onEdit: () {
-  //                           Navigator.push(
-  //                             context,
-  //                             MaterialPageRoute(
-  //                               builder:
-  //                                   (context) => EditProduct(
-  //                                     onRefreshProduct: refreshProducts,
-  //                                     product: productcard,
-  //                                   ),
-  //                             ),
-  //                           );
-  //                         },
-  //                       ),
-  //                 ),
-  //               )
-  //               .then((_) => refreshProducts());
-  //         },
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),
-  //             border: Border.all(
-  //               width: 2,
-  //               color: CustomColors.textColorLightGrey,
-  //             ),
-  //           ),
-  //           child: Column(
-  //             children: [
-  //               Gap(CustomPadding.paddingLarge.v),
-  //               Row(
-  //                 children: [
-  //                   Gap(CustomPadding.paddingLarge.v),
-  //                   Expanded(
-  //                     child: Container(
-  //                       decoration: BoxDecoration(
-  //                         color: CustomColors.lightGreen,
-  //                         borderRadius: BorderRadius.circular(
-  //                           CustomPadding.padding.v,
-  //                         ),
-  //                       ),
-  //                       height: 170.v,
-  //                       width: 200.v,
-  //                       child: ClipRRect(
-  //                         borderRadius: BorderRadius.circular(
-  //                           CustomPadding.padding.v,
-  //                         ),
-  //                         child: CachedNetworkImage(
-  //                           imageUrl:
-  //                               '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
-  //                           fit: BoxFit.cover,
-  //                           placeholder:
-  //                               (context, url) => Shimmer.fromColors(
-  //                                 baseColor: Colors.grey[300]!,
-  //                                 highlightColor: Colors.grey[100]!,
-  //                                 child: Container(color: Colors.grey),
-  //                               ),
-  //                           errorWidget:
-  //                               (context, url, error) =>
-  //                                   Icon(Icons.error, color: Colors.red),
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Gap(CustomPadding.paddingLarge.v),
-  //                   Expanded(
-  //                     child: Column(
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         Text(
-  //                           productcard.name.toString(),
-  //                           style: context.inter50014,
-  //                         ),
-  //                         Gap(CustomPadding.paddingLarge.v),
-  //                         ProductDetaileRow(
-  //                           cardType: productcard.category!.name ?? '',
-  //                           price: productcard.actualPrice.toString(),
-  //                           offerPrice: productcard.salePrice.toString(),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   Gap(CustomPadding.paddingLarge.v),
-  //                 ],
-  //               ),
-  //               Gap(CustomPadding.paddingLarge.v),
-  //               Row(
-  //                 children: [
-  //                   Gap(CustomPadding.paddingLarge.v),
-  //                   Switch(
-  //                     value: enabledList[index],
-  //                     onChanged: (value) {
-  //                       setState(() {
-  //                         enabledList[index] = value;
-  //                       });
-  //                     },
-  //                   ),
-  //                   Gap(CustomPadding.padding.v),
-  //                   enabledList[index] ? Text('Enable') : Text('Disabled'),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 }

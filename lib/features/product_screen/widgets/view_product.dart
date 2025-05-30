@@ -39,22 +39,22 @@ class ViewProduct extends StatefulWidget {
 
 class _ViewProductState extends State<ViewProduct> {
   bool isEdit = false;
-    // Product? currentProduct;
+  // Product? currentProduct;
   // bool viewProduct=false;
 
-//   @override
-//   void initState() {
-//     // TODO: implement initState
-//         currentProduct = widget.product;
-// refreshProduct();
-//     super.initState();
-//   }
-//   Future<void> refreshProduct() async {
-//     await widget.onRefresh();
-//     setState(() {
-//       // Update the current product if needed
-//     });
-//   }
+  //   @override
+  //   void initState() {
+  //     // TODO: implement initState
+  //         currentProduct = widget.product;
+  // refreshProduct();
+  //     super.initState();
+  //   }
+  //   Future<void> refreshProduct() async {
+  //     await widget.onRefresh();
+  //     setState(() {
+  //       // Update the current product if needed
+  //     });
+  //   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,7 +126,7 @@ class _ViewProductState extends State<ViewProduct> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ProductIdContainer(),
+                ProductIdContainer(productId: widget.product!.code.toString()),
                 Gap(CustomPadding.paddingLarge.v),
                 Wrap(
                   spacing: 8,

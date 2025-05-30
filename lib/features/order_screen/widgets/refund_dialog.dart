@@ -37,9 +37,13 @@ class _RefundDialogState extends State<RefundDialog> {
     try {
       final response = await OrderService.cancelOrder(
         orderId: widget.orderId,
-        refundPercentage: int.parse(percentageController.text),
+        refundPercentage:
+            selectedRefundType == 'full'
+                ? 0
+                : (percentageController.text.isEmpty
+                    ? 0
+                    : int.parse(percentageController.text)),
       );
-
       if (response['success'] == true) {
         if (mounted && context.mounted) {
           SnackbarHelper.showSuccess(

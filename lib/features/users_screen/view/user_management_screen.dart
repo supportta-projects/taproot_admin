@@ -221,7 +221,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     DataColumn(label: Text('Phone')),
                     DataColumn(label: Text('WhatsApp')),
                     DataColumn(label: Text('Email')),
-                    DataColumn(label: Text('Website Link')),
+                    // DataColumn(label: Text('Website Link')),
                     DataColumn(label: Text('Premium')),
                   ],
                   source:
@@ -303,12 +303,12 @@ class UserDataTableSource extends DataTableSource {
         DataCell(
           InkWell(onTap: handleRowTap, child: Center(child: Text(user.email))),
         ),
-        DataCell(
-          InkWell(
-            onTap: handleRowTap,
-            child: Center(child: Text(user.website)),
-          ),
-        ),
+        // DataCell(
+        //   InkWell(
+        //     onTap: handleRowTap,
+        //     child: Center(child: Text(user.website)),
+        //   ),
+        // ),
         DataCell(
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

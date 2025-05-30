@@ -856,7 +856,7 @@ class _EditProductState extends State<EditProduct> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ProductIdContainer(),
+                  ProductIdContainer(productId: widget.product!.code.toString(),),
                   Gap(CustomPadding.paddingXL.v),
                   Wrap(
                     spacing: 8,
