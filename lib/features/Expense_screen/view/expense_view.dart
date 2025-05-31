@@ -271,6 +271,8 @@ class _ExpenseViewState extends State<ExpenseView> {
     return SizedBox(
       height: 70.v,
       child: PaginatedDataTable(
+        arrowHeadColor: CustomColors.borderGradient.colors.first,
+
         dataRowMaxHeight: 100,
         source: ExpenseDataSource(
           _expenses,

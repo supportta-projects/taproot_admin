@@ -29,7 +29,7 @@ class _ImageContainerWithHeadState extends State<ImageContainerWithHead> {
   bool _isDownloading = false;
 
   Future<void> downloadImage(BuildContext context) async {
-    final String imageUrl = '$baseUrl/file?key=portfolios/${widget.imageKey}';
+    final String imageUrl = '$baseUrlImage/portfolios/${widget.imageKey}';
     final String fileName =
         '${widget.heading.toLowerCase().replaceAll(' ', '_')}.jpg';
 
@@ -107,7 +107,7 @@ class _ImageContainerWithHeadState extends State<ImageContainerWithHead> {
                       CustomPadding.paddingLarge.v,
                     ),
                     child: Image.network(
-                      '$baseUrl/file?key=portfolios/${widget.imageKey}',
+                      '$baseUrlImage/portfolios/${widget.imageKey}',
                       fit: BoxFit.fill,
                     ),
                   ),

@@ -102,7 +102,7 @@ class _ProductCardState extends State<ProductCard> {
                       CustomPadding.padding.v,
                     ),
                     child: Image.network(
-                      '$baseUrl/file?key=products/${widget.image}',
+                      '$baseUrlImage/products/${widget.image}',
                       fit: BoxFit.cover,
                     ),
                   ),

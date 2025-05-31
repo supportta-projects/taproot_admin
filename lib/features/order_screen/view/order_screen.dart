@@ -249,7 +249,6 @@ class _OrderScreenState extends State<OrderScreen> {
                         GestureDetector(
                           onTap: () {
                             showDatePicker(
-                              
                               context: context,
                               firstDate: DateTime.utc(2024),
                               lastDate: DateTime.now(),
@@ -324,6 +323,10 @@ class _OrderScreenState extends State<OrderScreen> {
                           }
 
                           return PaginatedDataTable(
+                            showFirstLastButtons: true,
+                            arrowHeadColor:
+                                CustomColors.borderGradient.colors.first,
+
                             key: index == 0 ? _tableKey : null,
                             dataRowMaxHeight: 60,
                             rowsPerPage: _rowsPerPage,

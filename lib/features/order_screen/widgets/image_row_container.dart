@@ -172,7 +172,7 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
 
   String? getPortfolioImageUrl(String? key) {
     if (key == null) return null;
-    return '$baseUrl/file?key=portfolios/$key';
+    return '$baseUrlImage/portfolios/$key';
   }
 
   @override

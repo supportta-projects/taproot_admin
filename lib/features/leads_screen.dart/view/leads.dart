@@ -76,6 +76,9 @@ class _LeadScreenState extends State<LeadScreen> {
                   height: SizeUtils.height * 0.75,
                   child: SingleChildScrollView(
                     child: PaginatedDataTable(
+                      showFirstLastButtons: true,
+                      arrowHeadColor: CustomColors.borderGradient.colors.first,
+
                       // columnSpacing: 260,
                       dataRowMaxHeight: 100,
                       columns: const [
@@ -84,7 +87,7 @@ class _LeadScreenState extends State<LeadScreen> {
                             child: Text(
                               'Full Name',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: CustomColors.hintGrey),
+                              style: TextStyle(color: CustomColors.textColor),
                             ),
                           ),
                         ),
@@ -93,7 +96,7 @@ class _LeadScreenState extends State<LeadScreen> {
                             child: Text(
                               'Phone Number',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: CustomColors.hintGrey),
+                              style: TextStyle(color: CustomColors.textColor),
                             ),
                           ),
                         ),
@@ -101,7 +104,7 @@ class _LeadScreenState extends State<LeadScreen> {
                           label: Expanded(
                             child: Text(
                               'Email',
-                              style: TextStyle(color: CustomColors.hintGrey),
+                              style: TextStyle(color: CustomColors.textColor),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -111,7 +114,7 @@ class _LeadScreenState extends State<LeadScreen> {
                             child: Text(
                               'Description',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: CustomColors.hintGrey),
+                              style: TextStyle(color: CustomColors.textColor),
                             ),
                           ),
                         ),
@@ -120,7 +123,7 @@ class _LeadScreenState extends State<LeadScreen> {
                             child: Text(
                               ' ',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: CustomColors.hintGrey),
+                              style: TextStyle(color: CustomColors.textColor),
                             ),
                           ),
                         ),
@@ -152,7 +155,7 @@ class _LeadsDataSource extends DataTableSource {
             child: Text(
               lead.name[0].toUpperCase() + lead.name.substring(1),
               style: TextStyle(
-                color: CustomColors.greenDark,
+                color: CustomColors.green,
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
               ),

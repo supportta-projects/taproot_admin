@@ -12,28 +12,16 @@ import 'package:flutter/widgets.dart';
 class $AssetsPngGen {
   const $AssetsPngGen();
 
-  /// File path: assets/png/Group 1321314488.png
-  AssetGenImage get group1321314488 =>
-      const AssetGenImage('assets/png/Group 1321314488.png');
-
-  /// File path: assets/png/background.png
-  AssetGenImage get background =>
-      const AssetGenImage('assets/png/background.png');
-
-  /// File path: assets/png/bglog.png
-  AssetGenImage get bglog => const AssetGenImage('assets/png/bglog.png');
+  /// File path: assets/png/backgroundlog.png
+  AssetGenImage get backgroundlog =>
+      const AssetGenImage('assets/png/backgroundlog.png');
 
   /// File path: assets/png/supporttalogin.png
   AssetGenImage get supporttalogin =>
       const AssetGenImage('assets/png/supporttalogin.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [
-    group1321314488,
-    background,
-    bglog,
-    supporttalogin,
-  ];
+  List<AssetGenImage> get values => [backgroundlog, supporttalogin];
 }
 
 class $AssetsSvgGen {

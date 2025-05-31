@@ -45,6 +45,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       gradient: RadialGradient(
                         radius: 0.3,
                         center: Alignment(-0.2, -0.25),
+                        // focal: Alignment.bottomRight,
                         colors: [
                           Color(0xFfFAAD4F),
                           CustomColors.secondaryColor,
@@ -62,7 +63,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             // width: screenWidth * 0.5,
                             height: screenHeight * 0.5,
                             child: Image.asset(
-                              Assets.png.group1321314488.path,
+                              Assets.png.backgroundlog.path,
                               // fit: BoxFit.scaleDown,
                             ),
                           ),
