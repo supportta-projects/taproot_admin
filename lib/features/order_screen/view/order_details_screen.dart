@@ -126,19 +126,40 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       final response = await OrderService.getOrderDetails(
         orderId: widget.order.id,
       );
+
+      // Safely handle the response
       setState(() {
         orderDetails = response.result;
       });
-    } catch (e) {
-      logError(
-        'Failed to fetch order details: $e \nStack Trace: ${StackTrace.current}',
-      );
-      SnackbarHelper.showError(
-        context,
-        'Failed to fetch order details. Please try again.',
-      );
+    } catch (e, stackTrace) {
+      logError('Failed to fetch order details: $e \nStack Trace: $stackTrace');
+      if (mounted) {
+        SnackbarHelper.showError(
+          context,
+          'Failed to fetch order details. Please try again.',
+        );
+      }
     }
   }
+
+  // Future<void> getOrderDetails() async {
+  //   try {
+  //     final response = await OrderService.getOrderDetails(
+  //       orderId: widget.order.id,
+  //     );
+  //     setState(() {
+  //       orderDetails = response.result;
+  //     });
+  //   } catch (e) {
+  //     logError(
+  //       'Failed to fetch order details: $e \nStack Trace: ${StackTrace.current}',
+  //     );
+  //     SnackbarHelper.showError(
+  //       context,
+  //       'Failed to fetch order details. Please try again.',
+  //     );
+  //   }
+  // }
 
   bool isLoadingUser = false;
 
@@ -640,178 +661,228 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         Column(
                           children: [
                             Gap(CustomPadding.paddingLarge.v),
-                            ...List.generate(
-                              orderDetails!.products.length,
-                              (index) => ProductCard(
-                                image:
-                                    orderDetails!.products[index].product
-                                            is String
-                                        ? ''
-                                        : ((orderDetails!
-                                                        .products[index]
-                                                        .product
-                                                    as order_details.ProductDetails)
-                                                .firstImage
-                                                ?.key ??
-                                            ''),
-                                productName:
-                                    orderDetails!.products[index].product
-                                            is String
-                                        ? 'Product'
-                                        : (orderDetails!.products[index].product
-                                                as order_details.ProductDetails)
-                                            .name,
-                                categoryName:
-                                    orderDetails!.products[index].product
-                                            is String
-                                        ? ''
-                                        : (orderDetails!.products[index].product
-                                                as order_details.ProductDetails)
-                                            .category
-                                            .name,
-                                orderEdit: orderEdit,
-                                price: orderDetails!.products[index].salePrice,
-                                discountPrice:
-                                    orderDetails!.products[index].product
-                                            is String
-                                        ? 0
-                                        : (orderDetails!.products[index].product
-                                                as order_details.ProductDetails)
-                                            .discountedPrice,
-                                quantity:
-                                    editedQuantities[orderDetails!
-                                                .products[index]
-                                                .product
-                                            is String
-                                        ? orderDetails!.products[index].product
-                                            .toString()
-                                        : (orderDetails!.products[index].product
-                                                as order_details.ProductDetails)
-                                            .id] ??
-                                    orderDetails!.products[index].quantity,
-                                totalPrice:
-                                    orderDetails!.products[index].totalPrice,
+                            ...List.generate(orderDetails!.products.length, (
+                              index,
+                            ) {
+                              final product = orderDetails!.products[index];
+                              final productDetails =
+                                  product.product
+                                          is order_details.ProductDetails
+                                      ? product.product
+                                          as order_details.ProductDetails
+                                      : null;
 
+                              return ProductCard(
+                                image: productDetails?.firstImage?.key ?? '',
+                                productName:
+                                    productDetails?.name ??
+                                    'Product Unavailable',
+                                categoryName:
+                                    productDetails?.category.name ?? 'N/A',
+                                orderEdit: orderEdit,
+                                price: product.salePrice,
+                                discountPrice:
+                                    productDetails?.discountedPrice ?? 0,
+                                quantity:
+                                    editedQuantities[productDetails?.id ??
+                                        product.product.toString()] ??
+                                    product.quantity,
+                                totalPrice: product.totalPrice,
                                 onQuantityChanged:
                                     orderEdit
                                         ? (newQuantity) {
                                           setState(() {
                                             String productId =
-                                                orderDetails!
-                                                            .products[index]
-                                                            .product
-                                                        is String
-                                                    ? orderDetails!
-                                                        .products[index]
-                                                        .product
-                                                        .toString()
-                                                    : (orderDetails!
-                                                                .products[index]
-                                                                .product
-                                                            as order_details.ProductDetails)
-                                                        .id;
+                                                productDetails?.id ??
+                                                product.product.toString();
                                             editedQuantities[productId] =
                                                 newQuantity;
 
-                                            orderDetails!
-                                                .products[index] = orderDetails!
-                                                .products[index]
-                                                .copyWith(
+                                            orderDetails!.products[index] =
+                                                product.copyWith(
                                                   quantity: newQuantity,
                                                   totalPrice:
-                                                      orderDetails!
-                                                          .products[index]
-                                                          .salePrice *
+                                                      product.salePrice *
                                                       newQuantity,
                                                 );
                                           });
                                         }
                                         : null,
-                              ),
+                              );
+                            }),
 
-                              // ProductCard(
-                              //   image:
-                              //       orderDetails!.products[index].product
-                              //               is String
-                              //           ? ''
-                              //           : (orderDetails!.products[index].product
-                              //                   as order_details.ProductDetails)
-                              //               .productImages
-                              //               .key,
-                              //   productName:
-                              //       orderDetails!.products[index].product
-                              //               is String
-                              //           ? 'Product'
-                              //           : (orderDetails!.products[index].product
-                              //                   as order_details.ProductDetails)
-                              //               .name,
-                              //   categoryName:
-                              //       orderDetails!.products[index].product
-                              //               is String
-                              //           ? ''
-                              //           : (orderDetails!.products[index].product
-                              //                   as order_details.ProductDetails)
-                              //               .category
-                              //               .name,
-                              //   orderEdit: orderEdit,
-                              //   price: orderDetails!.products[index].salePrice,
-                              //   discountPrice:
-                              //       orderDetails!.products[index].product
-                              //               is String
-                              //           ? 0
-                              //           : (orderDetails!.products[index].product
-                              //                   as order_details.ProductDetails)
-                              //               .discountedPrice,
-                              //   quantity:
-                              //       editedQuantities[orderDetails!
-                              //                   .products[index]
-                              //                   .product
-                              //               is String
-                              //           ? orderDetails!.products[index].product
-                              //               .toString()
-                              //           : (orderDetails!.products[index].product
-                              //                   as order_details.ProductDetails)
-                              //               .id] ??
-                              //       orderDetails!.products[index].quantity,
-                              //   totalPrice:
-                              //       orderDetails!.products[index].totalPrice,
-                              //   onQuantityChanged:
-                              //       orderEdit
-                              //           ? (newQuantity) {
-                              //             setState(() {
-                              //               String productId =
-                              //                   orderDetails!
-                              //                               .products[index]
-                              //                               .product
-                              //                           is String
-                              //                       ? orderDetails!
-                              //                           .products[index]
-                              //                           .product
-                              //                           .toString()
-                              //                       : (orderDetails!
-                              //                                   .products[index]
-                              //                                   .product
-                              //                               as order_details.ProductDetails)
-                              //                           .id;
-                              //               editedQuantities[productId] =
-                              //                   newQuantity;
+                            // ...List.generate(
+                            //   orderDetails!.products.length,
+                            //   (index) => ProductCard(
+                            //     image:
+                            //         orderDetails!.products[index].product
+                            //                 is String
+                            //             ? ''
+                            //             : ((orderDetails!
+                            //                             .products[index]
+                            //                             .product
+                            //                         as order_details.ProductDetails)
+                            //                     .firstImage
+                            //                     ?.key ??
+                            //                 ''),
+                            //     productName:
+                            //         orderDetails!.products[index].product
+                            //                 is String
+                            //             ? 'Product'
+                            //             : (orderDetails!.products[index].product
+                            //                     as order_details.ProductDetails)
+                            //                 .name,
+                            //     categoryName:
+                            //         orderDetails!.products[index].product
+                            //                 is String
+                            //             ? ''
+                            //             : (orderDetails!.products[index].product
+                            //                     as order_details.ProductDetails)
+                            //                 .category
+                            //                 .name,
+                            //     orderEdit: orderEdit,
+                            //     price: orderDetails!.products[index].salePrice,
+                            //     discountPrice:
+                            //         orderDetails!.products[index].product
+                            //                 is String
+                            //             ? 0
+                            //             : (orderDetails!.products[index].product
+                            //                     as order_details.ProductDetails)
+                            //                 .discountedPrice,
+                            //     quantity:
+                            //         editedQuantities[orderDetails!
+                            //                     .products[index]
+                            //                     .product
+                            //                 is String
+                            //             ? orderDetails!.products[index].product
+                            //                 .toString()
+                            //             : (orderDetails!.products[index].product
+                            //                     as order_details.ProductDetails)
+                            //                 .id] ??
+                            //         orderDetails!.products[index].quantity,
+                            //     totalPrice:
+                            //         orderDetails!.products[index].totalPrice,
 
-                              //               orderDetails!
-                              //                   .products[index] = orderDetails!
-                              //                   .products[index]
-                              //                   .copyWith(
-                              //                     quantity: newQuantity,
-                              //                     totalPrice:
-                              //                         orderDetails!
-                              //                             .products[index]
-                              //                             .salePrice *
-                              //                         newQuantity,
-                              //                   );
-                              //             });
-                              //           }
-                              //           : null,
-                              // ),
-                            ),
+                            //     onQuantityChanged:
+                            //         orderEdit
+                            //             ? (newQuantity) {
+                            //               setState(() {
+                            //                 String productId =
+                            //                     orderDetails!
+                            //                                 .products[index]
+                            //                                 .product
+                            //                             is String
+                            //                         ? orderDetails!
+                            //                             .products[index]
+                            //                             .product
+                            //                             .toString()
+                            //                         : (orderDetails!
+                            //                                     .products[index]
+                            //                                     .product
+                            //                                 as order_details.ProductDetails)
+                            //                             .id;
+                            //                 editedQuantities[productId] =
+                            //                     newQuantity;
+
+                            //                 orderDetails!
+                            //                     .products[index] = orderDetails!
+                            //                     .products[index]
+                            //                     .copyWith(
+                            //                       quantity: newQuantity,
+                            //                       totalPrice:
+                            //                           orderDetails!
+                            //                               .products[index]
+                            //                               .salePrice *
+                            //                           newQuantity,
+                            //                     );
+                            //               });
+                            //             }
+                            //             : null,
+                            //   ),
+
+                            //   // ProductCard(
+                            //   //   image:
+                            //   //       orderDetails!.products[index].product
+                            //   //               is String
+                            //   //           ? ''
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .productImages
+                            //   //               .key,
+                            //   //   productName:
+                            //   //       orderDetails!.products[index].product
+                            //   //               is String
+                            //   //           ? 'Product'
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .name,
+                            //   //   categoryName:
+                            //   //       orderDetails!.products[index].product
+                            //   //               is String
+                            //   //           ? ''
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .category
+                            //   //               .name,
+                            //   //   orderEdit: orderEdit,
+                            //   //   price: orderDetails!.products[index].salePrice,
+                            //   //   discountPrice:
+                            //   //       orderDetails!.products[index].product
+                            //   //               is String
+                            //   //           ? 0
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .discountedPrice,
+                            //   //   quantity:
+                            //   //       editedQuantities[orderDetails!
+                            //   //                   .products[index]
+                            //   //                   .product
+                            //   //               is String
+                            //   //           ? orderDetails!.products[index].product
+                            //   //               .toString()
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .id] ??
+                            //   //       orderDetails!.products[index].quantity,
+                            //   //   totalPrice:
+                            //   //       orderDetails!.products[index].totalPrice,
+                            //   //   onQuantityChanged:
+                            //   //       orderEdit
+                            //   //           ? (newQuantity) {
+                            //   //             setState(() {
+                            //   //               String productId =
+                            //   //                   orderDetails!
+                            //   //                               .products[index]
+                            //   //                               .product
+                            //   //                           is String
+                            //   //                       ? orderDetails!
+                            //   //                           .products[index]
+                            //   //                           .product
+                            //   //                           .toString()
+                            //   //                       : (orderDetails!
+                            //   //                                   .products[index]
+                            //   //                                   .product
+                            //   //                               as order_details.ProductDetails)
+                            //   //                           .id;
+                            //   //               editedQuantities[productId] =
+                            //   //                   newQuantity;
+
+                            //   //               orderDetails!
+                            //   //                   .products[index] = orderDetails!
+                            //   //                   .products[index]
+                            //   //                   .copyWith(
+                            //   //                     quantity: newQuantity,
+                            //   //                     totalPrice:
+                            //   //                         orderDetails!
+                            //   //                             .products[index]
+                            //   //                             .salePrice *
+                            //   //                         newQuantity,
+                            //   //                   );
+                            //   //             });
+                            //   //           }
+                            //   //           : null,
+                            //   // ),
+                            // ),
                           ],
                         ),
                       ],

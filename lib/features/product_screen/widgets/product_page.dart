@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/utils.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/data/product_category_model.dart';
@@ -264,7 +265,11 @@ class _ProductPageState extends State<ProductPage>
                             tabs: [
                               const Tab(text: 'All'),
                               ...productCategory.map(
-                                (category) => Tab(text: category.name),
+                                (category) => Tab(
+                                  text:
+                                      category.name[0].toUpperCase() +
+                                      category.name.substring(1),
+                                ),
                               ),
                             ],
                           ),
@@ -323,41 +328,76 @@ class _ProductPageState extends State<ProductPage>
 
         final productcard = products[index];
         return GestureDetector(
-          onTap: () {
-            Navigator.of(context)
-                .push(
-                  MaterialPageRoute(
-                    builder:
-                        (context) => ViewProduct(
-                          product: productcard,
-                          images:
-                              productcard.productImages!
-                                  .map((e) => e.key)
-                                  .toList(),
-                          onBack: () {
-                            Navigator.pop(context);
-                          },
-                          onEdit: () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => EditProduct(
-                                      onRefreshProduct: () async {
-                                        await refreshProducts();
-                                      },
+          onTap: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder:
+                    (context) => ViewProduct(
+                      product: productcard,
+                      images:
+                          productcard.productImages!.map((e) => e.key).toList(),
+                      onBack: () {
+                        Navigator.pop(context);
+                      },
+                      onEdit: () async {
+                        // Wait for EditProduct to complete and refresh
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => EditProduct(
+                                  product: productcard,
+                                  onRefreshProduct: () async {
+                                    await refreshProducts(); // Refresh product list
+                                  },
+                                ),
+                          ),
+                        );
+                        await refreshProducts(); // Refresh again after returning
+                      },
+                    ),
+              ),
+            );
 
-                                      product: productcard,
-                                    ),
-                              ),
-                            );
-                            await refreshProducts();
-                          },
-                        ),
-                  ),
-                )
-                .then((_) => refreshProducts());
+            // Final refresh when returning to list
+            await refreshProducts();
           },
+
+          // onTap: () {
+          //   Navigator.of(context)
+          //       .push(
+          //         MaterialPageRoute(
+          //           builder:
+          //               (context) => ViewProduct(
+          //                 product: productcard,
+          //                 images:
+          //                     productcard.productImages!
+          //                         .map((e) => e.key)
+          //                         .toList(),
+          //                 onBack: () {
+          //                   Navigator.pop(context);
+          //                 },
+          //                 onEdit: () async {
+          //                   Navigator.push(
+          //                     context,
+          //                     MaterialPageRoute(
+          //                       builder:
+          //                           (context) => EditProduct(
+          //                             onRefreshProduct: () async {
+          //                               await refreshProducts();
+          //                             },
+
+          //                             product: productcard,
+          //                           ),
+          //                     ),
+          //                   );
+          //                   await refreshProducts();
+          //                 },
+          //               ),
+          //         ),
+          //       )
+          //       .then((_) => refreshProducts());
+          // },
           child: Card(
             color: Colors.white,
             elevation: 8,
@@ -386,7 +426,8 @@ class _ProductPageState extends State<ProductPage>
                           ),
                           child: CachedNetworkImage(
                             imageUrl:
-                                '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
+                                '$baseUrlImage/products/${productcard.productImages!.first.key}',
+                            // '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
                             fit: BoxFit.cover,
                             placeholder:
                                 (context, url) => Shimmer.fromColors(

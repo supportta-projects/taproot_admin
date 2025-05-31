@@ -51,7 +51,7 @@ class DashBoardContainer extends StatelessWidget {
                 Text('₹ $amount', style: context.inter60024),
                 Gap(CustomPadding.paddingXL.v),
                 Text(
-                  '+$percentage%',
+                  '$percentage%',
                   style:
                       isExpense
                           ? TextStyle(color: CustomColors.red)

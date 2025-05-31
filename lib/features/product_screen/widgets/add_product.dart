@@ -448,9 +448,7 @@ class AddImageContainer extends StatelessWidget {
                         borderRadius: BorderRadius.circular(
                           CustomPadding.padding.v,
                         ),
-                        child: Image.network(
-                          '$baseUrl/file?key=products/$path',
-                        ),
+                        child: Image.network('$baseUrlImage/products/$path'),
                         // Image.file(File(path.toString()), fit: BoxFit.cover),
                       ),
                       Column(
@@ -520,7 +518,7 @@ class AddImageContainer extends StatelessWidget {
                                     CustomPadding.padding.v,
                                   ),
                                   child: Image.network(
-                                    '$baseUrl/file?key=products/$imagekey',
+                                    '$baseUrlImage/products/$imagekey',
                                     fit: BoxFit.cover,
                                   ),
                                   //  Image.file(

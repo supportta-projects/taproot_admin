@@ -14,6 +14,7 @@ import 'package:taproot_admin/features/Expense_screen/widgets/expense_descriptio
 import 'package:taproot_admin/features/Expense_screen/widgets/filter_button.dart';
 import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/not_found_widget.dart';
 
 class ExpenseView extends StatefulWidget {
   const ExpenseView({super.key});
@@ -170,7 +171,7 @@ class _ExpenseViewState extends State<ExpenseView> {
                           onTap: () {
                             showDatePicker(
                               context: context,
-                              firstDate: DateTime.utc(2024),
+                              firstDate: DateTime.utc(2020),
                               lastDate: DateTime.now(),
                             ).then((selectedDate) {
                               _fetchExpensesWithDate(selectedDate.toString());
@@ -259,47 +260,94 @@ class _ExpenseViewState extends State<ExpenseView> {
   }
 
   Widget _buildPaginatedDataTable() {
-    return _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : SizedBox(
-          height: 70.v,
-          child: PaginatedDataTable(
-            dataRowMaxHeight: 100,
-            source: ExpenseDataSource(
-              _expenses,
-              _expenseResponse.totalCount,
-              context,
-              _fetchExpenses,
-            ),
-            header: null,
-            rowsPerPage: _rowsPerPage,
-            availableRowsPerPage: [5],
-            initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
-            showFirstLastButtons: true,
-            onPageChanged: (firstRowIndex) {
-              // Calculate the new page number (1-based)
-              final newPage = (firstRowIndex ~/ _rowsPerPage) + 1;
-              logInfo('Changing to page: $newPage');
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
 
-              // Only fetch if we're actually changing pages
-              if (newPage != _currentPage) {
-                setState(() {
-                  _currentPage = newPage;
-                });
-                _fetchExpenses();
-              }
-            },
-            columns: [
-              DataColumn(label: Text('Expense Category')),
-              DataColumn(label: Text('Order ID /Expense name')),
-              DataColumn(label: Text('Description')),
-              DataColumn(label: Text('Amount')),
-              DataColumn(label: Text('Date')),
-              DataColumn(label: Text('Edit')),
-            ],
-          ),
-        );
+    if (_expenses.isEmpty) {
+      return const NotFoundWidget();
+    }
+
+    return SizedBox(
+      height: 70.v,
+      child: PaginatedDataTable(
+        dataRowMaxHeight: 100,
+        source: ExpenseDataSource(
+          _expenses,
+          _expenseResponse.totalCount,
+          context,
+          _fetchExpenses,
+        ),
+        header: null,
+        rowsPerPage: _rowsPerPage,
+        availableRowsPerPage: [5],
+        initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
+        showFirstLastButtons: true,
+        onPageChanged: (firstRowIndex) {
+          final newPage = (firstRowIndex ~/ _rowsPerPage) + 1;
+          logInfo('Changing to page: $newPage');
+
+          if (newPage != _currentPage) {
+            setState(() {
+              _currentPage = newPage;
+            });
+            _fetchExpenses();
+          }
+        },
+        columns: [
+          DataColumn(label: Text('Expense Category')),
+          DataColumn(label: Text('Order ID /Expense name')),
+          DataColumn(label: Text('Description')),
+          DataColumn(label: Text('Amount')),
+          DataColumn(label: Text('Date')),
+          DataColumn(label: Text('Edit')),
+        ],
+      ),
+    );
   }
+
+  // Widget _buildPaginatedDataTable() {
+  //   return _isLoading
+  //       ? Center(child: CircularProgressIndicator())
+  //       : SizedBox(
+  //         height: 70.v,
+  //         child: PaginatedDataTable(
+  //           dataRowMaxHeight: 100,
+  //           source: ExpenseDataSource(
+  //             _expenses,
+  //             _expenseResponse.totalCount,
+  //             context,
+  //             _fetchExpenses,
+  //           ),
+  //           header: null,
+  //           rowsPerPage: _rowsPerPage,
+  //           availableRowsPerPage: [5],
+  //           initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
+  //           showFirstLastButtons: true,
+  //           onPageChanged: (firstRowIndex) {
+  //             // Calculate the new page number (1-based)
+  //             final newPage = (firstRowIndex ~/ _rowsPerPage) + 1;
+  //             logInfo('Changing to page: $newPage');
+
+  //             // Only fetch if we're actually changing pages
+  //             if (newPage != _currentPage) {
+  //               setState(() {
+  //                 _currentPage = newPage;
+  //               });
+  //               _fetchExpenses();
+  //             }
+  //           },
+  //           columns: [
+  //             DataColumn(label: Text('Expense Category')),
+  //             DataColumn(label: Text('Order ID /Expense name')),
+  //             DataColumn(label: Text('Description')),
+  //             DataColumn(label: Text('Amount')),
+  //             DataColumn(label: Text('Date')),
+  //             DataColumn(label: Text('Edit')),
+  //           ],
+  //         ),
+  //       );
+  // }
 }
 
 class ExpenseDataSource extends DataTableSource {

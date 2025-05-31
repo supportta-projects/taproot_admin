@@ -269,6 +269,7 @@ class OrderProduct {
     );
   }
 }
+
 class ProductDetails {
   final String id;
   final String name;
@@ -319,7 +320,6 @@ class ProductDetails {
     );
   }
 }
-
 
 // class ProductDetails {
 //   final String id;

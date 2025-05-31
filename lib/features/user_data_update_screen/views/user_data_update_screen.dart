@@ -92,7 +92,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     if (portfolio?.services.isNotEmpty == true &&
         portfolio?.services[0].image?.key != null) {
       final imageUrl =
-          '$baseUrl/file?key=portfolios/portfolio_services/${portfolio!.services[0].image!.key}';
+          '$baseUrlImage/portfolios/portfolio_services/${portfolio!.services[0].image!.key}';
       logSuccess('Generated image URL: $imageUrl');
       return imageUrl;
     }
@@ -360,8 +360,7 @@ class ServiceCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl =
-        '$baseUrl/file?key=portfolios/portfolio_services/${service.image!.key}';
+    final imageUrl = '$baseUrlImage/portfolios/services/${service.image!.key}';
     logSuccess('Full Image URL: $imageUrl');
     return Container(
       padding: EdgeInsets.all(CustomPadding.paddingLarge.v),

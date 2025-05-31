@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
+import 'package:taproot_admin/features/product_screen/data/product_service.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_id_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
@@ -16,7 +17,7 @@ class ViewProduct extends StatefulWidget {
   final String? description;
   final String? cardType;
   final List<String>? images;
-  //  final Future<void> Function() onRefresh;
+  // final Future<Product?> Function(String) onRefresh;
   final VoidCallback onBack;
   final VoidCallback onEdit;
   const ViewProduct({
@@ -26,7 +27,7 @@ class ViewProduct extends StatefulWidget {
     this.images,
     this.productName,
     this.price,
-    // required this.onRefresh,
+    //  required this.onRefresh,
     this.offerPrice,
     this.description,
     this.cardType,
@@ -39,7 +40,7 @@ class ViewProduct extends StatefulWidget {
 
 class _ViewProductState extends State<ViewProduct> {
   bool isEdit = false;
-  // Product? currentProduct;
+  Product? currentProduct;
   // bool viewProduct=false;
 
   //   @override
@@ -49,12 +50,29 @@ class _ViewProductState extends State<ViewProduct> {
   // refreshProduct();
   //     super.initState();
   //   }
-  //   Future<void> refreshProduct() async {
-  //     await widget.onRefresh();
-  //     setState(() {
-  //       // Update the current product if needed
-  //     });
-  //   }
+
+  Future<void> refreshProduct() async {
+    try {
+      if (currentProduct?.id != null) {
+        final updatedProduct = await ProductService.getProductById(
+          currentProduct!.id.toString(),
+        );
+        setState(() {
+          currentProduct = updatedProduct;
+        });
+      }
+    } catch (e) {
+      logError('Error refreshing product: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    currentProduct = widget.product;
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,8 +104,9 @@ class _ViewProductState extends State<ViewProduct> {
               MiniLoadingButton(
                 icon: Icons.edit,
                 text: 'Edit',
-                onPressed: () {
+                onPressed: () async {
                   widget.onEdit();
+                  await refreshProduct();
                 },
                 useGradient: true,
                 gradientColors: CustomColors.borderGradient.colors,
@@ -138,7 +157,7 @@ class _ViewProductState extends State<ViewProduct> {
                       child: AddImageContainer(
                         isImageView: true,
                         imageUrl:
-                            '$baseUrl/file?key=products/${widget.images![index]}',
+                            '$baseUrlImage/products/${widget.images![index]}',
                       ),
                     ),
                   ),

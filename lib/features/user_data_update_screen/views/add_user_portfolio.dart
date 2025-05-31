@@ -391,17 +391,18 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
     );
   }
 }
+
 class AddImageContainer extends StatefulWidget {
   final ProductImage? initialImage;
   final Function(ProductImage?) onImageSelected;
   final String? imageUrl;
-  final String baseUrl;
+  final String baseUrlImage;
   const AddImageContainer({
     super.key,
     this.imageUrl,
     required this.onImageSelected,
     this.initialImage,
-    required this.baseUrl,
+    required this.baseUrlImage,
   });
 
   @override
@@ -502,7 +503,7 @@ class _AddImageContainerState extends State<AddImageContainer> {
   Widget _buildPreview() {
     if (currentImage != null) {
       final imageUrl =
-          '${widget.baseUrl}/file?key=portfolios/portfolio_services/${currentImage!.key}';
+          '${widget.baseUrlImage}/portfolios/services/${currentImage!.key}';
       print('Building preview with URL: $imageUrl');
 
       return Stack(

@@ -114,13 +114,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Spacer(),
                   Container(
                     width: 200,
-                    padding: EdgeInsets.only(right: CustomPadding.paddingLarge),
+
+                    padding: EdgeInsets.only(
+                      right: CustomPadding.paddingLarge,
+                      left: CustomPadding.paddingLarge,
+                    ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.grey[300]!),
                     ),
                     child: DropdownButton<String>(
                       value: selectedValue,
+                      focusColor: CustomColors.backgroundColor,
+                      
                       isExpanded: true,
                       underline: Container(),
                       items:

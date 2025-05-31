@@ -1,3 +1,5 @@
+import 'package:taproot_admin/constants/constants.dart';
+
 class PortfolioDataModel {
   final String id;
   final PersonalInfo personalInfo;
@@ -188,7 +190,7 @@ class ProductImage {
 
   String? getImageUrl(String baseUrl) {
     if (key.isNotEmpty) {
-      return '$baseUrl/file?key=portfolios/$key';
+      return '$baseUrlImage/portfolios/$key';
     }
     return null;
   }
@@ -456,7 +458,7 @@ class Service {
   };
   String? getImageUrl(String baseUrl) {
     if (image?.key != null) {
-      return '$baseUrl/file?key=portfolios/portfolio_services/${image!.key}';
+      return '$baseUrlImage/portfolios/portfolio_services/${image!.key}';
     }
     return null;
   }

@@ -45,6 +45,23 @@ class ProductService with ErrorExceptionHandler {
       throw ProductService().handleError('Failed to load products, $e');
     }
   }
+static Future<Product> getProductById(String productId) async {
+    try {
+      final response = await DioHelper().get(
+        '/product/$productId',
+        type: ApiType.baseUrl,
+      );
+
+      if (response.statusCode == 200) {
+        logSuccess("Response Data: ${response.data}");
+        return Product.fromJson(response.data['result']);
+      } else {
+        throw Exception('Failed to load product');
+      }
+    } catch (e) {
+      throw ProductService().handleError('Failed to load product, $e');
+    }
+  }
 
   // static Future<ProductResponse> getProduct({
   //   required int page,

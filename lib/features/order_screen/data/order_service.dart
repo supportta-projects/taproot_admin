@@ -83,8 +83,7 @@ class OrderService with ErrorExceptionHandler {
   //       throw OrderService().handleError(e);
   //     }
   //   }
-
-  static Future<OrderDetailsResponse> getOrderDetails({
+static Future<OrderDetailsResponse> getOrderDetails({
     required String orderId,
   }) async {
     try {
@@ -95,11 +94,56 @@ class OrderService with ErrorExceptionHandler {
 
       logInfo('API Response: ${response.data}');
 
-      return OrderDetailsResponse.fromJson(response.data);
+      // Cast response.data to Map<String, dynamic>
+      final Map<String, dynamic> responseData = Map<String, dynamic>.from(
+        response.data,
+      );
+
+      // Cast result to Map<String, dynamic>
+      if (responseData['result'] != null) {
+        final Map<String, dynamic> result = Map<String, dynamic>.from(
+          responseData['result'],
+        );
+
+        // Handle products array
+        if (result['products'] != null) {
+          final List<Map<String, dynamic>> products =
+              (result['products'] as List)
+                  .map((product) => Map<String, dynamic>.from(product))
+                  .toList();
+
+          // Update the products in result
+          result['products'] = products;
+        }
+
+        // Update the result in responseData
+        responseData['result'] = result;
+      }
+
+      return OrderDetailsResponse.fromJson(responseData);
     } catch (e) {
+      logError('Error in getOrderDetails: $e');
       throw OrderService().handleError(e);
     }
   }
+
+
+  // static Future<OrderDetailsResponse> getOrderDetails({
+  //   required String orderId,
+  // }) async {
+  //   try {
+  //     final response = await DioHelper().get(
+  //       '/order/order-details/$orderId',
+  //       type: ApiType.baseUrl,
+  //     );
+
+  //     logInfo('API Response: ${response.data}');
+
+  //     return OrderDetailsResponse.fromJson(response.data);
+  //   } catch (e) {
+  //     throw OrderService().handleError(e);
+  //   }
+  // }
 
   static Future<OrderResponseUser?> getOrderedUser({
     required String orderId,

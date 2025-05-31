@@ -513,6 +513,18 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               child: Row(
                 children: [
                   AdditionalContainer(
+                    onLogoRemoved: () {
+                      setState(() {
+                        pickedLogoImage = null;
+                        previewLogoBytes = null;
+                      });
+                    },
+                    onBannerRemoved: () {
+                      setState(() {
+                        pickedBannerImage = null;
+                        previewBannerBytes = null;
+                      });
+                    },
                     logoImageUrl: widget.portfolio?.workInfo.getCompanyLogoUrl(
                       baseUrl,
                     ),
@@ -701,10 +713,10 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                         children: [
                           Gap(CustomPadding.paddingLarge.v),
                           AddImageContainer(
-                            baseUrl: baseUrl,
+                            baseUrlImage: baseUrlImage,
                             imageUrl:
                                 pickedServiceImage?.key != null
-                                    ? '$baseUrl/file?key=portfolios/portfolio_services/${pickedServiceImage!.key}'
+                                    ? '$baseUrlImage/portfolios/services/${pickedServiceImage!.key}'
                                     : null,
                             initialImage: pickedServiceImage,
 

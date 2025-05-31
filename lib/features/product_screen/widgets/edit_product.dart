@@ -141,7 +141,7 @@ class _EditProductState extends State<EditProduct> {
     }
   }
 
- Future<void> updateProduct() async {
+  Future<void> updateProduct() async {
     try {
       // Validate inputs
       if (nameController.text.isEmpty) {
@@ -177,6 +177,10 @@ class _EditProductState extends State<EditProduct> {
       // Calculate the discount amount and sale price
       final discountAmount = (actualPrice * discountPercentage) / 100;
       final salePrice = actualPrice - discountAmount;
+      final discountPrice =
+          discountPercentage == 0
+              ? actualPrice // No discount
+              : actualPrice - (actualPrice * discountPercentage / 100);
 
       // Prepare product images
       List<ProductImage> productImages = [];
@@ -282,8 +286,8 @@ class _EditProductState extends State<EditProduct> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Product updated successfully')),
         );
-        Navigator.pop(context);
         widget.onRefreshProduct();
+        Navigator.pop(context,);
       } else {
         throw Exception(response.message);
       }
@@ -296,7 +300,6 @@ class _EditProductState extends State<EditProduct> {
       );
     }
   }
-
 
   // Future<void> updateProduct() async {
   //   try {
@@ -856,7 +859,9 @@ class _EditProductState extends State<EditProduct> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ProductIdContainer(productId: widget.product!.code.toString(),),
+                  ProductIdContainer(
+                    productId: widget.product!.code.toString(),
+                  ),
                   Gap(CustomPadding.paddingXL.v),
                   Wrap(
                     spacing: 8,

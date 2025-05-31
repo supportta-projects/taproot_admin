@@ -22,6 +22,8 @@ class AdditionalContainer extends StatefulWidget {
   final String? logoImageUrl;
   final Function(PlatformFile file)? onLogoSelected;
   final Function(PlatformFile file)? onBannerSelected;
+  final Function()? onLogoRemoved;
+  final Function()? onBannerRemoved;
 
   const AdditionalContainer({
     super.key,
@@ -34,6 +36,8 @@ class AdditionalContainer extends StatefulWidget {
     this.logoImageUrl,
     this.onLogoSelected,
     this.onBannerSelected,
+    this.onLogoRemoved,
+    this.onBannerRemoved,
   });
 
   @override
@@ -45,6 +49,8 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
   PlatformFile? pickedBannerImage;
   Uint8List? previewLogoBytes;
   Uint8List? previewBannerBytes;
+  bool isLogoRemoved = false;
+  bool isBannerRemoved = false;
 
   void _pickImage({required bool isLogo}) async {
     try {
@@ -80,14 +86,32 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
   void _removeLogoImage() {
     setState(() {
       previewLogoBytes = null;
+      pickedLogoImage = null;
+      isLogoRemoved = true;
     });
+    widget.onLogoRemoved?.call();
   }
 
   void _removeBannerImage() {
     setState(() {
       previewBannerBytes = null;
+      pickedBannerImage = null;
+      isBannerRemoved = true;
     });
+    widget.onBannerRemoved?.call();
   }
+
+  // void _removeLogoImage() {
+  //   setState(() {
+  //     previewLogoBytes = null;
+  //   });
+  // }
+
+  // void _removeBannerImage() {
+  //   setState(() {
+  //     previewBannerBytes = null;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +167,8 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                       ImageContainer(
                         onTapRemove: widget.isEdit ? _removeLogoImage : null,
                         previewBytes: previewLogoBytes,
-                        imageUrl: widget.logoImageUrl,
+                        imageUrl: isLogoRemoved ? null : widget.logoImageUrl,
+                        // imageUrl: widget.logoImageUrl,
                         isEdit: widget.isEdit,
                         icon:
                             previewLogoBytes == null
@@ -161,7 +186,9 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                       ImageContainer(
                         onTapRemove: widget.isEdit ? _removeBannerImage : null,
                         previewBytes: previewBannerBytes,
-                        imageUrl: widget.bannerImageUrl,
+                        imageUrl:
+                            isBannerRemoved ? null : widget.bannerImageUrl,
+                        // imageUrl: widget.bannerImageUrl,
                         isEdit: widget.isEdit,
                         icon:
                             previewBannerBytes == null
