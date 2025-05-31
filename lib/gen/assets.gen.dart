@@ -12,12 +12,28 @@ import 'package:flutter/widgets.dart';
 class $AssetsPngGen {
   const $AssetsPngGen();
 
+  /// File path: assets/png/Group 1321314488.png
+  AssetGenImage get group1321314488 =>
+      const AssetGenImage('assets/png/Group 1321314488.png');
+
   /// File path: assets/png/background.png
   AssetGenImage get background =>
       const AssetGenImage('assets/png/background.png');
 
+  /// File path: assets/png/bglog.png
+  AssetGenImage get bglog => const AssetGenImage('assets/png/bglog.png');
+
+  /// File path: assets/png/supporttalogin.png
+  AssetGenImage get supporttalogin =>
+      const AssetGenImage('assets/png/supporttalogin.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [background];
+  List<AssetGenImage> get values => [
+    group1321314488,
+    background,
+    bglog,
+    supporttalogin,
+  ];
 }
 
 class $AssetsSvgGen {
@@ -26,8 +42,14 @@ class $AssetsSvgGen {
   /// File path: assets/svg/addround.svg
   String get addround => 'assets/svg/addround.svg';
 
+  /// File path: assets/svg/backgroundlogin.svg
+  String get backgroundlogin => 'assets/svg/backgroundlogin.svg';
+
   /// File path: assets/svg/behance.svg
   String get behance => 'assets/svg/behance.svg';
+
+  /// File path: assets/svg/bglogin.svg
+  String get bglogin => 'assets/svg/bglogin.svg';
 
   /// File path: assets/svg/facebook.svg
   String get facebook => 'assets/svg/facebook.svg';
@@ -65,7 +87,9 @@ class $AssetsSvgGen {
   /// List of all assets
   List<String> get values => [
     addround,
+    backgroundlogin,
     behance,
+    bglogin,
     facebook,
     github,
     instagram,
