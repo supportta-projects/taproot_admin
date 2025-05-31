@@ -83,35 +83,19 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
     }
   }
 
+ 
+
   void _removeLogoImage() {
     setState(() {
       previewLogoBytes = null;
-      pickedLogoImage = null;
-      isLogoRemoved = true;
     });
-    widget.onLogoRemoved?.call();
   }
 
   void _removeBannerImage() {
     setState(() {
       previewBannerBytes = null;
-      pickedBannerImage = null;
-      isBannerRemoved = true;
     });
-    widget.onBannerRemoved?.call();
   }
-
-  // void _removeLogoImage() {
-  //   setState(() {
-  //     previewLogoBytes = null;
-  //   });
-  // }
-
-  // void _removeBannerImage() {
-  //   setState(() {
-  //     previewBannerBytes = null;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
