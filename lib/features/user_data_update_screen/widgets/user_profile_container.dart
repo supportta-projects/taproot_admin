@@ -167,9 +167,9 @@ class _UserProfileContainerState extends State<UserProfileContainer>
       child: Container(
         decoration: BoxDecoration(
           color: CustomColors.secondaryColor,
-          borderRadius: BorderRadius.circular(CustomPadding.padding),
+          borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
         ),
-        height: SizeUtils.height * 0.40,
+        height: SizeUtils.height * 0.475,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

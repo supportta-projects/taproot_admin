@@ -54,6 +54,30 @@ class Order {
     required this.totalAmount,
     required this.paymentStatus,
   });
+  Order copyWith({
+    String? id,
+    String? code,
+    String? orderStatus,
+    bool? isDeleted,
+    User? user,
+    Address? address,
+    int? totalProducts,
+    double? totalAmount,
+    String? paymentStatus,
+  }) {
+    return Order(
+      id: id ?? this.id,
+      code: code ?? this.code,
+      orderStatus: orderStatus ?? this.orderStatus,
+      isDeleted: isDeleted ?? this.isDeleted,
+      user: user ?? this.user,
+      address: address ?? this.address,
+      totalProducts: totalProducts ?? this.totalProducts,
+      totalAmount: totalAmount ?? this.totalAmount,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+    );
+  }
+
 factory Order.fromJson(Map<String, dynamic> json) {
     try {
       return Order(

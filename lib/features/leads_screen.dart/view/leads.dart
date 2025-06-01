@@ -155,7 +155,7 @@ class _LeadsDataSource extends DataTableSource {
             child: Text(
               lead.name[0].toUpperCase() + lead.name.substring(1),
               style: TextStyle(
-                color: CustomColors.green,
+                color: CustomColors.buttonColor1,
                 fontWeight: FontWeight.w700,
                 fontSize: 16,
               ),

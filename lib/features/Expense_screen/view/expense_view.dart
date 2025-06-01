@@ -11,8 +11,7 @@ import 'package:taproot_admin/features/Expense_screen/data/expense_service.dart'
 import 'package:taproot_admin/features/Expense_screen/widgets/add_expense.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/edit_expense.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/expense_description_container.dart';
-import 'package:taproot_admin/features/Expense_screen/widgets/filter_button.dart';
-import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
+
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
 
@@ -33,7 +32,7 @@ class _ExpenseViewState extends State<ExpenseView> {
   String? _currentCategory;
   String searchQuery = '';
   Timer? _debounce;
-  final _tableKey = GlobalKey<PaginatedDataTableState>();
+  // final _tableKey = GlobalKey<PaginatedDataTableState>();
 
   @override
   void initState() {
@@ -107,7 +106,6 @@ class _ExpenseViewState extends State<ExpenseView> {
   @override
   void dispose() {
     _debounce?.cancel();
-    // TODO: implement dispose
     super.dispose();
   }
 

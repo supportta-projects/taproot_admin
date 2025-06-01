@@ -24,9 +24,9 @@ class AddImageContainer extends StatelessWidget {
       width: isImageView ? double.infinity : 200,
       height: 200,
       decoration: BoxDecoration(
-        color: CustomColors.textColorLightGrey,
+        color: CustomColors.hoverColor,
         borderRadius: BorderRadius.circular(CustomPadding.padding),
-        border: Border.all(color: CustomColors.textColorLightGrey, width: 1),
+        border: Border.all(color: CustomColors.hoverColor, width: 1),
       ),
       child: Stack(
         children: [
@@ -49,11 +49,11 @@ class AddImageContainer extends StatelessWidget {
                 height: double.infinity,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  print('Error loading image: $error');
+                  logError('Error loading image: $error');
                   return Center(
                     child: Icon(
                       LucideIcons.image,
-                      color: CustomColors.textColorDarkGrey,
+                      color: CustomColors.hoverColor,
                       size: SizeUtils.height * 0.1,
                     ),
                   );
@@ -76,7 +76,7 @@ class AddImageContainer extends StatelessWidget {
             Center(
               child: Icon(
                 LucideIcons.image,
-                color: CustomColors.textColorDarkGrey,
+                color: CustomColors.hoverColor,
                 size: SizeUtils.height * 0.1,
               ),
             ),
@@ -109,7 +109,6 @@ class AddImageContainer extends StatelessWidget {
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:taproot_admin/exporter/exporter.dart';

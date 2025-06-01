@@ -108,15 +108,16 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               : SingleChildScrollView(
                 child: Column(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.pop(context);
+                    //   },
 
-                      child: Text(
-                        'Click here to go back to the previous screen',
-                      ),
-                    ),
+                    //   child: Text(
+                    //     'Click here to go back to the previous screen',
+                    //   ),
+                    // ),
+                    Gap(CustomPadding.paddingLarge),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: CustomPadding.paddingLarge,
@@ -127,7 +128,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                           Text(
                             'User  >  User Details',
                             style: context.inter60016.copyWith(
-                              color: Colors.green,
+                              color: CustomColors.buttonColor1,
                             ),
                           ),
                           Spacer(),
@@ -328,6 +329,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               },
                             ),
                           ),
+                          Gap(CustomPadding.paddingLarge),
                         ],
                       ),
                     ),
@@ -360,103 +362,114 @@ class ServiceCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl = '$baseUrlImage/portfolios/services/${service.image!.key}';
+    final imageUrl =
+        '$baseUrlImage/portfolios/portfolio_services/${service.image!.key}';
     logSuccess('Full Image URL: $imageUrl');
-    return Container(
-      padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
-      width: 350,
-      height: 400,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(CustomPadding.padding.v),
-        border: Border.all(color: CustomColors.hintGrey),
-      ),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(service.heading, style: context.inter50014),
-              Gap(CustomPadding.paddingLarge.v),
-              SizedBox(
-                height: 160,
-                width: double.infinity,
-                child:
-                    service.image?.key != null
-                        ? Image.network(
-                          imageUrl,
-                          fit: BoxFit.fill,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            logError('Image Error for $imageUrl: $error');
-                            return const Center(
-                              child: Icon(
-                                Icons.image_not_supported,
-                                size: 40,
-                                color: CustomColors.hintGrey,
-                              ),
-                            );
-                          },
-                        )
-                        : const Center(
-                          child: Icon(
-                            Icons.image_not_supported,
-                            size: 40,
-                            color: CustomColors.hintGrey,
-                          ),
-                        ),
-              ),
-              Gap(CustomPadding.paddingLarge.v),
-              Text(
-                'Description',
-                style: TextStyle(color: CustomColors.textFieldBorderGrey),
-              ),
-              Gap(CustomPadding.paddingLarge.v),
-              Expanded(
-                child: SingleChildScrollView(child: Text(service.description)),
-              ),
-            ],
-          ),
-          if (isEditMode)
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Row(
-                children: [
-                  TextButton(
-                    onPressed: onEdit,
-                    child: Text(
-                      'Edit',
-                      style: context.inter50016.copyWith(
-                        color: CustomColors.green,
-                      ),
-                    ),
-                  ),
+    return Card(
+      color: Colors.white,
+      elevation: 8,
+      surfaceTintColor: CustomColors.secondaryColor,
 
-                  TextButton(
-                    onPressed: onDelete,
-                    child: Text(
-                      'Delete',
-                      style: context.inter50016.copyWith(
-                        color: CustomColors.red,
+      shadowColor: Colors.black.withValues(alpha: 0.6),
+      child: Container(
+        padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
+        width: 350,
+        height: 400,
+        // decoration: BoxDecoration(
+        //   borderRadius: BorderRadius.circular(CustomPadding.padding.v),
+        //   border: Border.all(color: CustomColors.hintGrey),
+        // ),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(service.heading, style: context.inter50014),
+                Gap(CustomPadding.paddingLarge.v),
+                SizedBox(
+                  height: 160,
+                  width: double.infinity,
+                  child:
+                      service.image?.key != null
+                          ? Image.network(
+                            imageUrl,
+                            fit: BoxFit.fill,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                              loadingProgress
+                                                  .expectedTotalBytes!
+                                          : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              logError('Image Error for $imageUrl: $error');
+                              return const Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 40,
+                                  color: CustomColors.hintGrey,
+                                ),
+                              );
+                            },
+                          )
+                          : const Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              size: 40,
+                              color: CustomColors.hintGrey,
+                            ),
+                          ),
+                ),
+                Gap(CustomPadding.paddingLarge.v),
+                Text(
+                  'Description',
+                  style: TextStyle(color: CustomColors.textFieldBorderGrey),
+                ),
+                Gap(CustomPadding.paddingLarge.v),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Text(service.description),
+                  ),
+                ),
+              ],
+            ),
+            if (isEditMode)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Row(
+                  children: [
+                    TextButton(
+                      onPressed: onEdit,
+                      child: Text(
+                        'Edit',
+                        style: context.inter50016.copyWith(
+                          color: CustomColors.green,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+
+                    TextButton(
+                      onPressed: onDelete,
+                      child: Text(
+                        'Delete',
+                        style: context.inter50016.copyWith(
+                          color: CustomColors.red,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

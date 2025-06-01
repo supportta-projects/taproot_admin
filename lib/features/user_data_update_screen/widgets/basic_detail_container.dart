@@ -131,44 +131,57 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             ? SizedBox()
             : DetailRowCopy(
               label: 'Portfolio Link',
-              value:
-                  'https://cards.app.supporttasolutions.com/portfolio/\n${user.id}',
-              icon: Icons.open_in_new,
+              value: 'https://app.supporttacards.com/portfolio/\n${user.id}',
+              icon: Icons.copy,
               onTap: () async {
-                final url =
-                    'https://cards.app.supporttasolutions.com/portfolio/${user.id}';
-                if (await canLaunch(url)) {
-                  await launch(url);
-                } else {
-                  throw 'Could not launch $url';
+                final Uri url = Uri.parse(
+                  'https://app.supporttacards.com/portfolio/${user.id}',
+                );
+                if (!await launchUrl(url)) {
+                  throw Exception('Could not launch $url');
                 }
               },
             ),
-        widget.isEdit ? SizedBox() : Gap(CustomPadding.padding.v),
-        widget.isEdit
-            ? SizedBox()
-            : Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    'QR Code',
-                    style: context.inter50014.copyWith(fontSize: 14.fSize),
-                  ),
-                  Spacer(),
-                  GradientText(
-                    'Download',
-                    gradient: CustomColors.borderGradient,
-                    style: context.inter50014.copyWith(
-                      decoration: TextDecoration.underline,
-                      decorationColor: CustomColors.greenDark,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+
+        // DetailRowCopy(
+        //   label: 'Portfolio Link',
+        //   value: 'https://app.supporttacards.com/portfolio/\n${user.id}',
+        //   icon: Icons.copy,
+        //   onTap: () async {
+        //     final url =
+        //         'https://app.supporttacards.com/portfolio/${user.id}';
+        //     if (await canLaunch(url)) {
+        //       await launch(url);
+        //     } else {
+        //       throw 'Could not launch $url';
+        //     }
+        //   },
+        // ),
+        // widget.isEdit ? SizedBox() : Gap(CustomPadding.padding.v),
+        // widget.isEdit
+        //     ? SizedBox()
+        //     : Padding(
+        //       padding: EdgeInsets.symmetric(
+        //         horizontal: CustomPadding.paddingLarge.v,
+        //       ),
+        //       child: Row(
+        //         children: [
+        //           Text(
+        //             'QR Code',
+        //             style: context.inter50014.copyWith(fontSize: 14.fSize),
+        //           ),
+        //           Spacer(),
+        //           GradientText(
+        //             'Download',
+        //             gradient: CustomColors.borderGradient,
+        //             style: context.inter50014.copyWith(
+        //               decoration: TextDecoration.underline,
+        //               decorationColor: CustomColors.greenDark,
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
       ],
     );
   }

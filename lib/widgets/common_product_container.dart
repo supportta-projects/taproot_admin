@@ -42,7 +42,7 @@ class _CommonProductContainerState extends State<CommonProductContainer> {
                 color:
                     widget.isOrderDetails
                         ? CustomColors.secondaryColor
-                        : CustomColors.lightGreen,
+                        : CustomColors.hoverColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(CustomPadding.paddingLarge),
                   topRight: Radius.circular(CustomPadding.paddingLarge),

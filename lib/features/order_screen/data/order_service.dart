@@ -5,6 +5,7 @@ import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_details_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
+import 'package:taproot_admin/features/order_screen/data/order_status_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_user_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_paginated_model.dart';
@@ -294,4 +295,42 @@ static Future<OrderDetailsResponse> getOrderDetails({
       throw OrderService().handleError(e);
     }
   }
+  static Future<OrderStatusResponse?> getOrderStatus({
+    required String orderId,
+  }) async {
+    try {
+      final response = await DioHelper().patch(
+        '/order/order-status/$orderId',
+        type: ApiType.baseUrl,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return OrderStatusResponse.fromJson(response.data);
+      } else {
+        logInfo('Failed to get order details. Status: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      logInfo('Exception in getOrderStatus: $e');
+      return null;
+    }
+  }
+  static Future<OrderStatusResponse?> retryOrder(String orderId) async {
+    try {
+      final response = await DioHelper().patch(
+        '/order/retry-order/$orderId',
+        type: ApiType.baseUrl,
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return OrderStatusResponse.fromJson(response.data);
+      }
+    } catch (e) {
+      logInfo('Retry Order API error: $e');
+    }
+
+    return null;
+  }
+
+
 }

@@ -121,6 +121,19 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     });
   }
 
+  Color _getPaymentStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'success':
+        return CustomColors.green;
+      case 'pending':
+        return Colors.orangeAccent;
+      case 'failed':
+        return Colors.red;
+      default:
+        return Colors.grey; // Default color for unknown status
+    }
+  }
+
   Future<void> getOrderDetails() async {
     try {
       final response = await OrderService.getOrderDetails(
@@ -1180,7 +1193,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                               orderDetails!.paymentStatus,
                                           sufixstyle: context.inter50016
                                               .copyWith(
-                                                color: CustomColors.green,
+                                                color: _getPaymentStatusColor(
+                                                  orderDetails!.paymentStatus,
+                                                ),
+                                                //  CustomColors.green,
                                               ),
                                         ),
                                         CardRow(

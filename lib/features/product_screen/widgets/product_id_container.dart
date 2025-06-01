@@ -4,7 +4,7 @@ import 'package:taproot_admin/exporter/exporter.dart';
 
 class ProductIdContainer extends StatelessWidget {
   final String productId;
-  const ProductIdContainer({super.key,required this.productId});
+  const ProductIdContainer({super.key, required this.productId});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class ProductIdContainer extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(CustomPadding.padding.v),
-        color: CustomColors.lightGreen,
+        color: CustomColors.hoverColor,
       ),
       child: Row(
         children: [

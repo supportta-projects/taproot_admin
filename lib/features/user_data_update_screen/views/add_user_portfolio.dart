@@ -503,7 +503,7 @@ class _AddImageContainerState extends State<AddImageContainer> {
   Widget _buildPreview() {
     if (currentImage != null) {
       final imageUrl =
-          '${widget.baseUrlImage}/portfolios/services/${currentImage!.key}';
+          '${widget.baseUrlImage}/portfolios/portfolio_services/${currentImage!.key}';
       print('Building preview with URL: $imageUrl');
 
       return Stack(

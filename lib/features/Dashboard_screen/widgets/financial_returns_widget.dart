@@ -28,10 +28,6 @@ class FinancialReturnsWidget extends StatelessWidget {
         dashboardModel!.result.result.expenseChange.toString();
     String profitChange = dashboardModel!.result.result.profitChange.toString();
 
-    // Get the numeric values for comparison
-    double revenueChangeNum = dashboardModel!.result.result.revenueChange;
-    double expenseChangeNum = dashboardModel!.result.result.expenseChange;
-    double profitChangeNum = dashboardModel!.result.result.profitChange;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: CustomPadding.paddingLarge),
       width: double.infinity,

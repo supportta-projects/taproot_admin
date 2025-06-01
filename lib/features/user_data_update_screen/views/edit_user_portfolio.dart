@@ -716,7 +716,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                             baseUrlImage: baseUrlImage,
                             imageUrl:
                                 pickedServiceImage?.key != null
-                                    ? '$baseUrlImage/portfolios/services/${pickedServiceImage!.key}'
+                                    ? '$baseUrlImage/portfolios/portfolio-services/${pickedServiceImage!.key}'
                                     : null,
                             initialImage: pickedServiceImage,
 

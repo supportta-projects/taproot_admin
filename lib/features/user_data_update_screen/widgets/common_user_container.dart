@@ -29,7 +29,7 @@ class CommonUserContainer extends StatelessWidget {
             Container(
               height: SizeUtils.height * 0.06,
               decoration: BoxDecoration(
-                color: CustomColors.lightGreen,
+                color: CustomColors.hoverColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(CustomPadding.paddingLarge),
                   topRight: Radius.circular(CustomPadding.paddingLarge),

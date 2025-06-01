@@ -89,7 +89,7 @@ class _ProductCardState extends State<ProductCard> {
                     horizontal: CustomPadding.paddingXXL.v,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: CustomColors.hoverColor,
 
                     borderRadius: BorderRadius.circular(
                       CustomPadding.padding.v,

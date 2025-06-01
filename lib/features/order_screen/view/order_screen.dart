@@ -9,8 +9,6 @@ import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/view/create_order.dart';
 import 'package:taproot_admin/features/order_screen/view/order_details_screen.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
-import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
-
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
 
@@ -340,6 +338,8 @@ class _OrderScreenState extends State<OrderScreen> {
                               DataColumn(label: Text('Phone')),
                               DataColumn(label: Text('Amount')),
                               DataColumn(label: Text('Order Count')),
+                              DataColumn(label: Text('Status')),
+                              DataColumn(label: Text('Action')),
                             ],
                             source:
                                 orderDataSource ??
@@ -371,6 +371,7 @@ class OrderDataSource extends DataTableSource {
   final GlobalKey<NavigatorState>? innerNavigatorKey;
   final int totalCount;
   final int rowsPerPage;
+  final Set<String> loadingOrderIds = {};
 
   OrderDataSource(
     this.orderList,
@@ -407,7 +408,9 @@ class OrderDataSource extends DataTableSource {
               child: Center(
                 child: Text(
                   order.code,
-                  style: context.inter60016.copyWith(color: CustomColors.green),
+                  style: context.inter60016.copyWith(
+                    color: CustomColors.buttonColor1,
+                  ),
                 ),
               ),
             ),
@@ -436,12 +439,135 @@ class OrderDataSource extends DataTableSource {
               child: Center(child: Text(order.totalProducts.toString())),
             ),
           ),
+          DataCell(
+            InkWell(
+              onTap: handleRowTap,
+              child: Center(child: Text(order.orderStatus.toString())),
+            ),
+          ),
+          DataCell(
+            Builder(
+              builder: (_) {
+                final status = order.orderStatus;
+
+                if (status == 'Pending' || status == 'Completed') {
+                  return const SizedBox();
+                }
+                if (status == 'Failed') {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      final isLoading = loadingOrderIds.contains(order.id);
+
+                      return MiniLoadingButton(
+                        useGradient: true,
+                        text: 'Retry',
+                        icon: Icons.replay,
+                        isLoading: isLoading,
+                        onPressed: () async {
+                          loadingOrderIds.add(order.id);
+                          setState(() {}); // Rebuild with loading=true
+
+                          final result = await OrderService.retryOrder(
+                            order.id,
+                          );
+                          if (result?.success ?? false) {
+                            orderList[index % rowsPerPage] = order.copyWith(
+                              orderStatus: result!.orderStatus,
+                            );
+                            notifyListeners();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(result.message)),
+                            );
+                          }
+
+                          loadingOrderIds.remove(order.id);
+                          setState(() {}); // Rebuild with loading=false
+                        },
+                      );
+                    },
+                  );
+                }
+
+                if (status == 'Placed' || status == 'Confirmed') {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      final isLoading = loadingOrderIds.contains(order.id);
+
+                      return MiniLoadingButton(
+                        useGradient: true,
+                        text: 'Dispatch',
+                        icon: Icons.local_shipping,
+                        isLoading: isLoading,
+                        onPressed: () async {
+                          loadingOrderIds.add(order.id);
+                          setState(() {});
+
+                          final result = await OrderService.getOrderStatus(
+                            orderId: order.id,
+                          );
+                          if (result?.success ?? false) {
+                            orderList[index % rowsPerPage] = order.copyWith(
+                              orderStatus: result!.orderStatus,
+                            );
+                            notifyListeners();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(result.message)),
+                            );
+                          }
+
+                          loadingOrderIds.remove(order.id);
+                          setState(() {});
+                        },
+                      );
+                    },
+                  );
+                }
+
+                if (status == 'Shipped') {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      final isLoading = loadingOrderIds.contains(order.id);
+
+                      return MiniLoadingButton(
+                        useGradient: true,
+                        text: 'Complete',
+                        icon: Icons.check_circle,
+                        isLoading: isLoading,
+                        onPressed: () async {
+                          loadingOrderIds.add(order.id);
+                          setState(() {});
+
+                          final result = await OrderService.getOrderStatus(
+                            orderId: order.id,
+                          );
+                          if (result?.success ?? false) {
+                            orderList[index % rowsPerPage] = order.copyWith(
+                              orderStatus: result!.orderStatus,
+                            );
+                            notifyListeners();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(result.message)),
+                            );
+                          }
+
+                          loadingOrderIds.remove(order.id);
+                          setState(() {});
+                        },
+                      );
+                    },
+                  );
+                }
+
+                return const SizedBox(); // fallback
+              },
+            ),
+          ),
         ],
       );
     }
 
     return DataRow(
-      cells: List<DataCell>.generate(5, (index) => const DataCell(Text('-'))),
+      cells: List<DataCell>.generate(6, (index) => const DataCell(Text('-'))),
     );
   }
 

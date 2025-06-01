@@ -436,7 +436,7 @@ class AddImageContainer extends StatelessWidget {
           width: 200.v,
           height: 150.h,
           decoration: BoxDecoration(
-            color: CustomColors.lightGreen,
+            color: CustomColors.hoverColor,
             borderRadius: BorderRadius.circular(CustomPadding.padding.v),
           ),
           child:
