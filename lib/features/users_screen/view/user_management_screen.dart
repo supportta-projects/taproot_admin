@@ -23,6 +23,8 @@ class UserManagementScreen extends StatefulWidget {
 class _UserManagementScreenState extends State<UserManagementScreen> {
   List<User> users = [];
   bool isLoading = true;
+  bool isSearching = false;
+
   int currentPage = 1;
   int totalPages = 1;
   int totalUser = 0;
@@ -159,6 +161,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           prefixIcon: Icon(Icons.search),
                           hintText: 'Search Uses ID, Name, Number',
                         ),
+
                         onChanged: (val) {
                           setState(() {
                             searchQuery = val;

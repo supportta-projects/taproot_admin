@@ -446,153 +446,163 @@ class OrderDataSource extends DataTableSource {
             ),
           ),
           DataCell(
-            Builder(
-              builder: (_) {
-                final status = order.orderStatus;
+            Center(
+              child: Builder(
+                builder: (_) {
+                  final status = order.orderStatus;
 
-                if (status == 'Pending' || status == 'Completed') {
-                  return const SizedBox();
-                }
-                if (status == 'Failed') {
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      final isLoading = loadingOrderIds.contains(order.id);
+                  if (status == 'Pending' || status == 'Completed') {
+                    return const SizedBox();
+                  }
+                  if (status == 'Failed') {
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        final isLoading = loadingOrderIds.contains(order.id);
 
-                      return MiniLoadingButton(
-                        useGradient: true,
-                        text: 'Retry',
-                        icon: Icons.replay,
-                        isLoading: isLoading,
-                        onPressed: () async {
-                          loadingOrderIds.add(order.id);
-                          setState(() {}); // Rebuild with loading=true
+                        return MiniLoadingButton(
+                          gradientColors: CustomColors.borderGradient.colors,
 
-                          final result = await OrderService.retryOrder(
-                            order.id,
-                          );
-                          if (result?.success ?? false) {
-                            orderList[index % rowsPerPage] = order.copyWith(
-                              orderStatus: result!.orderStatus,
+                          useGradient: true,
+                          text: 'Retry',
+                          icon: Icons.replay,
+                          isLoading: isLoading,
+                          onPressed: () async {
+                            loadingOrderIds.add(order.id);
+                            setState(() {}); // Rebuild with loading=true
+
+                            final result = await OrderService.retryOrder(
+                              order.id,
                             );
-                            notifyListeners();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(result.message)),
+                            if (result?.success ?? false) {
+                              orderList[index % rowsPerPage] = order.copyWith(
+                                orderStatus: result!.orderStatus,
+                              );
+                              notifyListeners();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(result.message)),
+                              );
+                            }
+
+                            loadingOrderIds.remove(order.id);
+                            setState(() {}); // Rebuild with loading=false
+                          },
+                        );
+                      },
+                    );
+                  }
+                  if (status == 'Placed') {
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        final isLoading = loadingOrderIds.contains(order.id);
+
+                        return MiniLoadingButton(
+                          gradientColors: CustomColors.borderGradient.colors,
+
+                          useGradient: true,
+                          text: 'Confirm',
+                          icon: Icons.check,
+                          isLoading: isLoading,
+                          onPressed: () async {
+                            loadingOrderIds.add(order.id);
+                            setState(() {});
+
+                            final result = await OrderService.getOrderStatus(
+                              orderId: order.id,
                             );
-                          }
+                            if (result?.success ?? false) {
+                              orderList[index % rowsPerPage] = order.copyWith(
+                                orderStatus: result!.orderStatus,
+                              );
+                              notifyListeners();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(result.message)),
+                              );
+                            }
 
-                          loadingOrderIds.remove(order.id);
-                          setState(() {}); // Rebuild with loading=false
-                        },
-                      );
-                    },
-                  );
-                }
-                if (status == 'Placed') {
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      final isLoading = loadingOrderIds.contains(order.id);
+                            loadingOrderIds.remove(order.id);
+                            setState(() {});
+                          },
+                        );
+                      },
+                    );
+                  }
+                  if (status == 'Confirmed') {
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        final isLoading = loadingOrderIds.contains(order.id);
 
-                      return MiniLoadingButton(
-                        useGradient: true,
-                        text: 'Confirm',
-                        icon: Icons.check,
-                        isLoading: isLoading,
-                        onPressed: () async {
-                          loadingOrderIds.add(order.id);
-                          setState(() {});
+                        return MiniLoadingButton(
+                          gradientColors: CustomColors.borderGradient.colors,
 
-                          final result = await OrderService.getOrderStatus(
-                            orderId: order.id,
-                          );
-                          if (result?.success ?? false) {
-                            orderList[index % rowsPerPage] = order.copyWith(
-                              orderStatus: result!.orderStatus,
+                          useGradient: true,
+                          text: 'Dispatch',
+                          icon: Icons.local_shipping,
+                          isLoading: isLoading,
+                          onPressed: () async {
+                            loadingOrderIds.add(order.id);
+                            setState(() {});
+
+                            final result = await OrderService.getOrderStatus(
+                              orderId: order.id,
                             );
-                            notifyListeners();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(result.message)),
+                            if (result?.success ?? false) {
+                              orderList[index % rowsPerPage] = order.copyWith(
+                                orderStatus: result!.orderStatus,
+                              );
+                              notifyListeners();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(result.message)),
+                              );
+                            }
+
+                            loadingOrderIds.remove(order.id);
+                            setState(() {});
+                          },
+                        );
+                      },
+                    );
+                  }
+
+                  if (status == 'Shipped') {
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        final isLoading = loadingOrderIds.contains(order.id);
+
+                        return MiniLoadingButton(
+                          gradientColors: CustomColors.borderGradient.colors,
+
+                          useGradient: true,
+                          text: 'Complete',
+                          icon: Icons.check_circle,
+                          isLoading: isLoading,
+                          onPressed: () async {
+                            loadingOrderIds.add(order.id);
+                            setState(() {});
+
+                            final result = await OrderService.getOrderStatus(
+                              orderId: order.id,
                             );
-                          }
+                            if (result?.success ?? false) {
+                              orderList[index % rowsPerPage] = order.copyWith(
+                                orderStatus: result!.orderStatus,
+                              );
+                              notifyListeners();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(result.message)),
+                              );
+                            }
 
-                          loadingOrderIds.remove(order.id);
-                          setState(() {});
-                        },
-                      );
-                    },
-                  );
-                }
-                if (status == 'Confirmed') {
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      final isLoading = loadingOrderIds.contains(order.id);
+                            loadingOrderIds.remove(order.id);
+                            setState(() {});
+                          },
+                        );
+                      },
+                    );
+                  }
 
-                      return MiniLoadingButton(
-                        useGradient: true,
-                        text: 'Dispatch',
-                        icon: Icons.local_shipping,
-                        isLoading: isLoading,
-                        onPressed: () async {
-                          loadingOrderIds.add(order.id);
-                          setState(() {});
-
-                          final result = await OrderService.getOrderStatus(
-                            orderId: order.id,
-                          );
-                          if (result?.success ?? false) {
-                            orderList[index % rowsPerPage] = order.copyWith(
-                              orderStatus: result!.orderStatus,
-                            );
-                            notifyListeners();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(result.message)),
-                            );
-                          }
-
-                          loadingOrderIds.remove(order.id);
-                          setState(() {});
-                        },
-                      );
-                    },
-                  );
-                }
-
-                if (status == 'Shipped') {
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      final isLoading = loadingOrderIds.contains(order.id);
-
-                      return MiniLoadingButton(
-                        useGradient: true,
-                        text: 'Complete',
-                        icon: Icons.check_circle,
-                        isLoading: isLoading,
-                        onPressed: () async {
-                          loadingOrderIds.add(order.id);
-                          setState(() {});
-
-                          final result = await OrderService.getOrderStatus(
-                            orderId: order.id,
-                          );
-                          if (result?.success ?? false) {
-                            orderList[index % rowsPerPage] = order.copyWith(
-                              orderStatus: result!.orderStatus,
-                            );
-                            notifyListeners();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(result.message)),
-                            );
-                          }
-
-                          loadingOrderIds.remove(order.id);
-                          setState(() {});
-                        },
-                      );
-                    },
-                  );
-                }
-
-                return const SizedBox(); // fallback
-              },
+                  return const SizedBox(); // fallback
+                },
+              ),
             ),
           ),
         ],

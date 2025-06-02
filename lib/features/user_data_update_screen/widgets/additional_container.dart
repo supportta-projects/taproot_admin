@@ -83,17 +83,30 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
     }
   }
 
- 
+  // void _removeLogoImage() {
+  //   setState(() {
+  //     previewLogoBytes = null;
+  //   });
+  // }
 
+  // void _removeBannerImage() {
+  //   setState(() {
+  //     previewBannerBytes = null;
+  //   });
+  // }
   void _removeLogoImage() {
     setState(() {
       previewLogoBytes = null;
+      isLogoRemoved = true;
+      widget.onLogoRemoved?.call();
     });
   }
 
   void _removeBannerImage() {
     setState(() {
       previewBannerBytes = null;
+      isBannerRemoved = true;
+      widget.onBannerRemoved?.call();
     });
   }
 
@@ -155,16 +168,29 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                         // imageUrl: widget.logoImageUrl,
                         isEdit: widget.isEdit,
                         icon:
-                            previewLogoBytes == null
+                            (previewLogoBytes == null &&
+                                    (widget.logoImageUrl == null ||
+                                        widget.logoImageUrl!.isEmpty))
                                 ? LucideIcons.upload
                                 : LucideIcons.repeat,
+                        // icon:
+                        //     previewLogoBytes == null
+                        //         ? LucideIcons.upload
+                        //         : LucideIcons.repeat,
                         title: 'Logo',
                         onTap:
                             widget.isEdit
                                 ? () => _pickImage(isLogo: true)
                                 : null,
                         imageState:
-                            previewLogoBytes == null ? 'Upload' : 'Replace',
+                            (previewLogoBytes == null &&
+                                    (widget.logoImageUrl == null ||
+                                        widget.logoImageUrl!.isEmpty))
+                                ? 'Upload'
+                                : 'Replace',
+
+                        // imageState:
+                        //     previewLogoBytes == null ? 'Upload' : 'Replace',
                       ),
                       Gap(16.h),
                       ImageContainer(
@@ -175,7 +201,9 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                         // imageUrl: widget.bannerImageUrl,
                         isEdit: widget.isEdit,
                         icon:
-                            previewBannerBytes == null
+                            (previewBannerBytes == null &&
+                                    (widget.bannerImageUrl == null ||
+                                        widget.bannerImageUrl!.isEmpty))
                                 ? LucideIcons.upload
                                 : LucideIcons.repeat,
                         title: 'Banner Image',
@@ -184,7 +212,14 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                                 ? () => _pickImage(isLogo: false)
                                 : null,
                         imageState:
-                            previewBannerBytes == null ? 'Upload' : 'Replace',
+                            (previewBannerBytes == null &&
+                                    (widget.bannerImageUrl == null ||
+                                        widget.bannerImageUrl!.isEmpty))
+                                ? 'Upload'
+                                : 'Replace',
+
+                        // imageState:
+                        //     previewBannerBytes == null ? 'Upload' : 'Replace',
                       ),
                     ],
                   ),
