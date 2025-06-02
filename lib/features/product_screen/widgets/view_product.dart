@@ -43,7 +43,7 @@ class ViewProduct extends StatefulWidget {
 class _ViewProductState extends State<ViewProduct> {
   bool isEdit = false;
   Product? currentProduct;
-    List<String> currentImages = [];
+  List<String> currentImages = [];
   // bool viewProduct=false;
 
   //   @override
@@ -62,9 +62,9 @@ class _ViewProductState extends State<ViewProduct> {
         );
         setState(() {
           currentProduct = updatedProduct;
-              currentImages = widget.images ?? [];
-              //           currentImages =
-              // updatedProduct?.productImages?.map((e) => e.key).toList() ?? [];
+          currentImages = widget.images ?? [];
+          //           currentImages =
+          // updatedProduct?.productImages?.map((e) => e.key).toList() ?? [];
         });
       }
     } catch (e) {
@@ -127,8 +127,8 @@ class _ViewProductState extends State<ViewProduct> {
                     await refreshProduct(); // refresh only if update succeeded
                   }
 
-          //  widget.onEdit();
-          //         await refreshProduct();
+                  //  widget.onEdit();
+                  //         await refreshProduct();
                 },
                 useGradient: true,
                 gradientColors: CustomColors.borderGradient.colors,
