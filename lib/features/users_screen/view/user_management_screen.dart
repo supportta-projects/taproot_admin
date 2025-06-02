@@ -23,6 +23,8 @@ class UserManagementScreen extends StatefulWidget {
 class _UserManagementScreenState extends State<UserManagementScreen> {
   List<User> users = [];
   bool isLoading = true;
+  bool isSearching = false;
+
   int currentPage = 1;
   int totalPages = 1;
   int totalUser = 0;
@@ -159,6 +161,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           prefixIcon: Icon(Icons.search),
                           hintText: 'Search Uses ID, Name, Number',
                         ),
+
                         onChanged: (val) {
                           setState(() {
                             searchQuery = val;
@@ -172,7 +175,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 ),
               ),
               SizedBox(
-                width: .8 * SizeUtils.width,
+                width: .87 * SizeUtils.width,
                 child: PaginatedDataTable(
                   key: _tableKey,
                   headingRowColor: WidgetStateProperty.resolveWith<Color>((
@@ -221,7 +224,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                     DataColumn(label: Text('Phone')),
                     DataColumn(label: Text('WhatsApp')),
                     DataColumn(label: Text('Email')),
-                    DataColumn(label: Text('Website Link')),
+                    // DataColumn(label: Text('Website Link')),
                     DataColumn(label: Text('Premium')),
                   ],
                   source:
@@ -303,12 +306,12 @@ class UserDataTableSource extends DataTableSource {
         DataCell(
           InkWell(onTap: handleRowTap, child: Center(child: Text(user.email))),
         ),
-        DataCell(
-          InkWell(
-            onTap: handleRowTap,
-            child: Center(child: Text(user.website)),
-          ),
-        ),
+        // DataCell(
+        //   InkWell(
+        //     onTap: handleRowTap,
+        //     child: Center(child: Text(user.website)),
+        //   ),
+        // ),
         DataCell(
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

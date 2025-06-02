@@ -42,7 +42,7 @@ class _CommonProductContainerState extends State<CommonProductContainer> {
                 color:
                     widget.isOrderDetails
                         ? CustomColors.secondaryColor
-                        : CustomColors.lightGreen,
+                        : CustomColors.hoverColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(CustomPadding.paddingLarge),
                   topRight: Radius.circular(CustomPadding.paddingLarge),
@@ -72,7 +72,7 @@ class _CommonProductContainerState extends State<CommonProductContainer> {
                   ),
                   child: Row(
                     children: [
-                      Text('Total Amount'),
+                      Text('Total Amount', style: context.inter50024),
                       Spacer(),
                       Text('₹${widget.grandTotal}', style: context.inter50024),
                     ],

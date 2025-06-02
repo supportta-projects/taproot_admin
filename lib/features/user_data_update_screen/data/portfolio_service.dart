@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -300,12 +299,22 @@ class PortfolioService with ErrorExceptionHandler {
     }
   }
 
-  static Future<void> isUserPremium({required String userId}) async {
-    await DioHelper().patch(
-      '/user/change-premium-status/$userId',
-      type: ApiType.baseUrl,
-    );
-    
+static Future<bool> isUserPremium({required String userId}) async {
+    try {
+      final response = await DioHelper().patch(
+        '/user/change-premium-status/$userId',
+        type: ApiType.baseUrl,
+      );
+
+      // Check if the response is successful (you might need to adjust this based on your API response structure)
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      logError('Premium status update failed: $e');
+      rethrow;
+    }
   }
 }
 

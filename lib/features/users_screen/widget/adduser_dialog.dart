@@ -117,7 +117,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
                     topLeft: Radius.circular(CustomPadding.paddingLarge.v),
                     topRight: Radius.circular(CustomPadding.paddingLarge.v),
                   ),
-                  color: CustomColors.burgandryRed,
+                  color: CustomColors.buttonColor1,
                 ),
                 child: Row(
                   children: [

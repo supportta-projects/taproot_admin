@@ -41,6 +41,7 @@ class _UserProfileContainerState extends State<UserProfileContainer>
   late TabController _tabController;
   late final User user;
   bool isPremiumSelected = false;
+  bool isUpdating = false;
 
   String userType = "";
   IconData userTypeIcon = Icons.check_circle;
@@ -54,17 +55,15 @@ class _UserProfileContainerState extends State<UserProfileContainer>
 
     user = widget.user as User;
     setUserType();
-
-    isPremiumSelected = widget.portfolio?.user.isPremium ?? false;
+    isPremiumSelected = user.isPremium;
     _tabController =
         TabController(length: 2, vsync: this)
           ..index = isPremiumSelected ? 1 : 0
           ..addListener(() {
             if (!_tabController.indexIsChanging) {
               final newVal = _tabController.index == 1;
-              if (newVal != isPremiumSelected) {
-                setState(() => isPremiumSelected = newVal);
-                widget.onPremiumChanged(newVal);
+              if (newVal != isPremiumSelected && !isUpdating) {
+                _handlePremiumChange(newVal);
               }
             }
           });
@@ -76,16 +75,71 @@ class _UserProfileContainerState extends State<UserProfileContainer>
     _tabController.dispose();
   }
 
-  Future<void> isPremiumm() async {
-    final response = await PortfolioService.isUserPremium(
-      userId: widget.portfolio!.user.id,
-    );
-    response;
+  Future<void> _handlePremiumChange(bool newValue) async {
+    if (isUpdating) return;
+
+    setState(() {
+      isUpdating = true;
+    });
+
+    try {
+      final success = await PortfolioService.isUserPremium(userId: user.id);
+
+      if (success) {
+        if (mounted) {
+          setState(() {
+            isPremiumSelected = newValue;
+            user.isPremium = newValue;
+            widget.onPremiumChanged(newValue);
+            setUserType();
+          });
+        }
+      } else {
+        _revertChanges(newValue);
+        _showError('Failed to update premium status. Please try again.');
+      }
+    } catch (e) {
+      _revertChanges(newValue);
+      _showError('An error occurred while updating premium status');
+      logError('Premium update error: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isUpdating = false;
+        });
+      }
+    }
+  }
+
+  void _revertChanges(bool newValue) {
+    if (mounted) {
+      _tabController.animateTo(newValue ? 0 : 1);
+      setState(() {
+        isPremiumSelected = !newValue;
+      });
+    }
+  }
+
+  void _showError(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+          action: SnackBarAction(
+            label: 'Dismiss',
+            textColor: Colors.white,
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            },
+          ),
+        ),
+      );
+    }
   }
 
   void setUserType() {
-    // logInfo(user.isPremium );
-
     if (user.isPremium) {
       logSuccess("opted for premium");
       setState(() {
@@ -113,9 +167,9 @@ class _UserProfileContainerState extends State<UserProfileContainer>
       child: Container(
         decoration: BoxDecoration(
           color: CustomColors.secondaryColor,
-          borderRadius: BorderRadius.circular(CustomPadding.padding),
+          borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
         ),
-        height: SizeUtils.height * 0.40,
+        height: SizeUtils.height * 0.475,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -239,13 +293,15 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                     CustomPadding.paddingXL.v,
                   ),
                   color: Colors.white,
-                  border: Border.all(color: CustomColors.burgandryRed),
+                  border: Border.all(color: CustomColors.buttonColor1),
                 ),
                 child: TabBar(
+                  dividerColor: Colors.transparent,
                   controller: _tabController,
                   indicatorSize: TabBarIndicatorSize.tab,
                   indicator: BoxDecoration(
-                    color: CustomColors.burgandryRed,
+                    gradient: CustomColors.borderGradient,
+                    // color: CustomColors.buttonColor1,
                     borderRadius: BorderRadius.circular(
                       CustomPadding.paddingXL.v,
                     ),
@@ -298,22 +354,6 @@ class _UserProfileContainerState extends State<UserProfileContainer>
                   ),
                 ],
               ),
-            // Container(
-            //   width: 150.v,
-            //   height: 30.h,
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.circular(
-            //       CustomPadding.paddingLarge,
-            //     ),
-            //     color: Colors.red,
-            //   ),
-
-            //   child: Center(),
-            //   // child: Row(
-            //   //   mainAxisAlignment: MainAxisAlignment.center,
-            //   //   children: [Chip(label: Text(userType))],
-            //   // ),
-            // ),
           ],
         ),
       ),

@@ -161,10 +161,32 @@ class _AddExpenseState extends State<AddExpense> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter name';
                           }
+
+                          if (category != 'Order') {
+                            // If it's an expense name (not Order ID)
+                            if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
+                              return 'Only alphabets are allowed';
+                            }
+                          }
+
                           return null;
                         },
                       ),
                     ),
+
+                    // Expanded(
+                    //   child: TextFormContainer(
+                    //     controller: _nameController,
+                    //     labelText:
+                    //         category == 'Order' ? 'Order ID' : 'Expense Name',
+                    //     validator: (value) {
+                    //       if (value == null || value.isEmpty) {
+                    //         return 'Please enter name';
+                    //       }
+                    //       return null;
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 ),
                 Gap(CustomPadding.paddingLarge.v),

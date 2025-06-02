@@ -1,20 +1,21 @@
 class OrderPostModel {
   final NfcDetails nfcDetails;
   final double totalPrice;
-  final List<ProductQuantity> products;
+  final List<ProductQuantity>? products;
   final Address address;
 
   OrderPostModel({
     required this.nfcDetails,
     required this.totalPrice,
-    required this.products,
+    this.products,
     required this.address,
   });
 
   Map<String, dynamic> toJson() => {
     'nfcDetails': nfcDetails.toJson(),
     'totalPrice': totalPrice,
-    'products': products.map((e) => e.toJson()).toList(),
+    if (products != null) 'products': products!.map((e) => e.toJson()).toList(),
+    // 'products': products.map((e) => e.toJson()).toList(),
     'address': address.toJson(),
   };
 }
@@ -27,7 +28,7 @@ class NfcDetails {
 
   NfcDetails({
     required this.customerName,
-     this.designation,
+    this.designation,
     required this.customerLogo,
     required this.customerPhoto,
   });
@@ -44,7 +45,7 @@ class ImageSource {
   final ImageDetails? image;
   final String source;
 
-  ImageSource({ this.image, required this.source});
+  ImageSource({this.image, required this.source});
 
   Map<String, dynamic> toJson() => {'image': image?.toJson(), 'source': source};
 }
@@ -61,6 +62,20 @@ class ImageDetails {
     required this.mimetype,
     required this.size,
   });
+
+  factory ImageDetails.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> data =
+        json.containsKey('result')
+            ? json['result'] as Map<String, dynamic>
+            : json;
+
+    return ImageDetails(
+      key: data['key'] as String,
+      name: data['name'] as String,
+      mimetype: data['mimetype'] as String,
+      size: data['size'] as int,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'key': key,

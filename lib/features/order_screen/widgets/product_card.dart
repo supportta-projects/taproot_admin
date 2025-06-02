@@ -14,8 +14,8 @@ class ProductCard extends StatefulWidget {
     required this.categoryName,
     required this.productName,
     required this.image,
-     this.onDelete,
-     this.onQuantityChanged,
+    this.onDelete,
+    this.onQuantityChanged,
   });
   final double price;
   final String productName;
@@ -26,7 +26,7 @@ class ProductCard extends StatefulWidget {
   final String image;
 
   final double totalPrice;
-   final VoidCallback? onDelete;
+  final VoidCallback? onDelete;
   final Function(int)? onQuantityChanged;
 
   @override
@@ -48,7 +48,8 @@ class _ProductCardState extends State<ProductCard> {
     }
     return priceStr;
   }
-   void handleQuantityChange(bool increase) {
+
+  void handleQuantityChange(bool increase) {
     if (increase) {
       setState(() {
         widget.quantity = (widget.quantity ?? 0) + 1;
@@ -88,7 +89,7 @@ class _ProductCardState extends State<ProductCard> {
                     horizontal: CustomPadding.paddingXXL.v,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: CustomColors.hoverColor,
 
                     borderRadius: BorderRadius.circular(
                       CustomPadding.padding.v,
@@ -101,7 +102,7 @@ class _ProductCardState extends State<ProductCard> {
                       CustomPadding.padding.v,
                     ),
                     child: Image.network(
-                      '$baseUrl/file?key=products/${widget.image}',
+                      '$baseUrlImage/products/${widget.image}',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -157,7 +158,7 @@ class _ProductCardState extends State<ProductCard> {
                             Gap(CustomPadding.paddingLarge.v),
                             Chip(
                               label: GestureDetector(
-                                onTap:() =>  handleQuantityChange(true),
+                                onTap: () => handleQuantityChange(true),
                                 child: Icon(Icons.add),
                               ),
                             ),

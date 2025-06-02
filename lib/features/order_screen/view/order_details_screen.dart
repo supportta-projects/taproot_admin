@@ -1,23 +1,33 @@
 import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:taproot_admin/features/users_screen/data/user_data_model.dart'
+    as user_model;
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart'
+    as add_model;
 import 'package:taproot_admin/features/order_screen/data/order_details_model.dart'
     as order_details;
 import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
+import 'package:taproot_admin/features/order_screen/data/order_user_model.dart';
+import 'package:taproot_admin/features/order_screen/widgets/image_container_with_head.dart';
+import 'package:taproot_admin/features/order_screen/widgets/image_row_container.dart';
 import 'package:taproot_admin/features/order_screen/widgets/product_card.dart';
+import 'package:taproot_admin/features/order_screen/widgets/refund_dialog.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
+import 'package:taproot_admin/features/user_data_update_screen/views/user_data_update_screen.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
+import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 class OrderDetailScreen extends StatefulWidget {
   final dynamic user;
@@ -40,33 +50,67 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   TextEditingController areaController = TextEditingController();
   TextEditingController pincodeController = TextEditingController();
   TextEditingController stateController = TextEditingController();
-
   TextEditingController districtController = TextEditingController();
+  TextEditingController customerNameController = TextEditingController();
+  TextEditingController designationController = TextEditingController();
 
   File? selectedImageLoco;
   File? selectedImageBanner;
+  bool isUpdating = false;
   bool isEdit = true;
-  // var orderDetails;
+  Map<String, int> editedQuantities = {};
+  add_model.ImageSource? newCompanyLogo;
+  add_model.ImageSource? newProfilePhoto;
+  String selectedRefundType = 'full';
   order_details.OrderDetails? orderDetails;
+  OrderResponseUser? orderUserDetail;
   late Order order;
+  final TextEditingController percentageController = TextEditingController();
+  double calculatedAmount = 0.0;
+  double remainingAmount = 0.0;
+
+  user_model.User convertOrderUserToUser(OrderResponseUser orderUser) {
+    return user_model.User(
+      id: orderUser.result.user.id,
+      fullName: orderUser.result.personalInfo.name, // for display name
+      userId: orderUser.result.user.code ?? '',
+      phone: orderUser.result.personalInfo.phoneNumber,
+      whatsapp: orderUser.result.personalInfo.whatsappNumber,
+      email: orderUser.result.personalInfo.email ?? '',
+      website: '', // Default empty string since it's not in OrderResponseUser
+      isPremium: orderUser.result.user.isPremium,
+    );
+  }
+
   @override
   void initState() {
     order = widget.order;
+
     getOrderDetails().then((_) {
       if (orderDetails != null) {
-        fetchShippingAddress();
+        fetchExistingData();
+        initializeQuantities();
+        getUserData();
       }
     });
-    // TODO: implement initState
+
     super.initState();
   }
 
-  void fetchShippingAddress() {
+  void fetchExistingData() {
     buildingNameController.text = orderDetails!.address.address1;
     areaController.text = orderDetails!.address.address2;
     pincodeController.text = orderDetails!.address.pincode;
     stateController.text = orderDetails!.address.state;
     districtController.text = orderDetails!.address.district;
+    customerNameController.text = orderDetails!.nfcDetails.customerName;
+    designationController.text = orderDetails!.nfcDetails.designation;
+  }
+
+  void initializeQuantities() {
+    for (var product in orderDetails!.products) {
+      editedQuantities[product.product.id] = product.quantity.toInt();
+    }
   }
 
   bool orderEdit = false;
@@ -77,41 +121,228 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     });
   }
 
+  Color _getPaymentStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'success':
+        return CustomColors.green;
+      case 'pending':
+        return Colors.orangeAccent;
+      case 'failed':
+        return Colors.red;
+      default:
+        return Colors.grey; // Default color for unknown status
+    }
+  }
+
   Future<void> getOrderDetails() async {
     try {
       final response = await OrderService.getOrderDetails(
         orderId: widget.order.id,
       );
+
+      // Safely handle the response
       setState(() {
         orderDetails = response.result;
       });
-    } catch (e) {
-      logError('Failed to fetch order details: $e');
+    } catch (e, stackTrace) {
+      logError('Failed to fetch order details: $e \nStack Trace: $stackTrace');
+      if (mounted) {
+        SnackbarHelper.showError(
+          context,
+          'Failed to fetch order details. Please try again.',
+        );
+      }
+    }
+  }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to fetch order details. Please try again.'),
-        ),
+  // Future<void> getOrderDetails() async {
+  //   try {
+  //     final response = await OrderService.getOrderDetails(
+  //       orderId: widget.order.id,
+  //     );
+  //     setState(() {
+  //       orderDetails = response.result;
+  //     });
+  //   } catch (e) {
+  //     logError(
+  //       'Failed to fetch order details: $e \nStack Trace: ${StackTrace.current}',
+  //     );
+  //     SnackbarHelper.showError(
+  //       context,
+  //       'Failed to fetch order details. Please try again.',
+  //     );
+  //   }
+  // }
+
+  bool isLoadingUser = false;
+
+  Future<void> getUserData() async {
+    try {
+      setState(() => isLoadingUser = true);
+      final response = await OrderService.getOrderedUser(
+        orderId: widget.order.id,
       );
+
+      if (response != null) {
+        setState(() {
+          orderUserDetail = response;
+        });
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to load user details')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('An error occurred while loading user details'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isLoadingUser = false);
+      }
     }
   }
 
   Future<void> updateOrder() async {
-    final newAddress = order_details.Address(
-      name: '',
-      mobile: '',
-      address1: buildingNameController.text,
-      address2: areaController.text,
-      landmark: '',
-      pincode: pincodeController.text,
-      district: districtController.text,
-      state: stateController.text,
-      country: 'India',
-    );
-    final Map<String, dynamic> data = {
-      'address': newAddress.toJson(), // Convert address to JSON
-    };
-    await OrderService.editOrder(orderId: widget.order.id, data: data);
+    try {
+      setState(() => isUpdating = true);
+
+      final updateRequest = add_model.OrderPostModel(
+        address: add_model.Address(
+          name: orderDetails!.address.name,
+          mobile: orderDetails!.address.mobile,
+          address1: buildingNameController.text,
+          address2: areaController.text,
+          pincode: pincodeController.text,
+          district: districtController.text,
+          state: stateController.text,
+          country: 'India',
+        ),
+        nfcDetails: add_model.NfcDetails(
+          customerName: customerNameController.text,
+          designation: designationController.text,
+          customerLogo: add_model.ImageSource(
+            image:
+                newCompanyLogo?.image ??
+                add_model.ImageDetails(
+                  key: orderDetails!.nfcDetails.customerLogo.image.key,
+                  name: orderDetails!.nfcDetails.customerLogo.image.name,
+                  mimetype:
+                      orderDetails!.nfcDetails.customerLogo.image.mimetype,
+                  size: orderDetails!.nfcDetails.customerLogo.image.size,
+                ),
+            source: 'portfolio',
+          ),
+          customerPhoto: add_model.ImageSource(
+            image:
+                newProfilePhoto?.image ??
+                add_model.ImageDetails(
+                  key: orderDetails!.nfcDetails.customerPhoto.image.key,
+                  name: orderDetails!.nfcDetails.customerPhoto.image.name,
+                  mimetype:
+                      orderDetails!.nfcDetails.customerPhoto.image.mimetype,
+                  size: orderDetails!.nfcDetails.customerPhoto.image.size,
+                ),
+            source: 'portfolio',
+          ),
+        ),
+        products:
+            orderDetails!.paymentStatus.toLowerCase() == 'success'
+                ? null
+                : orderDetails!.products
+                    .map(
+                      (product) => add_model.ProductQuantity(
+                        product:
+                            product.product is String
+                                ? product.product
+                                : (product.product
+                                        as order_details.ProductDetails)
+                                    .id,
+                        quantity:
+                            editedQuantities[product.product is String
+                                ? product.product
+                                : (product.product
+                                        as order_details.ProductDetails)
+                                    .id] ??
+                            product.quantity,
+                      ),
+                    )
+                    .toList(),
+        // products:
+        //     orderDetails!.products
+        //         .map(
+        //           (product) => add_model.ProductQuantity(
+        //             product:
+        //                 product.product is String
+        //                     ? product.product
+        //                     : (product.product as order_details.ProductDetails)
+        //                         .id,
+        //             quantity:
+        //                 editedQuantities[product.product is String
+        //                     ? product.product
+        //                     : (product.product as order_details.ProductDetails)
+        //                         .id] ??
+        //                 product.quantity,
+        //           ),
+        //         )
+        //         .toList(),
+        totalPrice: orderDetails!.totalPrice,
+      );
+
+      final editResponse = await OrderService.editOrder(
+        orderId: widget.order.id,
+        data: updateRequest.toJson(),
+      );
+
+      if (editResponse.success) {
+        final freshDetails = await OrderService.getOrderDetails(
+          orderId: widget.order.id,
+        );
+
+        setState(() {
+          orderDetails = freshDetails.result;
+          orderEdit = false;
+          newCompanyLogo = null;
+          newProfilePhoto = null;
+          isUpdating = false;
+        });
+
+        if (mounted) {
+          SnackbarHelper.showInfo(context, editResponse.message);
+          // ScaffoldMessenger.of(
+          //   context,
+          // ).showSnackBar(SnackBar(content: Text(editResponse.message)));
+        }
+      }
+    } catch (e) {
+      logError('Update failed: $e');
+      if (mounted) {
+        setState(() => isUpdating = false);
+        SnackbarHelper.showInfo(context, 'Failed to update order: $e');
+        // ScaffoldMessenger.of(
+        //   context,
+        // ).showSnackBar(SnackBar(content: Text('Failed to update order: $e')));
+      }
+    }
+  }
+
+  double calculateGrandTotal() {
+    return orderDetails!.products.fold(0.0, (sum, product) {
+      String productId =
+          product.product is String
+              ? product.product.toString()
+              : (product.product as order_details.ProductDetails).id;
+
+      int quantity = editedQuantities[productId] ?? product.quantity;
+      return sum + (product.salePrice * quantity);
+    });
   }
 
   @override
@@ -126,23 +357,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       }
     }
 
-    void pickImage({required bool isLogo}) async {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        allowedExtensions: ['jpg', 'jpeg', 'png'],
-      );
-      if (result != null && result.files.isNotEmpty) {
-        setState(() {
-          if (isLogo) {
-            selectedImageLoco = File(result.files.first.path!);
-          } else {
-            selectedImageBanner = File(result.files.first.path!);
-          }
-        });
-      }
-    }
-
-    // DateTime date = DateTime(now.year, now.month, now.day);
     return Scaffold(
       body:
           orderDetails == null
@@ -248,20 +462,103 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                         spacing: CustomPadding.paddingLarge.v,
                                         children: [
                                           Gap(CustomPadding.padding.v),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Full Name',
+                                                style: context.inter50014
+                                                    .copyWith(
+                                                      color:
+                                                          CustomColors.hintGrey,
+                                                    ),
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                orderUserDetail
+                                                        ?.result
+                                                        .personalInfo
+                                                        .name ??
+                                                    'N/A',
+                                                style: context.inter50014
+                                                    .copyWith(
+                                                      color: CustomColors.green,
+                                                    ),
+                                              ),
+                                              // Text(
+                                              //   orderUserDetail!
+                                              //       .result
+                                              //       .personalInfo
+                                              //       .name,
+                                              //   style: context.inter50014
+                                              //       .copyWith(
+                                              //         color: CustomColors.green,
+                                              //       ),
+                                              // ),
+                                              Gap(CustomPadding.padding.v),
 
-                                          CardRow(
-                                            prefixText: 'Full Name',
-                                            suffixText:
-                                                orderDetails!.personalInfo.name,
-                                            prefixstyle: context.inter50014
-                                                .copyWith(
-                                                  color: CustomColors.hintGrey,
+                                              GestureDetector(
+                                                onTap: () {
+                                                  if (orderUserDetail != null) {
+                                                    try {
+                                                      final userForNavigation =
+                                                          convertOrderUserToUser(
+                                                            orderUserDetail!,
+                                                          );
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (
+                                                                context,
+                                                              ) => UserDataUpdateScreen(
+                                                                user:
+                                                                    userForNavigation,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    } catch (e) {
+                                                      logError(
+                                                        'Navigation error: $e',
+                                                      );
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                            'Error navigating to user details: $e',
+                                                          ),
+                                                          duration:
+                                                              const Duration(
+                                                                seconds: 3,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  }
+                                                },
+                                                child: SvgPicture.asset(
+                                                  Assets.svg.link,
                                                 ),
-                                            sufixstyle: context.inter50014
-                                                .copyWith(
-                                                  color: CustomColors.green,
-                                                ),
+                                              ),
+                                            ],
                                           ),
+                                          // CardRow(
+                                          //   prefixText: 'Full Name',
+                                          //   suffixText:
+                                          //       orderUserDetail!
+                                          //           .result
+                                          //           .personalInfo
+                                          //           .name,
+                                          //   // orderDetails!.personalInfo.name,
+                                          //   prefixstyle: context.inter50014
+                                          //       .copyWith(
+                                          //         color: CustomColors.hintGrey,
+                                          //       ),
+                                          // sufixstyle: context.inter50014
+                                          //     .copyWith(
+                                          //       color: CustomColors.green,
+                                          //     ),
+                                          // ),
                                           CardRow(
                                             prefixText: 'Email',
                                             suffixText:
@@ -279,9 +576,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           CardRow(
                                             prefixText: 'Phone Number',
                                             suffixText:
-                                                orderDetails!
+                                                orderUserDetail
+                                                    ?.result
                                                     .personalInfo
-                                                    .phoneNumber,
+                                                    .phoneNumber ??
+                                                'N/A',
+                                            // orderUserDetail!
+                                            //     .result
+                                            //     .personalInfo
+                                            //     .phoneNumber,
+                                            // orderDetails!
+                                            //     .personalInfo
+                                            //     .phoneNumber,
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -294,9 +600,18 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           CardRow(
                                             prefixText: 'WhatsApp Number',
                                             suffixText:
-                                                orderDetails!
+                                                orderUserDetail
+                                                    ?.result
                                                     .personalInfo
-                                                    .whatsappNumber,
+                                                    .whatsappNumber ??
+                                                'N/A',
+                                            // orderUserDetail!
+                                            //     .result
+                                            //     .personalInfo
+                                            //     .whatsappNumber,
+                                            // orderDetails!
+                                            //     .personalInfo
+                                            //     .whatsappNumber,
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -338,9 +653,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                               orderDetails!.createdAt,
                                             ),
 
-                                            //  date
-                                            //     .toString()
-                                            //     .replaceAll("00:00:00.000", ""),
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -378,50 +690,234 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     CommonProductContainer(
                       isAmountContainer: true,
                       title: 'Product Summary',
-                      grandTotal: orderDetails!.totalPrice,
+                      grandTotal: calculateGrandTotal(),
+                      // orderDetails!.totalPrice,
                       children: [
                         Column(
                           children: [
                             Gap(CustomPadding.paddingLarge.v),
-                            ...List.generate(
-                              orderDetails!.products.length,
-                              (index) => ProductCard(
-                                image:
-                                    orderDetails!
-                                        .products[index]
-                                        .product
-                                        .productImages
-                                        .key,
+                            ...List.generate(orderDetails!.products.length, (
+                              index,
+                            ) {
+                              final product = orderDetails!.products[index];
+                              final productDetails =
+                                  product.product
+                                          is order_details.ProductDetails
+                                      ? product.product
+                                          as order_details.ProductDetails
+                                      : null;
+
+                              return ProductCard(
+                                image: productDetails?.firstImage?.key ?? '',
                                 productName:
-                                    orderDetails!.products[index].product.name,
+                                    productDetails?.name ??
+                                    'Product Unavailable',
                                 categoryName:
-                                    orderDetails!
-                                        .products[index]
-                                        .product
-                                        .category
-                                        .name,
+                                    productDetails?.category.name ?? 'N/A',
                                 orderEdit: orderEdit,
-                                price: orderDetails!.products[index].salePrice,
-
+                                price: product.salePrice,
                                 discountPrice:
-                                    orderDetails!
-                                        .products[index]
-                                        .product
-                                        .discountedPrice,
-                                // orderDetails!
-                                //     .products[index]
-                                //     .discountedPrice
-                                //     .toInt(),
+                                    productDetails?.discountedPrice ?? 0,
                                 quantity:
-                                    orderDetails!.products[index].quantity
-                                        .toInt(),
-                                totalPrice:
-                                    orderDetails!.products[index].totalPrice,
-                              ),
-                            ),
+                                    editedQuantities[productDetails?.id ??
+                                        product.product.toString()] ??
+                                    product.quantity,
+                                totalPrice: product.totalPrice,
+                                onQuantityChanged:
+                                    orderEdit
+                                        ? (newQuantity) {
+                                          setState(() {
+                                            String productId =
+                                                productDetails?.id ??
+                                                product.product.toString();
+                                            editedQuantities[productId] =
+                                                newQuantity;
 
-                            // ProductCard(orderEdit: orderEdit),
-                            // ProductCard(orderEdit: orderEdit),
+                                            orderDetails!.products[index] =
+                                                product.copyWith(
+                                                  quantity: newQuantity,
+                                                  totalPrice:
+                                                      product.salePrice *
+                                                      newQuantity,
+                                                );
+                                          });
+                                        }
+                                        : null,
+                              );
+                            }),
+
+                            // ...List.generate(
+                            //   orderDetails!.products.length,
+                            //   (index) => ProductCard(
+                            //     image:
+                            //         orderDetails!.products[index].product
+                            //                 is String
+                            //             ? ''
+                            //             : ((orderDetails!
+                            //                             .products[index]
+                            //                             .product
+                            //                         as order_details.ProductDetails)
+                            //                     .firstImage
+                            //                     ?.key ??
+                            //                 ''),
+                            //     productName:
+                            //         orderDetails!.products[index].product
+                            //                 is String
+                            //             ? 'Product'
+                            //             : (orderDetails!.products[index].product
+                            //                     as order_details.ProductDetails)
+                            //                 .name,
+                            //     categoryName:
+                            //         orderDetails!.products[index].product
+                            //                 is String
+                            //             ? ''
+                            //             : (orderDetails!.products[index].product
+                            //                     as order_details.ProductDetails)
+                            //                 .category
+                            //                 .name,
+                            //     orderEdit: orderEdit,
+                            //     price: orderDetails!.products[index].salePrice,
+                            //     discountPrice:
+                            //         orderDetails!.products[index].product
+                            //                 is String
+                            //             ? 0
+                            //             : (orderDetails!.products[index].product
+                            //                     as order_details.ProductDetails)
+                            //                 .discountedPrice,
+                            //     quantity:
+                            //         editedQuantities[orderDetails!
+                            //                     .products[index]
+                            //                     .product
+                            //                 is String
+                            //             ? orderDetails!.products[index].product
+                            //                 .toString()
+                            //             : (orderDetails!.products[index].product
+                            //                     as order_details.ProductDetails)
+                            //                 .id] ??
+                            //         orderDetails!.products[index].quantity,
+                            //     totalPrice:
+                            //         orderDetails!.products[index].totalPrice,
+
+                            //     onQuantityChanged:
+                            //         orderEdit
+                            //             ? (newQuantity) {
+                            //               setState(() {
+                            //                 String productId =
+                            //                     orderDetails!
+                            //                                 .products[index]
+                            //                                 .product
+                            //                             is String
+                            //                         ? orderDetails!
+                            //                             .products[index]
+                            //                             .product
+                            //                             .toString()
+                            //                         : (orderDetails!
+                            //                                     .products[index]
+                            //                                     .product
+                            //                                 as order_details.ProductDetails)
+                            //                             .id;
+                            //                 editedQuantities[productId] =
+                            //                     newQuantity;
+
+                            //                 orderDetails!
+                            //                     .products[index] = orderDetails!
+                            //                     .products[index]
+                            //                     .copyWith(
+                            //                       quantity: newQuantity,
+                            //                       totalPrice:
+                            //                           orderDetails!
+                            //                               .products[index]
+                            //                               .salePrice *
+                            //                           newQuantity,
+                            //                     );
+                            //               });
+                            //             }
+                            //             : null,
+                            //   ),
+
+                            //   // ProductCard(
+                            //   //   image:
+                            //   //       orderDetails!.products[index].product
+                            //   //               is String
+                            //   //           ? ''
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .productImages
+                            //   //               .key,
+                            //   //   productName:
+                            //   //       orderDetails!.products[index].product
+                            //   //               is String
+                            //   //           ? 'Product'
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .name,
+                            //   //   categoryName:
+                            //   //       orderDetails!.products[index].product
+                            //   //               is String
+                            //   //           ? ''
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .category
+                            //   //               .name,
+                            //   //   orderEdit: orderEdit,
+                            //   //   price: orderDetails!.products[index].salePrice,
+                            //   //   discountPrice:
+                            //   //       orderDetails!.products[index].product
+                            //   //               is String
+                            //   //           ? 0
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .discountedPrice,
+                            //   //   quantity:
+                            //   //       editedQuantities[orderDetails!
+                            //   //                   .products[index]
+                            //   //                   .product
+                            //   //               is String
+                            //   //           ? orderDetails!.products[index].product
+                            //   //               .toString()
+                            //   //           : (orderDetails!.products[index].product
+                            //   //                   as order_details.ProductDetails)
+                            //   //               .id] ??
+                            //   //       orderDetails!.products[index].quantity,
+                            //   //   totalPrice:
+                            //   //       orderDetails!.products[index].totalPrice,
+                            //   //   onQuantityChanged:
+                            //   //       orderEdit
+                            //   //           ? (newQuantity) {
+                            //   //             setState(() {
+                            //   //               String productId =
+                            //   //                   orderDetails!
+                            //   //                               .products[index]
+                            //   //                               .product
+                            //   //                           is String
+                            //   //                       ? orderDetails!
+                            //   //                           .products[index]
+                            //   //                           .product
+                            //   //                           .toString()
+                            //   //                       : (orderDetails!
+                            //   //                                   .products[index]
+                            //   //                                   .product
+                            //   //                               as order_details.ProductDetails)
+                            //   //                           .id;
+                            //   //               editedQuantities[productId] =
+                            //   //                   newQuantity;
+
+                            //   //               orderDetails!
+                            //   //                   .products[index] = orderDetails!
+                            //   //                   .products[index]
+                            //   //                   .copyWith(
+                            //   //                     quantity: newQuantity,
+                            //   //                     totalPrice:
+                            //   //                         orderDetails!
+                            //   //                             .products[index]
+                            //   //                             .salePrice *
+                            //   //                         newQuantity,
+                            //   //                   );
+                            //   //             });
+                            //   //           }
+                            //   //           : null,
+                            //   // ),
+                            // ),
                           ],
                         ),
                       ],
@@ -431,96 +927,161 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       title: 'NFC Card Details',
                       children: [
                         Gap(CustomPadding.paddingLarge.v),
-
                         TextFormContainer(
-                          readonly: true,
+                          readonly: isEdit ? false : true,
                           labelText: 'Full Name',
                           initialValue: orderDetails!.nfcDetails.customerName,
                         ),
                         Gap(CustomPadding.paddingLarge.v),
                         TextFormContainer(
-                          readonly: true,
+                          readonly: isEdit ? false : true,
                           labelText: 'Designation',
                           initialValue: orderDetails!.nfcDetails.designation,
                         ),
                         Gap(CustomPadding.paddingXL.v),
 
-                        Row(
-                          children: [
-                            Gap(CustomPadding.paddingXL.v),
-
-                            ImageContainerWithHead(
-                              heading: 'Company Logo',
-                              orderDetails: orderDetails,
-                              imageKey:
-                                  orderDetails!
-                                      .nfcDetails
-                                      .customerLogo
-                                      .image
-                                      .key,
-                            ),
-                            Gap(CustomPadding.paddingXL.v),
-
-                            ImageContainerWithHead(
-                              heading: 'Profile Image',
-                              orderDetails: orderDetails,
-                              imageKey:
-                                  orderDetails!
-                                      .nfcDetails
-                                      .customerPhoto
-                                      .image
-                                      .key,
-                            ),
-
-                            // isEdit
-                            //     ? ImageContainer(
-                            //       selectedFile: selectedImageLoco,
-                            //       isEdit: true,
-                            //       icon:
-                            //           selectedImageLoco == null
-                            //               ? LucideIcons.upload
-                            //               : LucideIcons.repeat,
-                            //       title: 'Loco',
-                            //       onTap: () => pickImage(isLogo: true),
-                            //       imageState:
-                            //           selectedImageLoco == null
-                            //               ? 'Upload'
-                            //               : 'Replace',
-                            //     )
-                            //     : ImageContainer(
-                            //       onTap: () {},
-                            //       isEdit: false,
-                            //       title: 'Loco',
-                            //       icon: LucideIcons.upload,
-                            //       imageState: 'Upload',
-                            //       selectedFile: null,
-                            //     ),
-                            // isEdit
-                            //     ? ImageContainer(
-                            //       onTap: () => pickImage(isLogo: false),
-                            //       isEdit: true,
-                            //       title: 'Banner Image',
-                            //       icon:
-                            //           selectedImageBanner == null
-                            //               ? LucideIcons.upload
-                            //               : LucideIcons.repeat,
-                            //       imageState:
-                            //           selectedImageBanner == null
-                            //               ? 'Upload'
-                            //               : 'Replace',
-                            //       selectedFile: selectedImageBanner,
-                            //     )
-                            //     : ImageContainer(
-                            //       onTap: () {},
-                            //       icon: LucideIcons.upload,
-                            //       title: 'Banner Image',
-                            //       imageState: 'Upload',
-                            //       selectedFile: null,
-                            //     ),
-                          ],
-                        ),
+                        // Only show the Row if either editing is enabled or there are images to display
+                        if (orderEdit ||
+                            orderDetails!
+                                .nfcDetails
+                                .customerLogo
+                                .image
+                                .key
+                                .isNotEmpty ||
+                            orderDetails!
+                                .nfcDetails
+                                .customerPhoto
+                                .image
+                                .key
+                                .isNotEmpty)
+                          Row(
+                            children: [
+                              Gap(CustomPadding.paddingXL.v),
+                              if (orderEdit)
+                                ImageRowContainer(
+                                  userCode: orderDetails!.user.id,
+                                  title: 'Company Logo',
+                                  imageType: 'companyLogo',
+                                  onImageChanged: (imageSource) {
+                                    setState(
+                                      () => newCompanyLogo = imageSource,
+                                    );
+                                  },
+                                )
+                              else if (orderDetails!
+                                  .nfcDetails
+                                  .customerLogo
+                                  .image
+                                  .key
+                                  .isNotEmpty)
+                                ImageContainerWithHead(
+                                  heading: 'Company Logo',
+                                  orderDetails: orderDetails,
+                                  imageKey:
+                                      orderDetails!
+                                          .nfcDetails
+                                          .customerLogo
+                                          .image
+                                          .key,
+                                ),
+                              Gap(CustomPadding.paddingXL.v),
+                              if (orderEdit)
+                                ImageRowContainer(
+                                  userCode: orderDetails!.user.id,
+                                  title: 'Profile Image',
+                                  imageType: 'profilePicture',
+                                  onImageChanged: (imageSource) {
+                                    setState(
+                                      () => newProfilePhoto = imageSource,
+                                    );
+                                  },
+                                )
+                              else if (orderDetails!
+                                  .nfcDetails
+                                  .customerPhoto
+                                  .image
+                                  .key
+                                  .isNotEmpty)
+                                ImageContainerWithHead(
+                                  heading: 'Profile Image',
+                                  orderDetails: orderDetails,
+                                  imageKey:
+                                      orderDetails!
+                                          .nfcDetails
+                                          .customerPhoto
+                                          .image
+                                          .key,
+                                ),
+                            ],
+                          ),
                       ],
                     ),
+                    // CommonProductContainer(
+                    //   title: 'NFC Card Details',
+                    //   children: [
+                    //     Gap(CustomPadding.paddingLarge.v),
+
+                    //     TextFormContainer(
+                    //       readonly: isEdit ? false : true,
+                    //       labelText: 'Full Name',
+                    //       initialValue: orderDetails!.nfcDetails.customerName,
+                    //     ),
+                    //     Gap(CustomPadding.paddingLarge.v),
+                    //     TextFormContainer(
+                    //       readonly: isEdit ? false : true,
+                    //       labelText: 'Designation',
+                    //       initialValue: orderDetails!.nfcDetails.designation,
+                    //     ),
+                    //     Gap(CustomPadding.paddingXL.v),
+
+                    //     Row(
+                    //       children: [
+                    //         Gap(CustomPadding.paddingXL.v),
+                    //         if (orderEdit)
+                    //           ImageRowContainer(
+                    //             userCode: orderDetails!.user.id,
+                    //             title: 'Company Logo',
+                    //             imageType: 'companyLogo',
+                    //             onImageChanged: (imageSource) {
+                    //               setState(() => newCompanyLogo = imageSource);
+                    //             },
+                    //           )
+                    //         else
+                    //           ImageContainerWithHead(
+                    //             heading: 'Company Logo',
+                    //             orderDetails: orderDetails,
+                    //             imageKey:
+                    //                 orderDetails!
+                    //                     .nfcDetails
+                    //                     .customerLogo
+                    //                     .image
+                    //                     .key,
+                    //           ),
+                    //         Gap(CustomPadding.paddingXL.v),
+                    //         if (orderEdit)
+                    //           ImageRowContainer(
+                    //             userCode: orderDetails!.user.id,
+                    //             title: 'Profile Image',
+                    //             imageType: 'profilePicture',
+                    //             onImageChanged: (imageSource) {
+                    //               setState(() => newProfilePhoto = imageSource);
+                    //             },
+                    //           )
+                    //         else
+                    //           ImageContainerWithHead(
+                    //             heading: 'Profile Image',
+                    //             orderDetails: orderDetails,
+                    //             imageKey:
+                    //                 orderDetails!
+                    //                     .nfcDetails
+                    //                     .customerPhoto
+                    //                     .image
+                    //                     .key,
+                    //           ),
+                    //       ],
+                    //     ),
+                    //   ],
+                    // ),
                     Gap(CustomPadding.paddingXL.v),
                     orderEdit
                         ? Row(
@@ -608,19 +1169,32 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           ],
                         ),
                     Gap(CustomPadding.paddingXL.v),
+
                     orderEdit
-                        ? Center(
-                          child: Container(
-                            child: MiniLoadingButton(
-                              needRow: false,
-                              text: 'Cancel Order',
-                              onPressed: () {},
-                              useGradient: true,
-                              gradientColors:
-                                  CustomColors.borderGradient.colors,
-                            ),
-                          ),
-                        )
+                        ? orderDetails?.paymentStatus.toLowerCase() == 'success'
+                            ? Center(
+                              child: MiniLoadingButton(
+                                needRow: false,
+                                text: 'Cancel Order',
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return RefundDialog(
+                                        onRefresh: getOrderDetails,
+                                        orderId: orderDetails!.id,
+                                        totalAmount: calculateGrandTotal(),
+                                      );
+                                    },
+                                  );
+                                },
+
+                                useGradient: true,
+                                gradientColors:
+                                    CustomColors.borderGradient.colors,
+                              ),
+                            )
+                            : SizedBox()
                         : CommonProductContainer(
                           title: 'Payment Details',
                           children: [
@@ -641,7 +1215,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                               orderDetails!.paymentStatus,
                                           sufixstyle: context.inter50016
                                               .copyWith(
-                                                color: CustomColors.green,
+                                                color: _getPaymentStatusColor(
+                                                  orderDetails!.paymentStatus,
+                                                ),
+                                                //  CustomColors.green,
                                               ),
                                         ),
                                         CardRow(
@@ -687,52 +1264,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   ],
                 ),
               ),
-    );
-  }
-}
-
-class ImageContainerWithHead extends StatelessWidget {
-  const ImageContainerWithHead({
-    super.key,
-    required this.orderDetails,
-    required this.heading,
-    required this.imageKey,
-  });
-
-  final order_details.OrderDetails? orderDetails;
-  final String heading;
-  final String imageKey;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(children: [Text(heading)]),
-        Gap(CustomPadding.paddingLarge.v),
-
-        Row(
-          children: [
-            Gap(CustomPadding.paddingXL.v),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                  CustomPadding.paddingLarge.v,
-                ),
-              ),
-              width: 200,
-              height: 150,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                  CustomPadding.paddingLarge.v,
-                ),
-                child: Image.network('$baseUrl/file?key=portfolios/$imageKey'),
-              ),
-            ),
-          ],
-        ),
-        Gap(CustomPadding.paddingXL.v),
-      ],
     );
   }
 }

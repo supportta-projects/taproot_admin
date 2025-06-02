@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:shimmer/shimmer.dart';
+
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/chart_data.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/dashboard_model.dart';
-import 'package:taproot_admin/features/Dashboard_screen/widgets/dashboard_container.dart';
-import 'package:taproot_admin/features/Dashboard_screen/widgets/order_details_container.dart';
-import 'package:taproot_admin/features/Dashboard_screen/widgets/refund_order_container.dart';
+import 'package:taproot_admin/features/Dashboard_screen/widgets/financial_returns_widget.dart';
+import 'package:taproot_admin/features/Dashboard_screen/widgets/line_graph_widget.dart';
 
 import '../data/dashboard_services.dart';
+import '../widgets/logistic_data_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -21,195 +21,489 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   DashboardModel? dashboardModel;
-  Future<void> _fetchDashboardData() async {
-    try {
-      final response = await DashboardServices.getDashData();
+  ChartData? chartData;
+  bool isLoading = true;
+  bool isFieldsLoading = false;
+  String? error;
+  String selectedValue = 'thisMonth';
 
-      if (response.success) {
+  final Map<String, String> dateFilters = {
+    'Today': 'today',
+    'Yesterday': 'yesterday',
+    'This Week': 'thisWeek',
+    'Last Week': 'lastWeek',
+    'This Month': 'thisMonth',
+    'Last Month': 'lastMonth',
+  };
+
+  Future<void> _initialLoad() async {
+    try {
+      final response = await DashboardServices.getDashData(selectedValue);
+      final chartResponse = await DashboardServices.getChartData();
+
+      if (response.success && chartResponse.success!) {
         logSuccess(response.message);
         setState(() {
+          chartData = chartResponse;
           dashboardModel = response;
-          // dashboardData = response.result;
+          isLoading = false;
         });
-      } else {
-        // Handle error
       }
     } catch (e) {
-      // Handle error
+      logError('Error fetching dashboard data: $e');
+      setState(() {
+        isLoading = false;
+        error = e.toString();
+      });
+    }
+  }
+
+  Future<void> _refreshFields(String period) async {
+    setState(() {
+      isFieldsLoading = true;
+    });
+
+    try {
+      final response = await DashboardServices.getDashData(period);
+
+      if (response.success) {
+        setState(() {
+          dashboardModel = response;
+          isFieldsLoading = false;
+        });
+      }
+    } catch (e) {
+      logError('Error fetching dashboard data: $e');
+      setState(() {
+        isFieldsLoading = false;
+        error = e.toString();
+      });
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchDashboardData();
+    _initialLoad();
   }
-
-  final List<ChartData> data = [
-    ChartData('Jan', 500, 200, 1000),
-    ChartData('Feb', 700, 250, 1200),
-    ChartData('March', 600, 300, 1100),
-    ChartData('April', 800, 350, 1300),
-    ChartData('May', 750, 300, 1250),
-    ChartData('June', 900, 400, 1400),
-  ];
 
   @override
   Widget build(BuildContext context) {
-    if (dashboardModel == null) {
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    double normalPadding = CustomPadding.padding * 2.2;
+    double tileWidgetBorderRadius = CustomPadding.padding * 2.5;
+
+    if (isLoading) {
+      return Scaffold(
+        body: ShimmerDashboard(), // Full page shimmer for initial load
+      );
     }
+
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: CustomPadding.paddingLarge.v),
-              child: Text('Dashboard', style: context.inter60024),
-            ),
-            Gap(CustomPadding.paddingLarge.v),
-            Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingLarge.v,
-              ),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: CustomColors.secondaryColor,
-                borderRadius: BorderRadius.circular(
-                  CustomPadding.padding.v + CustomPadding.paddingLarge.v,
-                ),
-              ),
-              child: Row(
+        child: Padding(
+          padding: EdgeInsets.all(normalPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  DashBoardContainer(
-                    title: 'Revenue',
-                    amount: dashboardModel!.result.result.revenue.toString(),
-                    percentage: '8',
-                    icon: LucideIcons.banknote,
-                    iconColor: CustomColors.buttonColor1,
+                  Padding(
+                    padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
+                    child: Text('Dashboard', style: context.inter60024),
                   ),
-                  DashBoardContainer(
-                    isExpense: true,
-                    title: 'Expense',
-                    amount: dashboardModel!.result.result.expense.toString(),
-                    icon: LucideIcons.banknoteArrowDown,
-                    iconColor: CustomColors.red,
-                    percentage: '8',
-                  ),
-                  DashBoardContainer(
-                    title: 'Profit',
-                    amount: dashboardModel!.result.result.profit.toString(),
-                    percentage: '8',
-                    icon: LucideIcons.banknoteArrowUp,
-                    iconColor: CustomColors.green,
+                  Spacer(),
+                  Container(
+                    width: 200,
+
+                    padding: EdgeInsets.only(
+                      right: CustomPadding.paddingLarge,
+                      left: CustomPadding.paddingLarge,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: DropdownButton<String>(
+                      value: selectedValue,
+                      focusColor: CustomColors.backgroundColor,
+                      
+                      isExpanded: true,
+                      underline: Container(),
+                      items:
+                          dateFilters.entries.map((entry) {
+                            return DropdownMenuItem<String>(
+                              value: entry.value,
+                              child: Text(entry.key),
+                            );
+                          }).toList(),
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            selectedValue = newValue;
+                          });
+                          _refreshFields(newValue);
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
-            ),
-            Gap(CustomPadding.paddingLarge.v),
-            Row(
-              children: [
-                Gap(CustomPadding.paddingLarge.v),
-
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(CustomPadding.paddingXL.v),
-                    decoration: BoxDecoration(
-                      color: CustomColors.secondaryColor,
-                      borderRadius: BorderRadius.circular(
-                        CustomPadding.paddingXL.v + CustomPadding.padding.v,
-                      ),
-                    ),
-                    height: 600,
-                    child: SfCartesianChart(
-                      legend: Legend(
-                        isVisible: true,
-                        position: LegendPosition.bottom,
-                      ),
-                      tooltipBehavior: TooltipBehavior(enable: true),
-                      primaryXAxis: CategoryAxis(
-                        labelPlacement: LabelPlacement.onTicks,
-                      ),
-                      primaryYAxis: NumericAxis(),
-                      series: <CartesianSeries>[
-                        LineSeries<ChartData, String>(
-                          color: CustomColors.red,
-                          name: 'Expense',
-                          dataSource: data,
-                          xValueMapper: (ChartData d, _) => d.month,
-                          yValueMapper: (ChartData d, _) => d.expense,
-                          markerSettings: MarkerSettings(isVisible: true),
-                        ),
-                        LineSeries<ChartData, String>(
-                          color: CustomColors.green,
-                          name: 'Profit',
-                          dataSource: data,
-                          xValueMapper: (ChartData d, _) => d.month,
-                          yValueMapper: (ChartData d, _) => d.profit,
-                          markerSettings: MarkerSettings(isVisible: true),
-                        ),
-                        LineSeries<ChartData, String>(
-                          color: CustomColors.buttonColor1,
-                          name: 'Revenue',
-                          dataSource: data,
-                          xValueMapper: (ChartData d, _) => d.month,
-                          yValueMapper: (ChartData d, _) => d.revenue,
-                          markerSettings: MarkerSettings(isVisible: true),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Gap(CustomPadding.paddingXL.v),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: CustomPadding.padding,
-                    ),
-                    height: 600,
-                    decoration: BoxDecoration(
-                      color: CustomColors.secondaryColor,
-                      borderRadius: BorderRadius.circular(
-                        CustomPadding.paddingLarge.v,
-                      ),
-                    ),
+              Gap(CustomPadding.paddingLarge),
+              isFieldsLoading
+                  ? ShimmerFields() // Shimmer only for fields when refreshing
+                  : FinancialReturnsWidget(dashboardModel: dashboardModel),
+              Gap(normalPadding),
+              Row(
+                children: [
+                  Gap(normalPadding),
+                  SizedBox(
+                    width: (620 / 1440) * MediaQuery.of(context).size.width,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: CustomPadding.padding.v,
                       children: [
-                        OrderDetailsContainer(
-                          title: 'Total Orders',
-                          totalCount: dashboardModel!.result.result.totalOrder,
-                          // statusCount: 5,
-                          statusTitle: 'Order',
-                        ),
-                        OrderDetailsContainer(
-                          title: 'Total Orders Delivered',
-                          totalCount:
-                              dashboardModel!.result.result.deliveredOrder,
-                          // statusCount: 5,
-                          statusTitle: 'Delivered Order',
-                        ),
-                        RefundOrderContainer(
-                          title: 'Refunded Orders',
-                          refundCount:
-                              dashboardModel!.result.result.cancelledOrder,
-
-                          refundedAmount:
-                              dashboardModel!.result.result.refundAmount
-                                  .toInt(),
+                        LineGraphWidget(
+                          data: chartData!.result!.lastSixMonthsData!,
                         ),
                       ],
                     ),
                   ),
-                ),
-                Gap(CustomPadding.paddingLarge.v),
-              ],
-            ),
-          ],
+                  Gap(normalPadding),
+                  isFieldsLoading
+                      ? ShimmerLogisticData() // Shimmer for logistic data when refreshing
+                      : LogisticDataWidget(
+                        data: dashboardModel!,
+                        normalPadding: normalPadding,
+                        tileWidgetBorderRadius: tileWidgetBorderRadius,
+                      ),
+                  Gap(CustomPadding.paddingLarge),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+// Shimmer widgets
+class ShimmerDashboard extends StatelessWidget {
+  const ShimmerDashboard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      enabled: true,
+      period: Duration(seconds: 2),
+      direction: ShimmerDirection.ltr,
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Column(
+        children: [
+          // Add shimmer layout matching your dashboard layout
+        ],
+      ),
+    );
+  }
+}
+
+class ShimmerFields extends StatelessWidget {
+  const ShimmerFields({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: List.generate(
+            4,
+            (index) => Expanded(
+              child: Container(
+                margin: EdgeInsets.all(8),
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ShimmerLogisticData extends StatelessWidget {
+  const ShimmerLogisticData({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: 300,
+        height: 400,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+}
+
+// class _DashboardScreenState extends State<DashboardScreen> {
+//   DashboardModel? dashboardModel;
+//   ChartData? chartData;
+//   bool isLoading = true;
+//   String? error;
+//   String selectedValue = 'today';
+
+//   final Map<String, String> dateFilters = {
+//     'Today': 'today',
+//     'Yesterday': 'yesterday',
+//     'This Week': 'thisWeek',
+//     'Last Week': 'lastWeek',
+//     'This Month': 'thisMonth',
+//     'Last Month': 'lastMonth',
+//   };
+
+//   Future<void> _fetchDashboardData([String? period]) async {
+//     setState(() {
+//       isLoading = true;
+//     });
+
+//     try {
+//       final response = await DashboardServices.getDashData(period);
+//       final chartResponse = await DashboardServices.getChartData();
+
+//       if (response.success && chartResponse.success!) {
+//         logSuccess(response.message);
+//         setState(() {
+//           chartData = chartResponse;
+//           dashboardModel = response;
+//           isLoading = false;
+//         });
+//       }
+//     } catch (e) {
+//       logError('Error fetching dashboard data: $e');
+//       setState(() {
+//         isLoading = false;
+//         error = e.toString();
+//       });
+//     }
+//   }
+
+//   Future<void> _refreshData() async {
+//     await _fetchDashboardData(selectedValue);
+//   }
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _fetchDashboardData(selectedValue);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     double normalPadding = CustomPadding.padding * 2.2;
+//     double tileWidgetBorderRadius = CustomPadding.padding * 2.5;
+
+//     if (isLoading && dashboardModel == null) {
+//       return Scaffold(body: Center(child: CircularProgressIndicator()));
+//     }
+
+//     return RefreshIndicator(
+//       onRefresh: _refreshData,
+//       child: Scaffold(
+//         body: SingleChildScrollView(
+//           child: Padding(
+//             padding: EdgeInsets.all(normalPadding),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Row(
+//                   children: [
+//                     Padding(
+//                       padding: EdgeInsets.only(
+//                         left: CustomPadding.paddingLarge,
+//                       ),
+//                       child: Text('Dashboard', style: context.inter60024),
+//                     ),
+//                     Spacer(),
+//                     // Add the dropdown here
+//                     Container(
+//                       width: 200,
+//                       padding: EdgeInsets.only(
+//                         right: CustomPadding.paddingLarge,
+//                       ),
+//                       child: DropdownButton<String>(
+//                         value: selectedValue,
+//                         isExpanded: true,
+//                         items:
+//                             dateFilters.entries.map((entry) {
+//                               return DropdownMenuItem<String>(
+//                                 value: entry.value,
+//                                 child: Text(entry.key),
+//                               );
+//                             }).toList(),
+//                         onChanged: (String? newValue) {
+//                           if (newValue != null) {
+//                             setState(() {
+//                               selectedValue = newValue;
+//                             });
+//                             _fetchDashboardData(newValue);
+//                           }
+//                         },
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//                 if (isLoading)
+//                   Center(child: CircularProgressIndicator())
+//                 else ...[
+//                   Gap(CustomPadding.paddingLarge),
+//                   FinancialReturnsWidget(dashboardModel: dashboardModel),
+//                   Gap(normalPadding),
+//                   Row(
+//                     children: [
+//                       Gap(normalPadding),
+//                       SizedBox(
+//                         width: (620 / 1440) * MediaQuery.of(context).size.width,
+//                         child: Column(
+//                           children: [
+//                             LineGraphWidget(
+//                               data: chartData!.result!.lastSixMonthsData!,
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                       Gap(normalPadding),
+//                       LogisticDataWidget(
+//                         data: dashboardModel!,
+//                         normalPadding: normalPadding,
+//                         tileWidgetBorderRadius: tileWidgetBorderRadius,
+//                       ),
+//                       Gap(CustomPadding.paddingLarge),
+//                     ],
+//                   ),
+//                 ],
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class _DashboardScreenState extends State<DashboardScreen> {
+//   DashboardModel? dashboardModel;
+//   ChartData? chartData;
+//   bool isLoading = true;
+//   String? error;
+//   String selectedValue = 'today'; // Default value
+//   final Map<String, String> dateFilters = {
+//     'Today': 'today',
+//     'Yesterday': 'yesterday',
+//     'This Week': 'thisWeek',
+//     'Last Week': 'lastWeek',
+//     'This Month': 'thisMonth',
+//     'Last Month': 'lastMonth',
+//   };
+//   Future<void> _fetchDashboardData([String? period]) async {
+//     try {
+//       final response = await DashboardServices.getDashData(period);
+//       final chartResponse = await DashboardServices.getChartData();
+
+//       if (response.success && chartResponse.success!) {
+//         logSuccess(response.message);
+//         setState(() {
+//           chartData = chartResponse;
+//           dashboardModel = response;
+//           isLoading = false;
+//         });
+//       } else {}
+//     } catch (e) {
+//       logError('Error fetching dashboard data: $e');
+//     }
+//   }
+
+//   Future<void> _refreshData() async {
+//     await _fetchDashboardData(selectedValue);
+//   }
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _fetchDashboardData(selectedValue);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     double normalPadding = CustomPadding.padding * 2.2;
+//     double tileWidgetBorderRadius = CustomPadding.padding * 2.5;
+//     if (dashboardModel == null) {
+//       return Scaffold(body: Center(child: CircularProgressIndicator()));
+//     }
+//     return RefreshIndicator(
+//       onRefresh: _refreshData,
+//       child: Scaffold(
+//         body: SingleChildScrollView(
+//           child: Padding(
+//             padding: EdgeInsets.all(normalPadding),
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Row(
+//                   children: [
+//                     Padding(
+//                       padding: EdgeInsets.only(
+//                         left: CustomPadding.paddingLarge,
+//                       ),
+//                       child: Text('Dashboard', style: context.inter60024),
+//                     ),
+//                     Spacer(),
+//                   ],
+//                 ),
+//                 Gap(CustomPadding.paddingLarge),
+//                 FinancialReturnsWidget(dashboardModel: dashboardModel),
+//                 Gap(normalPadding),
+//                 Row(
+//                   children: [
+//                     Gap(normalPadding),
+//                     SizedBox(
+//                       width: (620 / 1440) * MediaQuery.of(context).size.width,
+
+//                       child: Column(
+//                         children: [
+//                           //TODO data
+//                           LineGraphWidget(
+//                             data: chartData!.result!.lastSixMonthsData!,
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                     // Spacer(),
+//                     Gap(normalPadding),
+//                     LogisticDataWidget(
+//                       data: dashboardModel!,
+//                       normalPadding: normalPadding,
+//                       tileWidgetBorderRadius: tileWidgetBorderRadius,
+//                     ),
+
+//                     Gap(CustomPadding.paddingLarge),
+//                   ],
+//                 ),
+//               ],
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

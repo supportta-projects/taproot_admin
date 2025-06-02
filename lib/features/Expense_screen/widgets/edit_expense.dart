@@ -78,10 +78,12 @@ class _EditExpenseState extends State<EditExpense> {
         if (_nameController.text != widget.expense.name) hasChanges = true;
         if (parsedAmount != widget.expense.amount) hasChanges = true;
         if (DateFormat('dd/MM/yyyy').format(date) !=
-            DateFormat('dd/MM/yyyy').format(widget.expense.date))
+            DateFormat('dd/MM/yyyy').format(widget.expense.date)) {
           hasChanges = true;
-        if (_descriptionController.text != widget.expense.description)
+        }
+        if (_descriptionController.text != widget.expense.description) {
           hasChanges = true;
+        }
         if (!hasChanges) {
           if (mounted) {
             SnackbarHelper.showInfo(context, 'No changes were made');

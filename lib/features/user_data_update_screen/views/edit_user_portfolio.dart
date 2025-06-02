@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,11 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   bool _showAddServiceUI = false;
   String? editingServiceId;
   List<SocialMedia> socialLinks = [];
+  bool isLogoImageRemoved = false;
+  bool isBannerImageRemoved = false;
+  bool isProfileImageRemoved = false;
+  
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
@@ -77,7 +83,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     fetchedTexfieldValue();
@@ -115,150 +120,15 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     }
   }
 
-  // Future<void> editPortfolio() async {
-  //   try {
-  //     final portfolio = widget.portfolio!;
-
-  //     // Keep existing images if no new ones are selected
-  //     ProductImage? updatedProfilePicture =
-  //         portfolio.personalInfo.profilePicture;
-  //     ProductImage? updatedBannerImage = portfolio.personalInfo.bannerImage;
-  //     ProductImage? updatedCompanyLogo = portfolio.workInfo.companyLogo;
-
-  //     // Upload new images only if they are selected
-  //     if (pickedProfileImage?.bytes != null) {
-  //       try {
-  //         final profileUploadResult = await PortfolioService.uploadImageFile(
-  //           pickedProfileImage!.bytes!,
-  //           pickedProfileImage!.name,
-  //         );
-
-  //         updatedProfilePicture = ProductImage(
-  //           name: profileUploadResult['name'] ?? '',
-  //           key: profileUploadResult['key'] ?? '',
-  //           size: int.tryParse(profileUploadResult['size']?.toString() ?? ''),
-  //           mimetype: profileUploadResult['mimetype'] ?? '',
-  //         );
-  //       } catch (e) {
-  //         logError('Error uploading profile: $e');
-  //       }
-  //     }
-
-  //     if (pickedLogoImage?.bytes != null) {
-  //       try {
-  //         final logoUploadResult = await PortfolioService.uploadImageFile(
-  //           pickedLogoImage!.bytes!,
-  //           pickedLogoImage!.name,
-  //         );
-
-  //         updatedCompanyLogo = ProductImage(
-  //           name: logoUploadResult['name'] ?? '',
-  //           key: logoUploadResult['key'] ?? '',
-  //           size: int.tryParse(logoUploadResult['size']?.toString() ?? ''),
-  //           mimetype: logoUploadResult['mimetype'] ?? '',
-  //         );
-  //       } catch (e) {
-  //         logError('Error uploading logo: $e');
-  //       }
-  //     }
-
-  //     if (pickedBannerImage?.bytes != null) {
-  //       try {
-  //         final bannerUploadResult = await PortfolioService.uploadImageFile(
-  //           pickedBannerImage!.bytes!,
-  //           pickedBannerImage!.name,
-  //         );
-
-  //         updatedBannerImage = ProductImage(
-  //           name: bannerUploadResult['name'] ?? '',
-  //           key: bannerUploadResult['key'] ?? '',
-  //           size: int.tryParse(bannerUploadResult['size']?.toString() ?? ''),
-  //           mimetype: bannerUploadResult['mimetype'] ?? '',
-  //         );
-  //       } catch (e) {
-  //         logError('Error uploading banner: $e');
-  //       }
-  //     }
-
-  //     final portfolioEditData = {
-  //       'personalInfo': {
-  //         'profilePicture': updatedProfilePicture?.toJson(),
-  //         'bannerImage': updatedBannerImage?.toJson(),
-  //         'name': nameController.text,
-  //         'email': emailController.text,
-  //         'phoneNumber': phoneNumberController.text,
-  //         'whatsappNumber': whatsappNumberController.text,
-  //       },
-  //       'workInfo': {
-  //         'companyLogo': updatedCompanyLogo?.toJson(),
-  //         'companyName': companyNameController.text,
-  //         'designation': designationcontroller.text,
-  //         'workEmail': workemailController.text,
-  //         'primaryWebsite': primaryWebsiteController.text,
-  //         'secondaryWebsite': secondaryWebsiteController.text,
-  //       },
-  //       'addressInfo': {
-  //         'buildingName': buildingNamecontroller.text,
-  //         'area': areaController.text,
-  //         'pincode': pincodeController.text,
-  //         'district': districtController.text,
-  //         'state': stateController.text,
-  //       },
-  //       'about': {
-  //         'heading': headingcontroller.text,
-  //         'description': descriptioncontroller.text,
-  //       },
-  //       'serviceHeading': serviceHeadController.text,
-  //       'socialMedia':
-  //           theFetchedPortfolio!.socialMedia.map((x) => x.toJson()).toList(),
-  //       'services':
-  //           theFetchedPortfolio!.services.map((x) => x.toJson()).toList(),
-  //     };
-
-  //     print('Sending edit request with data: $portfolioEditData');
-
-  //     await PortfolioService.editPortfolio(
-  //       userid: widget.user.id,
-  //       portfolioEditedData: portfolioEditData,
-  //     );
-
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(content: Text('Portfolio updated successfully')),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     logError('Error editing portfolio: $e');
-  //     if (mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Failed to update portfolio: $e')),
-  //       );
-  //     }
-  //   }
-  // }
   Future<void> editPortfolio() async {
     try {
       final portfolio = widget.portfolio!;
       final Map<String, dynamic> updateData = {};
 
-      // Check and add personalInfo changes with null safety
       try {
         final Map<String, dynamic> personalInfo = {};
-        if (nameController.text != portfolio.personalInfo.name) {
-          personalInfo['name'] = nameController.text;
-        }
-        if (emailController.text != portfolio.personalInfo.email) {
-          personalInfo['email'] = emailController.text;
-        }
-        if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
-          personalInfo['phoneNumber'] = phoneNumberController.text;
-        }
-        if (whatsappNumberController.text !=
-            portfolio.personalInfo.whatsappNumber) {
-          personalInfo['whatsappNumber'] = whatsappNumberController.text;
-        }
 
-        // Handle profile picture if changed
+        // Profile Picture
         if (pickedProfileImage?.bytes != null) {
           try {
             final profileUploadResult = await PortfolioService.uploadImageFile(
@@ -276,7 +146,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           }
         }
 
-        // Handle banner image if changed
+        // Banner Image
         if (pickedBannerImage?.bytes != null) {
           try {
             final bannerUploadResult = await PortfolioService.uploadImageFile(
@@ -292,18 +162,60 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           } catch (e) {
             logError('Error uploading banner: $e');
           }
+        } else if (isBannerImageRemoved) {
+          personalInfo['bannerImage'] = null;
         }
 
-        if (personalInfo.isNotEmpty) {
-          updateData['personalInfo'] = personalInfo;
+        if (nameController.text != portfolio.personalInfo.name) {
+          personalInfo['name'] = nameController.text;
         }
+        if (emailController.text != portfolio.personalInfo.email) {
+          personalInfo['email'] = emailController.text;
+        }
+        if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
+          personalInfo['phoneNumber'] = phoneNumberController.text;
+        }
+        if (whatsappNumberController.text !=
+            portfolio.personalInfo.whatsappNumber) {
+          personalInfo['whatsappNumber'] = whatsappNumberController.text;
+        }
+        updateData['personalInfo'] = {
+          ...personalInfo,
+          if (isBannerImageRemoved && pickedBannerImage == null)
+            'bannerImage': null,
+          if (isProfileImageRemoved && pickedProfileImage == null)
+            'profilePicture': null,
+        };
+
+        // if (personalInfo.isNotEmpty) {
+        //   updateData['personalInfo'] = personalInfo;
+        // }
       } catch (e) {
         logError('Error processing personalInfo: $e');
       }
 
-      // Check and add workInfo changes with null safety
       try {
         final Map<String, dynamic> workInfo = {};
+
+        if (pickedLogoImage?.bytes != null) {
+          try {
+            final logoUploadResult = await PortfolioService.uploadImageFile(
+              pickedLogoImage!.bytes!,
+              pickedLogoImage!.name,
+            );
+            workInfo['companyLogo'] = {
+              'name': logoUploadResult['name'] ?? '',
+              'key': logoUploadResult['key'] ?? '',
+              'size': logoUploadResult['size'] ?? 0,
+              'mimetype': logoUploadResult['mimetype'] ?? '',
+            };
+          } catch (e) {
+            logError('Error uploading logo: $e');
+          }
+        } else if (isLogoImageRemoved) {
+          workInfo['companyLogo'] = null;
+        }
+
         if (companyNameController.text != portfolio.workInfo.companyName) {
           workInfo['companyName'] = companyNameController.text;
         }
@@ -321,33 +233,19 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
             portfolio.workInfo.secondaryWebsite) {
           workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
         }
+        updateData['workInfo'] = {
+          ...workInfo,
+          if (isLogoImageRemoved && pickedLogoImage == null)
+            'companyLogo': null,
+        };
 
-        // Handle company logo if changed
-        if (pickedLogoImage?.bytes != null) {
-          try {
-            final logoUploadResult = await PortfolioService.uploadImageFile(
-              pickedLogoImage!.bytes!,
-              pickedLogoImage!.name,
-            );
-            workInfo['companyLogo'] = {
-              'name': logoUploadResult['name'] ?? '',
-              'key': logoUploadResult['key'] ?? '',
-              'size': logoUploadResult['size'] ?? 0,
-              'mimetype': logoUploadResult['mimetype'] ?? '',
-            };
-          } catch (e) {
-            logError('Error uploading logo: $e');
-          }
-        }
-
-        if (workInfo.isNotEmpty) {
-          updateData['workInfo'] = workInfo;
-        }
+        // if (workInfo.isNotEmpty) {
+        //   updateData['workInfo'] = workInfo;
+        // }
       } catch (e) {
         logError('Error processing workInfo: $e');
       }
 
-      // Check and add addressInfo changes with null safety
       try {
         final Map<String, dynamic> addressInfo = {};
         if (buildingNamecontroller.text != portfolio.addressInfo.buildingName) {
@@ -373,7 +271,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         logError('Error processing addressInfo: $e');
       }
 
-      // Check and add about changes with null safety
       try {
         final Map<String, dynamic> about = {};
         if (headingcontroller.text != portfolio.about.heading) {
@@ -390,7 +287,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         logError('Error processing about: $e');
       }
 
-      // Add service heading if changed
       try {
         if (serviceHeadController.text != portfolio.serviceHeading) {
           updateData['serviceHeading'] = serviceHeadController.text;
@@ -399,7 +295,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         logError('Error processing serviceHeading: $e');
       }
 
-      // Add social media with null safety
       try {
         if (theFetchedPortfolio?.socialMedia != null) {
           final socialMediaList =
@@ -416,7 +311,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         logError('Error processing socialMedia: $e');
       }
 
-      // Only send update if there are changes
       if (updateData.isNotEmpty) {
         logSuccess('Sending update with changed fields: $updateData');
 
@@ -435,7 +329,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       }
     } catch (e, stackTrace) {
       logError('Error editing portfolio: $e');
-        logError('Stack trace: $stackTrace');  // This will show where the error occurs
+      logError('Stack trace: $stackTrace');
       if (mounted) {
         SnackbarHelper.showError(context, 'Failed to update portfolio: $e');
       }
@@ -447,162 +341,242 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   //     final portfolio = widget.portfolio!;
   //     final Map<String, dynamic> updateData = {};
 
-  //     // Check and add personalInfo changes
-  //     final Map<String, dynamic> personalInfo = {};
-  //     if (nameController.text != portfolio.personalInfo.name) {
-  //       personalInfo['name'] = nameController.text;
-  //     }
-  //     if (emailController.text != portfolio.personalInfo.email) {
-  //       personalInfo['email'] = emailController.text;
-  //     }
-  //     if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
-  //       personalInfo['phoneNumber'] = phoneNumberController.text;
-  //     }
-  //     if (whatsappNumberController.text !=
-  //         portfolio.personalInfo.whatsappNumber) {
-  //       personalInfo['whatsappNumber'] = whatsappNumberController.text;
-  //     }
-
-  //     // Handle profile picture if changed
-  //     if (pickedProfileImage?.bytes != null) {
-  //       try {
-  //         final profileUploadResult = await PortfolioService.uploadImageFile(
-  //           pickedProfileImage!.bytes!,
-  //           pickedProfileImage!.name,
-  //         );
-  //         personalInfo['profilePicture'] = {
-  //           'name': profileUploadResult['name'],
-  //           'key': profileUploadResult['key'],
-  //           'size': profileUploadResult['size'],
-  //           'mimetype': profileUploadResult['mimetype'],
-  //         };
-  //       } catch (e) {
-  //         logError('Error uploading profile: $e');
+  //     try {
+  //       final Map<String, dynamic> personalInfo = {};
+  //       if (nameController.text != portfolio.personalInfo.name) {
+  //         personalInfo['name'] = nameController.text;
   //       }
-  //     }
+  //       if (emailController.text != portfolio.personalInfo.email) {
+  //         personalInfo['email'] = emailController.text;
+  //       }
+  //       if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
+  //         personalInfo['phoneNumber'] = phoneNumberController.text;
+  //       }
+  //       if (whatsappNumberController.text !=
+  //           portfolio.personalInfo.whatsappNumber) {
+  //         personalInfo['whatsappNumber'] = whatsappNumberController.text;
+  //       }
 
-  //     // Handle banner image if changed
-  //     if (pickedBannerImage?.bytes != null) {
-  //       try {
+  //       if (pickedProfileImage?.bytes != null) {
+  //         try {
+  //           final profileUploadResult = await PortfolioService.uploadImageFile(
+  //             pickedProfileImage!.bytes!,
+  //             pickedProfileImage!.name,
+  //           );
+  //           personalInfo['profilePicture'] = {
+  //             'name': profileUploadResult['name'] ?? '',
+  //             'key': profileUploadResult['key'] ?? '',
+  //             'size': profileUploadResult['size'] ?? 0,
+  //             'mimetype': profileUploadResult['mimetype'] ?? '',
+  //           };
+  //         } catch (e) {
+  //           logError('Error uploading profile: $e');
+  //         }
+  //       }
+  //       if (pickedBannerImage != null) {
   //         final bannerUploadResult = await PortfolioService.uploadImageFile(
   //           pickedBannerImage!.bytes!,
   //           pickedBannerImage!.name,
   //         );
   //         personalInfo['bannerImage'] = {
-  //           'name': bannerUploadResult['name'],
-  //           'key': bannerUploadResult['key'],
-  //           'size': bannerUploadResult['size'],
-  //           'mimetype': bannerUploadResult['mimetype'],
+  //           'name': bannerUploadResult['name'] ?? '',
+  //           'key': bannerUploadResult['key'] ?? '',
+  //           'size': bannerUploadResult['size'] ?? 0,
+  //           'mimetype': bannerUploadResult['mimetype'] ?? '',
   //         };
-  //       } catch (e) {
-  //         logError('Error uploading banner: $e');
+  //       } else if (isBannerImageRemoved) {
+  //         personalInfo['bannerImage'] = null;
   //       }
-  //     }
 
-  //     if (personalInfo.isNotEmpty) {
-  //       updateData['personalInfo'] = personalInfo;
-  //     }
+  //       // if (pickedBannerImage?.bytes != null) {
+  //       //   final bannerUploadResult = await PortfolioService.uploadImageFile(
+  //       //     pickedBannerImage!.bytes!,
+  //       //     pickedBannerImage!.name,
+  //       //   );
+  //       //   personalInfo['bannerImage'] = {
+  //       //     'name': bannerUploadResult['name'] ?? '',
+  //       //     'key': bannerUploadResult['key'] ?? '',
+  //       //     'size': bannerUploadResult['size'] ?? 0,
+  //       //     'mimetype': bannerUploadResult['mimetype'] ?? '',
+  //       //   };
+  //       // } else if (isBannerImageRemoved) {
+  //       //   personalInfo['bannerImage'] = null; // <== force null to API
+  //       // }
 
-  //     // Check and add workInfo changes
-  //     final Map<String, dynamic> workInfo = {};
-  //     if (companyNameController.text != portfolio.workInfo.companyName) {
-  //       workInfo['companyName'] = companyNameController.text;
-  //     }
-  //     if (designationcontroller.text != portfolio.workInfo.designation) {
-  //       workInfo['designation'] = designationcontroller.text;
-  //     }
-  //     if (workemailController.text != portfolio.workInfo.workEmail) {
-  //       workInfo['workEmail'] = workemailController.text;
-  //     }
-  //     if (primaryWebsiteController.text != portfolio.workInfo.primaryWebsite) {
-  //       workInfo['primaryWebsite'] = primaryWebsiteController.text;
-  //     }
-  //     if (secondaryWebsiteController.text !=
-  //         portfolio.workInfo.secondaryWebsite) {
-  //       workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
-  //     }
+  //       // if (pickedBannerImage?.bytes != null) {
+  //       //   try {
+  //       //     final bannerUploadResult = await PortfolioService.uploadImageFile(
+  //       //       pickedBannerImage!.bytes!,
+  //       //       pickedBannerImage!.name,
+  //       //     );
+  //       //     personalInfo['bannerImage'] = {
+  //       //       'name': bannerUploadResult['name'] ?? '',
+  //       //       'key': bannerUploadResult['key'] ?? '',
+  //       //       'size': bannerUploadResult['size'] ?? 0,
+  //       //       'mimetype': bannerUploadResult['mimetype'] ?? '',
+  //       //     };
+  //       //   } catch (e) {
+  //       //     logError('Error uploading banner: $e');
+  //       //   }
+  //       // }
+  //       if (isBannerImageRemoved) {
+  //         personalInfo['bannerImage'] = null;
+  //       }
+  //       if (personalInfo.isNotEmpty || isBannerImageRemoved) {
+  //         updateData['personalInfo'] = personalInfo;
+  //       }
 
-  //     // Handle company logo if changed
-  //     if (pickedLogoImage?.bytes != null) {
-  //       try {
+  //       // if (personalInfo.isNotEmpty) {
+  //       //   updateData['personalInfo'] = personalInfo;
+  //       // }
+  //     } catch (e) {
+  //       logError('Error processing personalInfo: $e');
+  //     }
+  //     logSuccess('Final updateData being sent: ${jsonEncode(updateData)}');
+  //     try {
+  //       final Map<String, dynamic> workInfo = {};
+  //       if (companyNameController.text != portfolio.workInfo.companyName) {
+  //         workInfo['companyName'] = companyNameController.text;
+  //       }
+  //       if (designationcontroller.text != portfolio.workInfo.designation) {
+  //         workInfo['designation'] = designationcontroller.text;
+  //       }
+  //       if (workemailController.text != portfolio.workInfo.workEmail) {
+  //         workInfo['workEmail'] = workemailController.text;
+  //       }
+  //       if (primaryWebsiteController.text !=
+  //           portfolio.workInfo.primaryWebsite) {
+  //         workInfo['primaryWebsite'] = primaryWebsiteController.text;
+  //       }
+  //       if (secondaryWebsiteController.text !=
+  //           portfolio.workInfo.secondaryWebsite) {
+  //         workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
+  //       }
+  //       if (pickedLogoImage != null) {
   //         final logoUploadResult = await PortfolioService.uploadImageFile(
   //           pickedLogoImage!.bytes!,
   //           pickedLogoImage!.name,
   //         );
   //         workInfo['companyLogo'] = {
-  //           'name': logoUploadResult['name'],
-  //           'key': logoUploadResult['key'],
-  //           'size': logoUploadResult['size'],
-  //           'mimetype': logoUploadResult['mimetype'],
+  //           'name': logoUploadResult['name'] ?? '',
+  //           'key': logoUploadResult['key'] ?? '',
+  //           'size': logoUploadResult['size'] ?? 0,
+  //           'mimetype': logoUploadResult['mimetype'] ?? '',
   //         };
-  //       } catch (e) {
-  //         logError('Error uploading logo: $e');
+  //       } else if (isLogoImageRemoved) {
+  //         workInfo['companyLogo'] = null;
   //       }
+
+  //       // if (pickedLogoImage?.bytes != null) {
+  //       //   final logoUploadResult = await PortfolioService.uploadImageFile(
+  //       //     pickedLogoImage!.bytes!,
+  //       //     pickedLogoImage!.name,
+  //       //   );
+  //       //   workInfo['companyLogo'] = {
+  //       //     'name': logoUploadResult['name'] ?? '',
+  //       //     'key': logoUploadResult['key'] ?? '',
+  //       //     'size': logoUploadResult['size'] ?? 0,
+  //       //     'mimetype': logoUploadResult['mimetype'] ?? '',
+  //       //   };
+  //       // } else if (isLogoImageRemoved) {
+  //       //   workInfo['companyLogo'] = null; // <== force null to API
+  //       // }
+
+  //       // if (pickedLogoImage?.bytes != null) {
+  //       //   try {
+  //       //     final logoUploadResult = await PortfolioService.uploadImageFile(
+  //       //       pickedLogoImage!.bytes!,
+  //       //       pickedLogoImage!.name,
+  //       //     );
+  //       //     workInfo['companyLogo'] = {
+  //       //       'name': logoUploadResult['name'] ?? '',
+  //       //       'key': logoUploadResult['key'] ?? '',
+  //       //       'size': logoUploadResult['size'] ?? 0,
+  //       //       'mimetype': logoUploadResult['mimetype'] ?? '',
+  //       //     };
+  //       //   } catch (e) {
+  //       //     logError('Error uploading logo: $e');
+  //       //   }
+  //       // }
+  //       if (isLogoImageRemoved) {
+  //         workInfo['companyLogo'] = null;
+  //       }
+  //       if (workInfo.isNotEmpty || isLogoImageRemoved) {
+  //         updateData['workInfo'] = workInfo;
+  //       }
+
+  //       // if (workInfo.isNotEmpty) {
+  //       //   updateData['workInfo'] = workInfo;
+  //       // }
+  //     } catch (e) {
+  //       logError('Error processing workInfo: $e');
   //     }
 
-  //     if (workInfo.isNotEmpty) {
-  //       updateData['workInfo'] = workInfo;
-  //     }
-
-  //     // Check and add addressInfo changes
-  //     final Map<String, dynamic> addressInfo = {};
-  //     if (buildingNamecontroller.text != portfolio.addressInfo.buildingName) {
-  //       addressInfo['buildingName'] = buildingNamecontroller.text;
-  //     }
-  //     if (areaController.text != portfolio.addressInfo.area) {
-  //       addressInfo['area'] = areaController.text;
-  //     }
-  //     if (pincodeController.text != portfolio.addressInfo.pincode) {
-  //       addressInfo['pincode'] = pincodeController.text;
-  //     }
-  //     if (districtController.text != portfolio.addressInfo.district) {
-  //       addressInfo['district'] = districtController.text;
-  //     }
-  //     if (stateController.text != portfolio.addressInfo.state) {
-  //       addressInfo['state'] = stateController.text;
-  //     }
-
-  //     if (addressInfo.isNotEmpty) {
-  //       updateData['addressInfo'] = addressInfo;
-  //     }
-
-  //     // Check and add about changes
-  //     final Map<String, dynamic> about = {};
-  //     if (headingcontroller.text != portfolio.about.heading) {
-  //       about['heading'] = headingcontroller.text;
-  //     }
-  //     if (descriptioncontroller.text != portfolio.about.description) {
-  //       about['description'] = descriptioncontroller.text;
-  //     }
-
-  //     if (about.isNotEmpty) {
-  //       updateData['about'] = about;
-  //     }
-
-  //     // Add service heading if changed
-  //     if (serviceHeadController.text != portfolio.serviceHeading) {
-  //       updateData['serviceHeading'] = serviceHeadController.text;
-  //     }
   //     try {
-  //       if (theFetchedPortfolio != null) {
-  //         updateData['socialMedia'] =
-  //             theFetchedPortfolio!.socialMedia
-  //                 .map(
-  //                   (social) => {
-  //                     'source': social.source,
-  //                     'link': social.link,
-  //                     if (social.id != null && social.id!.isNotEmpty)
-  //                       '_id': social.id,
-  //                   },
-  //                 )
-  //                 .toList();
+  //       final Map<String, dynamic> addressInfo = {};
+  //       if (buildingNamecontroller.text != portfolio.addressInfo.buildingName) {
+  //         addressInfo['buildingName'] = buildingNamecontroller.text;
+  //       }
+  //       if (areaController.text != portfolio.addressInfo.area) {
+  //         addressInfo['area'] = areaController.text;
+  //       }
+  //       if (pincodeController.text != portfolio.addressInfo.pincode) {
+  //         addressInfo['pincode'] = pincodeController.text;
+  //       }
+  //       if (districtController.text != portfolio.addressInfo.district) {
+  //         addressInfo['district'] = districtController.text;
+  //       }
+  //       if (stateController.text != portfolio.addressInfo.state) {
+  //         addressInfo['state'] = stateController.text;
+  //       }
 
-  //         print('Social Media Data being sent: ${updateData['socialMedia']}');
+  //       if (addressInfo.isNotEmpty) {
+  //         updateData['addressInfo'] = addressInfo;
   //       }
   //     } catch (e) {
-  //       logError('Error processing social media: $e');
+  //       logError('Error processing addressInfo: $e');
   //     }
-  //     // Only send update if there are changes
+
+  //     try {
+  //       final Map<String, dynamic> about = {};
+  //       if (headingcontroller.text != portfolio.about.heading) {
+  //         about['heading'] = headingcontroller.text;
+  //       }
+  //       if (descriptioncontroller.text != portfolio.about.description) {
+  //         about['description'] = descriptioncontroller.text;
+  //       }
+
+  //       if (about.isNotEmpty) {
+  //         updateData['about'] = about;
+  //       }
+  //     } catch (e) {
+  //       logError('Error processing about: $e');
+  //     }
+
+  //     try {
+  //       if (serviceHeadController.text != portfolio.serviceHeading) {
+  //         updateData['serviceHeading'] = serviceHeadController.text;
+  //       }
+  //     } catch (e) {
+  //       logError('Error processing serviceHeading: $e');
+  //     }
+
+  //     try {
+  //       if (theFetchedPortfolio?.socialMedia != null) {
+  //         final socialMediaList =
+  //             theFetchedPortfolio!.socialMedia
+  //                 .where((social) => social != null)
+  //                 .map((social) => social.toJson())
+  //                 .toList();
+
+  //         if (socialMediaList.isNotEmpty) {
+  //           updateData['socialMedia'] = socialMediaList;
+  //         }
+  //       }
+  //     } catch (e) {
+  //       logError('Error processing socialMedia: $e');
+  //     }
+
   //     if (updateData.isNotEmpty) {
   //       logSuccess('Sending update with changed fields: $updateData');
 
@@ -613,20 +587,15 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
 
   //       if (mounted) {
   //         SnackbarHelper.showSuccess(context, 'Portfolio updated successfully');
-  //         // ScaffoldMessenger.of(context).showSnackBar(
-  //         //   const SnackBar(content: Text('Portfolio updated successfully')),
-  //         // );
   //       }
   //     } else {
   //       if (mounted) {
   //         SnackbarHelper.showInfo(context, 'No changes to update');
-  //         // ScaffoldMessenger.of(
-  //         //   context,
-  //         // ).showSnackBar(const SnackBar(content: Text('No changes to update')));
   //       }
   //     }
-  //   } catch (e) {
+  //   } catch (e, stackTrace) {
   //     logError('Error editing portfolio: $e');
+  //     logError('Stack trace: $stackTrace');
   //     if (mounted) {
   //       SnackbarHelper.showError(context, 'Failed to update portfolio: $e');
   //     }
@@ -647,17 +616,12 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       if (serviceHeadingController.text.trim().isEmpty ||
           serviceDescriptionController.text.trim().isEmpty) {
         SnackbarHelper.showInfo(context, 'Please fill in both fields');
-        // ScaffoldMessenger.of(
-        //   context,
-        // ).showSnackBar(SnackBar(content: Text('Please fill in both fields')));
+
         return;
       }
       if (pickedServiceImage == null) {
         SnackbarHelper.showInfo(context, 'Please select an image');
 
-        // ScaffoldMessenger.of(
-        //   context,
-        // ).showSnackBar(const SnackBar(content: Text('Please select an image')));
         return;
       }
 
@@ -679,6 +643,10 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         portfolioId: portfolio.id,
         serviceData: serviceData,
       );
+      setState(() {
+        isLogoImageRemoved = false;
+        isBannerImageRemoved = false;
+      });
 
       setState(() {
         theFetchedPortfolio = response;
@@ -693,18 +661,11 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       if (mounted) {
         SnackbarHelper.showSuccess(context, 'Service added successfully');
       }
-
-      // ScaffoldMessenger.of(
-      //   context,
-      // ).showSnackBar(SnackBar(content: Text('Service added successfully')));
     } catch (e) {
       logError('Error adding service to portfolio: $e');
       if (mounted) {
         SnackbarHelper.showError(context, 'Failed to add service');
       }
-      // ScaffoldMessenger.of(
-      //   context,
-      // ).showSnackBar(SnackBar(content: Text('Failed to add service')));
     } finally {
       setState(() {
         isLoading = false;
@@ -730,12 +691,11 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       logError('Error picking or uploading profile image: $e');
       if (mounted) {
         SnackbarHelper.showError(context, 'Error uploading profile image: $e');
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('Error uploading profile image: $e')),
-        // );
       }
     }
   }
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -766,7 +726,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                   text: 'Back',
                   icon: Icons.arrow_back,
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
 
                   gradient: LinearGradient(
@@ -849,6 +809,21 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               child: Row(
                 children: [
                   AdditionalContainer(
+                    onLogoRemoved: () {
+                      setState(() {
+                        pickedLogoImage = null;
+                        previewLogoBytes = null;
+                        isLogoImageRemoved = true;
+                      });
+                    },
+                    onBannerRemoved: () {
+                      setState(() {
+                        pickedBannerImage = null;
+                        previewBannerBytes = null;
+                                                      isBannerImageRemoved = true;
+
+                      });
+                    },
                     logoImageUrl: widget.portfolio?.workInfo.getCompanyLogoUrl(
                       baseUrl,
                     ),
@@ -911,7 +886,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               ),
               child: Row(
                 children: [
-                  //TODO : add textformfield scrollable
                   AboutContainer(
                     aboutHeadingController: headingcontroller,
                     aboutDescriptionController: descriptioncontroller,
@@ -944,7 +918,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                           spacing: CustomPadding.paddingLarge.v,
                           runSpacing: CustomPadding.paddingLarge.v,
                           children: [
-                            // Existing service cards
                             ...theFetchedPortfolio?.services.map((service) {
                                   return ServiceCardWidget(
                                     portfolio: theFetchedPortfolio,
@@ -952,6 +925,9 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                     service: service,
                                     isEditMode: true,
                                     onEdit: () async {
+                                      logError(
+                                        'Service image before edit: ${service.image?.key}',
+                                      );
                                       setState(() {
                                         editingServiceId = service.id;
                                         _showAddServiceUI = true;
@@ -960,7 +936,20 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                             service.heading;
                                         serviceDescriptionController.text =
                                             service.description;
-                                        pickedServiceImage = service.image;
+                                        if (service.image != null) {
+                                          pickedServiceImage = ProductImage(
+                                            key: service.image!.key,
+                                            name: service.image!.name,
+                                            size: service.image!.size,
+                                            mimetype: service.image!.mimetype,
+                                          );
+                                          logError(
+                                            'Picked image after set: ${pickedServiceImage?.key}',
+                                          );
+                                        } else {
+                                          pickedServiceImage = null;
+                                        }
+                                        // pickedServiceImage = service.image;
                                       });
                                     },
                                     onDelete: () async {
@@ -977,36 +966,17 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                           context,
                                           'Service deleted successfully',
                                         );
-                                        // ScaffoldMessenger.of(
-                                        //   context,
-                                        // ).showSnackBar(
-                                        //   SnackBar(
-                                        //     content: Text(
-                                        //       'Service deleted successfully',
-                                        //     ),
-                                        //   ),
-                                        // );
                                       } catch (e) {
                                         SnackbarHelper.showError(
                                           context,
                                           'Failed to delete service',
                                         );
-                                        // ScaffoldMessenger.of(
-                                        //   context,
-                                        // ).showSnackBar(
-                                        //   SnackBar(
-                                        //     content: Text(
-                                        //       'Failed to delete service',
-                                        //     ),
-                                        //   ),
-                                        // );
                                       }
                                     },
                                   );
                                 }).toList() ??
                                 [],
 
-                            // Add button without border
                             if ((theFetchedPortfolio?.services.length ?? 0) < 3)
                               SizedBox(
                                 width: 350,
@@ -1042,10 +1012,10 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                         children: [
                           Gap(CustomPadding.paddingLarge.v),
                           AddImageContainer(
-                            baseUrl: baseUrl,
+                            baseUrlImage: baseUrlImage,
                             imageUrl:
                                 pickedServiceImage?.key != null
-                                    ? '$baseUrl/file?key=portfolios/portfolio_services/${pickedServiceImage!.key}'
+                                    ? '$baseUrlImage/portfolios/portfolio-services/${pickedServiceImage!.key}'
                                     : null,
                             initialImage: pickedServiceImage,
 
@@ -1080,11 +1050,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                   context,
                                   'Please select an image',
                                 );
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   const SnackBar(
-                                //     content: Text('Please select an image'),
-                                //   ),
-                                // );
+
                                 return;
                               }
 
@@ -1098,17 +1064,12 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                   context,
                                   'Please fill in all fields',
                                 );
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   const SnackBar(
-                                //     content: Text('Please fill in all fields'),
-                                //   ),
-                                // );
+
                                 return;
                               }
 
                               try {
                                 if (editingServiceId != null) {
-                                  // Editing existing service
                                   final updatedPortfolio =
                                       await PortfolioService.editService(
                                         userId: widget.portfolio!.user.id,
@@ -1138,15 +1099,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                     context,
                                     'Service updated successfully',
                                   );
-                                  // ScaffoldMessenger.of(context).showSnackBar(
-                                  //   const SnackBar(
-                                  //     content: Text(
-                                  //       'Service updated successfully',
-                                  //     ),
-                                  //   ),
-                                  // );
                                 } else {
-                                  // Adding new service
                                   await addServiceToPortfolio();
                                 }
                               } catch (e) {
@@ -1154,11 +1107,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                   context,
                                   'Failed to save service: $e',
                                 );
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(
-                                //     content: Text('Failed to save service: $e'),
-                                //   ),
-                                // );
                               }
                             },
 
@@ -1191,7 +1139,10 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                 ),
               ],
             ),
-            Gap(CustomPadding.paddingXL.v),
+            Gap(CustomPadding.paddingXXL.v),
+            Gap(CustomPadding.paddingXXL.v),
+
+            Gap(CustomPadding.paddingXXL.v),
           ],
         ),
       ),

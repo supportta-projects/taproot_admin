@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
 class SideMenuLucideIcon extends StatelessWidget {
@@ -17,10 +16,16 @@ class SideMenuLucideIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelected = currentIndex == index;
-    return LucideIconWidget(
-      icon: icon,
-      color: isSelected ? Colors.white : CustomColors.textColorDarkGrey,
+    return Icon(
+      icon,
       size: 20.fSize,
+      color: isSelected ? Colors.white : CustomColors.textColorDarkGrey,
     );
+
+    // LucideIconWidget(
+    //   icon: icon,
+    //   color: isSelected ? Colors.white : CustomColors.textColorDarkGrey,
+    //   size: 20.fSize,
+    // );
   }
 }

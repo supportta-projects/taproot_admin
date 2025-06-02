@@ -10,13 +10,31 @@ import 'package:taproot_admin/features/product_screen/data/product_category_mode
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 
 class ProductService with ErrorExceptionHandler {
-  static Future<ProductResponse> getProduct({required int page}) async {
+  static Future<ProductResponse> getProduct({
+    required int page,
+    String? searchQuery,
+    String? sort,
+  }) async {
     try {
+      final Map<String, dynamic> queryParameters = {
+        'page': page,
+        if (searchQuery != null && searchQuery.isNotEmpty)
+          'search': searchQuery,
+        if (sort != null &&
+            sort != 'all') // Only add sort parameter if it's not 'all'
+          'sort': sort,
+      };
+
+      logSuccess(
+        "Query Parameters: $queryParameters",
+      ); // Log the query parameters
+
       final response = await DioHelper().get(
         '/product',
         type: ApiType.baseUrl,
-        queryParameters: {'page': page},
+        queryParameters: queryParameters,
       );
+
       if (response.statusCode == 200) {
         logSuccess("Response Data: ${response.data}");
         return ProductResponse.fromJson(response.data);
@@ -27,6 +45,70 @@ class ProductService with ErrorExceptionHandler {
       throw ProductService().handleError('Failed to load products, $e');
     }
   }
+static Future<Product> getProductById(String productId) async {
+    try {
+      final response = await DioHelper().get(
+        '/product/$productId',
+        type: ApiType.baseUrl,
+      );
+
+      if (response.statusCode == 200) {
+        logSuccess("Response Data: ${response.data}");
+        return Product.fromJson(response.data['result']);
+      } else {
+        throw Exception('Failed to load product');
+      }
+    } catch (e) {
+      throw ProductService().handleError('Failed to load product, $e');
+    }
+  }
+
+  // static Future<ProductResponse> getProduct({
+  //   required int page,
+  //   String? searchQuery,
+  //   String? sort,
+  // }) async {
+  //   try {
+  //     final Map<String, dynamic> queryParameters = {
+  //       'page': page,
+  //       if (searchQuery != null && searchQuery.isNotEmpty)
+  //         'search': searchQuery,
+  //     };
+
+  //     final response = await DioHelper().get(
+  //       '/product',
+  //       type: ApiType.baseUrl,
+  //       queryParameters: queryParameters,
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       logSuccess("Response Data: ${response.data}");
+  //       return ProductResponse.fromJson(response.data);
+  //     } else {
+  //       throw Exception('Failed to load products');
+  //     }
+  //   } catch (e) {
+  //     throw ProductService().handleError('Failed to load products, $e');
+  //   }
+  // }
+
+  // static Future<ProductResponse> getProduct({required int page}) async {
+  //   try {
+  //     final response = await DioHelper().get(
+  //       '/product',
+  //       type: ApiType.baseUrl,
+  //       queryParameters: {'page': page},
+  //     );
+  //     if (response.statusCode == 200) {
+  //       logSuccess("Response Data: ${response.data}");
+  //       return ProductResponse.fromJson(response.data);
+  //     } else {
+  //       throw Exception('Failed to load products');
+  //     }
+  //   } catch (e) {
+  //     throw ProductService().handleError('Failed to load products, $e');
+  //   }
+  // }
 
   static Future<List<ProductCategory>> getProductCategory() async {
     try {
@@ -118,12 +200,14 @@ class ProductService with ErrorExceptionHandler {
       throw ProductService().handleError('Failed to load products, $e');
     }
   }
+
   static Future<SingleProductResponse> editProduct({
     String? name,
     String? categoryId,
     String? description,
     double? actualPrice,
     double? discountPrice,
+    double? discountPercentage,
     List<ProductImage>? productImages,
     required String productId,
   }) async {
@@ -134,6 +218,8 @@ class ProductService with ErrorExceptionHandler {
         if (description != null) 'description': description,
         if (actualPrice != null) 'actualPrice': actualPrice,
         if (discountPrice != null) 'discountPrice': discountPrice,
+        if (discountPercentage != null)
+          'discountPercentage': discountPercentage,
         if (productImages != null && productImages.isNotEmpty)
           'productImages':
               productImages
@@ -175,67 +261,65 @@ class ProductService with ErrorExceptionHandler {
       throw Exception('Failed to update product: $e');
     }
   }
-// static Future<ProductResponse> editProduct({
-//     String? name,
-//     String? categoryId,
-//     String? description,
-//     double? actualPrice,
-//     double? discountPrice,
-//     List<ProductImage>? productImages,
-//     required String productId,
-//   }) async {
-//     try {
-//       final Map<String, dynamic> requestBody = {
-//         if (name != null) 'name': name,
-//         if (categoryId != null) 'categoryId': categoryId,
-//         if (description != null) 'description': description,
-//         if (actualPrice != null) 'actualPrice': actualPrice,
-//         if (discountPrice != null) 'discountPrice': discountPrice,
-//         if (productImages != null)
-//           'productImages':
-//               productImages
-//                   .map(
-//                     (img) => {
-//                       'name':
-//                           img.name ??
-//                           img.key
-//                               .split('-')
-//                               .last, // Use filename from key if name is null
-//                       'key': img.key,
-//                       'size': img.size ?? 0,
-//                       'mimetype':
-//                           img.mimetype ??
-//                           'image/${img.key.split('.').last.toLowerCase()}',
-//                     },
-//                   )
-//                   .toList(),
-//       };
+  // static Future<ProductResponse> editProduct({
+  //     String? name,
+  //     String? categoryId,
+  //     String? description,
+  //     double? actualPrice,
+  //     double? discountPrice,
+  //     List<ProductImage>? productImages,
+  //     required String productId,
+  //   }) async {
+  //     try {
+  //       final Map<String, dynamic> requestBody = {
+  //         if (name != null) 'name': name,
+  //         if (categoryId != null) 'categoryId': categoryId,
+  //         if (description != null) 'description': description,
+  //         if (actualPrice != null) 'actualPrice': actualPrice,
+  //         if (discountPrice != null) 'discountPrice': discountPrice,
+  //         if (productImages != null)
+  //           'productImages':
+  //               productImages
+  //                   .map(
+  //                     (img) => {
+  //                       'name':
+  //                           img.name ??
+  //                           img.key
+  //                               .split('-')
+  //                               .last, // Use filename from key if name is null
+  //                       'key': img.key,
+  //                       'size': img.size ?? 0,
+  //                       'mimetype':
+  //                           img.mimetype ??
+  //                           'image/${img.key.split('.').last.toLowerCase()}',
+  //                     },
+  //                   )
+  //                   .toList(),
+  //       };
 
-//       logSuccess("Request Body: $requestBody");
+  //       logSuccess("Request Body: $requestBody");
 
-//       final response = await DioHelper().patch(
-//         '/product/$productId',
-//         type: ApiType.baseUrl,
-//         data: requestBody,
-//       );
+  //       final response = await DioHelper().patch(
+  //         '/product/$productId',
+  //         type: ApiType.baseUrl,
+  //         data: requestBody,
+  //       );
 
-//       if (response.statusCode == 200) {
-//         return ProductResponse.fromJson(response.data);
-//       } else {
-//         throw Exception(response.data['message'] ?? 'Failed to update product');
-//       }
-//     } catch (e) {
-//       if (e is DioException && e.response != null) {
-//         logError("Server Error Response: ${e.response?.data}");
-//         throw Exception(
-//           e.response?.data['message'] ?? 'Failed to update product',
-//         );
-//       }
-//       throw ProductService().handleError('Failed to update product: $e');
-//     }
-//   }
-
-
+  //       if (response.statusCode == 200) {
+  //         return ProductResponse.fromJson(response.data);
+  //       } else {
+  //         throw Exception(response.data['message'] ?? 'Failed to update product');
+  //       }
+  //     } catch (e) {
+  //       if (e is DioException && e.response != null) {
+  //         logError("Server Error Response: ${e.response?.data}");
+  //         throw Exception(
+  //           e.response?.data['message'] ?? 'Failed to update product',
+  //         );
+  //       }
+  //       throw ProductService().handleError('Failed to update product: $e');
+  //     }
+  //   }
 
   static Future<void> deleteImage(ProductImage image) async {
     try {
@@ -253,4 +337,22 @@ class ProductService with ErrorExceptionHandler {
       throw ProductService().handleError(e);
     }
   }
+
+ static Future<bool> isProductEnable({required String productId}) async {
+    try {
+      final response = await DioHelper().patch(
+        '/product/change-status/$productId',
+        type: ApiType.baseUrl,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      logError('Product status update failed: $e');
+      rethrow;
+    }
+  }
+
 }

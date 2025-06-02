@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart
 import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
 import 'package:taproot_admin/features/product_screen/widgets/view_product.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/not_found_widget.dart';
 
 class ProductPage extends StatefulWidget {
   final VoidCallback addTap;
@@ -31,6 +34,10 @@ class _ProductPageState extends State<ProductPage>
   bool _isLoadingMore = false;
   bool _hasMoreData = true;
   bool _isLoading = false;
+  Timer? _searchDebounce;
+  String _currentSearchQuery = '';
+
+  List<Product> _filteredProducts = [];
 
   List<Map<String, Object>> products = [];
   ProductResponse? product;
@@ -47,6 +54,7 @@ class _ProductPageState extends State<ProductPage>
   List<bool> enabledList = [];
 
   bool viewProduct = false;
+  SortOption _currentSort = SortOption.newItem;
   @override
   void initState() {
     super.initState();
@@ -81,7 +89,7 @@ class _ProductPageState extends State<ProductPage>
   }
 
   Future<void> fetchProduct({int page = 1}) async {
-    if (_isLoading) return; // Prevent multiple simultaneous calls
+    if (_isLoading) return;
 
     try {
       if (page == 1) {
@@ -93,18 +101,29 @@ class _ProductPageState extends State<ProductPage>
         });
       }
 
-      final response = await ProductService.getProduct(page: page);
+      final response = await ProductService.getProduct(
+        page: page,
+        searchQuery: _currentSearchQuery,
+        sort: _currentSort.apiParameter,
+      );
 
       if (mounted) {
         setState(() {
           if (page == 1) {
             product = response;
+            _filteredProducts = response.results;
+
+            enabledList =
+                response.results.map((p) => p.status == "Active").toList();
           } else {
             product!.results.addAll(response.results);
+            _filteredProducts = product!.results;
+
+            enabledList =
+                product!.results.map((p) => p.status == "Active").toList();
           }
           _hasMoreData = response.results.isNotEmpty;
           _isLoadingMore = false;
-          enabledList = List.generate(product!.results.length, (index) => true);
           _isLoading = false;
         });
       }
@@ -119,24 +138,13 @@ class _ProductPageState extends State<ProductPage>
     }
   }
 
-  // Future<void> fetchProduct({int page = 1}) async {
-  //   try {
-  //     final response = await ProductService.getProduct(page: page);
-  //     setState(() {
-  //       if (page == 1) {
-  //         product = response;
-  //       } else {
-  //         product!.results.addAll(response.results);
-  //       }
-  //       _hasMoreData = response.results.isNotEmpty;
-  //       _isLoadingMore = false;
-  //       enabledList = List.generate(product!.results.length, (index) => true);
-  //     });
-  //   } catch (e) {
-  //     logError('Error fetching products: $e');
-  //     _isLoadingMore = false;
-  //   }
-  // }
+  void _handleSort(SortOption sortOption) {
+    setState(() {
+      _currentSort = sortOption;
+      _currentPage = 1;
+    });
+    fetchProduct(page: 1);
+  }
 
   Future<void> fetchProductCategory() async {
     try {
@@ -153,11 +161,24 @@ class _ProductPageState extends State<ProductPage>
     await fetchProduct(page: 1);
   }
 
+  void _handleSearch(String query) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      setState(() {
+        _currentSearchQuery = query;
+        _currentPage = 1;
+        _hasMoreData = true;
+      });
+      fetchProduct(page: 1);
+    });
+  }
+
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _tabController.dispose();
     _scrollController.dispose();
-    // TODO: implement dispose
+
     super.dispose();
   }
 
@@ -187,11 +208,6 @@ class _ProductPageState extends State<ProductPage>
                                     ),
                               ),
                             );
-
-                            // widget.addTap();
-                            // setState(() {
-                            //   addProduct = !addProduct;
-                            // });
                           },
                           useGradient: true,
                           gradientColors: CustomColors.borderGradient.colors,
@@ -220,9 +236,16 @@ class _ProductPageState extends State<ProductPage>
                         children: [
                           Row(
                             children: [
-                              SearchWidget(hintText: 'Search Template Name'),
+                              SearchWidget(
+                                hintText: 'Search Template Name',
+
+                                onChanged: _handleSearch,
+                              ),
                               Spacer(),
-                              SortButton(),
+                              SortButton(
+                                currentSort: _currentSort,
+                                onSortChanged: _handleSort,
+                              ),
                             ],
                           ),
                           Gap(CustomPadding.paddingLarge.v),
@@ -241,14 +264,12 @@ class _ProductPageState extends State<ProductPage>
                             tabs: [
                               const Tab(text: 'All'),
                               ...productCategory.map(
-                                (category) => Tab(text: category.name ?? ''),
+                                (category) => Tab(
+                                  text:
+                                      category.name[0].toUpperCase() +
+                                      category.name.substring(1),
+                                ),
                               ),
-                              // Tab(text: 'All'),
-                              // Tab(text: 'Premium'),
-                              // Tab(text: 'Basic'),
-                              // Tab(text: 'Modern'),
-                              // Tab(text: 'Classic'),
-                              // Tab(text: 'Business'),
                             ],
                           ),
                           Gap(CustomPadding.paddingXL.v),
@@ -256,273 +277,21 @@ class _ProductPageState extends State<ProductPage>
                             child: TabBarView(
                               controller: _tabController,
                               children: [
-                                GridView.builder(
-                                  controller: _scrollController,
-                                  itemCount: product!.results.length + 1,
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        childAspectRatio: 2.8,
-                                        crossAxisCount: 2,
-                                        mainAxisSpacing:
-                                            CustomPadding.paddingXL.v,
-                                        crossAxisSpacing:
-                                            CustomPadding.paddingXL.v,
-                                      ),
-                                  itemBuilder: (context, index) {
-                                    if (index == product!.results.length) {
-                                      return _isLoadingMore
-                                          ? Center(
-                                            child: CircularProgressIndicator(),
+                                buildProductGrid(_filteredProducts),
+
+                                ...productCategory.map((category) {
+                                  final categoryFilteredProducts =
+                                      _filteredProducts
+                                          .where(
+                                            (product) =>
+                                                product.category?.id ==
+                                                category.id,
                                           )
-                                          : SizedBox.shrink();
-                                    }
-
-                                    final productcard = product!.results[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context)
-                                            .push(
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (context) => ViewProduct(
-                                                      product: productcard,
-                                                      images:
-                                                          productcard
-                                                              .productImages!
-                                                              .map((e) => e.key)
-                                                              .toList(),
-
-                                                      onBack: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      onEdit: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder:
-                                                                (
-                                                                  context,
-                                                                ) => EditProduct(
-                                                                  onRefreshProduct:
-                                                                      refreshProducts,
-                                                                  product:
-                                                                      productcard,
-                                                                  // images:
-                                                                  //     productcard
-                                                                  //         .productImages!
-                                                                  //         .map(
-                                                                  //           (
-                                                                  //             e,
-                                                                  //           ) =>
-                                                                  //               e.key,
-                                                                  //         )
-                                                                  //         .toList(),
-                                                                  // price:
-                                                                  //     product.actualPrice
-                                                                  //         .toString(),
-
-                                                                  // offerPrice:
-                                                                  //     product
-                                                                  //         .discountedPrice
-                                                                  //         .toString(),
-                                                                  // productName:
-                                                                  //     product.name
-                                                                  //         .toString(),
-                                                                  // cardType:
-                                                                  //     product.type
-                                                                  //         .toString(),
-                                                                  // description:
-                                                                  //     product.actualPrice
-                                                                  //         .toString(),
-                                                                  // images:
-                                                                  //     (product['images']
-                                                                  //             as List<
-                                                                  //               dynamic
-                                                                  //             >)
-                                                                  //         .map(
-                                                                  //           (e) =>
-                                                                  //               e.toString(),
-                                                                  //         )
-                                                                  //         .toList(),
-                                                                ),
-                                                          ),
-                                                        );
-                                                      },
-
-                                                      //   price: product['price'].toString(),
-                                                      //   offerPrice:
-                                                      //       product['discountPrice']
-                                                      //           .toString(),
-                                                      //   productName:
-                                                      //       product['templateName']
-                                                      //           .toString(),
-                                                      //   cardType: product['type'].toString(),
-                                                      //   description:
-                                                      //       product['description'].toString(),
-                                                      //  images:
-                                                      //       (product['images']
-                                                      //               as List<dynamic>)
-                                                      //           .map((e) => e.toString())
-                                                      //           .toList(),
-                                                    ),
-                                              ),
-                                            )
-                                            .then((_) => refreshProducts());
-                                        // widget.viewTap();
-                                        // setState(() {
-                                        //   viewProduct = !viewProduct;
-                                        // });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            CustomPadding.paddingLarge.v,
-                                          ),
-                                          border: Border.all(
-                                            width: 2,
-                                            color:
-                                                CustomColors.textColorLightGrey,
-                                          ),
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Gap(CustomPadding.paddingLarge.v),
-                                            Row(
-                                              children: [
-                                                Gap(
-                                                  CustomPadding.paddingLarge.v,
-                                                ),
-                                                Expanded(
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          CustomColors
-                                                              .lightGreen,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            CustomPadding
-                                                                .padding
-                                                                .v,
-                                                          ),
-                                                    ),
-                                                    height: 170.v,
-                                                    width: 200.v,
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            CustomPadding
-                                                                .padding
-                                                                .v,
-                                                          ),
-                                                      child: CachedNetworkImage(
-                                                        imageUrl:
-                                                            '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
-                                                        fit: BoxFit.cover,
-                                                        placeholder:
-                                                            (
-                                                              context,
-                                                              url,
-                                                            ) => Shimmer.fromColors(
-                                                              baseColor:
-                                                                  Colors
-                                                                      .grey[300]!,
-                                                              highlightColor:
-                                                                  Colors
-                                                                      .grey[100]!,
-                                                              child: Container(
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                        errorWidget:
-                                                            (
-                                                              context,
-                                                              url,
-                                                              error,
-                                                            ) => Icon(
-                                                              Icons.error,
-                                                              color: Colors.red,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                Gap(
-                                                  CustomPadding.paddingLarge.v,
-                                                ),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        productcard.name
-                                                            .toString(),
-                                                        style:
-                                                            context.inter50014,
-                                                      ),
-                                                      Gap(
-                                                        CustomPadding
-                                                            .paddingLarge
-                                                            .v,
-                                                      ),
-                                                      ProductDetaileRow(
-                                                        cardType:
-                                                            productcard
-                                                                .category!
-                                                                .name ??
-                                                            ''.toString(),
-                                                        price:
-                                                            productcard
-                                                                .actualPrice
-                                                                .toString(),
-                                                        offerPrice:
-                                                            productcard
-                                                                .discountedPrice
-                                                                .toString(),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Gap(
-                                                  CustomPadding.paddingLarge.v,
-                                                ),
-                                              ],
-                                            ),
-                                            Gap(CustomPadding.paddingLarge.v),
-                                            Row(
-                                              children: [
-                                                Gap(
-                                                  CustomPadding.paddingLarge.v,
-                                                ),
-                                                Switch(
-                                                  value: enabledList[index],
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      enabledList[index] =
-                                                          value;
-                                                    });
-                                                  },
-                                                ),
-                                                Gap(CustomPadding.padding.v),
-                                                enabledList[index]
-                                                    ? Text('Enable')
-                                                    : Text('Disabled'),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Center(child: Text('Premium')),
-                                Center(child: Text('Basic')),
-                                Center(child: Text('Modern')),
-                                // Center(child: Text('Classic')),
-                                // Center(child: Text('Business')),
+                                          .toList();
+                                  return buildProductGrid(
+                                    categoryFilteredProducts,
+                                  );
+                                }),
                               ],
                             ),
                           ),
@@ -532,6 +301,248 @@ class _ProductPageState extends State<ProductPage>
                   ],
                 ),
               ),
+    );
+  }
+
+  Widget buildProductGrid(List<Product> products) {
+    if (products.isEmpty) {
+      return NotFoundWidget();
+    }
+
+    return GridView.builder(
+      controller: _scrollController,
+      itemCount: products.length + (_hasMoreData ? 1 : 0),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        childAspectRatio: 2.8,
+        crossAxisCount: 2,
+        mainAxisSpacing: CustomPadding.paddingXL.v,
+        crossAxisSpacing: CustomPadding.paddingXL.v,
+      ),
+      itemBuilder: (context, index) {
+        if (index == products.length) {
+          return _isLoadingMore
+              ? Center(child: CircularProgressIndicator())
+              : SizedBox.shrink();
+        }
+
+        final productcard = products[index];
+        return GestureDetector(
+          onTap: () async {
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder:
+                    (context) => ViewProduct(
+                      product: productcard,
+                      images:
+                          productcard.productImages!.map((e) => e.key).toList(),
+                      onBack: () {
+                        Navigator.pop(context);
+                      },
+                      onEdit: () async {
+                        // Wait for EditProduct to complete and refresh
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => EditProduct(
+                                  product: productcard,
+                                  onRefreshProduct: () async {
+                                    await refreshProducts(); // Refresh product list
+                                  },
+                                ),
+                          ),
+                        );
+                        await refreshProducts(); // Refresh again after returning
+                      },
+                    ),
+              ),
+            );
+
+            // Final refresh when returning to list
+            await refreshProducts();
+          },
+
+          // onTap: () {
+          //   Navigator.of(context)
+          //       .push(
+          //         MaterialPageRoute(
+          //           builder:
+          //               (context) => ViewProduct(
+          //                 product: productcard,
+          //                 images:
+          //                     productcard.productImages!
+          //                         .map((e) => e.key)
+          //                         .toList(),
+          //                 onBack: () {
+          //                   Navigator.pop(context);
+          //                 },
+          //                 onEdit: () async {
+          //                   Navigator.push(
+          //                     context,
+          //                     MaterialPageRoute(
+          //                       builder:
+          //                           (context) => EditProduct(
+          //                             onRefreshProduct: () async {
+          //                               await refreshProducts();
+          //                             },
+
+          //                             product: productcard,
+          //                           ),
+          //                     ),
+          //                   );
+          //                   await refreshProducts();
+          //                 },
+          //               ),
+          //         ),
+          //       )
+          //       .then((_) => refreshProducts());
+          // },
+          child: Card(
+            color: Colors.white,
+            elevation: 8,
+
+            shadowColor: Colors.black.withValues(alpha: 0.6),
+
+            child: Column(
+              children: [
+                Gap(CustomPadding.paddingLarge.v),
+                Row(
+                  children: [
+                    Gap(CustomPadding.paddingLarge.v),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: CustomColors.hoverColor,
+                          borderRadius: BorderRadius.circular(
+                            CustomPadding.padding.v,
+                          ),
+                        ),
+                        height: 170.v,
+                        width: 200.v,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            CustomPadding.padding.v,
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                '$baseUrlImage/products/${productcard.productImages!.first.key}',
+                            // '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
+                            fit: BoxFit.cover,
+                            placeholder:
+                                (context, url) => Shimmer.fromColors(
+                                  baseColor: Colors.grey[300]!,
+                                  highlightColor: Colors.grey[100]!,
+                                  child: Container(color: Colors.grey),
+                                ),
+                            errorWidget:
+                                (context, url, error) =>
+                                    Icon(Icons.error, color: Colors.red),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            productcard.name.toString(),
+                            style: context.inter50014,
+                          ),
+                          Gap(CustomPadding.paddingLarge.v),
+                          ProductDetaileRow(
+                            cardType: productcard.category!.name ?? '',
+                            price: productcard.actualPrice.toString(),
+                            offerPrice: productcard.salePrice.toString(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Gap(CustomPadding.paddingLarge.v),
+                  ],
+                ),
+                Gap(CustomPadding.paddingLarge.v),
+                Row(
+                  children: [
+                    Gap(CustomPadding.paddingLarge.v),
+                    Switch(
+                      value: enabledList[index],
+                      onChanged: (value) async {
+                        if (!mounted) return;
+
+                        try {
+                          BuildContext? dialogContext;
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext ctx) {
+                              dialogContext = ctx;
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          );
+
+                          final success = await ProductService.isProductEnable(
+                            productId: productcard.id ?? '',
+                          );
+
+                          if (dialogContext != null && mounted) {
+                            Navigator.of(dialogContext!).pop();
+                          }
+
+                          if (!mounted) return;
+
+                          if (success) {
+                            setState(() {
+                              enabledList[index] = value;
+                            });
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Product status updated successfully',
+                                ),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+
+                            await refreshProducts();
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Failed to update product status',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Error updating product status: $e',
+                                ),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    ),
+                    Gap(CustomPadding.padding.v),
+                    Text(enabledList[index] ? 'Enable' : 'Disabled'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -51,7 +51,7 @@ class DashBoardContainer extends StatelessWidget {
                 Text('₹ $amount', style: context.inter60024),
                 Gap(CustomPadding.paddingXL.v),
                 Text(
-                  '+$percentage%',
+                  '$percentage%',
                   style:
                       isExpense
                           ? TextStyle(color: CustomColors.red)
@@ -62,14 +62,12 @@ class DashBoardContainer extends StatelessWidget {
                     : Icon(Icons.arrow_upward, color: CustomColors.green),
                 RichText(
                   text: TextSpan(
-                    text: 'vs',
-                    style: context.inter40016,
-                    children: [
-                      TextSpan(
-                        text: ' Last month',
-                        style: TextStyle(color: CustomColors.textColor),
-                      ),
-                    ],
+                    text: 'vs previous month',
+                    style: context.inter50018.copyWith(
+                      fontSize: 14.fSize,
+                      // fontWeight: FontWeight.w300,
+                      color: CustomColors.textColorDarkGrey,
+                    ),
                   ),
                 ),
               ],

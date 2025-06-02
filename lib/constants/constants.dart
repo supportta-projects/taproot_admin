@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 const String baseUrl = "http://213.210.36.7:5000";
+const String baseUrlImage='https://supportta-cards.blr1.cdn.digitaloceanspaces.com';
 // const String baseUrl = 'http://192.168.1.37:5000';
 
 class CustomPadding {
@@ -41,6 +42,9 @@ class CustomColors {
 
   static Color hoverColor = borderGradient.colors.last.withValues(alpha: 0.15);
 
+  static const Color totalOrderColor = Colors.indigo;
+  static const Color totalOrdersCompleted = Colors.green;
+  static const Color totalOrdersCancelled = Color(0xFFF44336);
   static const Color burgandryRed = Color(0xFF800020);
   static const Color hintGrey = Color(0xff7F6E72);
   static const secondaryColor = Colors.white;
@@ -153,3 +157,12 @@ String get randomName {
 
 const dummyProfile =
     "https://t3.ftcdn.net/jpg/05/16/27/58/240_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg";
+
+final List<BoxShadow> floatingShadow = [
+  BoxShadow(
+    color: CustomColors.textFieldBorderGrey,
+    spreadRadius: .5,
+    blurRadius: 2,
+    offset: Offset(0, 1), // Vertical shadow
+  ),
+];

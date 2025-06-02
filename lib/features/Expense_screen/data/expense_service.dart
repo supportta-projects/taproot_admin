@@ -8,6 +8,7 @@ class ExpenseService {
     int page, {
     String? category,
     String? searchQuery,
+    String? startDate
   }) async {
     try {
       final response = await DioHelper().get(
@@ -19,6 +20,8 @@ class ExpenseService {
           if (category != null && category != 'All') 'category': category,
           if (searchQuery != null && searchQuery.isNotEmpty)
             'search': searchQuery,
+                    if (startDate != null && startDate.isNotEmpty) 'startDate': startDate,
+
         },
       );
 

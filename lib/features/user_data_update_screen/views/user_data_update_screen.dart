@@ -37,8 +37,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
   void initState() {
     user = widget.user;
     fetchPortfolio();
-    // fetchPortfolio();
-    // TODO: implement initState
+
     super.initState();
   }
 
@@ -68,20 +67,13 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
       });
       if (mounted) {
         if (e is CustomException && e.statusCode == 404) {
-          // Navigate to add user portfolio screen
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => AddUserPortfolio(user: user)),
           );
-
-          // Navigator.pushReplacementNamed(
-          //   context,
-          //   '/addUserPortfolio',
-          //   arguments: user,
-          // );
         } else {
           logError(e.toString());
-          // You can show a Snackbar or AlertDialog to inform the user
+
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
@@ -91,7 +83,6 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
   }
 
   String? getServiceImageUrl() {
-    // Add these debug logs
     logSuccess('Portfolio services: ${portfolio?.services}');
     if (portfolio?.services.isNotEmpty == true) {
       logSuccess('First service: ${portfolio!.services[0].toJson()}');
@@ -101,8 +92,8 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     if (portfolio?.services.isNotEmpty == true &&
         portfolio?.services[0].image?.key != null) {
       final imageUrl =
-          '$baseUrl/file?key=portfolios/portfolio_services/${portfolio!.services[0].image!.key}';
-      logSuccess('Generated image URL: $imageUrl'); // Debug log
+          '$baseUrlImage/portfolios/portfolio_services/${portfolio!.services[0].image!.key}';
+      logSuccess('Generated image URL: $imageUrl');
       return imageUrl;
     }
     return null;
@@ -117,15 +108,16 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               : SingleChildScrollView(
                 child: Column(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.pop(context);
+                    //   },
 
-                      child: Text(
-                        'Click here to go back to the previous screen',
-                      ),
-                    ),
+                    //   child: Text(
+                    //     'Click here to go back to the previous screen',
+                    //   ),
+                    // ),
+                    Gap(CustomPadding.paddingLarge),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: CustomPadding.paddingLarge,
@@ -136,7 +128,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                           Text(
                             'User  >  User Details',
                             style: context.inter60016.copyWith(
-                              color: Colors.green,
+                              color: CustomColors.buttonColor1,
                             ),
                           ),
                           Spacer(),
@@ -182,45 +174,6 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               colors: CustomColors.borderGradient.colors,
                             ),
                           ),
-
-                          // MiniGradientBorderButton(
-                          //   text: 'Back',
-                          //   icon: Icons.arrow_back,
-                          //   onPressed: () async {
-                          //     if (userEdit) {
-                          //       final shouldDiscard = await showDialog<bool>(
-                          //         context: context,
-                          //         builder:
-                          //             (context) => AlertDialog(
-                          //               title: const Text('Discard changes?'),
-                          //               content: const Text(
-                          //                 'You have unsaved changes. Are you sure you want to go back?',
-                          //               ),
-                          //               actions: [
-                          //                 TextButton(
-                          //                   onPressed:
-                          //                       () => Navigator.of(context).pop(false),
-                          //                   child: const Text('Cancel'),
-                          //                 ),
-                          //                 TextButton(
-                          //                   onPressed:
-                          //                       () => Navigator.of(context).pop(true),
-                          //                   child: const Text('Discard'),
-                          //                 ),
-                          //               ],
-                          //             ),
-                          //       );
-                          //       if (shouldDiscard == true) {
-                          //         Navigator.pop(context);
-                          //       }
-                          //     } else {
-                          //       Navigator.pop(context);
-                          //     }
-                          //   },
-                          //   gradient: LinearGradient(
-                          //     colors: CustomColors.borderGradient.colors,
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -326,29 +279,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-                    // if (portfolio?.services.isNotEmpty == true)
-                    //   Padding(
-                    //     padding: EdgeInsets.symmetric(
-                    //       horizontal: CustomPadding.paddingLarge.v,
-                    //     ),
-                    //     child: Row(
-                    //       children: [
-                    //         ServiceContainer(
 
-                    //           services: [],
-                    //           // imageUrl:                              //     portfolio?.services.isNotEmpty == true &&
-                    //           //             portfolio?.services[0].image?.key !=
-                    //           //                 null
-                    //           //         ? '$baseUrl/file?key=portfolios/portfolio_services/${portfolio!.services[0].image!.key}' // Try without the portfolios/portfolio_services/ path
-                    //           //         : null,
-                    //           saveButton: () {},
-                    //           isEdited: false,
-                    //           user: user,
-                    //           portfolio: portfolio,
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
                     Visibility(
                       visible: !(portfolio?.services.isEmpty ?? true),
                       child: CommonProductContainer(
@@ -398,13 +329,12 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               },
                             ),
                           ),
+                          Gap(CustomPadding.paddingLarge),
                         ],
                       ),
                     ),
 
                     Gap(CustomPadding.paddingXXL.v),
-
-                    // Add your form fields here
                   ],
                 ),
               ),
@@ -433,170 +363,114 @@ class ServiceCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final imageUrl =
-        '$baseUrl/file?key=portfolios/portfolio_services/${service.image!.key}';
+        '$baseUrlImage/portfolios/portfolio_services/${service.image!.key}';
     logSuccess('Full Image URL: $imageUrl');
-    return Container(
-      padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
-      width: 350,
-      height: 400,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(CustomPadding.padding.v),
-        border: Border.all(color: CustomColors.hintGrey),
-      ),
-      child: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(service.heading, style: context.inter50014),
-              Gap(CustomPadding.paddingLarge.v),
-              SizedBox(
-                height: 160,
-                width: double.infinity,
-                child:
-                    service.image?.key != null
-                        ? Image.network(
-                          imageUrl,
-                          fit: BoxFit.fill,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value:
-                                    loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null,
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            logError(
-                              'Image Error for $imageUrl: $error',
-                            ); // Debug print
-                            return const Center(
-                              child: Icon(
-                                Icons.image_not_supported,
-                                size: 40,
-                                color: CustomColors.hintGrey,
-                              ),
-                            );
-                          },
-                        )
-                        : const Center(
-                          child: Icon(
-                            Icons.image_not_supported,
-                            size: 40,
-                            color: CustomColors.hintGrey,
-                          ),
-                        ),
-              ),
-              Gap(CustomPadding.paddingLarge.v),
-              Text(
-                'Description',
-                style: TextStyle(color: CustomColors.textFieldBorderGrey),
-              ),
-              Gap(CustomPadding.paddingLarge.v),
-              Expanded(
-                child: SingleChildScrollView(child: Text(service.description)),
-              ),
-            ],
-          ),
-          if (isEditMode)
-            Positioned(
-              top: 0,
-              right: 0,
-              child: Row(
-                children: [
-                  TextButton(
-                    onPressed: onEdit,
-                    child: Text(
-                      'Edit',
-                      style: context.inter50016.copyWith(
-                        color: CustomColors.green,
-                      ),
-                    ),
-                  ),
+    return Card(
+      color: Colors.white,
+      elevation: 8,
+      surfaceTintColor: CustomColors.secondaryColor,
 
-                  TextButton(
-                    onPressed: onDelete,
-                    child: Text(
-                      'Delete',
-                      style: context.inter50016.copyWith(
-                        color: CustomColors.red,
+      shadowColor: Colors.black.withValues(alpha: 0.6),
+      child: Container(
+        padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
+        width: 350,
+        height: 400,
+        // decoration: BoxDecoration(
+        //   borderRadius: BorderRadius.circular(CustomPadding.padding.v),
+        //   border: Border.all(color: CustomColors.hintGrey),
+        // ),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(service.heading, style: context.inter50014),
+                Gap(CustomPadding.paddingLarge.v),
+                SizedBox(
+                  height: 160,
+                  width: double.infinity,
+                  child:
+                      service.image?.key != null
+                          ? Image.network(
+                            imageUrl,
+                            fit: BoxFit.fill,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                              loadingProgress
+                                                  .expectedTotalBytes!
+                                          : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              logError('Image Error for $imageUrl: $error');
+                              return const Center(
+                                child: Icon(
+                                  Icons.image_not_supported,
+                                  size: 40,
+                                  color: CustomColors.hintGrey,
+                                ),
+                              );
+                            },
+                          )
+                          : const Center(
+                            child: Icon(
+                              Icons.image_not_supported,
+                              size: 40,
+                              color: CustomColors.hintGrey,
+                            ),
+                          ),
+                ),
+                Gap(CustomPadding.paddingLarge.v),
+                Text(
+                  'Description',
+                  style: TextStyle(color: CustomColors.textFieldBorderGrey),
+                ),
+                Gap(CustomPadding.paddingLarge.v),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Text(service.description),
+                  ),
+                ),
+              ],
+            ),
+            if (isEditMode)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Row(
+                  children: [
+                    TextButton(
+                      onPressed: onEdit,
+                      child: Text(
+                        'Edit',
+                        style: context.inter50016.copyWith(
+                          color: CustomColors.green,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+
+                    TextButton(
+                      onPressed: onDelete,
+                      child: Text(
+                        'Delete',
+                        style: context.inter50016.copyWith(
+                          color: CustomColors.red,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
-
-// class ServiceCardWidget extends StatelessWidget {
-//   final PortfolioDataModel? portfolio;
-//   final baseUrl;
-//   final Service service;
-//     final VoidCallback? onEdit;
-//   final VoidCallback? onDelete;
-//   const ServiceCardWidget({
-//     super.key,
-//     required this.portfolio,
-//     required this.baseUrl,
-//     required this.service,
-//        this.onEdit,
-//     this.onDelete,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
-//       width: 350,
-//       height: 400,
-//       decoration: BoxDecoration(
-//         borderRadius: BorderRadius.circular(CustomPadding.padding.v),
-//         border: Border.all(color: CustomColors.hintGrey),
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text(service.heading, style: context.inter50014),
-//           Gap(CustomPadding.paddingLarge.v),
-//           SizedBox(
-//             height: 160,
-//             width: double.infinity,
-//             child:
-//                 service.image?.key != null
-//                     ? Image.network(
-//                       '$baseUrl/file?key=portfolios/portfolio_services/${service.image!.key}',
-//                       fit: BoxFit.fill,
-//                     )
-//                     : const Center(
-//                       child: Icon(
-//                         Icons.image_not_supported,
-//                         size: 40,
-//                         color: CustomColors.hintGrey,
-//                       ),
-//                     ),
-//           ),
-//           Gap(CustomPadding.paddingLarge.v),
-//           Text(
-//             'Description',
-//             style: TextStyle(color: CustomColors.textFieldBorderGrey),
-//           ),
-//           Gap(CustomPadding.paddingLarge.v),
-//           Expanded(
-//             child: SingleChildScrollView(child: Text(service.description)),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-//

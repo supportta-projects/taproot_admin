@@ -11,9 +11,9 @@ import 'package:taproot_admin/features/Expense_screen/data/expense_service.dart'
 import 'package:taproot_admin/features/Expense_screen/widgets/add_expense.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/edit_expense.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/expense_description_container.dart';
-import 'package:taproot_admin/features/Expense_screen/widgets/filter_button.dart';
-import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
+
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/not_found_widget.dart';
 
 class ExpenseView extends StatefulWidget {
   const ExpenseView({super.key});
@@ -32,12 +32,44 @@ class _ExpenseViewState extends State<ExpenseView> {
   String? _currentCategory;
   String searchQuery = '';
   Timer? _debounce;
-  final _tableKey = GlobalKey<PaginatedDataTableState>();
+  // final _tableKey = GlobalKey<PaginatedDataTableState>();
 
   @override
   void initState() {
     super.initState();
     _fetchExpenses();
+  }
+
+  Future<void> _fetchExpensesWithDate(String? pickedDate) async {
+    setState(() => _isLoading = true);
+    try {
+      logInfo('Fetching page: $_currentPage');
+      final response = await ExpenseService.getExpense(
+        _currentPage,
+        category: _currentCategory,
+        searchQuery: searchQuery,
+        startDate: pickedDate,
+      );
+      logInfo(
+        'Response received: ${response.results.length} items, Total pages: ${response.totalPages}',
+      );
+
+      if (mounted) {
+        setState(() {
+          _expenseResponse = response;
+          _expenses = response.results;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      logError('Error fetching expenses: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error loading expenses: $e')));
+      }
+    }
   }
 
   Future<void> _fetchExpenses() async {
@@ -74,7 +106,6 @@ class _ExpenseViewState extends State<ExpenseView> {
   @override
   void dispose() {
     _debounce?.cancel();
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -132,9 +163,47 @@ class _ExpenseViewState extends State<ExpenseView> {
                     Row(
                       children: [
                         Spacer(),
-                        SortButton(),
+                        // SortButton(),
                         Gap(CustomPadding.padding.v),
-                        FilterButton(),
+                        GestureDetector(
+                          onTap: () {
+                            showDatePicker(
+                              context: context,
+                              firstDate: DateTime.utc(2020),
+                              lastDate: DateTime.now(),
+                            ).then((selectedDate) {
+                              _fetchExpensesWithDate(selectedDate.toString());
+
+                              if (selectedDate != null) {
+                                // Handle the selected date here
+                                logInfo('Selected date: $selectedDate');
+                              }
+                            });
+                          },
+                          child: Container(
+                            width: 110.v,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                CustomPadding.paddingXXL.v,
+                              ),
+                              border: Border.all(
+                                color: CustomColors.textColorLightGrey,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Filter', style: context.inter50014),
+                                Gap(CustomPadding.padding.v),
+                                Icon(
+                                  LucideIcons.filter,
+                                  color: CustomColors.textColorGrey,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
 
@@ -189,44 +258,96 @@ class _ExpenseViewState extends State<ExpenseView> {
   }
 
   Widget _buildPaginatedDataTable() {
-    return _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : PaginatedDataTable(
-          dataRowMaxHeight: 100,
-          source: ExpenseDataSource(
-            _expenses,
-            _expenseResponse.totalCount,
-            context,
-            _fetchExpenses,
-          ),
-          header: null,
-          rowsPerPage: _rowsPerPage,
-          availableRowsPerPage: [5],
-          initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
-          showFirstLastButtons: true,
-          onPageChanged: (firstRowIndex) {
-            // Calculate the new page number (1-based)
-            final newPage = (firstRowIndex ~/ _rowsPerPage) + 1;
-            logInfo('Changing to page: $newPage');
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
 
-            // Only fetch if we're actually changing pages
-            if (newPage != _currentPage) {
-              setState(() {
-                _currentPage = newPage;
-              });
-              _fetchExpenses();
-            }
-          },
-          columns: [
-            DataColumn(label: Text('Expense Category')),
-            DataColumn(label: Text('Order ID /Expense name')),
-            DataColumn(label: Text('Description')),
-            DataColumn(label: Text('Amount')),
-            DataColumn(label: Text('Date')),
-            DataColumn(label: Text('Edit')),
-          ],
-        );
+    if (_expenses.isEmpty) {
+      return const NotFoundWidget();
+    }
+
+    return SizedBox(
+      height: 70.v,
+      child: PaginatedDataTable(
+        arrowHeadColor: CustomColors.borderGradient.colors.first,
+
+        dataRowMaxHeight: 100,
+        source: ExpenseDataSource(
+          _expenses,
+          _expenseResponse.totalCount,
+          context,
+          _fetchExpenses,
+        ),
+        header: null,
+        rowsPerPage: _rowsPerPage,
+        availableRowsPerPage: [5],
+        initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
+        showFirstLastButtons: true,
+        onPageChanged: (firstRowIndex) {
+          final newPage = (firstRowIndex ~/ _rowsPerPage) + 1;
+          logInfo('Changing to page: $newPage');
+
+          if (newPage != _currentPage) {
+            setState(() {
+              _currentPage = newPage;
+            });
+            _fetchExpenses();
+          }
+        },
+        columns: [
+          DataColumn(label: Text('Expense Category')),
+          DataColumn(label: Text('Order ID /Expense name')),
+          DataColumn(label: Text('Description')),
+          DataColumn(label: Text('Amount')),
+          DataColumn(label: Text('Date')),
+          DataColumn(label: Text('Edit')),
+        ],
+      ),
+    );
   }
+
+  // Widget _buildPaginatedDataTable() {
+  //   return _isLoading
+  //       ? Center(child: CircularProgressIndicator())
+  //       : SizedBox(
+  //         height: 70.v,
+  //         child: PaginatedDataTable(
+  //           dataRowMaxHeight: 100,
+  //           source: ExpenseDataSource(
+  //             _expenses,
+  //             _expenseResponse.totalCount,
+  //             context,
+  //             _fetchExpenses,
+  //           ),
+  //           header: null,
+  //           rowsPerPage: _rowsPerPage,
+  //           availableRowsPerPage: [5],
+  //           initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
+  //           showFirstLastButtons: true,
+  //           onPageChanged: (firstRowIndex) {
+  //             // Calculate the new page number (1-based)
+  //             final newPage = (firstRowIndex ~/ _rowsPerPage) + 1;
+  //             logInfo('Changing to page: $newPage');
+
+  //             // Only fetch if we're actually changing pages
+  //             if (newPage != _currentPage) {
+  //               setState(() {
+  //                 _currentPage = newPage;
+  //               });
+  //               _fetchExpenses();
+  //             }
+  //           },
+  //           columns: [
+  //             DataColumn(label: Text('Expense Category')),
+  //             DataColumn(label: Text('Order ID /Expense name')),
+  //             DataColumn(label: Text('Description')),
+  //             DataColumn(label: Text('Amount')),
+  //             DataColumn(label: Text('Date')),
+  //             DataColumn(label: Text('Edit')),
+  //           ],
+  //         ),
+  //       );
+  // }
 }
 
 class ExpenseDataSource extends DataTableSource {

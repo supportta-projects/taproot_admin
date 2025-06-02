@@ -5,6 +5,7 @@ import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 
 class TextFormContainer extends StatefulWidget {
   final bool autofocus;
+  final String? suffixText;
   final String? initialValue;
   final int maxline;
   final bool readonly;
@@ -21,7 +22,7 @@ class TextFormContainer extends StatefulWidget {
     super.key,
     this.initialValue,
     this.autofocus = false,
-
+this.suffixText,
     required this.labelText,
     this.user,
     this.readonly = false,
@@ -89,7 +90,7 @@ class _TextFormContainerState extends State<TextFormContainer> {
         maxLines: widget.maxline,
         readOnly: widget.readonly || widget.isDatePicker,
         onTap: widget.isDatePicker ? _pickDate : null,
-        decoration: InputDecoration(
+        decoration: InputDecoration(suffixText: widget.suffixText,
           prefix: widget.isNumberField ? Text('+91 ') : null,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           label: Text(widget.labelText),

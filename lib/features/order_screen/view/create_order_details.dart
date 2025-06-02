@@ -14,7 +14,6 @@ import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_user_location.dart';
-import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_pick_upload_preview.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/padding_row.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
@@ -63,6 +62,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
   final TextEditingController stateController = TextEditingController();
   final TextEditingController designationController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController productSearchController = TextEditingController();
 
   UserSearch? userSearchList;
   List<ProductSearch> productSearchList = [];
@@ -87,6 +87,21 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
   bool isUploading = false;
   PortfolioDataModel? portfolio;
   Map<String, String> labelImageMap = {'company logo': ''};
+  ImageSource? companyLogoSource;
+  ImageSource? profileImageSource;
+
+  // Add callback handlers
+  void handleCompanyLogoChange(ImageSource imageSource) {
+    setState(() {
+      companyLogoSource = imageSource;
+    });
+  }
+
+  void handleProfileImageChange(ImageSource imageSource) {
+    setState(() {
+      profileImageSource = imageSource;
+    });
+  }
 
   void removeImage({required bool isCompanyLogo}) {
     setState(() {
@@ -102,36 +117,6 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
       }
       shouldRebuildImageWidget = true;
     });
-  }
-
-  void _pickAndUploadImage({required bool isCompanyLogo}) async {
-    final picked = await ImagePickerService.pickImage();
-    if (picked != null) {
-      setState(() {
-        if (isCompanyLogo) {
-          companyLogoPreviewBytes = picked.bytes;
-
-          companyLogoUploadState = 'Replace';
-        } else {
-          profileImagePreviewBytes = picked.bytes;
-          profileImageUploadState = 'Replace';
-        }
-      });
-
-      final uploaded = await ImagePickerService.uploadImageFile(
-        picked.bytes,
-        picked.filename,
-      );
-      setState(() {
-        if (isCompanyLogo) {
-          companyLogoImageUrl = uploaded.url;
-          companyLogoUploadState = 'Uploaded';
-        } else {
-          profileImageImageUrl = uploaded.url;
-          profileImageUploadState = 'Uploaded';
-        }
-      });
-    }
   }
 
   @override
@@ -191,8 +176,20 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         selectedProducts.add(product);
         productQuantities[product.id] = 1;
       }
+      productSearchController.clear();
+      productSearchList.clear();
+      isSearchingProduct = false;
     });
   }
+
+  // void onProductSelect(ProductSearch product) {
+  //   setState(() {
+  //     if (!selectedProducts.contains(product)) {
+  //       selectedProducts.add(product);
+  //       productQuantities[product.id] = 1;
+  //     }
+  //   });
+  // }
 
   void updateQuantity(String? productId, int newQuantity) {
     if (newQuantity > 0) {
@@ -232,7 +229,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
       if (result != null) {
         setState(() {
           portfolio = result;
-          // Update states based on existing images
+
           if (portfolio?.workInfo.companyLogo?.key != null) {
             companyLogoUploadState = 'Replace';
           }
@@ -248,16 +245,9 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
       });
       if (mounted) {
         if (e is CustomException && e.statusCode == 404) {
-          // Navigate to add user portfolio screen
-
-          // Navigator.pushReplacementNamed(
-          //   context,
-          //   '/addUserPortfolio',
-          //   arguments: user,
-          // );
         } else {
           logError(e.toString());
-          // You can show a Snackbar or AlertDialog to inform the user
+
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
@@ -350,8 +340,10 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
             designationController.text.trim().isEmpty
                 ? null
                 : designationController.text,
-        customerLogo: ImageSource(image: null, source: 'none'),
-        customerPhoto: ImageSource(image: null, source: 'none'),
+        // customerLogo: ImageSource(image: null, source: 'none'),
+        // customerPhoto: ImageSource(image: null, source: 'none'),
+        customerLogo: companyLogoSource ?? ImageSource(source: 'none'),
+        customerPhoto: profileImageSource ?? ImageSource(source: 'none'),
       );
 
       final address = Address(
@@ -413,7 +405,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         child: Column(
           children: [
             Gap(CustomPadding.paddingXL.v),
-            // Header Row
+
             Row(
               children: [
                 Gap(CustomPadding.paddingXL.v),
@@ -469,14 +461,14 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   icon: LucideIcons.save,
                   text: 'Save',
                   onPressed: _createOrder,
-                  useGradient: false,
+                  useGradient: selectedProducts.isNotEmpty,
                   backgroundColor: CustomColors.hintGrey,
                 ),
                 Gap(CustomPadding.paddingLarge.v),
               ],
             ),
             Gap(CustomPadding.paddingLarge.v),
-            // Order Details Container
+
             CommonProductContainer(
               title: 'Order Details',
               children: [
@@ -587,12 +579,13 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   ],
                 ),
                 Gap(CustomPadding.paddingXL.v),
-                // Product Selection Container
+
                 CommonProductContainer(
                   title: 'Choose Product',
                   children: [
                     Gap(CustomPadding.paddingLarge.v),
                     GradientBorderField(
+                      controller: productSearchController,
                       hintText: 'Add Product + ',
                       onChanged: (value) {
                         fetchProducts(value);
@@ -653,7 +646,6 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   ],
                 ),
 
-                // Product Summary Container
                 if (selectedProducts.isNotEmpty)
                   CommonProductContainer(
                     isOrderDetails: true,
@@ -722,71 +714,19 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 Row(
                   children: [
                     Gap(CustomPadding.paddingXL.v),
+
                     ImageRowContainer(
                       userCode: widget.userIdCode,
                       title: 'Company Logo',
+                      imageType: 'companyLogo',
+                      onImageChanged: handleCompanyLogoChange,
                     ),
-
-                    //                     Builder(
-                    //                       builder: (context) {
-
-                    // if(shouldRebuildImageWidget){
-                    // return ImageContainer(onTap: () {
-
-                    // }, icon: LucideIcons.upload, title: "Company Logo", imageState: 'Upload', onTapRemove: (){});
-                    // }
-
-                    // else
-
-                    //                       {  return ImageContainer(
-                    //                           onTapRemove: () => removeImage(isCompanyLogo: true),
-                    //                           title: 'Company Logo',
-                    //                           icon:
-                    //                               portfolio?.workInfo.companyLogo?.key != null ||
-                    //                                       companyLogoImageUrl != null
-                    //                                   ? LucideIcons.repeat
-                    //                                   : LucideIcons.upload,
-                    //                           imageState: companyLogoUploadState,
-                    //                           isEdit: true,
-                    //                           onTap: () => _pickAndUploadImage(isCompanyLogo: true),
-                    //                           previewBytes: companyLogoPreviewBytes,
-                    //                           // imageUrl: companyLogoImageUrl,
-                    //                           imageUrl:
-                    //                               companyLogoImageUrl ??
-                    //                               getPortfolioImageUrl(
-
-                    //                                 portfolio?.workInfo.companyLogo?.key,
-                    //                               ),
-                    //                           // (portfolio?.workInfo.companyLogo?.key != null
-                    //                           //     ? '$baseUrl/file?key=portfolios/${portfolio?.workInfo.companyLogo?.key}'
-                    //                           //     : null),
-                    //                         );}
-                    //                       }
-                    //                     ),
-                    //                     Gap(CustomPadding.paddingXL.v),
-
-                    //                     ImageContainer(
-                    //                       onTapRemove: () => removeImage(isCompanyLogo: false),
-                    //                       title: 'Profile Image',
-                    //                       icon:
-                    //                           portfolio?.personalInfo.profilePicture?.key != null ||
-                    //                                   companyLogoImageUrl != null
-                    //                               ? LucideIcons.repeat
-                    //                               : LucideIcons.upload,
-                    //                       imageState: profileImageUploadState,
-                    //                       isEdit: true,
-                    //                       onTap: () => _pickAndUploadImage(isCompanyLogo: false),
-                    //                       previewBytes: profileImagePreviewBytes,
-                    //                       // imageUrl: profileImageImageUrl,
-                    //                       imageUrl:
-                    //                           companyLogoImageUrl ??
-                    //                           getPortfolioImageUrl(
-                    //                             portfolio?.personalInfo.profilePicture?.key,
-                    //                           ),
-                    //                       // (portfolio?.workInfo.companyLogo?.key != null
-                    //                       //     ? '$baseUrl/file?key=portfolios/${portfolio?.personalInfo.profilePicture?.key}'
-                    //                       //     : null),
-                    //                     ),
+                    ImageRowContainer(
+                      userCode: widget.userIdCode,
+                      title: 'Profile Image',
+                      imageType: 'profilePicture',
+                      onImageChanged: handleProfileImageChange,
+                    ),
                   ],
                 ),
               ],
@@ -803,63 +743,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 ),
               ],
             ),
-            // CommonProductContainer(
-            //   title: 'Payment Details',
-            //   children: [
-            //     Gap(CustomPadding.paddingLarge.v),
 
-            //     Row(
-            //       children: [
-            //         Expanded(
-            //           child: Padding(
-            //             padding: EdgeInsets.symmetric(
-            //               horizontal: CustomPadding.paddingLarge.v,
-            //             ),
-            //             child: DropdownButtonFormField<String>(
-            //               decoration: InputDecoration(
-            //                 labelText: 'Payment Mode',
-            //                 labelStyle: context.inter40016,
-            //                 border: OutlineInputBorder(),
-            //               ),
-            //               items:
-            //                   ['Prepaid', 'Postpaid'].map((String payment) {
-            //                     return DropdownMenuItem<String>(
-            //                       value: payment,
-            //                       child: Text(payment),
-            //                     );
-            //                   }).toList(),
-            //               onChanged: (value) {
-            //                 String? payment;
-            //                 setState(() => payment = value);
-            //                 logInfo('Selected: $value');
-            //               },
-            //               validator: (value) {
-            //                 if (value == null || value.isEmpty) {
-            //                   return 'Please select a category';
-            //                 }
-            //                 return null;
-            //               },
-            //             ),
-            //           ),
-            //         ),
-            //         Expanded(
-            //           child: TextFormContainer(labelText: 'Transaction ID'),
-            //         ),
-            //       ],
-            //     ),
-            //     Gap(CustomPadding.paddingLarge.v),
-            //     Row(
-            //       children: [
-            //         Gap(CustomPadding.paddingLarge.v),
-            //         Text('Total Amount'),
-            //         Spacer(),
-            //         Text('₹$grandTotal', style: context.inter50016),
-            //         Gap(CustomPadding.paddingLarge.v),
-            //       ],
-            //     ),
-            //     Gap(CustomPadding.paddingLarge.v),
-            //   ],
-            // ),
             Gap(CustomPadding.paddingXXL.v),
           ],
         ),
