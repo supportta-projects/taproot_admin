@@ -487,8 +487,41 @@ class OrderDataSource extends DataTableSource {
                     },
                   );
                 }
+                if (status == 'Placed') {
+                  return StatefulBuilder(
+                    builder: (context, setState) {
+                      final isLoading = loadingOrderIds.contains(order.id);
 
-                if (status == 'Placed' || status == 'Confirmed') {
+                      return MiniLoadingButton(
+                        useGradient: true,
+                        text: 'Confirm',
+                        icon: Icons.check,
+                        isLoading: isLoading,
+                        onPressed: () async {
+                          loadingOrderIds.add(order.id);
+                          setState(() {});
+
+                          final result = await OrderService.getOrderStatus(
+                            orderId: order.id,
+                          );
+                          if (result?.success ?? false) {
+                            orderList[index % rowsPerPage] = order.copyWith(
+                              orderStatus: result!.orderStatus,
+                            );
+                            notifyListeners();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(result.message)),
+                            );
+                          }
+
+                          loadingOrderIds.remove(order.id);
+                          setState(() {});
+                        },
+                      );
+                    },
+                  );
+                }
+                if (status == 'Confirmed') {
                   return StatefulBuilder(
                     builder: (context, setState) {
                       final isLoading = loadingOrderIds.contains(order.id);
