@@ -175,8 +175,21 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         selectedProducts.add(product);
         productQuantities[product.id] = 1;
       }
+
+      // Clear search results and reset search state
+      productSearchList.clear();
+      isSearchingProduct = false;
     });
   }
+
+  // void onProductSelect(ProductSearch product) {
+  //   setState(() {
+  //     if (!selectedProducts.contains(product)) {
+  //       selectedProducts.add(product);
+  //       productQuantities[product.id] = 1;
+  //     }
+  //   });
+  // }
 
   void updateQuantity(String? productId, int newQuantity) {
     if (newQuantity > 0) {
