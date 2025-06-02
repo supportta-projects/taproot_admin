@@ -4,6 +4,7 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_service.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
+import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_id_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/add_image_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
@@ -20,6 +21,7 @@ class ViewProduct extends StatefulWidget {
   // final Future<Product?> Function(String) onRefresh;
   final VoidCallback onBack;
   final VoidCallback onEdit;
+  // final Future<void> Function() onEdit;
   const ViewProduct({
     super.key,
     required this.onBack,
@@ -41,6 +43,7 @@ class ViewProduct extends StatefulWidget {
 class _ViewProductState extends State<ViewProduct> {
   bool isEdit = false;
   Product? currentProduct;
+    List<String> currentImages = [];
   // bool viewProduct=false;
 
   //   @override
@@ -59,6 +62,9 @@ class _ViewProductState extends State<ViewProduct> {
         );
         setState(() {
           currentProduct = updatedProduct;
+              currentImages = widget.images ?? [];
+              //           currentImages =
+              // updatedProduct?.productImages?.map((e) => e.key).toList() ?? [];
         });
       }
     } catch (e) {
@@ -105,8 +111,24 @@ class _ViewProductState extends State<ViewProduct> {
                 icon: Icons.edit,
                 text: 'Edit',
                 onPressed: () async {
-                  widget.onEdit();
-                  await refreshProduct();
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => EditProduct(
+                            product: currentProduct,
+                            onRefreshProduct:
+                                () {}, // no need, we handle it here
+                          ),
+                    ),
+                  );
+
+                  if (result == true) {
+                    await refreshProduct(); // refresh only if update succeeded
+                  }
+
+          //  widget.onEdit();
+          //         await refreshProduct();
                 },
                 useGradient: true,
                 gradientColors: CustomColors.borderGradient.colors,
