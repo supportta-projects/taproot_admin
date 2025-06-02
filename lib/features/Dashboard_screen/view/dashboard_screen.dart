@@ -35,6 +35,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     'This Month': 'thisMonth',
     'Last Month': 'lastMonth',
   };
+  String getDropdownLabel(String value) {
+    return dateFilters.entries.firstWhere((entry) => entry.value == value).key;
+  }
 
   Future<void> _initialLoad() async {
     try {
@@ -126,7 +129,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     child: DropdownButton<String>(
                       value: selectedValue,
                       focusColor: CustomColors.backgroundColor,
-                      
+
                       isExpanded: true,
                       underline: Container(),
                       items:
@@ -151,7 +154,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Gap(CustomPadding.paddingLarge),
               isFieldsLoading
                   ? ShimmerFields() // Shimmer only for fields when refreshing
-                  : FinancialReturnsWidget(dashboardModel: dashboardModel),
+                  : FinancialReturnsWidget(
+                    dashboardModel: dashboardModel,
+                    comparisonText: getDropdownLabel(selectedValue),
+                  ),
               Gap(normalPadding),
               Row(
                 children: [

@@ -32,7 +32,7 @@ class _SocialContainerState extends State<SocialContainer> {
   final List<String> platforms = [
     'facebook',
     'instagram',
-    'twitter',
+    'x',
     'pinterest',
     'linkedin',
     'behance',
@@ -135,7 +135,7 @@ String _getSvgForPlatform(String platform) {
       return Assets.svg.facebook;
     case 'instagram':
       return Assets.svg.instagram;
-    case 'twitter':
+    case 'x':
       return Assets.svg.twitter;
     case 'pinterest':
       return Assets.svg.pinterest;

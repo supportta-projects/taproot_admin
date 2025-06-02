@@ -7,9 +7,10 @@ import '../../../exporter/exporter.dart';
 import '../data/dashboard_model.dart';
 
 class FinancialReturnsWidget extends StatelessWidget {
-  const FinancialReturnsWidget({super.key, required this.dashboardModel});
+  const FinancialReturnsWidget({super.key, required this.dashboardModel, required this.comparisonText});
 
   final DashboardModel? dashboardModel;
+  final String comparisonText;
 
   String formatAmount(num amount) {
     final formatter = NumberFormat('#,###.##');
@@ -47,6 +48,7 @@ class FinancialReturnsWidget extends StatelessWidget {
             icon: LucideIcons.banknote,
             iconColor: CustomColors.buttonColor1,
             isExpense: double.parse(revenueChange) < 0,
+            comparisonText: comparisonText,
           ),
           DashBoardContainer(
             // isExpense: true,
@@ -56,6 +58,8 @@ class FinancialReturnsWidget extends StatelessWidget {
             iconColor: CustomColors.red,
             percentage: dashboardModel!.result.result.expenseChange.toString(),
             isExpense: double.parse(expenseChange) < 0,
+            comparisonText: comparisonText,
+            
           ),
           DashBoardContainer(
             title: 'Profit',
@@ -64,6 +68,7 @@ class FinancialReturnsWidget extends StatelessWidget {
             icon: LucideIcons.banknoteArrowUp,
             iconColor: CustomColors.green,
             isExpense: double.parse(profitChange) < 0,
+            comparisonText: comparisonText,
           ),
         ],
       ),

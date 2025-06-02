@@ -9,6 +9,8 @@ class DashBoardContainer extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final bool isExpense;
+  final String comparisonText;
+
   const DashBoardContainer({
     super.key,
     required this.title,
@@ -17,6 +19,7 @@ class DashBoardContainer extends StatelessWidget {
     required this.iconColor,
     required this.percentage,
     this.isExpense = false,
+      required this.comparisonText,
   });
 
   @override
@@ -62,7 +65,7 @@ class DashBoardContainer extends StatelessWidget {
                     : Icon(Icons.arrow_upward, color: CustomColors.green),
                 RichText(
                   text: TextSpan(
-                    text: 'vs previous month',
+                    text: 'vs $comparisonText',
                     style: context.inter50018.copyWith(
                       fontSize: 14.fSize,
                       // fontWeight: FontWeight.w300,
