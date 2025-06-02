@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 const String baseUrl = "http://213.210.36.7:5000";
-const String baseUrlImage='https://supportta-cards.blr1.cdn.digitaloceanspaces.com';
+const String baseUrlImage =
+    'https://supportta-cards.blr1.cdn.digitaloceanspaces.com';
 // const String baseUrl = 'http://192.168.1.37:5000';
 
 class CustomPadding {

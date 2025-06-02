@@ -15,6 +15,7 @@ enum ImageWidgetState { upload, replace, delete }
 
 class ImageRowContainer extends StatefulWidget {
   final String title;
+  final ImageSource? initialImage;
   final String userCode;
   final String imageType;
   final Function(ImageSource imageSource) onImageChanged;
@@ -25,6 +26,7 @@ class ImageRowContainer extends StatefulWidget {
     required this.title,
     required this.imageType,
     required this.onImageChanged,
+    this.initialImage,
   });
 
   @override
@@ -38,12 +40,31 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
 
   PortfolioDataModel? portfolio;
   bool isLoading = false;
-
   @override
   void initState() {
     super.initState();
-    fetchPortfolio();
+
+    if (widget.initialImage != null && widget.initialImage!.image != null) {
+      final imageDetails = widget.initialImage!.image!;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            imageUrl = getPortfolioImageUrl(imageDetails.key);
+            imageState = ImageWidgetState.replace;
+          });
+          widget.onImageChanged(widget.initialImage!);
+        }
+      });
+    } else {
+      fetchPortfolio(); // this already handles its own setState inside safely
+    }
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchPortfolio();
+  // }
 
   Future<void> fetchPortfolio() async {
     setState(() => isLoading = true);

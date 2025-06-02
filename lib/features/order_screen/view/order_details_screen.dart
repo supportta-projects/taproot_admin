@@ -114,10 +114,38 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   bool orderEdit = false;
+  // void editOrder() {
+  //   setState(() {
+  //     orderEdit = !orderEdit;
+  //     logSuccess('mmmm${order.paymentStatus}');
+  //   });
+  // }
   void editOrder() {
     setState(() {
       orderEdit = !orderEdit;
-      logSuccess('mmmm${order.paymentStatus}');
+
+      if (orderEdit) {
+        // Set images from existing order details into new image sources
+        newCompanyLogo = add_model.ImageSource(
+          image: add_model.ImageDetails(
+            key: orderDetails!.nfcDetails.customerLogo.image.key,
+            name: orderDetails!.nfcDetails.customerLogo.image.name,
+            mimetype: orderDetails!.nfcDetails.customerLogo.image.mimetype,
+            size: orderDetails!.nfcDetails.customerLogo.image.size,
+          ),
+          source: 'portfolio',
+        );
+
+        newProfilePhoto = add_model.ImageSource(
+          image: add_model.ImageDetails(
+            key: orderDetails!.nfcDetails.customerPhoto.image.key,
+            name: orderDetails!.nfcDetails.customerPhoto.image.name,
+            mimetype: orderDetails!.nfcDetails.customerPhoto.image.mimetype,
+            size: orderDetails!.nfcDetails.customerPhoto.image.size,
+          ),
+          source: 'portfolio',
+        );
+      }
     });
   }
 
@@ -373,7 +401,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           child: Text(
                             'Order',
                             style: context.inter60016.copyWith(
-                              color: CustomColors.greenDark,
+                              color: CustomColors.buttonColor1,
                             ),
                           ),
                         ),
@@ -386,7 +414,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         ),
                         Gap(CustomPadding.padding.v),
                         Text(
-                          'Order ID',
+                          order.code,
+                          // 'Order ID',
                           style: context.inter60016.copyWith(
                             color: CustomColors.hintGrey,
                           ),
@@ -928,15 +957,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       children: [
                         Gap(CustomPadding.paddingLarge.v),
                         TextFormContainer(
+                          controller: customerNameController,
                           readonly: isEdit ? false : true,
                           labelText: 'Full Name',
-                          initialValue: orderDetails!.nfcDetails.customerName,
+                          // initialValue: orderDetails!.nfcDetails.customerName,
                         ),
                         Gap(CustomPadding.paddingLarge.v),
                         TextFormContainer(
                           readonly: isEdit ? false : true,
                           labelText: 'Designation',
-                          initialValue: orderDetails!.nfcDetails.designation,
+                          controller: designationController,
+                          // initialValue: orderDetails!.nfcDetails.designation,
                         ),
                         Gap(CustomPadding.paddingXL.v),
 
@@ -959,6 +990,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               Gap(CustomPadding.paddingXL.v),
                               if (orderEdit)
                                 ImageRowContainer(
+                                  initialImage: newCompanyLogo,
                                   userCode: orderDetails!.user.id,
                                   title: 'Company Logo',
                                   imageType: 'companyLogo',
@@ -987,6 +1019,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               Gap(CustomPadding.paddingXL.v),
                               if (orderEdit)
                                 ImageRowContainer(
+                                  initialImage: newProfilePhoto,
                                   userCode: orderDetails!.user.id,
                                   title: 'Profile Image',
                                   imageType: 'profilePicture',

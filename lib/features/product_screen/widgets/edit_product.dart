@@ -286,8 +286,9 @@ class _EditProductState extends State<EditProduct> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Product updated successfully')),
         );
-        widget.onRefreshProduct();
-        Navigator.pop(context);
+        Navigator.pop(context, true);
+        // widget.onRefreshProduct();
+        // Navigator.pop(context);
       } else {
         throw Exception(response.message);
       }
