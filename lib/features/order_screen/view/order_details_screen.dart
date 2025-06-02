@@ -149,7 +149,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     });
   }
 
-
   Color _getPaymentStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'success':
@@ -402,7 +401,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                           child: Text(
                             'Order',
                             style: context.inter60016.copyWith(
-                              color: CustomColors.greenDark,
+                              color: CustomColors.buttonColor1,
                             ),
                           ),
                         ),
@@ -415,7 +414,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         ),
                         Gap(CustomPadding.padding.v),
                         Text(
-                          'Order ID',
+                          order.code,
+                          // 'Order ID',
                           style: context.inter60016.copyWith(
                             color: CustomColors.hintGrey,
                           ),
@@ -957,15 +957,17 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       children: [
                         Gap(CustomPadding.paddingLarge.v),
                         TextFormContainer(
+                          controller: customerNameController,
                           readonly: isEdit ? false : true,
                           labelText: 'Full Name',
-                          initialValue: orderDetails!.nfcDetails.customerName,
+                          // initialValue: orderDetails!.nfcDetails.customerName,
                         ),
                         Gap(CustomPadding.paddingLarge.v),
                         TextFormContainer(
                           readonly: isEdit ? false : true,
                           labelText: 'Designation',
-                          initialValue: orderDetails!.nfcDetails.designation,
+                          controller: designationController,
+                          // initialValue: orderDetails!.nfcDetails.designation,
                         ),
                         Gap(CustomPadding.paddingXL.v),
 
