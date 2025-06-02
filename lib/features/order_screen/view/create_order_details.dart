@@ -62,6 +62,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
   final TextEditingController stateController = TextEditingController();
   final TextEditingController designationController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
+  final TextEditingController productSearchController = TextEditingController();
 
   UserSearch? userSearchList;
   List<ProductSearch> productSearchList = [];
@@ -175,8 +176,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         selectedProducts.add(product);
         productQuantities[product.id] = 1;
       }
-
-      // Clear search results and reset search state
+      productSearchController.clear();
       productSearchList.clear();
       isSearchingProduct = false;
     });
@@ -585,6 +585,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   children: [
                     Gap(CustomPadding.paddingLarge.v),
                     GradientBorderField(
+                      controller: productSearchController,
                       hintText: 'Add Product + ',
                       onChanged: (value) {
                         fetchProducts(value);

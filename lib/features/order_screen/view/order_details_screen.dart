@@ -254,23 +254,45 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           ),
         ),
         products:
-            orderDetails!.products
-                .map(
-                  (product) => add_model.ProductQuantity(
-                    product:
-                        product.product is String
-                            ? product.product
-                            : (product.product as order_details.ProductDetails)
-                                .id,
-                    quantity:
-                        editedQuantities[product.product is String
-                            ? product.product
-                            : (product.product as order_details.ProductDetails)
-                                .id] ??
-                        product.quantity,
-                  ),
-                )
-                .toList(),
+            orderDetails!.paymentStatus.toLowerCase() == 'success'
+                ? null
+                : orderDetails!.products
+                    .map(
+                      (product) => add_model.ProductQuantity(
+                        product:
+                            product.product is String
+                                ? product.product
+                                : (product.product
+                                        as order_details.ProductDetails)
+                                    .id,
+                        quantity:
+                            editedQuantities[product.product is String
+                                ? product.product
+                                : (product.product
+                                        as order_details.ProductDetails)
+                                    .id] ??
+                            product.quantity,
+                      ),
+                    )
+                    .toList(),
+        // products:
+        //     orderDetails!.products
+        //         .map(
+        //           (product) => add_model.ProductQuantity(
+        //             product:
+        //                 product.product is String
+        //                     ? product.product
+        //                     : (product.product as order_details.ProductDetails)
+        //                         .id,
+        //             quantity:
+        //                 editedQuantities[product.product is String
+        //                     ? product.product
+        //                     : (product.product as order_details.ProductDetails)
+        //                         .id] ??
+        //                 product.quantity,
+        //           ),
+        //         )
+        //         .toList(),
         totalPrice: orderDetails!.totalPrice,
       );
 

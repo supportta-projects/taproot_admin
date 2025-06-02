@@ -4,7 +4,8 @@ import 'package:taproot_admin/exporter/exporter.dart';
 class GradientBorderField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final String hintText;
-  const GradientBorderField({super.key, required this.hintText, this.onChanged});
+  final TextEditingController? controller;
+  const GradientBorderField({super.key, required this.hintText, this.onChanged,this.controller});
 
   @override
   Widget build(BuildContext context) {

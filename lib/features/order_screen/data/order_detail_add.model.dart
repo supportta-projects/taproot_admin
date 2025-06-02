@@ -1,20 +1,21 @@
 class OrderPostModel {
   final NfcDetails nfcDetails;
   final double totalPrice;
-  final List<ProductQuantity> products;
+  final List<ProductQuantity>? products;
   final Address address;
 
   OrderPostModel({
     required this.nfcDetails,
     required this.totalPrice,
-    required this.products,
+    this.products,
     required this.address,
   });
 
   Map<String, dynamic> toJson() => {
     'nfcDetails': nfcDetails.toJson(),
     'totalPrice': totalPrice,
-    'products': products.map((e) => e.toJson()).toList(),
+    if (products != null) 'products': products!.map((e) => e.toJson()).toList(),
+    // 'products': products.map((e) => e.toJson()).toList(),
     'address': address.toJson(),
   };
 }
