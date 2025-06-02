@@ -114,12 +114,41 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   bool orderEdit = false;
+  // void editOrder() {
+  //   setState(() {
+  //     orderEdit = !orderEdit;
+  //     logSuccess('mmmm${order.paymentStatus}');
+  //   });
+  // }
   void editOrder() {
     setState(() {
       orderEdit = !orderEdit;
-      logSuccess('mmmm${order.paymentStatus}');
+
+      if (orderEdit) {
+        // Set images from existing order details into new image sources
+        newCompanyLogo = add_model.ImageSource(
+          image: add_model.ImageDetails(
+            key: orderDetails!.nfcDetails.customerLogo.image.key,
+            name: orderDetails!.nfcDetails.customerLogo.image.name,
+            mimetype: orderDetails!.nfcDetails.customerLogo.image.mimetype,
+            size: orderDetails!.nfcDetails.customerLogo.image.size,
+          ),
+          source: 'portfolio',
+        );
+
+        newProfilePhoto = add_model.ImageSource(
+          image: add_model.ImageDetails(
+            key: orderDetails!.nfcDetails.customerPhoto.image.key,
+            name: orderDetails!.nfcDetails.customerPhoto.image.name,
+            mimetype: orderDetails!.nfcDetails.customerPhoto.image.mimetype,
+            size: orderDetails!.nfcDetails.customerPhoto.image.size,
+          ),
+          source: 'portfolio',
+        );
+      }
     });
   }
+
 
   Color _getPaymentStatusColor(String status) {
     switch (status.toLowerCase()) {
@@ -959,6 +988,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               Gap(CustomPadding.paddingXL.v),
                               if (orderEdit)
                                 ImageRowContainer(
+                                  initialImage: newCompanyLogo,
                                   userCode: orderDetails!.user.id,
                                   title: 'Company Logo',
                                   imageType: 'companyLogo',
@@ -987,6 +1017,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               Gap(CustomPadding.paddingXL.v),
                               if (orderEdit)
                                 ImageRowContainer(
+                                  initialImage: newProfilePhoto,
                                   userCode: orderDetails!.user.id,
                                   title: 'Profile Image',
                                   imageType: 'profilePicture',
