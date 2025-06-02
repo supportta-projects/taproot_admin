@@ -85,7 +85,10 @@ class _ProductPageState extends State<ProductPage>
     logSuccess('TabController length: ${_tabController.length}');
     logSuccess(productCategory.length + 1);
 
-    fetchProduct();
+    for (int i = 1; i <= 5; i++) {
+      await fetchProduct(page: i);
+      if (!_hasMoreData) break;
+    }
   }
 
   Future<void> fetchProduct({int page = 1}) async {
@@ -138,12 +141,19 @@ class _ProductPageState extends State<ProductPage>
     }
   }
 
-  void _handleSort(SortOption sortOption) {
+  void _handleSort(SortOption sortOption) async {
     setState(() {
       _currentSort = sortOption;
       _currentPage = 1;
+      _hasMoreData = true;
+      product = null;
+      _filteredProducts = [];
     });
-    fetchProduct(page: 1);
+
+    for (int i = 1; i <= 5; i++) {
+      await fetchProduct(page: i);
+      if (!_hasMoreData) break;
+    }
   }
 
   Future<void> fetchProductCategory() async {
@@ -339,7 +349,6 @@ class _ProductPageState extends State<ProductPage>
                         Navigator.pop(context);
                       },
                       onEdit: () async {
-                        // Wait for EditProduct to complete and refresh
                         await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -347,56 +356,20 @@ class _ProductPageState extends State<ProductPage>
                                 (context) => EditProduct(
                                   product: productcard,
                                   onRefreshProduct: () async {
-                                    await refreshProducts(); // Refresh product list
+                                    await refreshProducts();
                                   },
                                 ),
                           ),
                         );
-                        await refreshProducts(); // Refresh again after returning
+                        await refreshProducts();
                       },
                     ),
               ),
             );
 
-            // Final refresh when returning to list
             await refreshProducts();
           },
 
-          // onTap: () {
-          //   Navigator.of(context)
-          //       .push(
-          //         MaterialPageRoute(
-          //           builder:
-          //               (context) => ViewProduct(
-          //                 product: productcard,
-          //                 images:
-          //                     productcard.productImages!
-          //                         .map((e) => e.key)
-          //                         .toList(),
-          //                 onBack: () {
-          //                   Navigator.pop(context);
-          //                 },
-          //                 onEdit: () async {
-          //                   Navigator.push(
-          //                     context,
-          //                     MaterialPageRoute(
-          //                       builder:
-          //                           (context) => EditProduct(
-          //                             onRefreshProduct: () async {
-          //                               await refreshProducts();
-          //                             },
-
-          //                             product: productcard,
-          //                           ),
-          //                     ),
-          //                   );
-          //                   await refreshProducts();
-          //                 },
-          //               ),
-          //         ),
-          //       )
-          //       .then((_) => refreshProducts());
-          // },
           child: Card(
             color: Colors.white,
             elevation: 8,
@@ -426,7 +399,7 @@ class _ProductPageState extends State<ProductPage>
                           child: CachedNetworkImage(
                             imageUrl:
                                 '$baseUrlImage/products/${productcard.productImages!.first.key}',
-                            // '$baseUrl/file?key=products/${productcard.productImages!.first.key}',
+
                             fit: BoxFit.cover,
                             placeholder:
                                 (context, url) => Shimmer.fromColors(
