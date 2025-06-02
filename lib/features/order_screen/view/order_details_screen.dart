@@ -238,7 +238,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       orderDetails!.nfcDetails.customerLogo.image.mimetype,
                   size: orderDetails!.nfcDetails.customerLogo.image.size,
                 ),
-            source: 'order',
+            source: 'portfolio',
           ),
           customerPhoto: add_model.ImageSource(
             image:
@@ -250,7 +250,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       orderDetails!.nfcDetails.customerPhoto.image.mimetype,
                   size: orderDetails!.nfcDetails.customerPhoto.image.size,
                 ),
-            source: 'order',
+            source: 'portfolio',
           ),
         ),
         products:
