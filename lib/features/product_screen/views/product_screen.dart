@@ -48,7 +48,6 @@ class _ProductScreenState extends State<ProductScreen> {
     return viewProduct
         ? ViewProduct(
           onEdit: () {
-            
             // Navigator.of(
             //   context,
 
