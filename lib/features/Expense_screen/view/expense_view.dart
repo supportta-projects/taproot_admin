@@ -113,6 +113,7 @@ class _ExpenseViewState extends State<ExpenseView> {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
+        // appBar: AppBar(title: const Text('Expense')),
         body: SingleChildScrollView(
           child: Column(
             children: [

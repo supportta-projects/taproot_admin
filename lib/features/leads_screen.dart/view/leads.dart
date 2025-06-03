@@ -68,7 +68,7 @@ class _LeadScreenState extends State<LeadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Leads'),
+        // title: const Text('Leads'),
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _fetchLeads),
         ],

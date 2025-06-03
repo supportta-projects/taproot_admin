@@ -121,6 +121,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(title: const Text('User')),
       body: SingleChildScrollView(
         child: SizedBox(
           child: Column(

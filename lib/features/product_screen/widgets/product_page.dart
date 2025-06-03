@@ -204,6 +204,7 @@ class _ProductPageState extends State<ProductPage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        
                         MiniLoadingButton(
                           icon: Icons.add,
                           text: 'Add Product',
@@ -336,7 +337,7 @@ class _ProductPageState extends State<ProductPage>
 
         final productcard = products[index];
         return GestureDetector(
-            onTap: () async {
+          onTap: () async {
             final updated = await Navigator.of(context).push(
               MaterialPageRoute(
                 builder:
@@ -383,8 +384,8 @@ class _ProductPageState extends State<ProductPage>
           // );
 
           // await refreshProducts();
-          // },  
-          
+          // },
+
           // onTap: () async {
           //   final updated = await Navigator.of(context).push(
           //     MaterialPageRoute(

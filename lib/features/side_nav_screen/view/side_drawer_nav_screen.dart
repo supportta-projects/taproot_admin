@@ -1,5 +1,6 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
@@ -28,6 +29,14 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
       GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> _innerOrderNavigatorKey =
       GlobalKey<NavigatorState>();
+  final List<String> _pageTitles = [
+    'Dashboard',
+    'Orders',
+    'Product',
+    'Users',
+    'Expense',
+    'Leads',
+  ];
 
   @override
   void initState() {
@@ -44,6 +53,12 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: Row(
+          children: [
+            Gap(CustomPadding.paddingXXL.v),
+            Text(_pageTitles[_currentIndex]),
+          ],
+        ),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
           PopupMenuButton<String>(
@@ -61,7 +76,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
           ),
           CustomGap.gapXL,
         ],
-        leadingWidth: 220,
+        leadingWidth: 150,
         leading: Padding(
           padding: const EdgeInsets.all(CustomPadding.padding),
           child: Image.asset(

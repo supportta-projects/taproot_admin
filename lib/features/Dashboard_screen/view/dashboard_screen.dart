@@ -110,10 +110,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             children: [
               Row(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
-                    child: Text('Dashboard', style: context.inter60024),
-                  ),
+                  // Padding(
+                  //   padding: EdgeInsets.only(left: CustomPadding.paddingLarge),
+                  //   child: Text('Dashboard', style: context.inter60024),
+                  // ),
                   Spacer(),
                   Container(
                     width: 200,
