@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -695,7 +694,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     }
   }
 
-  final ScrollController _scrollController = ScrollController();
+  // final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {

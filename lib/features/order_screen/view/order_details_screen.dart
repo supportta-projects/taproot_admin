@@ -73,10 +73,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     return user_model.User(
       id: orderUser.result.user.id,
       fullName: orderUser.result.personalInfo.name,
-      userId: orderUser.result.user.code ?? '',
+      userId: orderUser.result.user.code,
       phone: orderUser.result.personalInfo.phoneNumber,
       whatsapp: orderUser.result.personalInfo.whatsappNumber,
-      email: orderUser.result.personalInfo.email ?? '',
+      email: orderUser.result.personalInfo.email,
       website: '',
       isPremium: orderUser.result.user.isPremium,
     );

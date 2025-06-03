@@ -11,29 +11,15 @@ import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class ViewProduct extends StatefulWidget {
-  final Product? product;
-  final String? productName;
-  final String? price;
-  final String? offerPrice;
-  final String? description;
-  final String? cardType;
-  final List<String>? images;
-  // final Future<Product?> Function(String) onRefresh;
+  final Product product;
   final VoidCallback onBack;
   final VoidCallback onEdit;
-  // final Future<void> Function() onEdit;
+
   const ViewProduct({
     super.key,
+    required this.product,
     required this.onBack,
     required this.onEdit,
-    this.images,
-    this.productName,
-    this.price,
-    //  required this.onRefresh,
-    this.offerPrice,
-    this.description,
-    this.cardType,
-    this.product,
   });
 
   @override
@@ -41,46 +27,37 @@ class ViewProduct extends StatefulWidget {
 }
 
 class _ViewProductState extends State<ViewProduct> {
-  bool isEdit = false;
   Product? currentProduct;
-  List<String> currentImages = [];
-  // bool viewProduct=false;
+  bool isLoading = false;
 
-  //   @override
-  //   void initState() {
-  //     // TODO: implement initState
-  //         currentProduct = widget.product;
-  // refreshProduct();
-  //     super.initState();
-  //   }
+  @override
+  void initState() {
+    super.initState();
+    currentProduct = widget.product;
+  }
 
   Future<void> refreshProduct() async {
     try {
-      if (currentProduct?.id != null) {
-        final updatedProduct = await ProductService.getProductById(
-          currentProduct!.id.toString(),
-        );
-        setState(() {
-          currentProduct = updatedProduct;
-          currentImages = widget.images ?? [];
-          //           currentImages =
-          // updatedProduct?.productImages?.map((e) => e.key).toList() ?? [];
-        });
-      }
+      setState(() => isLoading = true);
+      final updated = await ProductService.getProductById(widget.product.id!);
+      setState(() {
+        currentProduct = updated;
+        isLoading = false;
+      });
     } catch (e) {
-      logError('Error refreshing product: $e');
+      logError('Refresh error: $e');
+      setState(() => isLoading = false);
     }
   }
 
   @override
-  void initState() {
-    currentProduct = widget.product;
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    if (isLoading || currentProduct == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final product = currentProduct!;
+
     return Scaffold(
       body: Column(
         children: [
@@ -89,12 +66,7 @@ class _ViewProductState extends State<ViewProduct> {
             children: [
               Gap(CustomPadding.paddingXL.v),
               GestureDetector(
-                onTap: () {
-                  widget.onBack();
-                  // setState(() {
-                  //   viewProduct = !viewProduct;
-                  // });
-                },
+                onTap: widget.onBack,
                 child: Text(
                   'Product',
                   style: context.inter60016.copyWith(
@@ -105,8 +77,8 @@ class _ViewProductState extends State<ViewProduct> {
               Gap(CustomPadding.padding.v),
               Text('>', style: context.inter60016),
               Gap(CustomPadding.padding.v),
-              Text('${widget.product!.name}', style: context.inter60016),
-              Spacer(),
+              Text(product.name ?? '', style: context.inter60016),
+              const Spacer(),
               MiniLoadingButton(
                 icon: Icons.edit,
                 text: 'Edit',
@@ -115,20 +87,16 @@ class _ViewProductState extends State<ViewProduct> {
                     context,
                     MaterialPageRoute(
                       builder:
-                          (context) => EditProduct(
-                            product: currentProduct,
-                            onRefreshProduct:
-                                () {}, // no need, we handle it here
+                          (_) => EditProduct(
+                            product: product,
+                            onRefreshProduct: () {},
                           ),
                     ),
                   );
-
                   if (result == true) {
-                    await refreshProduct(); // refresh only if update succeeded
+                    await refreshProduct();
+                    widget.onEdit();
                   }
-
-                  //  widget.onEdit();
-                  //         await refreshProduct();
                 },
                 useGradient: true,
                 gradientColors: CustomColors.borderGradient.colors,
@@ -137,13 +105,7 @@ class _ViewProductState extends State<ViewProduct> {
               MiniGradientBorderButton(
                 text: 'Back',
                 icon: Icons.arrow_back,
-                onPressed: () {
-                  widget.onBack();
-                  // setState(() {
-                  //   viewProduct = !viewProduct;
-                  // });
-                },
-
+                onPressed: widget.onBack,
                 gradient: LinearGradient(
                   colors: CustomColors.borderGradient.colors,
                 ),
@@ -152,10 +114,7 @@ class _ViewProductState extends State<ViewProduct> {
             ],
           ),
           Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: CustomPadding.paddingLarge.v,
-              vertical: CustomPadding.paddingLarge.v,
-            ),
+            padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
             margin: EdgeInsets.symmetric(
               horizontal: CustomPadding.paddingLarge.v,
             ),
@@ -163,53 +122,54 @@ class _ViewProductState extends State<ViewProduct> {
               color: CustomColors.secondaryColor,
               borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),
             ),
-            width: double.infinity,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ProductIdContainer(productId: widget.product!.code.toString()),
+                ProductIdContainer(productId: product.code ?? ''),
                 Gap(CustomPadding.paddingLarge.v),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: List.generate(
-                    widget.images?.length ?? 0,
-                    (index) => SizedBox(
-                      width: SizeUtils.width / 5,
-                      child: AddImageContainer(
-                        isImageView: true,
-                        imageUrl:
-                            '$baseUrlImage/products/${widget.images![index]}',
+                if (product.productImages?.isNotEmpty ?? false)
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: List.generate(
+                      product.productImages!.length,
+                      (index) => SizedBox(
+                        width: SizeUtils.width / 5,
+                        child: AddImageContainer(
+                          isImageView: true,
+                          imageUrl:
+                              '$baseUrlImage/products/${product.productImages![index].key}',
+                        ),
                       ),
                     ),
                   ),
-                ),
                 Gap(CustomPadding.paddingLarge.v),
                 Container(
                   margin: EdgeInsets.only(left: CustomPadding.paddingXL.v),
                   width: SizeUtils.width / 2.5,
                   child: Column(
                     spacing: CustomPadding.paddingLarge.v,
+
                     children: [
                       CardRow(
                         prefixText: 'Template Name',
-                        suffixText: widget.product?.name ?? '',
+                        suffixText: product.name ?? '',
                       ),
                       CardRow(
                         prefixText: 'Price',
-                        suffixText: "₹${widget.product!.actualPrice}",
+                        suffixText: "₹${product.actualPrice ?? ''}",
                       ),
                       CardRow(
                         prefixText: 'Discounted Price',
-                        suffixText: "₹${widget.product!.salePrice} ",
+                        suffixText: "₹${product.salePrice ?? ''}",
                       ),
                       CardRow(
                         prefixText: 'Design Type',
-                        suffixText: widget.product!.category!.name.toString(),
+                        suffixText: product.category?.name ?? '',
                       ),
                       CardRow(
                         prefixText: 'Description',
-                        suffixText: '${widget.product!.description}',
+                        suffixText: product.description ?? '',
                       ),
                     ],
                   ),

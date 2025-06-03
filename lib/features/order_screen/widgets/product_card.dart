@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
 
+// ignore: must_be_immutable
 class ProductCard extends StatefulWidget {
   ProductCard({
     super.key,

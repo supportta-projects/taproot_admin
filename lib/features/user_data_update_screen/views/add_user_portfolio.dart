@@ -34,6 +34,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   late final User user;
 
   bool _isLoading = false;
+  // ignore: unused_field
   bool _isPremium = false;
 
   final TextEditingController nameController = TextEditingController();
@@ -419,7 +420,7 @@ class _AddImageContainerState extends State<AddImageContainer> {
   void initState() {
     super.initState();
     currentImage = widget.initialImage;
-    print('InitState - Current Image Key: ${currentImage?.key}');
+    // print('InitState - Current Image Key: ${currentImage?.key}');
   }
 
   @override

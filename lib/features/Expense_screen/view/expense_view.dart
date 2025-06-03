@@ -10,7 +10,6 @@ import 'package:taproot_admin/features/Expense_screen/data/expense_model.dart';
 import 'package:taproot_admin/features/Expense_screen/data/expense_service.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/add_expense.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/edit_expense.dart';
-import 'package:taproot_admin/features/Expense_screen/widgets/expense_description_container.dart';
 
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';

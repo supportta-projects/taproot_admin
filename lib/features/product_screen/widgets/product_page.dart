@@ -10,7 +10,6 @@ import 'package:taproot_admin/features/product_screen/data/product_category_mode
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_service.dart';
 import 'package:taproot_admin/features/product_screen/widgets/add_product.dart';
-import 'package:taproot_admin/features/product_screen/widgets/edit_product.dart';
 import 'package:taproot_admin/features/product_screen/widgets/product_detail_row.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
@@ -20,8 +19,8 @@ import 'package:taproot_admin/widgets/not_found_widget.dart';
 
 class ProductPage extends StatefulWidget {
   final VoidCallback addTap;
-  final VoidCallback viewTap;
-  const ProductPage({super.key, required this.addTap, required this.viewTap});
+  final VoidCallback? viewTap;
+  const ProductPage({super.key, required this.addTap, this.viewTap});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -337,39 +336,106 @@ class _ProductPageState extends State<ProductPage>
 
         final productcard = products[index];
         return GestureDetector(
-          onTap: () async {
-            await Navigator.of(context).push(
+            onTap: () async {
+            final updated = await Navigator.of(context).push(
               MaterialPageRoute(
                 builder:
                     (context) => ViewProduct(
                       product: productcard,
-                      images:
-                          productcard.productImages!.map((e) => e.key).toList(),
-                      onBack: () {
-                        Navigator.pop(context);
-                      },
-                      onEdit: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => EditProduct(
-                                  product: productcard,
-                                  onRefreshProduct: () async {
-                                    await refreshProducts();
-                                  },
-                                ),
-                          ),
-                        );
-                        await refreshProducts();
-                      },
+                      onBack: () => Navigator.pop(context),
+                      onEdit: () => refreshProducts(), // << IMPORTANT
                     ),
               ),
             );
 
-            await refreshProducts();
+            if (updated == true) {
+              await refreshProducts(); // << Backup refresh if needed
+            }
           },
+          // onTap: () async{
+          // await Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder:
+          //         (context) => ViewProduct(
+          //           product: productcard,
+          //           images:
+          //               productcard.productImages!.map((e) => e.key).toList(),
+          //           onBack: () {
+          //             Navigator.pop(context);
+          //           },
+          //           onEdit: () async {
+          //             await Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                 builder:
+          //                     (context) => EditProduct(
+          //                       product: productcard,
+          //                       onRefreshProduct: () async {
+          //                         await refreshProducts();
+          //                       },
+          //                     ),
+          //               ),
+          //             );
+          //             await refreshProducts();
+          //           },
+          //         ),
+          //   ),
+          // );
 
+          // await refreshProducts();
+          // },  
+          
+          // onTap: () async {
+          //   final updated = await Navigator.of(context).push(
+          //     MaterialPageRoute(
+          //       builder:
+          //           (context) => ViewProduct(
+          //             product: productcard,
+          //             onBack: () => Navigator.pop(context),
+          //             onEdit: () => refreshProducts(), // << IMPORTANT
+          //           ),
+          //     ),
+          //   );
+
+          //   if (updated == true) {
+          //     await refreshProducts(); // << Backup refresh if needed
+          //   }
+          // },
+
+          // REMOVE this ↓ (it's already being called inside onEdit)
+          /// await refreshProducts();
+
+          // await Navigator.of(context).push(
+          //   MaterialPageRoute(
+          //     builder:
+          //         (context) => ViewProduct(
+          //           product: productcard,
+          //           images:
+          //               productcard.productImages!.map((e) => e.key).toList(),
+          //           onBack: () {
+          //             Navigator.pop(context);
+          //           },
+          //           onEdit: () async {
+          //             await Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                 builder:
+          //                     (context) => EditProduct(
+          //                       product: productcard,
+          //                       onRefreshProduct: () async {
+          //                         await refreshProducts();
+          //                       },
+          //                     ),
+          //               ),
+          //             );
+          //             await refreshProducts();
+          //           },
+          //         ),
+          //   ),
+          // );
+
+          // await refreshProducts();
+          // },
           child: Card(
             color: Colors.white,
             elevation: 8,
