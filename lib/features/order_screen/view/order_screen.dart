@@ -52,6 +52,8 @@ class _OrderScreenState extends State<OrderScreen> {
         return 'Confirmed';
       case 6:
         return 'Failed';
+      case 7:
+        return 'Cancelled';
       default:
         return '';
     }
@@ -188,7 +190,7 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 7,
+      length: 8,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
@@ -303,12 +305,13 @@ class _OrderScreenState extends State<OrderScreen> {
                         Tab(text: 'Pending'),
                         Tab(text: 'Confirmed'),
                         Tab(text: 'Failed'),
+                        Tab(text: 'Cancelled'),
                       ],
                     ),
                     SizedBox(
                       height: SizeUtils.height * 0.75,
                       child: TabBarView(
-                        children: List.generate(7, (index) {
+                        children: List.generate(8, (index) {
                           if (isLoading) {
                             return const Center(
                               child: CircularProgressIndicator(),

@@ -919,8 +919,14 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     Gap(CustomPadding.paddingXL.v),
 
                     orderEdit
-                        ? orderDetails?.paymentStatus.toLowerCase() == 'success'
-                            ? Center(
+                        ? [
+                              'pending',
+                              'failed',
+                              'cancelled',
+                              'completed',
+                            ].contains(orderDetails?.orderStatus.toLowerCase())
+                            ? SizedBox()
+                            : Center(
                               child: MiniLoadingButton(
                                 needRow: false,
                                 text: 'Cancel Order',
@@ -942,7 +948,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                     CustomColors.borderGradient.colors,
                               ),
                             )
-                            : SizedBox()
+                        // : SizedBox()
                         : CommonProductContainer(
                           title: 'Payment Details',
                           children: [
