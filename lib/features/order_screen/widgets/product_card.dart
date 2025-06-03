@@ -144,10 +144,11 @@ class _ProductCardState extends State<ProductCard> {
                     widget.orderEdit
                         ? Row(
                           children: [
-                            Chip(
-                              label: GestureDetector(
-                                onTap: () => handleQuantityChange(false),
-                                child: Icon(
+                            InkWell(
+                              onTap: () => handleQuantityChange(false),
+                              borderRadius: BorderRadius.circular(20),
+                              child: Chip(
+                                label: Icon(
                                   widget.quantity == 1
                                       ? Icons.delete
                                       : Icons.remove,
@@ -157,14 +158,37 @@ class _ProductCardState extends State<ProductCard> {
                             Gap(CustomPadding.paddingLarge.v),
                             Text(widget.quantity.toString()),
                             Gap(CustomPadding.paddingLarge.v),
-                            Chip(
-                              label: GestureDetector(
-                                onTap: () => handleQuantityChange(true),
-                                child: Icon(Icons.add),
-                              ),
+                            InkWell(
+                              onTap: () => handleQuantityChange(true),
+                              borderRadius: BorderRadius.circular(20),
+                              child: Chip(label: Icon(Icons.add)),
                             ),
                           ],
                         )
+
+                        //  Row(
+                        //   children: [
+                        //     Chip(
+                        //       label: GestureDetector(
+                        //         onTap: () => handleQuantityChange(false),
+                        //         child: Icon(
+                        //           widget.quantity == 1
+                        //               ? Icons.delete
+                        //               : Icons.remove,
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     Gap(CustomPadding.paddingLarge.v),
+                        //     Text(widget.quantity.toString()),
+                        //     Gap(CustomPadding.paddingLarge.v),
+                        //     Chip(
+                        //       label: GestureDetector(
+                        //         onTap: () => handleQuantityChange(true),
+                        //         child: Icon(Icons.add),
+                        //       ),
+                        //     ),
+                        //   ],
+                        // )
                         : Chip(label: Text(widget.quantity.toString())),
                   ],
                 ),
