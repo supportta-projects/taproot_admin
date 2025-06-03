@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:taproot_admin/constants/constants.dart';
-import 'package:taproot_admin/features/Expense_screen/widgets/expense_description_container.dart';
 import 'package:taproot_admin/features/leads_screen.dart/data/leads_model.dart';
 import 'package:taproot_admin/features/leads_screen.dart/data/leads_service.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
@@ -21,23 +20,30 @@ class _LeadScreenState extends State<LeadScreen> {
   List<Lead> _leads = [];
   bool _isLoading = false;
   String? _error;
+  final int _rowsPerPage = 5;
+  int _currentPage = 1;
+  int _total = 0;
 
   @override
   void initState() {
     super.initState();
-    getLeads();
+    _fetchLeads();
   }
 
-  Future<void> getLeads() async {
-    try {
-      setState(() {
-        _isLoading = true;
-        _error = null;
-      });
+  Future<void> _fetchLeads() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
-      final response = await LeadsService.getLeads();
+    try {
+      final response = await LeadsService.getLeads(
+        page: _currentPage,
+        limit: _rowsPerPage,
+      );
       setState(() {
         _leads = response?.results ?? [];
+        _total = response?.totalCount ?? 0;
         _isLoading = false;
       });
     } catch (e) {
@@ -48,88 +54,71 @@ class _LeadScreenState extends State<LeadScreen> {
     }
   }
 
+  void _handlePageChange(int firstRowIndex) {
+    final page = (firstRowIndex ~/ _rowsPerPage) + 1;
+    if (page != _currentPage) {
+      setState(() {
+        _currentPage = page;
+      });
+      _fetchLeads();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Leads'),
-        actions: [IconButton(icon: Icon(Icons.refresh), onPressed: getLeads)],
+        actions: [
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _fetchLeads),
+        ],
       ),
       body:
           _isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : _error != null
               ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(_error!, style: TextStyle(color: Colors.red)),
-                    SizedBox(height: 16),
-                    ElevatedButton(onPressed: getLeads, child: Text('Retry')),
+                    Text(_error!, style: const TextStyle(color: Colors.red)),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _fetchLeads,
+                      child: const Text('Retry'),
+                    ),
                   ],
                 ),
               )
               : Padding(
                 padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: SizeUtils.height * 0.75,
-                  child: SingleChildScrollView(
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    width: .87 * SizeUtils.width,
+
                     child: PaginatedDataTable(
                       showFirstLastButtons: true,
                       arrowHeadColor: CustomColors.borderGradient.colors.first,
-
-                      // columnSpacing: 260,
-                      dataRowMaxHeight: 100,
+                      dataRowMaxHeight: 120,
+                      rowsPerPage: _rowsPerPage,
+                      availableRowsPerPage: const [5],
+                      onRowsPerPageChanged: null,
+                      initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
+                      onPageChanged: _handlePageChange,
                       columns: const [
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Full Name',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: CustomColors.textColor),
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Phone Number',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: CustomColors.textColor),
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Email',
-                              style: TextStyle(color: CustomColors.textColor),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              'Description',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: CustomColors.textColor),
-                            ),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Expanded(
-                            child: Text(
-                              ' ',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: CustomColors.textColor),
-                            ),
-                          ),
-                        ),
+                        DataColumn(label: Text('Full Name')),
+                        DataColumn(label: Text('Phone Number')),
+                        DataColumn(label: Text('Email')),
+                        DataColumn(label: Text('Description')),
+                        DataColumn(label: Text('WhatsApp')),
                       ],
-                      source: _LeadsDataSource(_leads, context),
-                      rowsPerPage: 6,
+                      source: _LeadsDataSource(
+                        leads: _leads,
+                        context: context,
+                        totalRowCount: _total,
+                        currentPage: _currentPage,
+                        rowsPerPage: _rowsPerPage,
+                      ),
                     ),
                   ),
                 ),
@@ -141,39 +130,72 @@ class _LeadScreenState extends State<LeadScreen> {
 class _LeadsDataSource extends DataTableSource {
   final List<Lead> leads;
   final BuildContext context;
+  final int totalRowCount;
+  final int currentPage;
+  final int rowsPerPage;
 
-  _LeadsDataSource(this.leads, this.context);
+  _LeadsDataSource({
+    required this.leads,
+    required this.context,
+    required this.totalRowCount,
+    required this.currentPage,
+    required this.rowsPerPage,
+  });
 
   @override
   DataRow? getRow(int index) {
-    if (index >= leads.length) return null;
-    final lead = leads[index];
+    final localIndex = index % rowsPerPage; // key fix
+    if (localIndex >= leads.length) return null;
+    final lead = leads[localIndex];
+
     return DataRow(
       cells: [
         DataCell(
           Center(
-            child: Text(
-              lead.name[0].toUpperCase() + lead.name.substring(1),
-              style: TextStyle(
-                color: CustomColors.buttonColor1,
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
-            ),
+            child: Text(lead.name[0].toUpperCase() + lead.name.substring(1)),
           ),
         ),
         DataCell(Center(child: Text(lead.number))),
         DataCell(Center(child: Text(lead.email))),
         DataCell(
-          ExpenseDescriptionContainer(
-            children: [
-              Center(
-                child: Text(
-                  lead.description,
-                  style: TextStyle(color: CustomColors.hintGrey),
-                ),
-              ),
-            ],
+          InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder:
+                    (BuildContext context) => AlertDialog(
+                      title: const Text("Lead Description"),
+                      content: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: 700,
+                          maxHeight: 300,
+                        ),
+                        child: Scrollbar(
+                          thickness: 2,
+                          radius: const Radius.circular(4),
+                          child: SingleChildScrollView(
+                            child: Text(
+                              lead.description,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: CustomColors.hintGrey,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Close"),
+                        ),
+                      ],
+                    ),
+              );
+            },
+            child: Center(
+              child: const Text("View", style: TextStyle(color: Colors.blue)),
+            ),
           ),
         ),
         DataCell(
@@ -181,28 +203,19 @@ class _LeadsDataSource extends DataTableSource {
             onTap: () async {
               final phoneNumber = lead.number.replaceAll(RegExp(r'[^\d+]'), '');
               final uri = Uri.parse('https://wa.me/$phoneNumber');
-
               try {
                 if (await canLaunchUrl(uri)) {
-                  await launchUrl(
-                    uri,
-                    //  mode: LaunchMode.externalApplication
-                  );
+                  await launchUrl(uri);
                 } else {
-                  if (context.mounted) {
-                    SnackbarHelper.showError(
-                      context,
-                      'Could not open WhatsApp',
-                    );
-                  }
+                  SnackbarHelper.showError(context, 'Could not open WhatsApp');
                 }
               } catch (e) {
-                if (context.mounted) {
-                  SnackbarHelper.showError(context, 'Error: ${e.toString()}');
-                }
+                SnackbarHelper.showError(context, 'Error: ${e.toString()}');
               }
             },
-            child: SvgPicture.asset(Assets.svg.whatsapp),
+            child: Center(
+              child: SvgPicture.asset(Assets.svg.whatsapp, height: 50),
+            ),
           ),
         ),
       ],
@@ -213,7 +226,7 @@ class _LeadsDataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => leads.length;
+  int get rowCount => totalRowCount;
 
   @override
   int get selectedRowCount => 0;

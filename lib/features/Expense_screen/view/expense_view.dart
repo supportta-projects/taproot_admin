@@ -379,8 +379,49 @@ class ExpenseDataSource extends DataTableSource {
         DataCell(Center(child: Text(expense.category))),
         DataCell(Center(child: Text(expense.name))),
         DataCell(
-          ExpenseDescriptionContainer(children: [Text(expense.description)]),
+          InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder:
+                    (BuildContext context) => AlertDialog(
+                      title: const Text("Lead Description"),
+                      content: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: 700,
+                          maxHeight: 300,
+                        ),
+                        child: Scrollbar(
+                          thickness: 2,
+                          radius: const Radius.circular(4),
+                          child: SingleChildScrollView(
+                            child: Text(
+                              expense.description,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: CustomColors.hintGrey,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Close"),
+                        ),
+                      ],
+                    ),
+              );
+            },
+            child: Center(
+              child: const Text("View", style: TextStyle(color: Colors.blue)),
+            ),
+          ),
         ),
+        // DataCell(
+        //   ExpenseDescriptionContainer(children: [Text(expense.description)]),
+        // ),
         DataCell(Center(child: Text('₹${expense.amount.toStringAsFixed(2)}'))),
         DataCell(
           Center(child: Text(DateFormat('MMM dd, yyyy').format(expense.date))),
