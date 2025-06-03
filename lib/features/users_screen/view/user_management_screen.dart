@@ -191,6 +191,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
                   showEmptyRows: false,
                   columnSpacing: CustomPadding.paddingXL.v,
+
                   actions: [
                     Text(
                       "Premium Users",

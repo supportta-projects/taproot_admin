@@ -112,7 +112,17 @@ class _RefundDialogState extends State<RefundDialog> {
     return Column(
       children: [
         Gap(CustomPadding.paddingLarge.v),
-        Text('Cancel Order & Initiate Refund', style: context.inter60022),
+        Container(
+          width: double.infinity,
+          height: 60,
+          color: Colors.amber,
+          child: Center(
+            child: Text(
+              'Cancel Order & Initiate Refund',
+              style: context.inter60022,
+            ),
+          ),
+        ),
         Gap(CustomPadding.paddingLarge.v),
         Divider(thickness: 1, color: CustomColors.textColor),
         Gap(CustomPadding.paddingLarge.v),
@@ -246,7 +256,7 @@ class _RefundDialogState extends State<RefundDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingXL.v),
+        // padding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingXL.v),
         decoration: BoxDecoration(
           color: CustomColors.secondaryColor,
           borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),

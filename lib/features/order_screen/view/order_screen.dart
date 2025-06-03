@@ -29,7 +29,7 @@ class _OrderScreenState extends State<OrderScreen> {
   int currentPage = 1;
   int totalPages = 1;
   int totalOrder = 0;
-  final int _rowsPerPage = 10;
+  final int _rowsPerPage = 6;
   OrderDataSource? orderDataSource;
   final _tableKey = GlobalKey<PaginatedDataTableState>();
   final TextEditingController _searchController = TextEditingController();
@@ -254,7 +254,6 @@ class _OrderScreenState extends State<OrderScreen> {
                               fetchDateFilteredOrder(selectedDate.toString());
 
                               if (selectedDate != null) {
-                                // Handle the selected date here
                                 logInfo('Selected date: $selectedDate');
                               }
                             });
@@ -326,7 +325,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                 CustomColors.borderGradient.colors.first,
 
                             key: index == 0 ? _tableKey : null,
-                            dataRowMaxHeight: 60,
+                            dataRowMaxHeight: 90,
                             rowsPerPage: _rowsPerPage,
                             initialFirstRowIndex:
                                 (currentPage - 1) * _rowsPerPage,
@@ -380,6 +379,24 @@ class OrderDataSource extends DataTableSource {
     this.innerNavigatorKey,
     this.rowsPerPage,
   );
+  Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'failed':
+        return Color(0xFFF44336);
+      case 'pending':
+        return Color(0xFFFFC107);
+      case 'placed':
+        return Color(0xFFFFA726);
+      case 'confirmed':
+        return Color(0xFF42A5F5);
+      case 'shipped':
+        return const Color(0xFF1E88E5);
+      case 'completed':
+        return Color(0xFF4CAF50);
+      default:
+        return Colors.grey;
+    }
+  }
 
   @override
   DataRow getRow(int index) {
@@ -442,7 +459,12 @@ class OrderDataSource extends DataTableSource {
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text(order.orderStatus.toString())),
+              child: Center(
+                child: Text(
+                  order.orderStatus.toString(),
+                  style: TextStyle(color: getStatusColor(order.orderStatus)),
+                ),
+              ),
             ),
           ),
           DataCell(
@@ -460,15 +482,14 @@ class OrderDataSource extends DataTableSource {
                         final isLoading = loadingOrderIds.contains(order.id);
 
                         return MiniLoadingButton(
-                          gradientColors: CustomColors.borderGradient.colors,
+                          backgroundColor: CustomColors.retryRed,
 
-                          useGradient: true,
                           text: 'Retry',
                           icon: Icons.replay,
                           isLoading: isLoading,
                           onPressed: () async {
                             loadingOrderIds.add(order.id);
-                            setState(() {}); // Rebuild with loading=true
+                            setState(() {});
 
                             final result = await OrderService.retryOrder(
                               order.id,
@@ -484,7 +505,7 @@ class OrderDataSource extends DataTableSource {
                             }
 
                             loadingOrderIds.remove(order.id);
-                            setState(() {}); // Rebuild with loading=false
+                            setState(() {});
                           },
                         );
                       },
@@ -496,9 +517,8 @@ class OrderDataSource extends DataTableSource {
                         final isLoading = loadingOrderIds.contains(order.id);
 
                         return MiniLoadingButton(
-                          gradientColors: CustomColors.borderGradient.colors,
+                          backgroundColor: CustomColors.confirmOrange,
 
-                          useGradient: true,
                           text: 'Confirm',
                           icon: Icons.check,
                           isLoading: isLoading,
@@ -569,9 +589,8 @@ class OrderDataSource extends DataTableSource {
                         final isLoading = loadingOrderIds.contains(order.id);
 
                         return MiniLoadingButton(
-                          gradientColors: CustomColors.borderGradient.colors,
+                          backgroundColor: CustomColors.completeGreen,
 
-                          useGradient: true,
                           text: 'Complete',
                           icon: Icons.check_circle,
                           isLoading: isLoading,
@@ -600,7 +619,7 @@ class OrderDataSource extends DataTableSource {
                     );
                   }
 
-                  return const SizedBox(); // fallback
+                  return const SizedBox();
                 },
               ),
             ),

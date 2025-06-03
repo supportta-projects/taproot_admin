@@ -9,6 +9,7 @@ import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
 import 'package:taproot_admin/features/users_screen/view/user_management_screen.dart';
+import 'package:taproot_admin/gen/assets.gen.dart';
 
 import '../widgets/side_menu_lucide_icon_widgt.dart';
 
@@ -60,10 +61,13 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
           ),
           CustomGap.gapXL,
         ],
-
+        leadingWidth: 220,
         leading: Padding(
-          padding: EdgeInsets.only(left: CustomPadding.paddingXL.v),
-          child: Placeholder(),
+          padding: const EdgeInsets.all(CustomPadding.padding),
+          child: Image.asset(
+            Assets.png.supporttalogo.path,
+            fit: BoxFit.contain,
+          ),
         ),
         toolbarHeight: kToolbarHeight.h,
 
