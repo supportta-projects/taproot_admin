@@ -95,7 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     double normalPadding = CustomPadding.padding * 2.2;
     double tileWidgetBorderRadius = CustomPadding.padding * 2.5;
 
-    if (isLoading) {
+    if (error != null || dashboardModel == null || chartData == null) {
       return Scaffold(
         body: ShimmerDashboard(), // Full page shimmer for initial load
       );

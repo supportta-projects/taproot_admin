@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:taproot_admin/features/auth_screen/data/auth_service.dart';
 
 import 'package:taproot_admin/features/side_nav_screen/view/side_drawer_nav_screen.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 import '../widgets/login_card.dart';
 import '/exporter/exporter.dart';
 
@@ -31,19 +32,45 @@ class _AuthScreenState extends State<AuthScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     setState(() => isLoading = true);
+
     try {
-      await AuthService.loginAdmin(
+      final success = await AuthService.loginAdmin(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      Navigator.of(context).pushReplacementNamed(SideDrawerNavScreen.path);
+
+      if (success) {
+        Navigator.of(context).pushReplacementNamed(SideDrawerNavScreen.path);
+      } else {
+        setState(() => isLoading = false);
+        SnackbarHelper.showError(
+          context,
+          'Login failed: Invalid or expired token',
+        );
+      }
     } catch (e) {
       setState(() => isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+      SnackbarHelper.showError(context, 'Login failed: $e');
     }
   }
+
+  // Future<void> _handleLogin() async {
+  //   if (!(_formKey.currentState?.validate() ?? false)) return;
+
+  //   setState(() => isLoading = true);
+  //   try {
+  //     await AuthService.loginAdmin(
+  //       email: emailController.text.trim(),
+  //       password: passwordController.text.trim(),
+  //     );
+  //     Navigator.of(context).pushReplacementNamed(SideDrawerNavScreen.path);
+  //   } catch (e) {
+  //     setState(() => isLoading = false);
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

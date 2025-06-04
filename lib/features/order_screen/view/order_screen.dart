@@ -8,6 +8,7 @@ import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/view/create_order.dart';
 import 'package:taproot_admin/features/order_screen/view/order_details_screen.dart';
+import 'package:taproot_admin/features/order_screen/widgets/alert_widget.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
@@ -491,6 +492,12 @@ class OrderDataSource extends DataTableSource {
                           icon: Icons.replay,
                           isLoading: isLoading,
                           onPressed: () async {
+                            if (!await showConfirmationDialog(
+                              context,
+                              'Confirm Retry',
+                              'Are you sure you want to retry this order?\nThis will attempt to process the order again and cannot be undone.',
+                            ))
+                              return;
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -526,6 +533,12 @@ class OrderDataSource extends DataTableSource {
                           icon: Icons.check,
                           isLoading: isLoading,
                           onPressed: () async {
+                            if (!await showConfirmationDialog(
+                              context,
+                              'Confirm Order',
+                              'Are you sure you want to confirm this order?\nOnce confirmed, this step cannot be reversed.',
+                            ))
+                              return;
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -562,6 +575,12 @@ class OrderDataSource extends DataTableSource {
                           icon: Icons.local_shipping,
                           isLoading: isLoading,
                           onPressed: () async {
+                            if (!await showConfirmationDialog(
+                              context,
+                              'Dispatch Order',
+                              'Are you ready to mark this order as dispatched?\nThis action will notify the user and cannot be undone.',
+                            ))
+                              return;
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -598,6 +617,12 @@ class OrderDataSource extends DataTableSource {
                           icon: Icons.check_circle,
                           isLoading: isLoading,
                           onPressed: () async {
+                            if (!await showConfirmationDialog(
+                              context,
+                              'Complete Order',
+                              'Are you sure you want to mark this order as completed?\nThis finalizes the order and cannot be changed afterward.',
+                            ))
+                              return;
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
