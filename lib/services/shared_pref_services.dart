@@ -92,4 +92,5 @@ class SharedPreferencesService {
   Future<void> setValue({String key = _token, required String value}) async {
     await _prefs.put(key, value);
   }
+  
 }

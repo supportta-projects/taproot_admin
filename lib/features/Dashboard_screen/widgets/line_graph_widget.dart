@@ -27,7 +27,7 @@ class LineGraphWidget extends StatelessWidget {
           CustomPadding.paddingXL + CustomPadding.padding,
         ),
       ),
-      height: 600,
+      height: 620,
       child: SfCartesianChart(
         legend: Legend(isVisible: true, position: LegendPosition.bottom),
         tooltipBehavior: TooltipBehavior(

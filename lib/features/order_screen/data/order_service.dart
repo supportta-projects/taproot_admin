@@ -13,12 +13,14 @@ import 'package:taproot_admin/features/users_screen/data/user_paginated_model.da
 class OrderService with ErrorExceptionHandler {
   static Future<OrderResponse> getAllOrder({
     int page = 1,
+    int limit = 6,
     String? search,
     String? orderStatus,
     String? startDate,
   }) async {
     try {
       final queryParameters = {
+        'limit': limit,
         'page': page,
         if (search != null && search.isNotEmpty) 'search': search,
         if (orderStatus != null && orderStatus.isNotEmpty)
@@ -36,55 +38,8 @@ class OrderService with ErrorExceptionHandler {
       throw OrderService().handleError(e);
     }
   }
-  // static Future<OrderResponse> getAllOrder({int page = 1,}) async {
-  //   try {
-  //     final response = await DioHelper().get(
-  //       '/order/all',
-  //       type: ApiType.baseUrl,
-  //       queryParameters: {'page': page},
-  //     );
-  //     return OrderResponse.fromJson(response.data);
-  //   } catch (e) {
-  //     throw OrderService().handleError(e);
-  //   }
-  // }
-  // static Future<OrderDetailsResponse> getOrderDetails({
-  //     required String orderId,
-  //   }) async {
-  //     try {
-  //       // Validate orderId format before making the request
-  //       if (orderId.isEmpty || orderId.length != 24) {
-  //         throw Exception('Invalid order ID format');
-  //       }
 
-  //       final response = await DioHelper().get(
-  //         '/order/order-details/$orderId',
-  //         type: ApiType.baseUrl,
-  //       );
-
-  //       logInfo('API Response: ${response.data}');
-
-  //       // Check if response.data is not null and has the expected structure
-  //       if (response.data == null) {
-  //         throw Exception('Empty response received');
-  //       }
-
-  //       final orderDetailsResponse = OrderDetailsResponse.fromJson(response.data);
-
-  //       // Validate the response
-  //       if (!orderDetailsResponse.success) {
-  //         throw Exception(
-  //           orderDetailsResponse.message ?? 'Failed to fetch order details',
-  //         );
-  //       }
-
-  //       return orderDetailsResponse;
-  //     } catch (e) {
-  //       logError('OrderService error: $e');
-  //       throw OrderService().handleError(e);
-  //     }
-  //   }
-static Future<OrderDetailsResponse> getOrderDetails({
+  static Future<OrderDetailsResponse> getOrderDetails({
     required String orderId,
   }) async {
     try {
@@ -95,29 +50,24 @@ static Future<OrderDetailsResponse> getOrderDetails({
 
       logInfo('API Response: ${response.data}');
 
-      // Cast response.data to Map<String, dynamic>
       final Map<String, dynamic> responseData = Map<String, dynamic>.from(
         response.data,
       );
 
-      // Cast result to Map<String, dynamic>
       if (responseData['result'] != null) {
         final Map<String, dynamic> result = Map<String, dynamic>.from(
           responseData['result'],
         );
 
-        // Handle products array
         if (result['products'] != null) {
           final List<Map<String, dynamic>> products =
               (result['products'] as List)
                   .map((product) => Map<String, dynamic>.from(product))
                   .toList();
 
-          // Update the products in result
           result['products'] = products;
         }
 
-        // Update the result in responseData
         responseData['result'] = result;
       }
 
@@ -127,24 +77,6 @@ static Future<OrderDetailsResponse> getOrderDetails({
       throw OrderService().handleError(e);
     }
   }
-
-
-  // static Future<OrderDetailsResponse> getOrderDetails({
-  //   required String orderId,
-  // }) async {
-  //   try {
-  //     final response = await DioHelper().get(
-  //       '/order/order-details/$orderId',
-  //       type: ApiType.baseUrl,
-  //     );
-
-  //     logInfo('API Response: ${response.data}');
-
-  //     return OrderDetailsResponse.fromJson(response.data);
-  //   } catch (e) {
-  //     throw OrderService().handleError(e);
-  //   }
-  // }
 
   static Future<OrderResponseUser?> getOrderedUser({
     required String orderId,
@@ -177,17 +109,14 @@ static Future<OrderDetailsResponse> getOrderDetails({
     }
   }
 
-  static Future<PaginatedUserResponse> fetchUser(
-    // int page,
-    String? searchQuery,
-  ) async {
+  static Future<PaginatedUserResponse> fetchUser(String? searchQuery) async {
     try {
       final response = await DioHelper().get(
         '/user',
         type: ApiType.baseUrl,
         queryParameters: {
           'limit': 4,
-          // 'page': page,
+
           if (searchQuery != null && searchQuery.isNotEmpty)
             'search': searchQuery,
         },
@@ -206,7 +135,7 @@ static Future<OrderDetailsResponse> getOrderDetails({
         type: ApiType.baseUrl,
         queryParameters: {
           'limit': 4,
-          // 'page': page,
+
           if (searchQuery != null && searchQuery.isNotEmpty)
             'search': searchQuery,
         },
@@ -214,7 +143,7 @@ static Future<OrderDetailsResponse> getOrderDetails({
       final data = response.data;
       return ProductResponse.fromJson(data);
     } catch (e) {
-      throw OrderService().handleError(e); // Handle the error properly
+      throw OrderService().handleError(e);
     }
   }
 
@@ -230,7 +159,7 @@ static Future<OrderDetailsResponse> getOrderDetails({
       );
       return OrderDetailsResponse.fromJson(response.data);
     } catch (e) {
-      throw OrderService().handleError(e); // Handle the error properly
+      throw OrderService().handleError(e);
     }
   }
 
@@ -265,7 +194,6 @@ static Future<OrderDetailsResponse> getOrderDetails({
         type: ApiType.baseUrl,
       );
 
-      // Check both status code and response data
       if (response.statusCode == 200) {
         return true;
       }
@@ -273,7 +201,7 @@ static Future<OrderDetailsResponse> getOrderDetails({
       return false;
     } catch (e) {
       logError('Portfolio check error: $e');
-      // Any error (including 404) means no portfolio
+
       return false;
     }
   }
@@ -289,12 +217,13 @@ static Future<OrderDetailsResponse> getOrderDetails({
         data: {'refundPercentage': refundPercentage},
       );
 
-      return response.data; // This should be the JSON response
+      return response.data;
     } catch (e) {
       logError('Error canceling order: $e');
       throw OrderService().handleError(e);
     }
   }
+
   static Future<OrderStatusResponse?> getOrderStatus({
     required String orderId,
   }) async {
@@ -315,6 +244,7 @@ static Future<OrderDetailsResponse> getOrderDetails({
       return null;
     }
   }
+
   static Future<OrderStatusResponse?> retryOrder(String orderId) async {
     try {
       final response = await DioHelper().patch(
@@ -331,6 +261,4 @@ static Future<OrderDetailsResponse> getOrderDetails({
 
     return null;
   }
-
-
 }

@@ -473,15 +473,15 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
               title: 'Order Details',
               children: [
                 Gap(CustomPadding.paddingLarge.v),
-                GradientBorderField(
-                  hintText: 'Search User name, User ID',
-                  onChanged: (value) async {
-                    setState(() {
-                      isSearching = value.isNotEmpty;
-                    });
-                    await widget.fetchUser(value);
-                  },
-                ),
+                // GradientBorderField(
+                //   hintText: 'Search User name, User ID',
+                //   onChanged: (value) async {
+                //     setState(() {
+                //       isSearching = value.isNotEmpty;
+                //     });
+                //     await widget.fetchUser(value);
+                //   },
+                // ),
                 Gap(CustomPadding.paddingLarge.v),
                 if (isLoading)
                   CircularProgressIndicator()

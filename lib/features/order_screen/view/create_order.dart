@@ -272,67 +272,67 @@ class _CreateOrderState extends State<CreateOrder> {
               ],
             ),
             Gap(CustomPadding.paddingXL.v),
-            CommonProductContainer(
-              title: 'Choose Product',
-              children: [
-                Gap(CustomPadding.paddingLarge.v),
-                GradientBorderField(
-                  hintText: 'Add Product + ',
-                  onChanged: (value) {
-                    fetchProducts(value);
-                    setState(() {
-                      isSearchingProduct = value.isNotEmpty;
-                    });
-                  },
-                ),
-                if (isLoadingProduct)
-                  CircularProgressIndicator()
-                else if (isSearchingProduct && productSearchList.isNotEmpty)
-                  Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: CustomPadding.paddingLarge,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                        CustomPadding.padding.v,
-                      ),
-                      border: Border.all(color: CustomColors.hintGrey),
-                    ),
-                    height: 300,
-                    child: ListView.builder(
-                      itemCount: productSearchList.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            ListTile(
-                              onTap: () {},
-                              title: Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: CustomPadding.paddingLarge.v,
-                                ),
-                                child: Text(
-                                  productSearchList[index].name.toString(),
-                                ),
-                              ),
-                              trailing: Column(
-                                children: [
-                                  Text(
-                                    ' ₹${productSearchList[index].salePrice.toString()}',
-                                    style: context.inter50014,
-                                  ),
-                                  Text('Price'),
-                                ],
-                              ),
-                            ),
-                            Divider(),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                Gap(CustomPadding.paddingLarge.v),
-              ],
-            ),
+            // CommonProductContainer(
+            //   title: 'Choose Product',
+            //   children: [
+            //     Gap(CustomPadding.paddingLarge.v),
+            //     GradientBorderField(
+            //       hintText: 'Add Product + ',
+            //       onChanged: (value) {
+            //         fetchProducts(value);
+            //         setState(() {
+            //           isSearchingProduct = value.isNotEmpty;
+            //         });
+            //       },
+            //     ),
+            //     if (isLoadingProduct)
+            //       CircularProgressIndicator()
+            //     else if (isSearchingProduct && productSearchList.isNotEmpty)
+            //       Container(
+            //         margin: EdgeInsets.symmetric(
+            //           horizontal: CustomPadding.paddingLarge,
+            //         ),
+            //         decoration: BoxDecoration(
+            //           borderRadius: BorderRadius.circular(
+            //             CustomPadding.padding.v,
+            //           ),
+            //           border: Border.all(color: CustomColors.hintGrey),
+            //         ),
+            //         height: 300,
+            //         child: ListView.builder(
+            //           itemCount: productSearchList.length,
+            //           itemBuilder: (context, index) {
+            //             return Column(
+            //               children: [
+            //                 ListTile(
+            //                   onTap: () {},
+            //                   title: Padding(
+            //                     padding: EdgeInsets.only(
+            //                       bottom: CustomPadding.paddingLarge.v,
+            //                     ),
+            //                     child: Text(
+            //                       productSearchList[index].name.toString(),
+            //                     ),
+            //                   ),
+            //                   trailing: Column(
+            //                     children: [
+            //                       Text(
+            //                         ' ₹${productSearchList[index].salePrice.toString()}',
+            //                         style: context.inter50014,
+            //                       ),
+            //                       Text('Price'),
+            //                     ],
+            //                   ),
+            //                 ),
+            //                 Divider(),
+            //               ],
+            //             );
+            //           },
+            //         ),
+            //       ),
+            //     Gap(CustomPadding.paddingLarge.v),
+            //   ],
+            // ),
           ],
         ),
       ),

@@ -8,7 +8,6 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row_copy.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
-import 'package:taproot_admin/widgets/gradient_text.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BasicDetailContainer extends StatefulWidget {

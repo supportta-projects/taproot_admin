@@ -111,13 +111,31 @@ class _RefundDialogState extends State<RefundDialog> {
   Widget _buildHeader() {
     return Column(
       children: [
+        // Gap(CustomPadding.paddingLarge.v),
+        Container(
+          width: double.infinity,
+          height: 60,
+          decoration: BoxDecoration(
+            color: CustomColors.buttonColor1,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(CustomPadding.paddingLarge),
+            ),
+          ),
+          child: Center(
+            child: Text(
+              'Cancel Order & Initiate Refund',
+              style: context.inter60022.copyWith(
+                color: CustomColors.secondaryColor,
+              ),
+            ),
+          ),
+        ),
         Gap(CustomPadding.paddingLarge.v),
-        Text('Cancel Order & Initiate Refund', style: context.inter60022),
-        Gap(CustomPadding.paddingLarge.v),
-        Divider(thickness: 1, color: CustomColors.textColor),
+        // Divider(thickness: 1, color: CustomColors.textColor),
         Gap(CustomPadding.paddingLarge.v),
         Row(
           children: [
+            Gap(CustomPadding.paddingLarge.v),
             Text(
               'You are about to cancel this order. Please choose a refund method below.',
             ),
@@ -132,6 +150,8 @@ class _RefundDialogState extends State<RefundDialog> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Gap(CustomPadding.paddingLarge.v),
+
         Radio<String>(
           value: 'full',
           groupValue: selectedRefundType,
@@ -208,6 +228,8 @@ class _RefundDialogState extends State<RefundDialog> {
       children: [
         Row(
           children: [
+            Gap(CustomPadding.paddingLarge.v),
+
             Text(
               ' Refund to be sent: ₹${selectedRefundType == 'full' ? widget.totalAmount.toStringAsFixed(2) : remainingAmount.toStringAsFixed(2)}',
             ),
@@ -246,7 +268,7 @@ class _RefundDialogState extends State<RefundDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingXL.v),
+        // padding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingXL.v),
         decoration: BoxDecoration(
           color: CustomColors.secondaryColor,
           borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),

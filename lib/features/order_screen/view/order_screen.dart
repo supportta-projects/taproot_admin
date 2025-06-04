@@ -8,6 +8,7 @@ import 'package:taproot_admin/features/order_screen/data/order_model.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/view/create_order.dart';
 import 'package:taproot_admin/features/order_screen/view/order_details_screen.dart';
+import 'package:taproot_admin/features/order_screen/widgets/alert_widget.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
@@ -29,7 +30,7 @@ class _OrderScreenState extends State<OrderScreen> {
   int currentPage = 1;
   int totalPages = 1;
   int totalOrder = 0;
-  final int _rowsPerPage = 10;
+  final int _rowsPerPage = 6;
   OrderDataSource? orderDataSource;
   final _tableKey = GlobalKey<PaginatedDataTableState>();
   final TextEditingController _searchController = TextEditingController();
@@ -52,6 +53,8 @@ class _OrderScreenState extends State<OrderScreen> {
         return 'Confirmed';
       case 6:
         return 'Failed';
+      case 7:
+        return 'Cancelled';
       default:
         return '';
     }
@@ -188,7 +191,7 @@ class _OrderScreenState extends State<OrderScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 7,
+      length: 8,
       child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
@@ -254,7 +257,6 @@ class _OrderScreenState extends State<OrderScreen> {
                               fetchDateFilteredOrder(selectedDate.toString());
 
                               if (selectedDate != null) {
-                                // Handle the selected date here
                                 logInfo('Selected date: $selectedDate');
                               }
                             });
@@ -304,12 +306,13 @@ class _OrderScreenState extends State<OrderScreen> {
                         Tab(text: 'Pending'),
                         Tab(text: 'Confirmed'),
                         Tab(text: 'Failed'),
+                        Tab(text: 'Cancelled'),
                       ],
                     ),
                     SizedBox(
                       height: SizeUtils.height * 0.75,
                       child: TabBarView(
-                        children: List.generate(7, (index) {
+                        children: List.generate(8, (index) {
                           if (isLoading) {
                             return const Center(
                               child: CircularProgressIndicator(),
@@ -326,7 +329,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                 CustomColors.borderGradient.colors.first,
 
                             key: index == 0 ? _tableKey : null,
-                            dataRowMaxHeight: 60,
+                            dataRowMaxHeight: 90,
                             rowsPerPage: _rowsPerPage,
                             initialFirstRowIndex:
                                 (currentPage - 1) * _rowsPerPage,
@@ -380,6 +383,24 @@ class OrderDataSource extends DataTableSource {
     this.innerNavigatorKey,
     this.rowsPerPage,
   );
+  Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'failed':
+        return Color(0xFFF44336);
+      case 'pending':
+        return Color(0xFFFFC107);
+      case 'placed':
+        return Color(0xFFFFA726);
+      case 'confirmed':
+        return Color(0xFF42A5F5);
+      case 'shipped':
+        return const Color(0xFF1E88E5);
+      case 'completed':
+        return Color(0xFF4CAF50);
+      default:
+        return Colors.grey;
+    }
+  }
 
   @override
   DataRow getRow(int index) {
@@ -442,7 +463,12 @@ class OrderDataSource extends DataTableSource {
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text(order.orderStatus.toString())),
+              child: Center(
+                child: Text(
+                  order.orderStatus.toString(),
+                  style: TextStyle(color: getStatusColor(order.orderStatus)),
+                ),
+              ),
             ),
           ),
           DataCell(
@@ -460,15 +486,20 @@ class OrderDataSource extends DataTableSource {
                         final isLoading = loadingOrderIds.contains(order.id);
 
                         return MiniLoadingButton(
-                          gradientColors: CustomColors.borderGradient.colors,
+                          backgroundColor: CustomColors.retryRed,
 
-                          useGradient: true,
                           text: 'Retry',
                           icon: Icons.replay,
                           isLoading: isLoading,
                           onPressed: () async {
+                            if (!await showConfirmationDialog(
+                              context,
+                              'Confirm Retry',
+                              'Are you sure you want to retry this order?\nThis will attempt to process the order again and cannot be undone.',
+                            ))
+                              return;
                             loadingOrderIds.add(order.id);
-                            setState(() {}); // Rebuild with loading=true
+                            setState(() {});
 
                             final result = await OrderService.retryOrder(
                               order.id,
@@ -484,7 +515,7 @@ class OrderDataSource extends DataTableSource {
                             }
 
                             loadingOrderIds.remove(order.id);
-                            setState(() {}); // Rebuild with loading=false
+                            setState(() {});
                           },
                         );
                       },
@@ -496,13 +527,18 @@ class OrderDataSource extends DataTableSource {
                         final isLoading = loadingOrderIds.contains(order.id);
 
                         return MiniLoadingButton(
-                          gradientColors: CustomColors.borderGradient.colors,
+                          backgroundColor: CustomColors.confirmOrange,
 
-                          useGradient: true,
                           text: 'Confirm',
                           icon: Icons.check,
                           isLoading: isLoading,
                           onPressed: () async {
+                            if (!await showConfirmationDialog(
+                              context,
+                              'Confirm Order',
+                              'Are you sure you want to confirm this order?\nOnce confirmed, this step cannot be reversed.',
+                            ))
+                              return;
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -539,6 +575,12 @@ class OrderDataSource extends DataTableSource {
                           icon: Icons.local_shipping,
                           isLoading: isLoading,
                           onPressed: () async {
+                            if (!await showConfirmationDialog(
+                              context,
+                              'Dispatch Order',
+                              'Are you ready to mark this order as dispatched?\nThis action will notify the user and cannot be undone.',
+                            ))
+                              return;
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -569,13 +611,18 @@ class OrderDataSource extends DataTableSource {
                         final isLoading = loadingOrderIds.contains(order.id);
 
                         return MiniLoadingButton(
-                          gradientColors: CustomColors.borderGradient.colors,
+                          backgroundColor: CustomColors.completeGreen,
 
-                          useGradient: true,
                           text: 'Complete',
                           icon: Icons.check_circle,
                           isLoading: isLoading,
                           onPressed: () async {
+                            if (!await showConfirmationDialog(
+                              context,
+                              'Complete Order',
+                              'Are you sure you want to mark this order as completed?\nThis finalizes the order and cannot be changed afterward.',
+                            ))
+                              return;
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -600,7 +647,7 @@ class OrderDataSource extends DataTableSource {
                     );
                   }
 
-                  return const SizedBox(); // fallback
+                  return const SizedBox();
                 },
               ),
             ),

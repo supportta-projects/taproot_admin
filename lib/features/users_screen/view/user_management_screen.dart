@@ -121,6 +121,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(title: const Text('User')),
       body: SingleChildScrollView(
         child: SizedBox(
           child: Column(
@@ -191,6 +192,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
                   showEmptyRows: false,
                   columnSpacing: CustomPadding.paddingXL.v,
+
                   actions: [
                     Text(
                       "Premium Users",

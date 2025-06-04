@@ -63,6 +63,11 @@ class CustomColors {
   static const Color buttonColor2 = Colors.lightGreen;
   static const Color green = Color(0xff27AE60);
   static const Color brown = Color(0xffa2845e);
+  static const Color retryRed=Color(0xFFF44336);
+  static const Color confirmOrange=Color(0xFFFF9800);
+  static const Color dispatchblue=Color(0xFF2196F3);
+  static const Color completeGreen=Color(0xFF4CAF50);
+
   static const Color greenDark = Color(0xff005624);
   static const Color lightGreen = Color(0xffE0EEE8);
   static const Color greylight = Color(0xffF4F5F6);
@@ -74,6 +79,11 @@ class CustomColors {
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
     colors: [Color(0xff0078e0), Color(0xff00b2af)],
+  );
+   static const LinearGradient borderGradientRed = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [Color(0xFFF44336), Color(0xFFF44336)],
   );
 }
 

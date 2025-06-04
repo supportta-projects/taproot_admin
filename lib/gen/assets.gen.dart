@@ -20,8 +20,16 @@ class $AssetsPngGen {
   AssetGenImage get supporttalogin =>
       const AssetGenImage('assets/png/supporttalogin.png');
 
+  /// File path: assets/png/supporttalogo.png
+  AssetGenImage get supporttalogo =>
+      const AssetGenImage('assets/png/supporttalogo.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [backgroundlog, supporttalogin];
+  List<AssetGenImage> get values => [
+    backgroundlog,
+    supporttalogin,
+    supporttalogo,
+  ];
 }
 
 class $AssetsSvgGen {
@@ -30,14 +38,8 @@ class $AssetsSvgGen {
   /// File path: assets/svg/addround.svg
   String get addround => 'assets/svg/addround.svg';
 
-  /// File path: assets/svg/backgroundlogin.svg
-  String get backgroundlogin => 'assets/svg/backgroundlogin.svg';
-
   /// File path: assets/svg/behance.svg
   String get behance => 'assets/svg/behance.svg';
-
-  /// File path: assets/svg/bglogin.svg
-  String get bglogin => 'assets/svg/bglogin.svg';
 
   /// File path: assets/svg/facebook.svg
   String get facebook => 'assets/svg/facebook.svg';
@@ -75,9 +77,7 @@ class $AssetsSvgGen {
   /// List of all assets
   List<String> get values => [
     addround,
-    backgroundlogin,
     behance,
-    bglogin,
     facebook,
     github,
     instagram,

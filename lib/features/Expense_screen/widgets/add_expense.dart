@@ -59,7 +59,7 @@ class _AddExpenseState extends State<AddExpense> {
           int.parse(dateParts[0]), // day
         );
 
-        final response = await ExpenseService.addExpense(
+         await ExpenseService.addExpense(
           category: category ?? '',
           name: _nameController.text,
           amount: parsedAmount,

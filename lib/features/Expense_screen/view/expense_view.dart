@@ -10,7 +10,6 @@ import 'package:taproot_admin/features/Expense_screen/data/expense_model.dart';
 import 'package:taproot_admin/features/Expense_screen/data/expense_service.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/add_expense.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/edit_expense.dart';
-import 'package:taproot_admin/features/Expense_screen/widgets/expense_description_container.dart';
 
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
@@ -114,6 +113,7 @@ class _ExpenseViewState extends State<ExpenseView> {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
+        // appBar: AppBar(title: const Text('Expense')),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -379,8 +379,49 @@ class ExpenseDataSource extends DataTableSource {
         DataCell(Center(child: Text(expense.category))),
         DataCell(Center(child: Text(expense.name))),
         DataCell(
-          ExpenseDescriptionContainer(children: [Text(expense.description)]),
+          InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder:
+                    (BuildContext context) => AlertDialog(
+                      title: const Text("Lead Description"),
+                      content: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: 700,
+                          maxHeight: 300,
+                        ),
+                        child: Scrollbar(
+                          thickness: 2,
+                          radius: const Radius.circular(4),
+                          child: SingleChildScrollView(
+                            child: Text(
+                              expense.description,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: CustomColors.hintGrey,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Close"),
+                        ),
+                      ],
+                    ),
+              );
+            },
+            child: Center(
+              child: const Text("View", style: TextStyle(color: Colors.blue)),
+            ),
+          ),
         ),
+        // DataCell(
+        //   ExpenseDescriptionContainer(children: [Text(expense.description)]),
+        // ),
         DataCell(Center(child: Text('₹${expense.amount.toStringAsFixed(2)}'))),
         DataCell(
           Center(child: Text(DateFormat('MMM dd, yyyy').format(expense.date))),
