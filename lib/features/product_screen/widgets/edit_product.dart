@@ -13,6 +13,7 @@ import 'package:taproot_admin/features/product_screen/widgets/product_id_contain
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 class EditProduct extends StatefulWidget {
   final Product? product;
@@ -272,9 +273,7 @@ class _EditProductState extends State<EditProduct> {
         oldImageKeys.clear();
         tempUploadedKeys.clear();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Product updated successfully')),
-        );
+        SnackbarHelper.showSuccess(context, 'Product updated successfully');
         Navigator.pop(context, true);
       } else {
         throw Exception(response.message);

@@ -13,6 +13,7 @@ import 'package:taproot_admin/features/Expense_screen/widgets/edit_expense.dart'
 
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 class ExpenseView extends StatefulWidget {
   const ExpenseView({super.key});
@@ -64,9 +65,7 @@ class _ExpenseViewState extends State<ExpenseView> {
       logError('Error fetching expenses: $e');
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading expenses: $e')));
+        SnackbarHelper.showError(context, 'Error loading expenses: $e');
       }
     }
   }
@@ -95,9 +94,7 @@ class _ExpenseViewState extends State<ExpenseView> {
       logError('Error fetching expenses: $e');
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error loading expenses: $e')));
+        SnackbarHelper.showError(context, 'Error loading expenses: $e');
       }
     }
   }
