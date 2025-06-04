@@ -90,6 +90,7 @@ dependencies:
   qr_flutter: ^4.1.0
   file_saver: ^0.2.14
   window_size: ^0.1.0
+  one_clock: ^1.0.1
   
 
 dev_dependencies:
@@ -190,6 +191,7 @@ flutter:
         - asset: assets/fonts/Inter_28pt-SemiBoldItalic.ttf
         - asset: assets/fonts/Inter_28pt-Thin.ttf
         - asset: assets/fonts/Inter_28pt-ThinItalic.ttf
+        
 
   #
   # For details regarding fonts from package dependencies,

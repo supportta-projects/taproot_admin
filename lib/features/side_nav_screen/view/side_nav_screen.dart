@@ -50,24 +50,24 @@ class _SideNavScreenState extends State<SideNavScreen> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.account_circle),
-            onSelected: (value) {
-              if (value == 'profile') {
-              } else if (value == 'logout') {}
-            },
-            itemBuilder:
-                (context) => [
-                
-                  const PopupMenuItem(value: 'profile', child: Text('Profile')),
-                  const PopupMenuItem(
-                    value: 'settings',
-                    child: Text('Settings'),
-                  ),
-                  const PopupMenuItem(value: 'logout', child: Text('Logout')),
-                ],
-          ),
+          // IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
+          // PopupMenuButton<String>(
+          //   icon: const Icon(Icons.account_circle),
+          //   onSelected: (value) {
+          //     if (value == 'profile') {
+          //     } else if (value == 'logout') {}
+          //   },
+          //   itemBuilder:
+          //       (context) => [
+
+          //         const PopupMenuItem(value: 'profile', child: Text('Profile')),
+          //         const PopupMenuItem(
+          //           value: 'settings',
+          //           child: Text('Settings'),
+          //         ),
+          //         const PopupMenuItem(value: 'logout', child: Text('Logout')),
+          //       ],
+          // ),
         ],
 
         leadingWidth: SizeUtils.width * 0.1,
