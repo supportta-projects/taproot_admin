@@ -1,9 +1,9 @@
+import 'dart:io';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/services/shared_pref_services.dart';
 import 'package:taproot_admin/services/size_utils.dart';
-
+import 'package:window_size/window_size.dart';
 import '/theme/theme.dart';
-
 import '/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 
@@ -11,9 +11,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SharedPreferencesService.i.initialize();
   await DioHelper().init();
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    final screen = await getCurrentScreen();
 
+    if (screen != null) {
+      final screenFrame = screen.frame;
+      setWindowFrame(screenFrame);
+    }
+  }
   final token = SharedPreferencesService.i.token;
-  final initialRoute = (token == null) ? '/auth' : '/sideDrawerNav';
+  final initialRoute = (token.isEmpty) ? '/auth' : '/sideDrawerNav';
   runApp(MyApp(initialRoute: initialRoute));
 }
 
