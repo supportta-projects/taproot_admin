@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:taproot_admin/features/side_nav_screen/view/side_nav_screen.dart';
-import 'package:taproot_admin/routes/app_routes.dart';
-import 'package:taproot_admin/widgets/common_button.dart';
-import 'package:taproot_admin/widgets/loading_button.dart';
+import 'package:taproot_admin/features/auth_screen/data/auth_service.dart';
+
+import 'package:taproot_admin/features/side_nav_screen/view/side_drawer_nav_screen.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
+import '../widgets/login_card.dart';
 import '/exporter/exporter.dart';
-import '/mixins/name_mixin.dart';
 
 class AuthScreen extends StatefulWidget {
   static const String path = '/auth';
@@ -14,107 +14,86 @@ class AuthScreen extends StatefulWidget {
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> with NameMixin {
+class _AuthScreenState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _obsecureText = true;
   bool isLoading = false;
+
+  final TextEditingController emailController =
+      TextEditingController()..text = 'admin@supporttacards.com';
+  final TextEditingController passwordController =
+      TextEditingController()..text = 'Admin@Supportta765';
+
+  void _toggleObscureText() {
+    setState(() => _obsecureText = !_obsecureText);
+  }
+
+  Future<void> _handleLogin() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    setState(() => isLoading = true);
+
+    try {
+      final success = await AuthService.loginAdmin(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      if (success) {
+        Navigator.of(context).pushReplacementNamed(SideDrawerNavScreen.path);
+      } else {
+        setState(() => isLoading = false);
+        SnackbarHelper.showError(
+          context,
+          'Login failed: Invalid or expired token',
+        );
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      SnackbarHelper.showError(context, 'Login failed: $e');
+    }
+  }
+
+  // Future<void> _handleLogin() async {
+  //   if (!(_formKey.currentState?.validate() ?? false)) return;
+
+  //   setState(() => isLoading = true);
+  //   try {
+  //     await AuthService.loginAdmin(
+  //       email: emailController.text.trim(),
+  //       password: passwordController.text.trim(),
+  //     );
+  //     Navigator.of(context).pushReplacementNamed(SideDrawerNavScreen.path);
+  //   } catch (e) {
+  //     setState(() => isLoading = false);
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(SnackBar(content: Text('Login failed: $e')));
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = SizeUtils.width;
     final screenHeight = SizeUtils.height;
 
     return Scaffold(
-      backgroundColor: Colors.green.shade100,
-      body: Center(
-        child: Container(
-          // padding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingXXL),
-          width: screenWidth * 0.25,
-          height: screenHeight * 0.6,
-          decoration: BoxDecoration(
-            color: CustomColors.secondaryColor,
-            borderRadius: BorderRadius.circular(CustomPadding.padding),
-          ),
-          child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: CustomPadding.paddingXL,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('LOGO'),
-                  nameField(),
-                  CustomGap.gapLarge,
-                  TextFormField(
-                    obscureText: _obsecureText,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(color: CustomColors.textColorGrey),
-                      suffixIcon: IconButton(
-                        icon:
-                            _obsecureText
-                                ? Icon(Icons.visibility_off)
-                                : Icon(Icons.visibility),
-                        onPressed: () {
-                          setState(() {
-                            _obsecureText = !_obsecureText;
-                          });
-                        },
-                      ),
-                    ),
-                    validator:
-                        (value) =>
-                            value == null || value.isEmpty
-                                ? "Password is required"
-                                : null,
+      body: Container(
+        decoration: BoxDecoration(gradient: CustomColors.borderGradient),
+        child: Center(
+          child:
+              isLoading
+                  ? const CircularProgressIndicator()
+                  : LoginCard(
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    formKey: _formKey,
+                    emailController: emailController,
+                    passwordController: passwordController,
+                    obsecureText: _obsecureText,
+                    toggleObscureText: _toggleObscureText,
+                    onLoginPressed: _handleLogin,
                   ),
-                  CustomGap.gapLarge,
-                  LoadingButton(
-                    buttonLoading: false,
-                    text: "Login",
-                    onPressed: () {
-Navigator.of(context).pushNamed(
-                SideNavScreen.path
-                    );  
-
-
-
-
-                    },
-                  ),
-                  // CommonBtn(text: 'Login', onTap: () {
-
-                  // },)
-                  // Common
-
-                  // ElevatedButton(
-                  //   onPressed: () {
-                  //     if (_formKey.currentState!.validate()) {}
-                  //   },
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: CustomColors.primaryColor,
-                  //     padding: EdgeInsets.symmetric(
-                  //       vertical: CustomPadding.paddingLarge,
-                  //       horizontal: CustomPadding.paddingXL,
-                  //     ),
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(
-                  //         CustomPadding.paddingSmall,
-                  //       ),
-                  //     ),
-                  //   ),
-                  //   child: Text(
-                  //     'Login',
-                  //     style: TextStyle(color: CustomColors.secondaryColor),
-                  //   ),
-                  // ),
-                ],
-              ),
-            ),
-          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'dart:io';
+// import 'dart:ui' as BorderType;
 
 // import 'package:constants/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -31,11 +32,14 @@ class UploadImageWidget extends StatelessWidget {
       onTap: onTap,
       borderRadius: borderradius,
       child: DottedBorder(
-        dashPattern: const [10, 5],
-        color: Colors.grey,
-        radius: const Radius.circular(CustomPadding.paddingXL),
-        strokeCap: StrokeCap.butt,
-        borderType: BorderType.RRect,
+        options: RoundedRectDottedBorderOptions(
+          dashPattern: const [10, 5],
+          color: Colors.grey,
+          radius: const Radius.circular(CustomPadding.paddingXL),
+          strokeCap: StrokeCap.butt,
+        ),
+
+        // borderType: BorderType.RRect,
         child: AspectRatio(
           aspectRatio: aspectRatio,
           child: Builder(
@@ -66,7 +70,7 @@ class UploadImageWidget extends StatelessWidget {
                               "${SharedPreferencesService.i.domainUrl}${networkImage!}",
                           fit: BoxFit.cover,
                         );
-                    },
+                      },
                     ),
                   ),
                   Center(
@@ -74,7 +78,7 @@ class UploadImageWidget extends StatelessWidget {
                       padding: const EdgeInsets.all(CustomPadding.paddingXL),
                       decoration: BoxDecoration(
                         borderRadius: borderradius,
-                        color: Colors.black.withOpacity(.1),
+                        color: Colors.black.withValues(alpha: .1),
                       ),
                       child: const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
