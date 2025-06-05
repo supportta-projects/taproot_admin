@@ -10,6 +10,9 @@
 class FontFamily {
   FontFamily._();
 
+  /// Font family: Doto
+  static const String doto = 'Doto';
+
   /// Font family: Inter
   static const String inter = 'Inter';
 }
