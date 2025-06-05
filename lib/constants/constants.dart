@@ -1,4 +1,6 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gap/gap.dart';
 
 const String baseUrl = "http://213.210.36.7:5000";
@@ -87,6 +89,24 @@ class CustomColors {
   );
 }
 
+
+Iterable<LocalizationsDelegate<dynamic>> customLocalizationsDelegates = const [
+              CountryLocalizations.delegate,
+
+              /// CountryLocalizations.getDelegate(enableLocalization: false),  // For no localization only english just declare delegate this way.
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ];
+
+// LocalizationsDelegate<dynamic> listDelegates = 
+//    [
+//     CountryLocalizations.delegate,
+
+//     /// CountryLocalizations.getDelegate(enableLocalization: false),  // For no localization only english just declare delegate this way.
+//     GlobalMaterialLocalizations.delegate,
+//     GlobalWidgetsLocalizations.delegate,
+  
+// ];
 const loremIpsum =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 

@@ -40,6 +40,11 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController countryCodewhatsappController =
+      TextEditingController();
+  final TextEditingController countryCodephoneController =
+      TextEditingController();
+
   final TextEditingController whatsappController = TextEditingController();
   final TextEditingController companyController = TextEditingController();
   final TextEditingController designationController = TextEditingController();
@@ -147,8 +152,11 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
           bannerImage: bannerImage,
           name: nameController.text,
           email: emailController.text,
-          phoneNumber: '+91${phoneController.text}',
-          whatsappNumber: '+91${whatsappController.text}',
+          phoneNumber: countryCodephoneController.text + phoneController.text,
+          // '+91${phoneController.text}',
+          whatsappNumber:
+              countryCodewhatsappController.text + whatsappController.text,
+          // '+91${whatsappController.text}',
         ),
         workInfo: WorkInfo(
           companyLogo: companyLogo,
@@ -312,6 +320,10 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                   Gap(CustomPadding.paddingXL.v),
 
                   AddBasicDetailContainer(
+                    countryCodephoneController: countryCodephoneController,
+                    countryCodewhatsappController:
+                        countryCodewhatsappController,
+
                     namecontroller: nameController,
                     emailcontroller: emailController,
                     phonecontroller: phoneController,

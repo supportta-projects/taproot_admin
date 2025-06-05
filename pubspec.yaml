@@ -62,7 +62,8 @@ dependencies:
   image_cropper: ^9.1.0
   url_launcher: ^6.3.1
   # cloud_firestore: ^5.6.6
-  intl: ^0.20.2
+  # intl: ^0.20.2
+  intl: 0.19.0
   # geolocator: ^13.0.4
   # geocoding: ^3.0.0
   dotted_border: ^3.0.1
@@ -91,6 +92,10 @@ dependencies:
   file_saver: ^0.2.14
   window_size: ^0.1.0
   one_clock: ^1.0.1
+  flutter_localizations_plus: ^0.2.7
+  flutter_local_network_ios: ^0.0.1
+  flutter_localizations:
+    sdk: flutter
   
 
 dev_dependencies:
