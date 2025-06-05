@@ -353,8 +353,9 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 onPressed: () => Navigator.pop(context, false),
               ),
               MiniLoadingButton(
+                useGradient: true,
                 needRow: false,
-                backgroundColor: CustomColors.red,
+                // backgroundColor: CustomColors.red,
                 text: 'Logout',
                 onPressed: () => Navigator.pop(context, true),
               ),
