@@ -164,10 +164,13 @@ class _LeadsDataSource extends DataTableSource {
                 context: context,
                 builder:
                     (BuildContext context) => AlertDialog(
-                      title: const Text("Lead Description"),
+                      title: const Text(
+                        "Lead Description",
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
                       content: ConstrainedBox(
                         constraints: const BoxConstraints(
-                          maxWidth: 700,
+                          maxWidth: 500,
                           maxHeight: 300,
                         ),
                         child: Scrollbar(
