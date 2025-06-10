@@ -333,7 +333,156 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                         ],
                       ),
                     ),
+                    Gap(CustomPadding.paddingLarge),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        MiniLoadingButton(
+                          useGradient: true,
+                          needRow: false,
+                          text: 'Portfolio Payment',
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                String paymentMode = 'razorpay';
+                                String? offlineMethod;
+                                final List<String> offlineOptions = [
+                                  'Card',
+                                  'UPI',
+                                  'NetBanking',
+                                  'Cash on hand',
+                                ];
 
+                                return StatefulBuilder(
+                                  builder:
+                                      (context, setState) => AlertDialog(
+                                        title: Text(
+                                          'Portfolio Payment',
+                                          style: context.inter60016,
+                                        ),
+                                        content: SizedBox(
+                                          width: 450, // Set your desired width
+                                          height:
+                                              300, // Set your desired height
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              RadioListTile<String>(
+                                                title: Text('Razorpay'),
+                                                value: 'razorpay',
+                                                groupValue: paymentMode,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    paymentMode = value!;
+                                                  });
+                                                },
+                                              ),
+                                              RadioListTile<String>(
+                                                title: Text('Offline'),
+                                                value: 'offline',
+                                                groupValue: paymentMode,
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    paymentMode = value!;
+                                                  });
+                                                },
+                                              ),
+                                              if (paymentMode == 'offline') ...[
+                                                Gap(10),
+                                                SizedBox(
+                                                  width: 250.v,
+                                                  child: DropdownButtonFormField<
+                                                    String
+                                                  >(
+                                                    isDense: true,
+                                                    value: offlineMethod,
+                                                    hint: Text(
+                                                      'Select Offline Method',
+                                                    ),
+                                                    items:
+                                                        offlineOptions.map((
+                                                          method,
+                                                        ) {
+                                                          return DropdownMenuItem(
+                                                            value: method,
+                                                            child: Text(method),
+                                                          );
+                                                        }).toList(),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        offlineMethod = value;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed:
+                                                () => Navigator.pop(context),
+                                            child: Text(
+                                              'Cancel',
+                                              style: context.inter50014,
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              if (paymentMode == 'razorpay') {
+                                                Navigator.pop(context);
+                                                // Navigate to Razorpay payment
+                                              } else if (paymentMode ==
+                                                      'offline' &&
+                                                  offlineMethod != null) {
+                                                Navigator.pop(context);
+                                                // Handle offline method
+                                              } else {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Please select an offline payment method',
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Text(
+                                              'Proceed',
+                                              style: context.inter50014
+                                                  .copyWith(
+                                                    color:
+                                                        CustomColors.greenDark,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     MiniLoadingButton(
+                    //       useGradient: true,
+                    //       needRow: false,
+
+                    //       text: 'Portfolio Payment',
+                    //       onPressed: () {},
+                    //     ),
+                    //   ],
+                    // ),
                     Gap(CustomPadding.paddingXXL.v),
                   ],
                 ),
