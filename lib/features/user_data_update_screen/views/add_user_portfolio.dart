@@ -87,6 +87,9 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
     user = widget.user;
     _isPremium = user.isPremium;
 
+    countryCodephoneController.text = '+91';
+    countryCodewhatsappController.text = '+91';
+
     super.initState();
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/widgets/card_row.dart';
+import 'package:taproot_admin/gen/assets.gen.dart';
 
 // ignore: must_be_immutable
 class ProductCard extends StatefulWidget {
@@ -102,11 +103,34 @@ class _ProductCardState extends State<ProductCard> {
                     borderRadius: BorderRadius.circular(
                       CustomPadding.padding.v,
                     ),
+                    clipBehavior: Clip.hardEdge,
                     child: Image.network(
                       '$baseUrlImage/products/${widget.image}',
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          Assets.png.supporttalogo.path,
+                          fit: BoxFit.cover,
+                        );
+                      },
                     ),
                   ),
+
+                  // child: ClipRRect(
+                  //   borderRadius: BorderRadius.circular(
+                  //     CustomPadding.padding.v,
+                  //   ),
+                  //   child: Image.network(
+                  //     '$baseUrlImage/products/${widget.image}',
+                  //     fit: BoxFit.cover,
+                  //     errorBuilder: (context, error, stackTrace) {
+                  //       return Image.asset(Assets.png.backgroundlog.path,
+                  //          // You must have this in your assets
+                  //         fit: BoxFit.cover,
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                 ),
               ],
             ),
@@ -165,7 +189,6 @@ class _ProductCardState extends State<ProductCard> {
                             ),
                           ],
                         )
-
                         //  Row(
                         //   children: [
                         //     Chip(
