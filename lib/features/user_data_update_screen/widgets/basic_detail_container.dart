@@ -158,17 +158,20 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
                   builder:
                       (context) => AlertDialog(
                         title: Text('Download'),
-                        content: RepaintBoundary(
-                          key: qrKey,
-                          child: PrettyQrView.data(
-                            data:
-                                'https://app.supporttacards.com/portfolio/${user.id}',
-                            decoration: PrettyQrDecoration(
-                              image: PrettyQrDecorationImage(
-                                fit: BoxFit.contain,
-                                image: AssetImage(Assets.png.supportta4.path),
+                        content: SizedBox(
+                          width: 300,
+                          child: RepaintBoundary(
+                            key: qrKey,
+                            child: PrettyQrView.data(
+                              data:
+                                  'https://app.supporttacards.com/portfolio/${user.id}',
+                              decoration: PrettyQrDecoration(
+                                image: PrettyQrDecorationImage(
+                                  fit: BoxFit.contain,
+                                  image: AssetImage(Assets.png.supportta4.path),
+                                ),
+                                quietZone: PrettyQrQuietZone.zero,
                               ),
-                              quietZone: PrettyQrQuietZone.zero,
                             ),
                           ),
                         ),
