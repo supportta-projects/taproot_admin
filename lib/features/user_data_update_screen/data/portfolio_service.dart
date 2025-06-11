@@ -7,6 +7,7 @@ import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/product_porfolio_model.dart';
 
 class PortfolioService with ErrorExceptionHandler {
   static Future<PortfolioDataModel?> getPortfolio({
@@ -299,7 +300,7 @@ class PortfolioService with ErrorExceptionHandler {
     }
   }
 
-static Future<bool> isUserPremium({required String userId}) async {
+  static Future<bool> isUserPremium({required String userId}) async {
     try {
       final response = await DioHelper().patch(
         '/user/change-premium-status/$userId',
@@ -316,6 +317,115 @@ static Future<bool> isUserPremium({required String userId}) async {
       rethrow;
     }
   }
+
+  static Future<bool> isUserPaidPortfolio({required String userId}) async {
+    try {
+      final response = await DioHelper().get(
+        '/order/portfolioorders/$userId',
+        type: ApiType.baseUrl,
+      );
+
+      if (response.data != null) {
+        return response.data['result'] == true;
+      }
+      return false;
+    } catch (e) {
+      logError('Paid portfolio check failed: $e');
+      return false; // fallback to unpaid if error occurs
+    }
+  }
+
+  static Future<List<PortfolioProductModel>> getPortfolioProducts() async {
+    try {
+      final response = await DioHelper().get(
+        '/product',
+        type: ApiType.baseUrl,
+        queryParameters: {'type': 'Portfolio'},
+      );
+
+      if (response.data != null && response.data['results'] != null) {
+        final List results = response.data['results'];
+        return results
+            .map((json) => PortfolioProductModel.fromJson(json))
+            .toList();
+      } else {
+        return [];
+      }
+    } catch (e) {
+      logError('Error fetching portfolio products: $e');
+      rethrow;
+    }
+  }
+  static Future createPortfolioOrder({
+    required String userId,
+    required String productId,
+    required String paymentServiceProvider,
+    String? paymentMethod,
+    String? referenceId,
+  }) async {
+    try {
+      final data = {
+        "paymentServiceProvider": paymentServiceProvider.toUpperCase(),
+        "paymentMethod": paymentMethod?.toUpperCase(),
+        if (referenceId != null && referenceId.isNotEmpty)
+          "referenceId": referenceId,
+      };
+      // final data = {
+      //   "paymentServiceProvider": paymentServiceProvider.toUpperCase(),
+      //   if (paymentServiceProvider.toUpperCase() == 'OFFLINE' &&
+      //       paymentMethod != null)
+      //     "paymentMethod": paymentMethod.toUpperCase(),
+      //   if (paymentServiceProvider.toUpperCase() == 'OFFLINE' &&
+      //       paymentMethod?.toUpperCase() != 'CASH' &&
+      //       referenceId != null)
+      //     "referenceId": referenceId,
+      // };
+
+      logInfo("Sending data => $data");
+
+      final response = await DioHelper().post(
+        '/order/portfolio-order/$userId/$productId',
+        data: data,
+        type: ApiType.baseUrl,
+      );
+
+      return response;
+    } catch (e) {
+      logInfo("Error in createPortfolioOrder: $e");
+      rethrow;
+    }
+  }
+
+
+  // static Future createPortfolioOrder({
+  //   required String userId,
+  //   required String productId,
+  //   required String paymentServiceProvider,
+  //   String? paymentMethod,
+  //   String? referenceId,
+  // }) async {
+  //   try {
+  //     final data = {
+  //       "paymentServiceProvider": paymentServiceProvider,
+  //       if (paymentServiceProvider == 'Offline' && paymentMethod != null)
+  //         "paymentMethod": paymentMethod,
+  //       if (paymentServiceProvider == 'Offline' &&
+  //           paymentMethod != 'Cash on hand' &&
+  //           referenceId != null)
+  //         "referenceId": referenceId,
+  //     };
+
+  //     final response = await DioHelper().post(
+  //       '/order/portfolio-order/$userId/$productId',
+  //       data: data,
+  //       type: ApiType.baseUrl,
+  //     );
+
+  //     return response;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 }
 
 

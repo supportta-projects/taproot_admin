@@ -4,11 +4,13 @@ import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/product_porfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/edit_user_portfolio.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/portfolio_payment_widget.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
@@ -30,13 +32,20 @@ class UserDataUpdateScreen extends StatefulWidget {
 }
 
 class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
+  final TextEditingController refController = TextEditingController();
+
   PortfolioDataModel? portfolio;
   late final User user;
   bool isLoading = false;
+  bool? isPortfolioPaid;
+  // late List<PortfolioProductModel> portfolioProductModel;
+  List<PortfolioProductModel>? portfolioProductModel;
+
   @override
   void initState() {
     user = widget.user;
     fetchPortfolio();
+    fetchPortfolioProducts();
 
     super.initState();
   }
@@ -47,6 +56,16 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
       userEdit = !userEdit;
     });
   }
+Future<void> fetchPortfolioProducts() async {
+    final result = await PortfolioService.getPortfolioProducts();
+    setState(() {
+      portfolioProductModel = result;
+    });
+  }
+
+  // Future<void> fetchPortfolioProducts() async {
+  //   portfolioProductModel = await PortfolioService.getPortfolioProducts();
+  // }
 
   Future fetchPortfolio() async {
     setState(() {
@@ -54,10 +73,13 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     });
     try {
       final result = await PortfolioService.getPortfolio(userid: user.id);
-
+      final paidStatus = await PortfolioService.isUserPaidPortfolio(
+        userId: user.id,
+      );
       if (result != null) {
         setState(() {
           portfolio = result;
+          isPortfolioPaid = paidStatus;
           isLoading = false;
         });
       }
@@ -108,15 +130,6 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               : SingleChildScrollView(
                 child: Column(
                   children: [
-                    // InkWell(
-                    //   onTap: () {
-                    //     Navigator.pop(context);
-                    //   },
-
-                    //   child: Text(
-                    //     'Click here to go back to the previous screen',
-                    //   ),
-                    // ),
                     Gap(CustomPadding.paddingLarge),
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -334,155 +347,11 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingLarge),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        MiniLoadingButton(
-                          useGradient: true,
-                          needRow: false,
-                          text: 'Portfolio Payment',
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                String paymentMode = 'razorpay';
-                                String? offlineMethod;
-                                final List<String> offlineOptions = [
-                                  'Card',
-                                  'UPI',
-                                  'NetBanking',
-                                  'Cash on hand',
-                                ];
+                    // if (isPortfolioPaid == false)
+                    if (isPortfolioPaid == false &&
+                        portfolioProductModel != null)
+                      PorfolioPaymentWidget(portfolioProductModel: portfolioProductModel!, user: user),
 
-                                return StatefulBuilder(
-                                  builder:
-                                      (context, setState) => AlertDialog(
-                                        title: Text(
-                                          'Portfolio Payment',
-                                          style: context.inter60016,
-                                        ),
-                                        content: SizedBox(
-                                          width: 450, // Set your desired width
-                                          height:
-                                              300, // Set your desired height
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              RadioListTile<String>(
-                                                title: Text('Razorpay'),
-                                                value: 'razorpay',
-                                                groupValue: paymentMode,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    paymentMode = value!;
-                                                  });
-                                                },
-                                              ),
-                                              RadioListTile<String>(
-                                                title: Text('Offline'),
-                                                value: 'offline',
-                                                groupValue: paymentMode,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    paymentMode = value!;
-                                                  });
-                                                },
-                                              ),
-                                              if (paymentMode == 'offline') ...[
-                                                Gap(10),
-                                                SizedBox(
-                                                  width: 250.v,
-                                                  child: DropdownButtonFormField<
-                                                    String
-                                                  >(
-                                                    isDense: true,
-                                                    value: offlineMethod,
-                                                    hint: Text(
-                                                      'Select Offline Method',
-                                                    ),
-                                                    items:
-                                                        offlineOptions.map((
-                                                          method,
-                                                        ) {
-                                                          return DropdownMenuItem(
-                                                            value: method,
-                                                            child: Text(method),
-                                                          );
-                                                        }).toList(),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        offlineMethod = value;
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            ],
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed:
-                                                () => Navigator.pop(context),
-                                            child: Text(
-                                              'Cancel',
-                                              style: context.inter50014,
-                                            ),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              if (paymentMode == 'razorpay') {
-                                                Navigator.pop(context);
-                                                // Navigate to Razorpay payment
-                                              } else if (paymentMode ==
-                                                      'offline' &&
-                                                  offlineMethod != null) {
-                                                Navigator.pop(context);
-                                                // Handle offline method
-                                              } else {
-                                                ScaffoldMessenger.of(
-                                                  context,
-                                                ).showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                      'Please select an offline payment method',
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                            child: Text(
-                                              'Proceed',
-                                              style: context.inter50014
-                                                  .copyWith(
-                                                    color:
-                                                        CustomColors.greenDark,
-                                                  ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     MiniLoadingButton(
-                    //       useGradient: true,
-                    //       needRow: false,
-
-                    //       text: 'Portfolio Payment',
-                    //       onPressed: () {},
-                    //     ),
-                    //   ],
-                    // ),
                     Gap(CustomPadding.paddingXXL.v),
                   ],
                 ),
@@ -490,6 +359,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     );
   }
 }
+
 
 class ServiceCardWidget extends StatelessWidget {
   final PortfolioDataModel? portfolio;
@@ -524,10 +394,7 @@ class ServiceCardWidget extends StatelessWidget {
         padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
         width: 350,
         height: 400,
-        // decoration: BoxDecoration(
-        //   borderRadius: BorderRadius.circular(CustomPadding.padding.v),
-        //   border: Border.all(color: CustomColors.hintGrey),
-        // ),
+
         child: Stack(
           children: [
             Column(

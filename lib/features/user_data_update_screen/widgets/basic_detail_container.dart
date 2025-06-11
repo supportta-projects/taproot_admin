@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
@@ -8,6 +10,8 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row_copy.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
+import 'package:taproot_admin/gen/assets.gen.dart';
+import 'package:taproot_admin/services/download_qr.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BasicDetailContainer extends StatefulWidget {
@@ -39,6 +43,7 @@ class BasicDetailContainer extends StatefulWidget {
 }
 
 class _BasicDetailContainerState extends State<BasicDetailContainer> {
+  final GlobalKey qrKey = GlobalKey();
   late User user;
 
   @override
@@ -141,46 +146,56 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
                 }
               },
             ),
+        Row(
+          children: [
+            Gap(CustomPadding.paddingLarge),
+            Text('QR Code'),
+            Spacer(),
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context, // Must be valid Material context
+                  builder:
+                      (context) => AlertDialog(
+                        title: Text('Download'),
+                        content: RepaintBoundary(
+                          key: qrKey,
+                          child: PrettyQrView.data(
+                            data:
+                                'https://app.supporttacards.com/portfolio/${user.id}',
+                            decoration: PrettyQrDecoration(
+                              image: PrettyQrDecorationImage(
+                                fit: BoxFit.contain,
+                                image: AssetImage(Assets.png.supportta4.path),
+                              ),
+                              quietZone: PrettyQrQuietZone.zero,
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () async {
+                              await downloadQrCode(qrKey, context);
+                            },
+                            child: Text('Download'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text('Close'),
+                          ),
+                        ],
+                      ),
+                );
+              },
+              child: Padding(
+                padding: EdgeInsets.all(12),
+                child: Text('Download'),
+              ),
+            ),
 
-        // DetailRowCopy(
-        //   label: 'Portfolio Link',
-        //   value: 'https://app.supporttacards.com/portfolio/\n${user.id}',
-        //   icon: Icons.copy,
-        //   onTap: () async {
-        //     final url =
-        //         'https://app.supporttacards.com/portfolio/${user.id}';
-        //     if (await canLaunch(url)) {
-        //       await launch(url);
-        //     } else {
-        //       throw 'Could not launch $url';
-        //     }
-        //   },
-        // ),
-        // widget.isEdit ? SizedBox() : Gap(CustomPadding.padding.v),
-        // widget.isEdit
-        //     ? SizedBox()
-        //     : Padding(
-        //       padding: EdgeInsets.symmetric(
-        //         horizontal: CustomPadding.paddingLarge.v,
-        //       ),
-        //       child: Row(
-        //         children: [
-        //           Text(
-        //             'QR Code',
-        //             style: context.inter50014.copyWith(fontSize: 14.fSize),
-        //           ),
-        //           Spacer(),
-        //           GradientText(
-        //             'Download',
-        //             gradient: CustomColors.borderGradient,
-        //             style: context.inter50014.copyWith(
-        //               decoration: TextDecoration.underline,
-        //               decorationColor: CustomColors.greenDark,
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
+            Gap(CustomPadding.paddingLarge),
+          ],
+        ),
       ],
     );
   }

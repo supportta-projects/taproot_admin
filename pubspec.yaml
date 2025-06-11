@@ -96,6 +96,7 @@ dependencies:
   flutter_local_network_ios: ^0.0.1
   flutter_localizations:
     sdk: flutter
+  pretty_qr_code: ^3.4.0
   
 
 dev_dependencies:
