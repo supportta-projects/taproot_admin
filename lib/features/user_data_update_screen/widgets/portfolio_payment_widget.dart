@@ -4,6 +4,7 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/product_porfolio_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
+import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class PorfolioPaymentWidget extends StatelessWidget {
@@ -33,17 +34,44 @@ class PorfolioPaymentWidget extends StatelessWidget {
 
                 return StatefulBuilder(
                   builder:
-                      (context, setState) => AlertDialog(
-                        backgroundColor: CustomColors.secondaryColor,
-                        title: Text(
-                          'Choose Portfolio Theme',
-                          style: context.inter60016,
-                        ),
-                        content: SizedBox(
-                          width: 600,
-                          height: 330,
+                      (context, setState) => Dialog(
+                        // backgroundColor: CustomColors.secondaryColor,
+                        // title: Text(
+                        //   'Choose Portfolio Theme',
+                        //   style: context.inter60016,
+                        // ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: CustomColors.secondaryColor,
+                            borderRadius: BorderRadius.circular(
+                              CustomPadding.paddingLarge.v,
+                            ),
+                          ),
+                          width: 600.h,
+                          height: 350.h,
                           child: Column(
                             children: [
+                              Container(
+                                width: double.infinity,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: CustomColors.buttonColor1,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(
+                                      CustomPadding.paddingLarge,
+                                    ),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Choose Portfolio Theme',
+                                    style: context.inter60020.copyWith(
+                                      color: CustomColors.secondaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Gap(CustomPadding.paddingLarge.v),
                               SizedBox(
                                 height: 260,
                                 child: ListView.separated(
@@ -130,250 +158,400 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 8),
+                              Spacer(),
                               if (selectedIndex != null)
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      void showPaymentOptionsDialog(
-                                        BuildContext context,
-                                        PortfolioProductModel product,
-                                      ) {
-                                        String paymentMode = 'razorpay';
-                                        String? offlineMethod;
-                                        String? referenceId;
-                                        final List<String> offlineOptions = [
-                                          'Card',
-                                          'UPI',
-                                          'NetBanking',
-                                          'Cash',
-                                        ];
+                                Row(
+                                  children: [
+                                    Spacer(),
+                                    MiniLoadingButton(
+                                      needRow: false,
+                                      useGradient: true,
+                                      text: 'Continue',
+                                      onPressed: () {
+                                        void showPaymentOptionsDialog(
+                                          BuildContext context,
+                                          PortfolioProductModel product,
+                                        ) {
+                                          String paymentMode = 'razorpay';
+                                          String? offlineMethod;
+                                          String? referenceId;
+                                          final List<String> offlineOptions = [
+                                            'Card',
+                                            'UPI',
+                                            'NetBanking',
+                                            'Cash',
+                                          ];
 
-                                        showDialog(
-                                          context: context,
-                                          builder:
-                                              (context) => StatefulBuilder(
-                                                builder:
-                                                    (
-                                                      context,
-                                                      setState,
-                                                    ) => AlertDialog(
-                                                      title: Text(
-                                                        'Portfolio Payment - ${product.name}',
-                                                      ),
-                                                      content: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          Text(
-                                                            'Selected Product: ₹${product.salePrice}',
-                                                          ),
-                                                          Gap(16),
-                                                          RadioListTile(
-                                                            title: Text(
-                                                              'Razorpay',
-                                                            ),
-                                                            value: 'RAZORPAY',
-                                                            groupValue:
-                                                                paymentMode,
-                                                            onChanged:
-                                                                (
-                                                                  value,
-                                                                ) => setState(
-                                                                  () =>
-                                                                      paymentMode =
-                                                                          value!,
+                                          showDialog(
+                                            context: context,
+                                            builder:
+                                                (context) => StatefulBuilder(
+                                                  builder:
+                                                      (
+                                                        context,
+                                                        setState,
+                                                      ) => Dialog(
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                            color:
+                                                                CustomColors
+                                                                    .secondaryColor,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  CustomPadding
+                                                                      .paddingLarge
+                                                                      .v,
                                                                 ),
                                                           ),
-                                                          RadioListTile(
-                                                            title: Text(
-                                                              'Offline',
-                                                            ),
-                                                            value: 'OFFLINE',
-                                                            groupValue:
-                                                                paymentMode,
-                                                            onChanged:
-                                                                (
-                                                                  value,
-                                                                ) => setState(
-                                                                  () =>
-                                                                      paymentMode =
-                                                                          value!,
+                                                          width: 600.h,
+                                                          height: 300.h,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                width:
+                                                                    double
+                                                                        .infinity,
+                                                                height: 60,
+                                                                decoration: BoxDecoration(
+                                                                  color:
+                                                                      CustomColors
+                                                                          .buttonColor1,
+                                                                  borderRadius: BorderRadius.vertical(
+                                                                    top: Radius.circular(
+                                                                      CustomPadding
+                                                                          .paddingLarge,
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                          ),
-                                                          if (paymentMode ==
-                                                              'OFFLINE') ...[
-                                                            SizedBox(
-                                                              width: 300,
-                                                              child: DropdownButtonFormField<
-                                                                String
-                                                              >(
+                                                                child: Row(
+                                                                  children: [
+                                                                    Spacer(),
+
+                                                                    Center(
+                                                                      child: Text(
+                                                                        'Portfolio Payment - ${product.name}',
+                                                                        style: context.inter60022.copyWith(
+                                                                          color:
+                                                                              CustomColors.secondaryColor,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    Spacer(),
+                                                                    IconButton(
+                                                                      onPressed: () {
+                                                                        Navigator.pop(
+                                                                          context,
+                                                                        );
+                                                                      },
+                                                                      icon: Icon(
+                                                                        Icons
+                                                                            .close,
+                                                                        color:
+                                                                            CustomColors.secondaryColor,
+                                                                      ),
+                                                                    ),
+                                                                    Gap(
+                                                                      CustomPadding
+                                                                          .paddingLarge
+                                                                          .h,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              Gap(
+                                                                CustomPadding
+                                                                    .paddingLarge
+                                                                    .v,
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets.only(
+                                                                  left:
+                                                                      CustomPadding
+                                                                          .paddingLarge,
+                                                                ),
+                                                                child: Text(
+                                                                  'Selected Product: ₹${product.salePrice}',
+                                                                ),
+                                                              ),
+                                                              Gap(
+                                                                CustomPadding
+                                                                    .padding
+                                                                    .v,
+                                                              ),
+                                                              RadioListTile(
+                                                                title: Text(
+                                                                  'Razorpay',
+                                                                ),
                                                                 value:
-                                                                    offlineMethod,
-                                                                hint: Text(
-                                                                  'Select Payment Method',
-                                                                ),
-                                                                items:
-                                                                    offlineOptions
-                                                                        .map(
-                                                                          (
-                                                                            e,
-                                                                          ) => DropdownMenuItem(
-                                                                            value:
-                                                                                e,
-                                                                            child: Text(
-                                                                              e,
-                                                                            ),
-                                                                          ),
-                                                                        )
-                                                                        .toList(),
+                                                                    'RAZORPAY',
+                                                                groupValue:
+                                                                    paymentMode,
                                                                 onChanged:
                                                                     (
                                                                       value,
                                                                     ) => setState(
                                                                       () =>
-                                                                          offlineMethod =
-                                                                              value,
+                                                                          paymentMode =
+                                                                              value!,
                                                                     ),
                                                               ),
-                                                            ),
-                                                            Gap(
-                                                              CustomPadding
-                                                                  .paddingLarge
-                                                                  .v,
-                                                            ),
-                                                            if (offlineMethod !=
-                                                                null)
-                                                              SizedBox(
-                                                                width: 300,
-                                                                child: TextFormField(
-                                                                  decoration:
-                                                                      InputDecoration(
-                                                                        labelText:
-                                                                            'Reference ID',
-                                                                      ),
-                                                                  onChanged:
-                                                                      (value) =>
-                                                                          referenceId =
-                                                                              value,
+                                                              RadioListTile(
+                                                                title: Text(
+                                                                  'Offline',
                                                                 ),
-                                                              ),
-                                                          ],
-                                                        ],
-                                                      ),
-                                                      actions: [
-                                                        TextButton(
-                                                          onPressed: () async {
-                                                            if (paymentMode ==
-                                                                'RAZORPAY') {
-                                                              await PortfolioService.createPortfolioOrder(
-                                                                userId: user.id,
-                                                                productId:
-                                                                    product.id,
-                                                                paymentServiceProvider:
-                                                                    'RAZORPAY',
-                                                                paymentMethod:
-                                                                    'RAZORPAY',
-                                                              );
-                                                              Navigator.pop(
-                                                                context,
-                                                              );
-                                                              ScaffoldMessenger.of(
-                                                                context,
-                                                              ).showSnackBar(
-                                                                SnackBar(
-                                                                  content: Text(
-                                                                    'Order created via Razorpay',
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            } else if (offlineMethod !=
-                                                                null) {
-                                                              final method =
-                                                                  offlineMethod!
-                                                                      .toUpperCase();
-                                                              final ref =
-                                                                  referenceId
-                                                                      ?.trim();
-
-                                                              if (method !=
-                                                                      'CASH' &&
-                                                                  (ref == null ||
-                                                                      ref.isEmpty)) {
-                                                                ScaffoldMessenger.of(
-                                                                  context,
-                                                                ).showSnackBar(
-                                                                  SnackBar(
-                                                                    content: Text(
-                                                                      'Please enter Reference ID',
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                                return;
-                                                              }
-
-                                                              await PortfolioService.createPortfolioOrder(
-                                                                userId: user.id,
-                                                                productId:
-                                                                    product.id,
-                                                                paymentServiceProvider:
+                                                                value:
                                                                     'OFFLINE',
-                                                                paymentMethod:
-                                                                    method,
-                                                                referenceId:
-                                                                    ref,
-                                                              );
-
-                                                              Navigator.pop(
-                                                                context,
-                                                              );
-                                                              ScaffoldMessenger.of(
-                                                                context,
-                                                              ).showSnackBar(
-                                                                SnackBar(
-                                                                  content: Text(
-                                                                    'Portfolio Purchased via $method',
+                                                                groupValue:
+                                                                    paymentMode,
+                                                                onChanged:
+                                                                    (
+                                                                      value,
+                                                                    ) => setState(
+                                                                      () =>
+                                                                          paymentMode =
+                                                                              value!,
+                                                                    ),
+                                                              ),
+                                                              if (paymentMode ==
+                                                                  'OFFLINE') ...[
+                                                                Padding(
+                                                                  padding: const EdgeInsets.only(
+                                                                    left:
+                                                                        CustomPadding
+                                                                            .paddingXL,
+                                                                  ),
+                                                                  child: SizedBox(
+                                                                    width: 300,
+                                                                    child: DropdownButtonFormField<
+                                                                      String
+                                                                    >(
+                                                                      value:
+                                                                          offlineMethod,
+                                                                      hint: Text(
+                                                                        'Select Payment Method',
+                                                                      ),
+                                                                      items:
+                                                                          offlineOptions
+                                                                              .map(
+                                                                                (
+                                                                                  e,
+                                                                                ) => DropdownMenuItem(
+                                                                                  value:
+                                                                                      e,
+                                                                                  child: Text(
+                                                                                    e,
+                                                                                  ),
+                                                                                ),
+                                                                              )
+                                                                              .toList(),
+                                                                      onChanged:
+                                                                          (
+                                                                            value,
+                                                                          ) => setState(
+                                                                            () =>
+                                                                                offlineMethod =
+                                                                                    value,
+                                                                          ),
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              );
-                                                            } else {
-                                                              ScaffoldMessenger.of(
-                                                                context,
-                                                              ).showSnackBar(
-                                                                SnackBar(
-                                                                  content: Text(
-                                                                    'Please select an offline payment method',
-                                                                  ),
+                                                                Gap(
+                                                                  CustomPadding
+                                                                      .paddingLarge
+                                                                      .v,
                                                                 ),
-                                                              );
-                                                            }
-                                                          },
+                                                                if (offlineMethod !=
+                                                                    null)
+                                                                  Padding(
+                                                                    padding: const EdgeInsets.only(
+                                                                      left:
+                                                                          CustomPadding
+                                                                              .paddingXL,
+                                                                    ),
+                                                                    child: SizedBox(
+                                                                      width:
+                                                                          300,
+                                                                      child: TextFormField(
+                                                                        decoration: InputDecoration(
+                                                                          labelText:
+                                                                              'Reference ID',
+                                                                        ),
+                                                                        onChanged:
+                                                                            (
+                                                                              value,
+                                                                            ) =>
+                                                                                referenceId =
+                                                                                    value,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                              ],
+                                                              Spacer(),
+                                                              Row(
+                                                                children: [
+                                                                  Spacer(),
+                                                                  MiniLoadingButton(
+                                                                    needRow:
+                                                                        false,
+                                                                    useGradient:
+                                                                        true,
+                                                                    text:
+                                                                        'Proceed',
+                                                                    onPressed: () async {
+                                                                      if (paymentMode ==
+                                                                          'RAZORPAY') {
+                                                                        await PortfolioService.createPortfolioOrder(
+                                                                          userId:
+                                                                              user.id,
+                                                                          productId:
+                                                                              product.id,
+                                                                          paymentServiceProvider:
+                                                                              'RAZORPAY',
+                                                                          paymentMethod:
+                                                                              'RAZORPAY',
+                                                                        );
+                                                                        Navigator.pop(
+                                                                          context,
+                                                                        );
+                                                                        ScaffoldMessenger.of(
+                                                                          context,
+                                                                        ).showSnackBar(
+                                                                          SnackBar(
+                                                                            content: Text(
+                                                                              'Order created via Razorpay',
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      } else if (offlineMethod !=
+                                                                          null) {
+                                                                        final method =
+                                                                            offlineMethod!.toUpperCase();
+                                                                        final ref =
+                                                                            referenceId?.trim();
 
-                                                          child: Text(
-                                                            'Proceed',
+                                                                        if (method !=
+                                                                                'CASH' &&
+                                                                            (ref ==
+                                                                                    null ||
+                                                                                ref.isEmpty)) {
+                                                                          ScaffoldMessenger.of(
+                                                                            context,
+                                                                          ).showSnackBar(
+                                                                            SnackBar(
+                                                                              content: Text(
+                                                                                'Please enter Reference ID',
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                          return;
+                                                                        }
+
+                                                                        await PortfolioService.createPortfolioOrder(
+                                                                          userId:
+                                                                              user.id,
+                                                                          productId:
+                                                                              product.id,
+                                                                          paymentServiceProvider:
+                                                                              'OFFLINE',
+                                                                          paymentMethod:
+                                                                              method,
+                                                                          referenceId:
+                                                                              ref,
+                                                                        );
+
+                                                                        Navigator.pop(
+                                                                          context,
+                                                                        );
+                                                                        ScaffoldMessenger.of(
+                                                                          context,
+                                                                        ).showSnackBar(
+                                                                          SnackBar(
+                                                                            content: Text(
+                                                                              'Portfolio Purchased via $method',
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      } else {
+                                                                        ScaffoldMessenger.of(
+                                                                          context,
+                                                                        ).showSnackBar(
+                                                                          SnackBar(
+                                                                            content: Text(
+                                                                              'Please select an offline payment method',
+                                                                            ),
+                                                                          ),
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                  ),
+                                                                  Gap(
+                                                                    CustomPadding
+                                                                        .paddingLarge
+                                                                        .h,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Gap(
+                                                                CustomPadding
+                                                                    .paddingLarge
+                                                                    .v,
+                                                              ),
+                                                              //  TextButton(
+
+                                                              //   child: Text(
+                                                              //     'Proceed',
+                                                              //   ),
+                                                              // ),
+                                                            ],
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
-                                              ),
-                                        );
-                                      }
+                                                        // title: Text(
+                                                        //   'Portfolio Payment - ${product.name}',
+                                                        // ),
+                                                        // content: Column(
+                                                        //   crossAxisAlignment:
+                                                        //       CrossAxisAlignment
+                                                        //           .start,
+                                                        //   mainAxisSize:
+                                                        //       MainAxisSize.min,
+                                                        //   children: [
 
-                                      Navigator.pop(context);
-                                      showPaymentOptionsDialog(
-                                        context,
-                                        portfolioProductModel[selectedIndex!],
-                                      );
-                                    },
-                                    child: Text('Continue to Payment'),
-                                  ),
+                                                        //   ],
+                                                        // ),
+                                                        // actions: [
+
+                                                        // ],
+                                                      ),
+                                                ),
+                                          );
+                                        }
+
+                                        Navigator.pop(context);
+                                        showPaymentOptionsDialog(
+                                          context,
+                                          portfolioProductModel[selectedIndex!],
+                                        );
+                                      },
+                                    ),
+                                    Gap(CustomPadding.paddingLarge),
+                                  ],
                                 ),
+                              Gap(CustomPadding.paddingLarge.v),
                             ],
                           ),
                         ),
+                        // content: SizedBox(
+                        //   width: 600,
+                        //   height: 330,
+                        //   child: Column(
+                        //     children: [
+
+                        //     ],
+                        //   ),
+                        // ),
                       ),
                 );
               },

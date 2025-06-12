@@ -25,6 +25,188 @@ import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 typedef RefreshOrdersCallback = Future<void> Function();
+Future<Map<String, dynamic>?> showPaymentMethodDialog(
+  BuildContext context,
+) async {
+  String selectedMethod = 'Razorpay';
+  String selectedOfflineOption = 'Card';
+  final offlineOptions = ['Card', 'UPI', 'NetBanking', 'Cash'];
+  final TextEditingController refController = TextEditingController();
+
+  return showDialog<Map<String, dynamic>>(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return Dialog(
+            child: Container(
+              decoration: BoxDecoration(
+                color: CustomColors.secondaryColor,
+                borderRadius: BorderRadius.circular(
+                  CustomPadding.paddingLarge.v,
+                ),
+              ),
+              width: 600.h,
+              height: 300.h,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: CustomColors.buttonColor1,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(CustomPadding.paddingLarge),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Select Payment Method',
+                        style: context.inter60022.copyWith(
+                          color: CustomColors.secondaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Gap(CustomPadding.paddingLarge.v),
+
+                  RadioListTile(
+                    value: 'Razorpay',
+                    groupValue: selectedMethod,
+                    title: Text('Razorpay'),
+                    onChanged:
+                        (value) => setState(() => selectedMethod = value!),
+                  ),
+                  RadioListTile(
+                    value: 'Offline',
+                    groupValue: selectedMethod,
+                    title: Text('Offline'),
+                    onChanged:
+                        (value) => setState(() => selectedMethod = value!),
+                  ),
+                  Gap(CustomPadding.paddingLarge.v),
+                  if (selectedMethod == 'Offline') ...[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: CustomPadding.paddingXL,
+                      ),
+                      child: SizedBox(
+                        width: 250.h,
+                        child: DropdownButtonFormField<String>(
+                          value: selectedOfflineOption,
+                          items:
+                              offlineOptions
+                                  .map(
+                                    (method) => DropdownMenuItem(
+                                      value: method,
+                                      child: Text(method),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged:
+                              (value) => setState(
+                                () => selectedOfflineOption = value!,
+                              ),
+                          decoration: InputDecoration(
+                            labelText: 'Offline Method',
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Gap(10),
+
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: CustomPadding.paddingLarge,
+                      ),
+                      child: SizedBox(
+                        width: 275.h,
+                        child: TextFormContainer(
+                          labelText: 'Reference ID (optional)',
+                          controller: refController,
+                        ),
+                      ),
+                    ),
+                    // TextFormField(
+                    //   controller: refController,
+                    //   decoration: InputDecoration(
+                    //     labelText: 'Reference ID (optional)',
+                    //   ),
+                    // ),
+                  ],
+                  Spacer(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MiniGradientBorderButton(
+                        text: 'Cancel',
+                        onPressed: () => Navigator.of(context).pop(null),
+                      ),
+                      Gap(CustomPadding.paddingLarge.v),
+                      // TextButton(
+                      //   onPressed: () => Navigator.of(context).pop(null),
+                      //   child: Text('Cancel'),
+                      // ),
+                      MiniLoadingButton(
+                        useGradient: true,
+                        needRow: false,
+                        text: 'Confirm',
+                        onPressed: () {
+                          final paymentData = {
+                            "paymentServiceProvider":
+                                selectedMethod == 'Razorpay'
+                                    ? 'RAZORPAY'
+                                    : 'OFFLINE',
+                            if (selectedMethod == 'Offline')
+                              "paymentMethod":
+                                  selectedOfflineOption.toUpperCase(),
+                            if (refController.text.trim().isNotEmpty)
+                              "referenceId": refController.text.trim(),
+                          };
+                          Navigator.of(context).pop(paymentData);
+                        },
+                      ),
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     final paymentData = {
+                      //       "paymentServiceProvider":
+                      //           selectedMethod == 'Razorpay'
+                      //               ? 'RAZORPAY'
+                      //               : 'OFFLINE',
+                      //       if (selectedMethod == 'Offline')
+                      //         "paymentMethod":
+                      //             selectedOfflineOption.toUpperCase(),
+                      //       if (refController.text.trim().isNotEmpty)
+                      //         "referenceId": refController.text.trim(),
+                      //     };
+                      //     Navigator.of(context).pop(paymentData);
+                      //   },
+                      //   child: Text('Confirm'),
+                      // ),
+                    ],
+                  ),
+                  Gap(CustomPadding.paddingLarge.v),
+                ],
+              ),
+            ),
+            // title: Text('Select Payment Method'),
+            // content: Column(
+            //   mainAxisSize: MainAxisSize.min,
+            //   children: [
+
+            //     ],
+            //   ],
+            // ),
+            // actions: [
+
+            // ],
+          );
+        },
+      );
+    },
+  );
+}
 
 class CreateOrderDetails extends StatefulWidget {
   final Future<void> Function(String) fetchUser;
@@ -398,6 +580,64 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
     }
   }
 
+  Future<void> createOrderWithPaymentDialog(BuildContext context) async {
+    final paymentInfo = await showPaymentMethodDialog(context);
+    if (paymentInfo == null) return;
+
+    try {
+      final orderData = OrderPostModel(
+        nfcDetails: NfcDetails(
+          customerName: fullNameController.text,
+          designation:
+              designationController.text.trim().isEmpty
+                  ? null
+                  : designationController.text,
+          customerLogo: companyLogoSource ?? ImageSource(source: 'none'),
+          customerPhoto: profileImageSource ?? ImageSource(source: 'none'),
+        ),
+        totalPrice: grandTotal,
+        products:
+            selectedProducts
+                .map(
+                  (product) => ProductQuantity(
+                    product: product.id ?? '',
+                    quantity: productQuantities[product.id] ?? 1,
+                  ),
+                )
+                .toList(),
+        address: Address(
+          name: widget.fullName,
+          mobile: widget.phoneNumber,
+          address1: buildingController.text,
+          address2: areaController.text,
+          pincode: pincodeController.text,
+          district: districtController.text,
+          state: stateController.text,
+          country: 'India',
+        ),
+        paymentServiceProvider: paymentInfo['paymentServiceProvider'],
+        paymentMethod: paymentInfo['paymentMethod'],
+        referenceId: paymentInfo['referenceId'],
+      );
+
+      await OrderService.createOrder(
+        userId: portfolio!.user.id,
+        orderData: orderData,
+      );
+
+      if (context.mounted) {
+        SnackbarHelper.showSuccess(context, 'Order created successfully!');
+        Navigator.pop(context);
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      logError(e);
+      if (context.mounted) {
+        SnackbarHelper.showError(context, 'Error creating order: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -460,7 +700,12 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                 MiniLoadingButton(
                   icon: LucideIcons.save,
                   text: 'Save',
-                  onPressed: _createOrder,
+                  onPressed:
+                      selectedProducts.isNotEmpty
+                          ? () => createOrderWithPaymentDialog(context)
+                          : () {},
+                  // onPressed: () => createOrderWithPaymentDialog(context),
+                  // onPressed: _createOrder,
                   useGradient: selectedProducts.isNotEmpty,
                   backgroundColor: CustomColors.hintGrey,
                 ),

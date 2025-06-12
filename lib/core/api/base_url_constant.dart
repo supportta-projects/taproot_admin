@@ -7,7 +7,7 @@ class BaseUrlConstant {
   // static const String localbaseUrl = 'http://192.168.1.37:5000/api/v1';
 
   static const String baseUrl = 'https://server.supporttacards.com/api/v1';
-  // static const String baseUrl = 'http://192.168.1.42:5000/api/v1';
+  // static const String baseUrl = 'http://192.168.1.45:5000/api/v1';
 
   static const String pincodeUrl = 'http://www.postalpincode.in/api';
 
