@@ -4,11 +4,13 @@ import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
+import 'package:taproot_admin/features/user_data_update_screen/data/product_porfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/add_user_portfolio.dart';
 import 'package:taproot_admin/features/user_data_update_screen/views/edit_user_portfolio.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/about_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/basic_detail_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
+import 'package:taproot_admin/features/user_data_update_screen/widgets/portfolio_payment_widget.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/profile_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/social_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/user_profile_container.dart';
@@ -30,13 +32,20 @@ class UserDataUpdateScreen extends StatefulWidget {
 }
 
 class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
+  final TextEditingController refController = TextEditingController();
+
   PortfolioDataModel? portfolio;
   late final User user;
   bool isLoading = false;
+  bool? isPortfolioPaid;
+  // late List<PortfolioProductModel> portfolioProductModel;
+  List<PortfolioProductModel>? portfolioProductModel;
+
   @override
   void initState() {
     user = widget.user;
     fetchPortfolio();
+    fetchPortfolioProducts();
 
     super.initState();
   }
@@ -47,6 +56,16 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
       userEdit = !userEdit;
     });
   }
+Future<void> fetchPortfolioProducts() async {
+    final result = await PortfolioService.getPortfolioProducts();
+    setState(() {
+      portfolioProductModel = result;
+    });
+  }
+
+  // Future<void> fetchPortfolioProducts() async {
+  //   portfolioProductModel = await PortfolioService.getPortfolioProducts();
+  // }
 
   Future fetchPortfolio() async {
     setState(() {
@@ -54,10 +73,13 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     });
     try {
       final result = await PortfolioService.getPortfolio(userid: user.id);
-
+      final paidStatus = await PortfolioService.isUserPaidPortfolio(
+        userId: user.id,
+      );
       if (result != null) {
         setState(() {
           portfolio = result;
+          isPortfolioPaid = paidStatus;
           isLoading = false;
         });
       }
@@ -108,15 +130,6 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               : SingleChildScrollView(
                 child: Column(
                   children: [
-                    // InkWell(
-                    //   onTap: () {
-                    //     Navigator.pop(context);
-                    //   },
-
-                    //   child: Text(
-                    //     'Click here to go back to the previous screen',
-                    //   ),
-                    // ),
                     Gap(CustomPadding.paddingLarge),
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -333,6 +346,11 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                         ],
                       ),
                     ),
+                    Gap(CustomPadding.paddingLarge),
+                    // if (isPortfolioPaid == false)
+                    if (isPortfolioPaid == false &&
+                        portfolioProductModel != null)
+                      PorfolioPaymentWidget(portfolioProductModel: portfolioProductModel!, user: user),
 
                     Gap(CustomPadding.paddingXXL.v),
                   ],
@@ -341,6 +359,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     );
   }
 }
+
 
 class ServiceCardWidget extends StatelessWidget {
   final PortfolioDataModel? portfolio;
@@ -375,10 +394,7 @@ class ServiceCardWidget extends StatelessWidget {
         padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
         width: 350,
         height: 400,
-        // decoration: BoxDecoration(
-        //   borderRadius: BorderRadius.circular(CustomPadding.padding.v),
-        //   border: Border.all(color: CustomColors.hintGrey),
-        // ),
+
         child: Stack(
           children: [
             Column(

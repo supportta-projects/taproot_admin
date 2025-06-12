@@ -205,6 +205,9 @@ class OrderService with ErrorExceptionHandler {
       return false;
     }
   }
+  // static Future<bool> checkPortfolioPaid()async{
+
+  // }
 
   static Future<Map<String, dynamic>> cancelOrder({
     required String orderId,

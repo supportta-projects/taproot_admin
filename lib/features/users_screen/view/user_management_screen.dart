@@ -5,6 +5,7 @@ import 'package:taproot_admin/features/users_screen/data/user_service.dart';
 import 'package:taproot_admin/features/users_screen/widget/adduser_dialog.dart';
 import 'package:taproot_admin/widgets/gradient_text.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/not_found_widget.dart';
 
 import '../../user_data_update_screen/views/user_data_update_screen.dart';
 import '../data/user_data_model.dart';
@@ -53,7 +54,8 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         users = response.users;
         premiumUsers = users.where((user) => user.isPremium).length;
         totalUser = response.totalCount;
-        totalPages = (totalUser / rowsPerPage).ceil();
+        totalPages = rowsPerPage == 0 ? 1 : (totalUser / rowsPerPage).ceil();
+        // totalPages = (totalUser / rowsPerPage).ceil();
         isLoading = false;
 
         final filtered =
@@ -177,67 +179,74 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               ),
               SizedBox(
                 width: .87 * SizeUtils.width,
-                child: PaginatedDataTable(
-                  key: _tableKey,
-                  headingRowColor: WidgetStateProperty.resolveWith<Color>((
-                    Set<WidgetState> states,
-                  ) {
-                    return Colors.transparent;
-                  }),
-                  onPageChanged: _handlePageChange,
+                child:
+                    users.isEmpty
+                        ? Column(children: [Gap(250), NotFoundWidget()])
+                        : PaginatedDataTable(
+                          key: _tableKey,
+                          headingRowColor:
+                              WidgetStateProperty.resolveWith<Color>((
+                                Set<WidgetState> states,
+                              ) {
+                                return Colors.transparent;
+                              }),
+                          onPageChanged: _handlePageChange,
 
-                  sortColumnIndex: 0,
-                  //TODO
-                  arrowHeadColor: CustomColors.borderGradient.colors.first,
+                          sortColumnIndex: 0,
+                          //TODO
+                          arrowHeadColor:
+                              CustomColors.borderGradient.colors.first,
 
-                  showEmptyRows: false,
-                  columnSpacing: CustomPadding.paddingXL.v,
+                          showEmptyRows: false,
+                          columnSpacing: CustomPadding.paddingXL.v,
 
-                  actions: [
-                    Text(
-                      "Premium Users",
-                      style: context.inter50016.copyWith(fontSize: 16.fSize),
-                    ),
-                    Switch(
-                      value: showOnlyPremium,
-                      onChanged: (val) {
-                        setState(() {
-                          showOnlyPremium = val;
-                          _tableKey.currentState?.pageTo(0);
-                        });
-                        loadUsers(); // refresh the data
-                      },
-                    ),
-                  ],
-                  dataRowMaxHeight: 60,
-                  header: SizedBox(),
-                  horizontalMargin: .06 * SizeUtils.width,
-                  rowsPerPage: 10,
-                  availableRowsPerPage: const [8, 10, 12],
-                  // You can customize this if needed
-                  showFirstLastButtons: true,
-                  columns: [
-                    DataColumn(label: Text('User ID')),
-                    DataColumn(
-                      // headingRowAlignment: ,
-                      label: Text('Full Name'),
-                    ),
+                          actions: [
+                            Text(
+                              "Premium Users",
+                              style: context.inter50016.copyWith(
+                                fontSize: 16.fSize,
+                              ),
+                            ),
+                            Switch(
+                              value: showOnlyPremium,
+                              onChanged: (val) {
+                                setState(() {
+                                  showOnlyPremium = val;
+                                  _tableKey.currentState?.pageTo(0);
+                                });
+                                loadUsers(); // refresh the data
+                              },
+                            ),
+                          ],
+                          dataRowMaxHeight: 60,
+                          header: SizedBox(),
+                          horizontalMargin: .06 * SizeUtils.width,
+                          rowsPerPage: 10,
+                          availableRowsPerPage: const [8, 10, 12],
+                          // You can customize this if needed
+                          showFirstLastButtons: true,
+                          columns: [
+                            DataColumn(label: Text('User ID')),
+                            DataColumn(
+                              // headingRowAlignment: ,
+                              label: Text('Full Name'),
+                            ),
 
-                    DataColumn(label: Text('Phone')),
-                    DataColumn(label: Text('WhatsApp')),
-                    DataColumn(label: Text('Email')),
-                    // DataColumn(label: Text('Website Link')),
-                    DataColumn(label: Text('Premium')),
-                  ],
-                  source:
-                      _dataSource ??
-                      UserDataTableSource(
-                        [],
-                        totalUser,
-                        context,
-                        widget.innerNavigatorKey,
-                      ),
-                ),
+                            DataColumn(label: Text('Phone')),
+                            DataColumn(label: Text('WhatsApp')),
+                            DataColumn(label: Text('Email')),
+                            // DataColumn(label: Text('Website Link')),
+                            DataColumn(label: Text('Premium')),
+                          ],
+                          source:
+                              _dataSource ??
+                              UserDataTableSource(
+                                [],
+                                totalUser,
+                                context,
+                                widget.innerNavigatorKey,
+                              ),
+                        ),
               ),
 
               Gap(CustomPadding.paddingXL.v),

@@ -3,12 +3,19 @@ class OrderPostModel {
   final double totalPrice;
   final List<ProductQuantity>? products;
   final Address address;
+  final String? paymentServiceProvider;
+  final String? paymentMethod;
+  final String? referenceId;
 
   OrderPostModel({
     required this.nfcDetails,
     required this.totalPrice,
     this.products,
     required this.address,
+    this.paymentServiceProvider,
+    this.paymentMethod,
+    this.referenceId,
+
   });
 
   Map<String, dynamic> toJson() => {
@@ -17,6 +24,10 @@ class OrderPostModel {
     if (products != null) 'products': products!.map((e) => e.toJson()).toList(),
     // 'products': products.map((e) => e.toJson()).toList(),
     'address': address.toJson(),
+      if (paymentServiceProvider != null)
+      'paymentServiceProvider': paymentServiceProvider,
+    if (paymentMethod != null) 'paymentMethod': paymentMethod,
+    if (referenceId != null) 'referenceId': referenceId,
   };
 }
 

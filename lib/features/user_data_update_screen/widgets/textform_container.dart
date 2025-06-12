@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -7,6 +8,7 @@ class TextFormContainer extends StatefulWidget {
   final bool autofocus;
   final String? suffixText;
   final String? initialValue;
+  final Widget? countryCodeWidget;
   final int maxline;
   final bool readonly;
   final String labelText;
@@ -21,8 +23,10 @@ class TextFormContainer extends StatefulWidget {
   const TextFormContainer({
     super.key,
     this.initialValue,
+
+    this.countryCodeWidget,
     this.autofocus = false,
-this.suffixText,
+    this.suffixText,
     required this.labelText,
     this.user,
     this.readonly = false,
@@ -90,8 +94,13 @@ class _TextFormContainerState extends State<TextFormContainer> {
         maxLines: widget.maxline,
         readOnly: widget.readonly || widget.isDatePicker,
         onTap: widget.isDatePicker ? _pickDate : null,
-        decoration: InputDecoration(suffixText: widget.suffixText,
-          prefix: widget.isNumberField ? Text('+91 ') : null,
+        decoration: InputDecoration(
+          suffixText: widget.suffixText,
+          prefix:
+              widget.isNumberField
+                  ? widget.countryCodeWidget
+                  : null,
+          // prefix: widget.isNumberField ? Text('+91 ') : null,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           label: Text(widget.labelText),
           labelStyle: TextStyle(color: CustomColors.textColorDarkGrey),

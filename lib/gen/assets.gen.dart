@@ -16,6 +16,10 @@ class $AssetsPngGen {
   AssetGenImage get backgroundlog =>
       const AssetGenImage('assets/png/backgroundlog.png');
 
+  /// File path: assets/png/supportta4.png
+  AssetGenImage get supportta4 =>
+      const AssetGenImage('assets/png/supportta4.png');
+
   /// File path: assets/png/supporttalogin.png
   AssetGenImage get supporttalogin =>
       const AssetGenImage('assets/png/supporttalogin.png');
@@ -24,11 +28,27 @@ class $AssetsPngGen {
   AssetGenImage get supporttalogo =>
       const AssetGenImage('assets/png/supporttalogo.png');
 
+  /// File path: assets/png/supporttaqr.png
+  AssetGenImage get supporttaqr =>
+      const AssetGenImage('assets/png/supporttaqr.png');
+
+  /// File path: assets/png/supporttaqr1.png
+  AssetGenImage get supporttaqr1 =>
+      const AssetGenImage('assets/png/supporttaqr1.png');
+
+  /// File path: assets/png/supporttaqr3.png
+  AssetGenImage get supporttaqr3 =>
+      const AssetGenImage('assets/png/supporttaqr3.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     backgroundlog,
+    supportta4,
     supporttalogin,
     supporttalogo,
+    supporttaqr,
+    supporttaqr1,
+    supporttaqr3,
   ];
 }
 
