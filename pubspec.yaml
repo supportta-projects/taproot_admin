@@ -98,6 +98,7 @@ dependencies:
     sdk: flutter
   pretty_qr_code: ^3.4.0
   
+  
 
 dev_dependencies:
   flutter_test:

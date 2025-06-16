@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:taproot_admin/features/order_screen/data/invoice_download.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart'
     as user_model;
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -68,6 +69,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   final TextEditingController percentageController = TextEditingController();
   double calculatedAmount = 0.0;
   double remainingAmount = 0.0;
+   bool _isDownloading = false;
 
   user_model.User convertOrderUserToUser(OrderResponseUser orderUser) {
     return user_model.User(
@@ -114,6 +116,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   bool orderEdit = false;
+   
+
+  
 
   void editOrder() {
     setState(() {
@@ -322,6 +327,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       int quantity = editedQuantities[productId] ?? product.quantity;
       return sum + (product.salePrice * quantity);
     });
+  }
+  Future<void> _handleDownload(BuildContext context) async {
+    setState(() => _isDownloading = true);
+
+    await downloadInvoicePdfWithoutPackage(context, orderDetails!.id);
+
+    setState(() => _isDownloading = false);
   }
 
   @override
@@ -979,6 +991,28 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           suffixText: orderDetails!.paymentMode,
                                           sufixstyle: context.inter50016,
                                         ),
+                                        if (orderDetails!.paymentStatus
+                                                .toLowerCase() ==
+                                            'success')
+                                          Row(
+                                            children: [
+                                              Text('Invoice'),
+                                              Spacer(),
+                                              MiniLoadingButton(
+                                                isLoading: _isDownloading,
+                                                useGradient: true,
+                                                icon: LucideIcons.download,
+                                                text: 'Download',
+                                                onPressed: () async {
+                                                  _handleDownload(context);
+                                                  // await downloadInvoicePdfWithoutPackage(
+                                                  //   context,
+                                                  //   orderDetails!.id,
+                                                  // );
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                       ],
                                     ),
                                   ),
