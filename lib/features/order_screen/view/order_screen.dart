@@ -431,6 +431,7 @@ class OrderDataSource extends DataTableSource {
                   order.code,
                   style: context.inter60016.copyWith(
                     color: CustomColors.buttonColor1,
+                    fontSize: 16.fSize,
                   ),
                 ),
               ),
@@ -439,25 +440,45 @@ class OrderDataSource extends DataTableSource {
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text(order.user.name)),
+              child: Center(
+                child: Text(
+                  order.user.name,
+                  style: TextStyle(fontSize: 16.fSize),
+                ),
+              ),
             ),
           ),
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text(order.address.mobile)),
+              child: Center(
+                child: Text(
+                  order.address.mobile,
+                  style: TextStyle(fontSize: 16.fSize),
+                ),
+              ),
             ),
           ),
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text('₹${order.totalAmount}')),
+              child: Center(
+                child: Text(
+                  '₹${order.totalAmount}',
+                  style: TextStyle(fontSize: 16.fSize),
+                ),
+              ),
             ),
           ),
           DataCell(
             InkWell(
               onTap: handleRowTap,
-              child: Center(child: Text(order.totalProducts.toString())),
+              child: Center(
+                child: Text(
+                  order.totalProducts.toString(),
+                  style: TextStyle(fontSize: 16.fSize),
+                ),
+              ),
             ),
           ),
           DataCell(
@@ -466,7 +487,10 @@ class OrderDataSource extends DataTableSource {
               child: Center(
                 child: Text(
                   order.orderStatus.toString(),
-                  style: TextStyle(color: getStatusColor(order.orderStatus)),
+                  style: TextStyle(
+                    color: getStatusColor(order.orderStatus),
+                    fontSize: 16.fSize,
+                  ),
                 ),
               ),
             ),
@@ -489,6 +513,7 @@ class OrderDataSource extends DataTableSource {
                           backgroundColor: CustomColors.retryRed,
 
                           text: 'Retry',
+
                           icon: Icons.replay,
                           isLoading: isLoading,
                           onPressed: () async {
