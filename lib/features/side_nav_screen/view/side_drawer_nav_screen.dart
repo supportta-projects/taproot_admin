@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:lucide_icons_flutter/test_icons.dart';
 import 'package:one_clock/one_clock.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
@@ -237,6 +238,11 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
 
                           NavControllers.sideMenuController.changePage(index);
                         },
+                      ),
+                      SideMenuItem(
+                        title: 'Logout',
+                        onTap: (index, controller) => _handleLogout(context),
+                        icon: Icon(Icons.logout),
                       ),
                     ],
                   ),
