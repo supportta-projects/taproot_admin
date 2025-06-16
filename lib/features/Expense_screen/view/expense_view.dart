@@ -373,8 +373,16 @@ class ExpenseDataSource extends DataTableSource {
     final expense = _expenses[relativeIndex];
     return DataRow(
       cells: [
-        DataCell(Center(child: Text(expense.category))),
-        DataCell(Center(child: Text(expense.name))),
+        DataCell(
+          Center(
+            child: Text(expense.category, style: TextStyle(fontSize: 16.fSize)),
+          ),
+        ),
+        DataCell(
+          Center(
+            child: Text(expense.name, style: TextStyle(fontSize: 16.fSize)),
+          ),
+        ),
         DataCell(
           InkWell(
             onTap: () {
@@ -412,16 +420,34 @@ class ExpenseDataSource extends DataTableSource {
               );
             },
             child: Center(
-              child: const Text("View", style: TextStyle(color: Colors.blue)),
+              child: const Text(
+                "View",
+                style: TextStyle(
+                  color: CustomColors.buttonColor1,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ),
         ),
         // DataCell(
         //   ExpenseDescriptionContainer(children: [Text(expense.description)]),
         // ),
-        DataCell(Center(child: Text('₹${expense.amount.toStringAsFixed(2)}'))),
         DataCell(
-          Center(child: Text(DateFormat('MMM dd, yyyy').format(expense.date))),
+          Center(
+            child: Text(
+              '₹${expense.amount.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 16.fSize),
+            ),
+          ),
+        ),
+        DataCell(
+          Center(
+            child: Text(
+              DateFormat('MMM dd, yyyy').format(expense.date),
+              style: TextStyle(fontSize: 16.fSize),
+            ),
+          ),
         ),
         DataCell(
           Center(
