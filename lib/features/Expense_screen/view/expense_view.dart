@@ -65,7 +65,7 @@ class _ExpenseViewState extends State<ExpenseView> {
       logError('Error fetching expenses: $e');
       if (mounted) {
         setState(() => _isLoading = false);
-        SnackbarHelper.showError(context, 'Error loading expenses: $e');
+        // SnackbarHelper.showError(context, 'Error loading expenses: $e');
       }
     }
   }
