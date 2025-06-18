@@ -904,6 +904,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                           ...List.generate(
                             selectedProducts.length,
                             (index) => ProductCard(
+                             
                               image:
                                   selectedProducts[index]
                                       .productImages

@@ -702,7 +702,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           as order_details.ProductDetails
                                       : null;
 
-                              return ProductCard(
+                              return ProductCard(orderType: orderDetails!.orderType,
                                 image: productDetails?.firstImage?.key ?? '',
                                 productName:
                                     productDetails?.name ??
@@ -744,104 +744,112 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         ),
                       ],
                     ),
-                    Gap(CustomPadding.paddingXL.v),
-                    CommonProductContainer(
-                      title: 'NFC Card Details',
-                      children: [
-                        Gap(CustomPadding.paddingLarge.v),
-                        TextFormContainer(
-                          controller: customerNameController,
-                          readonly: isEdit ? false : true,
-                          labelText: 'Full Name',
-                        ),
-                        Gap(CustomPadding.paddingLarge.v),
-                        TextFormContainer(
-                          readonly: isEdit ? false : true,
-                          labelText: 'Designation',
-                          controller: designationController,
-                        ),
-                        Gap(CustomPadding.paddingXL.v),
-
-                        if (orderEdit ||
-                            orderDetails!
-                                .nfcDetails
-                                .customerLogo
-                                .image
-                                .key
-                                .isNotEmpty ||
-                            orderDetails!
-                                .nfcDetails
-                                .customerPhoto
-                                .image
-                                .key
-                                .isNotEmpty)
-                          Row(
-                            children: [
-                              Gap(CustomPadding.paddingXL.v),
-                              if (orderEdit)
-                                ImageRowContainer(
-                                  initialImage: newCompanyLogo,
-                                  userCode: orderDetails!.user.id,
-                                  title: 'Company Logo',
-                                  imageType: 'companyLogo',
-                                  onImageChanged: (imageSource) {
-                                    setState(
-                                      () => newCompanyLogo = imageSource,
-                                    );
-                                  },
-                                )
-                              else if (orderDetails!
-                                  .nfcDetails
-                                  .customerLogo
-                                  .image
-                                  .key
-                                  .isNotEmpty)
-                                ImageContainerWithHead(
-                                  heading: 'Company Logo',
-                                  orderDetails: orderDetails,
-                                  imageKey:
-                                      orderDetails!
-                                          .nfcDetails
-                                          .customerLogo
-                                          .image
-                                          .key,
-                                ),
-                              Gap(CustomPadding.paddingXL.v),
-                              if (orderEdit)
-                                ImageRowContainer(
-                                  initialImage: newProfilePhoto,
-                                  userCode: orderDetails!.user.id,
-                                  title: 'Profile Image',
-                                  imageType: 'profilePicture',
-                                  onImageChanged: (imageSource) {
-                                    setState(
-                                      () => newProfilePhoto = imageSource,
-                                    );
-                                  },
-                                )
-                              else if (orderDetails!
-                                  .nfcDetails
-                                  .customerPhoto
-                                  .image
-                                  .key
-                                  .isNotEmpty)
-                                ImageContainerWithHead(
-                                  heading: 'Profile Image',
-                                  orderDetails: orderDetails,
-                                  imageKey:
-                                      orderDetails!
-                                          .nfcDetails
-                                          .customerPhoto
-                                          .image
-                                          .key,
-                                ),
-                            ],
-                          ),
-                      ],
-                    ),
+                                        orderDetails!.orderType == 'Portfolio'?SizedBox():
 
                     Gap(CustomPadding.paddingXL.v),
-                    orderEdit
+                    orderDetails!.orderType == 'Portfolio'
+                        ? SizedBox()
+                        : CommonProductContainer(
+                          title: 'NFC Card Details',
+                          children: [
+                            Gap(CustomPadding.paddingLarge.v),
+                            TextFormContainer(
+                              controller: customerNameController,
+                              readonly: isEdit ? false : true,
+                              labelText: 'Full Name',
+                            ),
+                            Gap(CustomPadding.paddingLarge.v),
+                            TextFormContainer(
+                              readonly: isEdit ? false : true,
+                              labelText: 'Designation',
+                              controller: designationController,
+                            ),
+                            Gap(CustomPadding.paddingXL.v),
+
+                            if (orderEdit ||
+                                orderDetails!
+                                    .nfcDetails
+                                    .customerLogo
+                                    .image
+                                    .key
+                                    .isNotEmpty ||
+                                orderDetails!
+                                    .nfcDetails
+                                    .customerPhoto
+                                    .image
+                                    .key
+                                    .isNotEmpty)
+                              Row(
+                                children: [
+                                  Gap(CustomPadding.paddingXL.v),
+                                  if (orderEdit)
+                                    ImageRowContainer(
+                                      initialImage: newCompanyLogo,
+                                      userCode: orderDetails!.user.id,
+                                      title: 'Company Logo',
+                                      imageType: 'companyLogo',
+                                      onImageChanged: (imageSource) {
+                                        setState(
+                                          () => newCompanyLogo = imageSource,
+                                        );
+                                      },
+                                    )
+                                  else if (orderDetails!
+                                      .nfcDetails
+                                      .customerLogo
+                                      .image
+                                      .key
+                                      .isNotEmpty)
+                                    ImageContainerWithHead(
+                                      heading: 'Company Logo',
+                                      orderDetails: orderDetails,
+                                      imageKey:
+                                          orderDetails!
+                                              .nfcDetails
+                                              .customerLogo
+                                              .image
+                                              .key,
+                                    ),
+                                  Gap(CustomPadding.paddingXL.v),
+                                  if (orderEdit)
+                                    ImageRowContainer(
+                                      initialImage: newProfilePhoto,
+                                      userCode: orderDetails!.user.id,
+                                      title: 'Profile Image',
+                                      imageType: 'profilePicture',
+                                      onImageChanged: (imageSource) {
+                                        setState(
+                                          () => newProfilePhoto = imageSource,
+                                        );
+                                      },
+                                    )
+                                  else if (orderDetails!
+                                      .nfcDetails
+                                      .customerPhoto
+                                      .image
+                                      .key
+                                      .isNotEmpty)
+                                    ImageContainerWithHead(
+                                      heading: 'Profile Image',
+                                      orderDetails: orderDetails,
+                                      imageKey:
+                                          orderDetails!
+                                              .nfcDetails
+                                              .customerPhoto
+                                              .image
+                                              .key,
+                                    ),
+                                ],
+                              ),
+                          ],
+                        ),
+orderDetails!.orderType == 'Portfolio'
+                        ? SizedBox()
+                        :
+                    Gap(CustomPadding.paddingXL.v),
+                    orderDetails!.orderType == 'Portfolio'
+                        ? SizedBox()
+                        : orderEdit
                         ? Row(
                           children: [
                             Gap(CustomPadding.paddingLarge.v),

@@ -18,7 +18,10 @@ class ProductCard extends StatefulWidget {
     required this.image,
     this.onDelete,
     this.onQuantityChanged,
+     this.orderType,
+
   });
+  final String? orderType;
   final double price;
   final String productName;
   final double discountPrice;
@@ -165,7 +168,7 @@ class _ProductCardState extends State<ProductCard> {
                   children: [
                     Text('Qty'),
                     Spacer(),
-                    widget.orderEdit
+                    widget.orderEdit&&widget.orderType != 'Portfolio'
                         ? Row(
                           children: [
                             InkWell(

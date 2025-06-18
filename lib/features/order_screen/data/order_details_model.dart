@@ -46,6 +46,7 @@ class OrderDetails {
   final String razorpayOrderId;
   final String razorpayPaymentId;
   final PersonalInfo personalInfo;
+  final String orderType;
 
   OrderDetails({
     required this.id,
@@ -72,6 +73,7 @@ class OrderDetails {
     required this.razorpayOrderId,
     required this.razorpayPaymentId,
     required this.personalInfo,
+    required this.orderType
   });
   OrderDetails copyWith({
     String? id,
@@ -98,6 +100,7 @@ class OrderDetails {
     String? razorpayOrderId,
     String? razorpayPaymentId,
     PersonalInfo? personalInfo,
+    String? orderType,
   }) {
     return OrderDetails(
       id: id ?? this.id,
@@ -126,6 +129,7 @@ class OrderDetails {
       razorpayOrderId: razorpayOrderId ?? this.razorpayOrderId,
       razorpayPaymentId: razorpayPaymentId ?? this.razorpayPaymentId,
       personalInfo: personalInfo ?? this.personalInfo,
+      orderType: orderType ?? this.orderType,
     );
   }
 
@@ -155,6 +159,7 @@ class OrderDetails {
       razorpayOrderId: '',
       razorpayPaymentId: '',
       personalInfo: PersonalInfo.empty(),
+      orderType: '',
     );
   }
 
@@ -194,6 +199,7 @@ class OrderDetails {
       personalInfo: PersonalInfo.fromJson(
         json['personalInfo'] as Map<String, dynamic>? ?? {},
       ),
+      orderType: json['orderType']?.toString() ?? '',
     );
   }
 }
