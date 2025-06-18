@@ -247,6 +247,17 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                         child: Padding(
                           padding: EdgeInsets.all(CustomPadding.padding),
                           child: TextButton.icon(
+                            style: ButtonStyle(
+                              overlayColor:
+                                  WidgetStateProperty.resolveWith<Color?>((
+                                    states,
+                                  ) {
+                                    if (states.contains(WidgetState.hovered)) {
+                                      return Colors.red.shade100;
+                                    }
+                                    return null;
+                                  }),
+                            ),
                             onPressed: () => _handleLogout(context),
                             icon: const Icon(Icons.logout, color: Colors.red),
                             label: const Text(

@@ -149,7 +149,10 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
         Row(
           children: [
             Gap(CustomPadding.paddingLarge),
-            Text('QR Code'),
+            Text(
+              'QR Code',
+              style: context.inter50014.copyWith(fontSize: 14.fSize),
+            ),
             Spacer(),
             GestureDetector(
               onTap: () {
@@ -192,7 +195,15 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
               },
               child: Padding(
                 padding: EdgeInsets.all(12),
-                child: Text('Download'),
+                child: Text(
+                  'Download',
+                  style: context.inter50014.copyWith(
+                    decoration: TextDecoration.underline,
+                    decorationColor: CustomColors.buttonColor1,
+                    fontSize: 14.fSize,
+                    color: CustomColors.buttonColor1,
+                  ),
+                ),
               ),
             ),
 
