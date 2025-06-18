@@ -198,7 +198,8 @@ class _EditProductState extends State<EditProduct> {
           String newKey = tempUploadedKeys[i] ?? '';
           if (newKey.isNotEmpty && selectedImages[i] != null) {
             int fileSize = selectedImages[i]!.lengthSync();
-            String fileName = newKey.split('/').last;
+            String fileName = selectedImages[i]!.path.split('/').last;
+            //  newKey.split('/').last;
             String extension = fileName.split('.').last.toLowerCase();
 
             productImages.add(
@@ -221,7 +222,8 @@ class _EditProductState extends State<EditProduct> {
         if (actualIndex < selectedImages.length &&
             selectedImages[actualIndex] != null) {
           int fileSize = selectedImages[actualIndex]!.lengthSync();
-          String fileName = key.split('/').last;
+          String fileName = selectedImages[actualIndex]!.path.split('/').last;
+          //  key.split('/').last;
           String extension = fileName.split('.').last.toLowerCase();
 
           productImages.add(

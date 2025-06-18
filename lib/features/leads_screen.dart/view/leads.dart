@@ -152,11 +152,20 @@ class _LeadsDataSource extends DataTableSource {
       cells: [
         DataCell(
           Center(
-            child: Text(lead.name[0].toUpperCase() + lead.name.substring(1)),
+            child: Text(
+              lead.name[0].toUpperCase() + lead.name.substring(1),
+              style: TextStyle(fontSize: 16.fSize),
+            ),
           ),
         ),
-        DataCell(Center(child: Text(lead.number))),
-        DataCell(Center(child: Text(lead.email))),
+        DataCell(
+          Center(
+            child: Text(lead.number, style: TextStyle(fontSize: 16.fSize)),
+          ),
+        ),
+        DataCell(
+          Center(child: Text(lead.email, style: TextStyle(fontSize: 16.fSize))),
+        ),
         DataCell(
           InkWell(
             onTap: () {
@@ -164,10 +173,13 @@ class _LeadsDataSource extends DataTableSource {
                 context: context,
                 builder:
                     (BuildContext context) => AlertDialog(
-                      title: const Text("Lead Description"),
+                      title: const Text(
+                        "Lead Description",
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
                       content: ConstrainedBox(
                         constraints: const BoxConstraints(
-                          maxWidth: 700,
+                          maxWidth: 500,
                           maxHeight: 300,
                         ),
                         child: Scrollbar(
@@ -194,7 +206,13 @@ class _LeadsDataSource extends DataTableSource {
               );
             },
             child: Center(
-              child: const Text("View", style: TextStyle(color: Colors.blue)),
+              child: const Text(
+                "View",
+                style: TextStyle(
+                  color: CustomColors.buttonColor1,
+                  fontSize: 16,
+                ),
+              ),
             ),
           ),
         ),

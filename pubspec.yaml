@@ -62,6 +62,7 @@ dependencies:
   image_cropper: ^9.1.0
   url_launcher: ^6.3.1
   # cloud_firestore: ^5.6.6
+  # intl: ^0.20.2
   intl: ^0.20.2
   # geolocator: ^13.0.4
   # geocoding: ^3.0.0
@@ -80,7 +81,9 @@ dependencies:
   build_runner: ^2.4.15
   flutter_gen: ^5.10.0
   lucide_icons_flutter: ^2.0.3
+
   easy_sidemenu: ^0.6.1
+  # used 0.6.1 version easy sidemenu when develop
   lucide_icons: ^0.257.0
   syncfusion_flutter_charts: ^29.1.40
   flutter_regex: ^0.0.3
@@ -89,6 +92,13 @@ dependencies:
   shimmer: ^3.0.0
   qr_flutter: ^4.1.0
   file_saver: ^0.2.14
+  window_size: ^0.1.0
+  one_clock: ^1.0.1
+  flutter_localizations_plus: ^0.2.7
+  flutter_local_network_ios: ^0.0.1
+  flutter_localizations:
+    sdk: flutter
+  pretty_qr_code: ^3.4.0
   
 
 dev_dependencies:
@@ -189,6 +199,7 @@ flutter:
         - asset: assets/fonts/Inter_28pt-SemiBoldItalic.ttf
         - asset: assets/fonts/Inter_28pt-Thin.ttf
         - asset: assets/fonts/Inter_28pt-ThinItalic.ttf
+        
 
   #
   # For details regarding fonts from package dependencies,

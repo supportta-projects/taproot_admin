@@ -4,6 +4,7 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 class AddUserDialog extends StatefulWidget {
   final VoidCallback onCallFunction;
@@ -37,10 +38,10 @@ class _AddUserDialogState extends State<AddUserDialog> {
       Navigator.pop(currentContext);
 
       widget.onCallFunction();
-
-      ScaffoldMessenger.of(
-        currentContext,
-      ).showSnackBar(const SnackBar(content: Text('User added successfully!')));
+      SnackbarHelper.showSuccess(currentContext, 'User added successfully!');
+      // ScaffoldMessenger.of(
+      //   currentContext,
+      // ).showSnackBar(const SnackBar(content: Text('User added successfully!')));
     } catch (e) {
       if (!mounted) return;
 

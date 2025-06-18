@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
@@ -43,6 +44,14 @@ class AuthService with ErrorExceptionHandler {
       return DateTime.now().isBefore(expiryDate);
     } catch (_) {
       return false;
+    }
+  }
+
+  static Future<void> sessionLogout(BuildContext context) async {
+    await SharedPreferencesService.i.clear();
+
+    if (context.mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/auth', (route) => false);
     }
   }
 

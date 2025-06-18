@@ -22,7 +22,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController emailController =
       TextEditingController()..text = 'admin@supporttacards.com';
   final TextEditingController passwordController =
-      TextEditingController()..text = 'Admin@Supportta765';
+      TextEditingController()..text = 'Admin@Supportta987';
 
   void _toggleObscureText() {
     setState(() => _obsecureText = !_obsecureText);
