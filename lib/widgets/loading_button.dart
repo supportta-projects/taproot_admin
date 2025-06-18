@@ -84,52 +84,59 @@ class LoadingButton extends StatelessWidget {
     // final borderRadius = BorderRadius.circular(CustomPadding.paddingXL);
 
     Widget content = MouseRegion(
-      cursor: enabled && !buttonLoading
-          ? SystemMouseCursors.click
-          : SystemMouseCursors.basic,
+      cursor:
+          enabled && !buttonLoading
+              ? SystemMouseCursors.click
+              : SystemMouseCursors.basic,
       child: Container(
         decoration: BoxDecoration(
           border: buttonType.border,
           gradient: backgroundColor != null ? null : buttonType.gradient,
           color: backgroundColor ?? buttonType.color,
-          borderRadius: BorderRadius.circular(borderRadius??CustomPadding.paddingXL),
+          borderRadius: BorderRadius.circular(
+            borderRadius ?? CustomPadding.paddingXL,
+          ),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(borderRadius??CustomPadding.paddingXL),
-            onTap: buttonLoading || !enabled
-                ? null
-                : () {
-                    FocusScope.of(context).unfocus();
-                    HapticFeedback.lightImpact();
-                    onPressed();
-                  },
+            borderRadius: BorderRadius.circular(
+              borderRadius ?? CustomPadding.paddingXL,
+            ),
+            onTap:
+                buttonLoading || !enabled
+                    ? null
+                    : () {
+                      FocusScope.of(context).unfocus();
+                      HapticFeedback.lightImpact();
+                      onPressed();
+                    },
             child: Padding(
               padding: padding,
               child: Center(
-                child: buttonLoading
-                    ? SizedBox(
-                        width: 20.h,
-                        height: 20.h,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (icon != null) ...[icon!, SizedBox(width: 8.h)],
-                          Text(
-                            text,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.labelLarge?.copyWith(
-                                  fontSize: 15.fSize,
-                                  color: textColor ?? buttonType.textColor,
-                                ),
-                          ),
-                        ],
-                      ),
+                child:
+                    buttonLoading
+                        ? SizedBox(
+                          width: 20.h,
+                          height: 20.h,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                        : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (icon != null) ...[icon!, SizedBox(width: 8.h)],
+                            Text(
+                              text,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.labelLarge?.copyWith(
+                                fontSize: 15.fSize,
+                                color: textColor ?? buttonType.textColor,
+                              ),
+                            ),
+                          ],
+                        ),
               ),
             ),
           ),

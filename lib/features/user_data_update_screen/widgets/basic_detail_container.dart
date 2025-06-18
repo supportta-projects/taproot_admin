@@ -181,7 +181,9 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
                         actions: [
                           TextButton(
                             onPressed: () async {
-                              await downloadQrCode(qrKey, context);
+                                final username =
+                                  widget.portfolio?.personalInfo.name ?? 'user';
+                              await downloadQrCode(qrKey, context,username);
                             },
                             child: Text('Download'),
                           ),
