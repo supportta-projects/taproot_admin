@@ -69,7 +69,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   final TextEditingController percentageController = TextEditingController();
   double calculatedAmount = 0.0;
   double remainingAmount = 0.0;
-   bool _isDownloading = false;
+  bool _isDownloading = false;
 
   user_model.User convertOrderUserToUser(OrderResponseUser orderUser) {
     return user_model.User(
@@ -116,9 +116,6 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   bool orderEdit = false;
-   
-
-  
 
   void editOrder() {
     setState(() {
@@ -328,6 +325,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       return sum + (product.salePrice * quantity);
     });
   }
+
   Future<void> _handleDownload(BuildContext context) async {
     setState(() => _isDownloading = true);
 
@@ -998,11 +996,24 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                             children: [
                                               Text('Invoice'),
                                               Spacer(),
-                                              MiniLoadingButton(
-                                                isLoading: _isDownloading,
-                                                useGradient: true,
-                                                icon: LucideIcons.download,
-                                                text: 'Download',
+                                              // TextButton(onPressed: , child: child)
+                                              TextButton(
+                                                // isLoading: _isDownloading,
+                                                // useGradient: true,
+                                                // icon: LucideIcons.download,
+                                                // text: 'Download',
+                                                child: Text(
+                                                  "Download",
+                                                  style: context.inter50016
+                                                      .copyWith(
+                                                        color:
+                                                            CustomColors
+                                                                .buttonColor1,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                      ),
+                                                ),
                                                 onPressed: () async {
                                                   _handleDownload(context);
                                                   // await downloadInvoicePdfWithoutPackage(
