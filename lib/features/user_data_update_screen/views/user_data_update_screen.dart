@@ -56,7 +56,8 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
       userEdit = !userEdit;
     });
   }
-Future<void> fetchPortfolioProducts() async {
+
+  Future<void> fetchPortfolioProducts() async {
     final result = await PortfolioService.getPortfolioProducts();
     setState(() {
       portfolioProductModel = result;
@@ -350,7 +351,11 @@ Future<void> fetchPortfolioProducts() async {
                     // if (isPortfolioPaid == false)
                     if (isPortfolioPaid == false &&
                         portfolioProductModel != null)
-                      PorfolioPaymentWidget(portfolioProductModel: portfolioProductModel!, user: user),
+                      PorfolioPaymentWidget(
+                        portfolioProductModel: portfolioProductModel!,
+                        user: user,
+                        onProceed: () => fetchPortfolio(),
+                      ),
 
                     Gap(CustomPadding.paddingXXL.v),
                   ],
@@ -359,7 +364,6 @@ Future<void> fetchPortfolioProducts() async {
     );
   }
 }
-
 
 class ServiceCardWidget extends StatelessWidget {
   final PortfolioDataModel? portfolio;
