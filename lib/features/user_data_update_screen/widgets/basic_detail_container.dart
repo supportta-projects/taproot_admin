@@ -135,11 +135,12 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             ? SizedBox()
             : DetailRowCopy(
               label: 'Portfolio Link',
-              value: 'https://app.supporttacards.com/portfolio/\n${user.id}',
+              value:
+                  'https://app.supporttacards.com/portfolio-view/\n${user.id}',
               icon: Icons.copy,
               onTap: () async {
                 final Uri url = Uri.parse(
-                  'https://app.supporttacards.com/portfolio/${user.id}',
+                  'https://app.supporttacards.com/portfolio-view/${user.id}',
                 );
                 if (!await launchUrl(url)) {
                   throw Exception('Could not launch $url');
@@ -167,7 +168,7 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
                             key: qrKey,
                             child: PrettyQrView.data(
                               data:
-                                  'https://app.supporttacards.com/portfolio/${user.id}',
+                                  'https://app.supporttacards.com/portfolio-view/${user.id}',
                               decoration: PrettyQrDecoration(
                                 image: PrettyQrDecorationImage(
                                   fit: BoxFit.contain,
@@ -181,9 +182,9 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
                         actions: [
                           TextButton(
                             onPressed: () async {
-                                final username =
+                              final username =
                                   widget.portfolio?.personalInfo.name ?? 'user';
-                              await downloadQrCode(qrKey, context,username);
+                              await downloadQrCode(qrKey, context, username);
                             },
                             child: Text('Download'),
                           ),
