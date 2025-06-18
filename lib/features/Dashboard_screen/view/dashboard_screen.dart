@@ -152,6 +152,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
               Gap(CustomPadding.paddingLarge),
+              
               isFieldsLoading
                   ? ShimmerFields() // Shimmer only for fields when refreshing
                   : FinancialReturnsWidget(
