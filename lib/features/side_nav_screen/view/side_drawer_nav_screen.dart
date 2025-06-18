@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:lucide_icons_flutter/test_icons.dart';
 import 'package:one_clock/one_clock.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
@@ -239,31 +240,34 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                         },
                       ),
                     ],
-                  ),
-                ),
-                Container(
-                  width: 200,
-                  color: CustomColors.secondaryColor,
-                  child: Padding(
-                    padding: EdgeInsets.all(CustomPadding.padding),
-                    child: TextButton.icon(
-                      onPressed: () => _handleLogout(context),
-                      icon: const Icon(Icons.logout, color: Colors.red),
-                      label: const Text(
-                        'Logout',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.w600,
+                    footer: Padding(
+                      padding: EdgeInsets.only(bottom: CustomPadding.paddingXL),
+                      child: Container(
+                        color: CustomColors.secondaryColor,
+                        child: Padding(
+                          padding: EdgeInsets.all(CustomPadding.padding),
+                          child: TextButton.icon(
+                            onPressed: () => _handleLogout(context),
+                            icon: const Icon(Icons.logout, color: Colors.red),
+                            label: const Text(
+                              'Logout',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                Container(
-                  width: 200,
-                  height: 20,
-                  color: CustomColors.secondaryColor,
-                ),
+
+                // Container(
+                //   width: 200,
+                //   height: 20,
+                //   color: CustomColors.secondaryColor,
+                // ),
               ],
             ),
           ),

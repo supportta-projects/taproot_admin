@@ -22,7 +22,7 @@ class LocationContainer extends StatefulWidget {
   final bool isEdit;
   const LocationContainer({
     super.key,
-  this.user,
+    this.user,
     this.isEdit = false,
     this.portfolio,
     this.buildingNamecontroller,
@@ -87,6 +87,7 @@ class _LocationContainerState extends State<LocationContainer> {
                   // initialValue: portfolio!.addressInfo.buildingName,
                   labelText: 'Building Name',
                   user: widget.user,
+                  maxline: 3,
                 ),
                 TextFormContainer(
                   controller: widget.areaController,

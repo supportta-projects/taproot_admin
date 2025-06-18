@@ -296,26 +296,45 @@ class UserDataTableSource extends DataTableSource {
     return DataRow(
       cells: [
         DataCell(
-          InkWell(onTap: handleRowTap, child: Center(child: Text(user.userId))),
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(
+              child: Text(user.userId, style: TextStyle(fontSize: 16.fSize)),
+            ),
+          ),
         ),
         DataCell(
           InkWell(
             onTap: handleRowTap,
-            child: Center(child: Text(user.fullName)),
+            child: Center(
+              child: Text(user.fullName, style: TextStyle(fontSize: 16.fSize)),
+            ),
           ),
         ),
 
         DataCell(
-          InkWell(onTap: handleRowTap, child: Center(child: Text(user.phone))),
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(
+              child: Text(user.phone, style: TextStyle(fontSize: 16.fSize)),
+            ),
+          ),
         ),
         DataCell(
           InkWell(
             onTap: handleRowTap,
-            child: Center(child: Text(user.whatsapp)),
+            child: Center(
+              child: Text(user.whatsapp, style: TextStyle(fontSize: 16.fSize)),
+            ),
           ),
         ),
         DataCell(
-          InkWell(onTap: handleRowTap, child: Center(child: Text(user.email))),
+          InkWell(
+            onTap: handleRowTap,
+            child: Center(
+              child: Text(user.email, style: TextStyle(fontSize: 16.fSize)),
+            ),
+          ),
         ),
         // DataCell(
         //   InkWell(
@@ -350,9 +369,9 @@ class UserDataTableSource extends DataTableSource {
                           ? GradientText(
                             'Premium',
                             gradient: CustomColors.borderGradient,
-                            style: context.inter50014,
+                            style: TextStyle(fontSize: 16.fSize),
                           )
-                          : Text('Base', style: context.inter50014),
+                          : Text('Base', style: TextStyle(fontSize: 16.fSize)),
                 ),
               ),
 

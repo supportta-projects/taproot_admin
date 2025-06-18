@@ -6,16 +6,19 @@ import 'package:taproot_admin/features/user_data_update_screen/data/product_porf
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 class PorfolioPaymentWidget extends StatelessWidget {
   const PorfolioPaymentWidget({
     super.key,
     required this.portfolioProductModel,
     required this.user,
+    this.onProceed
   });
 
   final List<PortfolioProductModel> portfolioProductModel;
   final User user;
+  final void Function()? onProceed;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +26,7 @@ class PorfolioPaymentWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         MiniLoadingButton(
+          gradientColors: CustomColors.borderGradient.colors,
           useGradient: true,
           needRow: false,
           text: 'Portfolio Payment',
@@ -164,6 +168,8 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                   children: [
                                     Spacer(),
                                     MiniLoadingButton(
+                                      gradientColors:
+                                          CustomColors.borderGradient.colors,
                                       needRow: false,
                                       useGradient: true,
                                       text: 'Continue',
@@ -394,6 +400,10 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                 children: [
                                                                   Spacer(),
                                                                   MiniLoadingButton(
+                                                                    gradientColors:
+                                                                        CustomColors
+                                                                            .borderGradient
+                                                                            .colors,
                                                                     needRow:
                                                                         false,
                                                                     useGradient:
@@ -416,15 +426,19 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                         Navigator.pop(
                                                                           context,
                                                                         );
-                                                                        ScaffoldMessenger.of(
+                                                                        SnackbarHelper.showSuccess(
                                                                           context,
-                                                                        ).showSnackBar(
-                                                                          SnackBar(
-                                                                            content: Text(
-                                                                              'Order created via Razorpay',
-                                                                            ),
-                                                                          ),
+                                                                          'Order created via Razorpay',
                                                                         );
+                                                                        // ScaffoldMessenger.of(
+                                                                        //   context,
+                                                                        // ).showSnackBar(
+                                                                        //   SnackBar(
+                                                                        //     content: Text(
+                                                                        //       'Order created via Razorpay',
+                                                                        //     ),
+                                                                        //   ),
+                                                                        // );
                                                                       } else if (offlineMethod !=
                                                                           null) {
                                                                         final method =
@@ -437,6 +451,11 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                             (ref ==
                                                                                     null ||
                                                                                 ref.isEmpty)) {
+                                                                          SnackbarHelper.showSuccess(
+                                                                            context,
+                                                                            'Order created via Razorpay',
+                                                                          );
+
                                                                           ScaffoldMessenger.of(
                                                                             context,
                                                                           ).showSnackBar(
@@ -465,6 +484,10 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                         Navigator.pop(
                                                                           context,
                                                                         );
+                                                                        if (onProceed !=
+                                                                            null) {
+                                                                          onProceed!(); // 🔁 Trigger refresh callback
+                                                                        }
                                                                         ScaffoldMessenger.of(
                                                                           context,
                                                                         ).showSnackBar(

@@ -81,7 +81,9 @@ dependencies:
   build_runner: ^2.4.15
   flutter_gen: ^5.10.0
   lucide_icons_flutter: ^2.0.3
+
   easy_sidemenu: ^0.6.1
+  # used 0.6.1 version easy sidemenu when develop
   lucide_icons: ^0.257.0
   syncfusion_flutter_charts: ^29.1.40
   flutter_regex: ^0.0.3
