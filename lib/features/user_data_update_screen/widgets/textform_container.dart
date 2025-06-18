@@ -101,12 +101,12 @@ class _TextFormContainerState extends State<TextFormContainer> {
           floatingLabelBehavior: FloatingLabelBehavior.always,
           label: Text(widget.labelText),
           labelStyle: TextStyle(color: CustomColors.textColorDarkGrey),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: CustomColors.textColorLightGrey),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: CustomColors.textColorLightGrey),
-          ),
+          // enabledBorder: OutlineInputBorder(
+          //   borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+          // ),
+          // focusedBorder: OutlineInputBorder(
+          //   borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+          // ),
         ),
         inputFormatters: widget.inputFormatters,
       ),

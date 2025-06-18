@@ -108,18 +108,37 @@ class AppTheme {
         fontWeight: FontWeight.w600,
       ),
     ),
-
     inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
+      ),
       enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(CustomPadding.paddingLarge), // ✅
         borderSide: BorderSide(color: CustomColors.textColorLightGrey),
       ),
       disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(CustomPadding.paddingLarge), // ✅
         borderSide: BorderSide(color: CustomColors.textColorLightGrey),
       ),
       focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(CustomPadding.paddingLarge), // ✅
         borderSide: BorderSide(color: CustomColors.textColorLightGrey),
       ),
     ),
+
+    // inputDecorationTheme: InputDecorationTheme(
+    //   border: OutlineInputBorder(
+    //     borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
+    //   ),
+    //   enabledBorder: OutlineInputBorder(
+    //     borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+    //   ),
+    //   disabledBorder: OutlineInputBorder(
+    //     borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+    //   ),
+    //   focusedBorder: OutlineInputBorder(
+    //     borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+    //   ),
+    // ),
   );
 }
