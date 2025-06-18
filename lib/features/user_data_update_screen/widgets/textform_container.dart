@@ -96,10 +96,7 @@ class _TextFormContainerState extends State<TextFormContainer> {
         onTap: widget.isDatePicker ? _pickDate : null,
         decoration: InputDecoration(
           suffixText: widget.suffixText,
-          prefix:
-              widget.isNumberField
-                  ? widget.countryCodeWidget
-                  : null,
+          prefix: widget.isNumberField ? widget.countryCodeWidget : null,
           // prefix: widget.isNumberField ? Text('+91 ') : null,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           label: Text(widget.labelText),
