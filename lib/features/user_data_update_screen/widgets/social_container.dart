@@ -145,6 +145,8 @@ String _getSvgForPlatform(String platform) {
       return Assets.svg.behance;
     case 'youtube':
       return Assets.svg.youtube;
+    case 'threads':
+      return Assets.svg.threads;
 
     default:
       return Assets.svg.link;

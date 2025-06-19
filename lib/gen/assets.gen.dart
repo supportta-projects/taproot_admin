@@ -85,6 +85,9 @@ class $AssetsSvgGen {
   /// File path: assets/svg/premium.svg
   String get premium => 'assets/svg/premium.svg';
 
+  /// File path: assets/svg/threads.svg
+  String get threads => 'assets/svg/threads.svg';
+
   /// File path: assets/svg/twitter.svg
   String get twitter => 'assets/svg/twitter.svg';
 
@@ -106,6 +109,7 @@ class $AssetsSvgGen {
     logo,
     pinterest,
     premium,
+    threads,
     twitter,
     whatsapp,
     youtube,

@@ -264,8 +264,10 @@ class _AddProductState extends State<AddProduct> {
                         Expanded(
                           child: TextFormContainer(
                             inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(2),
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,2}'),
+                              ),
+                              LengthLimitingTextInputFormatter(5),
                             ],
                             controller: _discountPriceController,
                             suffixText: '%',

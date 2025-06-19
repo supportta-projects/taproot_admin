@@ -584,15 +584,17 @@ class _EditProductState extends State<EditProduct> {
                       Expanded(
                         child: TextFormContainer(
                           inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(2),
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}'),
+                            ),
+                            LengthLimitingTextInputFormatter(5),
                           ],
                           controller: discountPriceController,
                           suffixText: '%',
                           labelText: 'Discount Percentage',
                           onChanged: (value) {
                             if (value.isNotEmpty) {
-                              final percentage = int.tryParse(value);
+                              final percentage = double.tryParse(value);
                               if (percentage != null &&
                                   percentage >= 0 &&
                                   percentage <= 99) {
@@ -606,7 +608,7 @@ class _EditProductState extends State<EditProduct> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a discount percentage';
                             }
-                            final percentage = int.tryParse(value);
+                            final percentage = double.tryParse(value);
                             if (percentage == null ||
                                 percentage < 0 ||
                                 percentage > 99) {
