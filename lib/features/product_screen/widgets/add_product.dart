@@ -280,7 +280,7 @@ class _AddProductState extends State<AddProduct> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter a discount percentage';
                               }
-                              final percentage = int.tryParse(value);
+                              final percentage = double.tryParse(value);
                               if (percentage == null ||
                                   percentage < 1 ||
                                   percentage > 99) {
