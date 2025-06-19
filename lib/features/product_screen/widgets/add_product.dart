@@ -187,7 +187,8 @@ class _AddProductState extends State<AddProduct> {
                       if (_formKey.currentState!.validate()) {
                         await addProduct();
                         await widget.onSave!();
-                        Navigator.pop(context);
+
+                        quitBack();
                       }
                     },
                     useGradient: true,
@@ -405,6 +406,10 @@ class _AddProductState extends State<AddProduct> {
         ),
       ),
     );
+  }
+
+  void quitBack() {
+    Navigator.pop(context);
   }
 }
 
