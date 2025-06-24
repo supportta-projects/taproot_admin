@@ -235,7 +235,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   ),
                 ),
                 width: double.infinity,
-                height: SizeUtils.height,
+                height: SizeUtils.height - 100,
 
                 child: Column(
                   children: [
@@ -309,8 +309,7 @@ class _OrderScreenState extends State<OrderScreen> {
                         Tab(text: 'Cancelled'),
                       ],
                     ),
-                    SizedBox(
-                      height: SizeUtils.height * 0.75,
+                    Expanded(
                       child: TabBarView(
                         children: List.generate(8, (index) {
                           if (isLoading) {
@@ -334,7 +333,7 @@ class _OrderScreenState extends State<OrderScreen> {
                             initialFirstRowIndex:
                                 (currentPage - 1) * _rowsPerPage,
                             onPageChanged: handlePageChange,
-                            availableRowsPerPage: const [10, 20, 50],
+                            availableRowsPerPage: const [6, 10, 20, 50],
                             columns: const [
                               DataColumn(label: Text('Order ID')),
                               DataColumn(label: Text('Full Name')),
