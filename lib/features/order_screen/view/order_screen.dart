@@ -327,44 +327,39 @@ class _OrderScreenState extends State<OrderScreen> {
                               return NotFoundWidget();
                             }
 
-                            return SingleChildScrollView(
+                            //TODO : SCROLL
 
+                            return PaginatedDataTable(
+                              primary: true,
+                              showFirstLastButtons: true,
+                              arrowHeadColor:
+                                  CustomColors.borderGradient.colors.first,
 
-                              //TODO : fix scroll
-                              
-                              physics: NeverScrollableScrollPhysics(),
-                              child: PaginatedDataTable(
-                                primary: true,
-                                showFirstLastButtons: true,
-                                arrowHeadColor:
-                                    CustomColors.borderGradient.colors.first,
-
-                                key: index == 0 ? _tableKey : null,
-                                dataRowMaxHeight: 90,
-                                rowsPerPage: _rowsPerPage,
-                                initialFirstRowIndex:
-                                    (currentPage - 1) * _rowsPerPage,
-                                onPageChanged: handlePageChange,
-                                availableRowsPerPage: const [6, 10, 20, 50],
-                                columns: const [
-                                  DataColumn(label: Text('Order ID')),
-                                  DataColumn(label: Text('Full Name')),
-                                  DataColumn(label: Text('Phone')),
-                                  DataColumn(label: Text('Amount')),
-                                  DataColumn(label: Text('Order Count')),
-                                  DataColumn(label: Text('Status')),
-                                  DataColumn(label: Text('Action')),
-                                ],
-                                source:
-                                    orderDataSource ??
-                                    OrderDataSource(
-                                      [],
-                                      0,
-                                      context,
-                                      widget.innerNavigatorKey,
-                                      _rowsPerPage,
-                                    ),
-                              ),
+                              key: index == 0 ? _tableKey : null,
+                              dataRowMaxHeight: 90,
+                              rowsPerPage: _rowsPerPage,
+                              initialFirstRowIndex:
+                                  (currentPage - 1) * _rowsPerPage,
+                              onPageChanged: handlePageChange,
+                              availableRowsPerPage: const [6, 10, 20, 50],
+                              columns: const [
+                                DataColumn(label: Text('Order ID')),
+                                DataColumn(label: Text('Full Name')),
+                                DataColumn(label: Text('Phone')),
+                                DataColumn(label: Text('Amount')),
+                                DataColumn(label: Text('Order Count')),
+                                DataColumn(label: Text('Status')),
+                                DataColumn(label: Text('Action')),
+                              ],
+                              source:
+                                  orderDataSource ??
+                                  OrderDataSource(
+                                    [],
+                                    0,
+                                    context,
+                                    widget.innerNavigatorKey,
+                                    _rowsPerPage,
+                                  ),
                             );
                           }),
                         ),
