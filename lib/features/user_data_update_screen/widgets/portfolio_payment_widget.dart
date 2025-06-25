@@ -7,7 +7,7 @@ import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
-class PorfolioPaymentWidget extends StatelessWidget {
+class PorfolioPaymentWidget extends StatefulWidget {
   const PorfolioPaymentWidget({
     super.key,
     required this.portfolioProductModel,
@@ -19,6 +19,11 @@ class PorfolioPaymentWidget extends StatelessWidget {
   final User user;
   final void Function()? onProceed;
 
+  @override
+  State<PorfolioPaymentWidget> createState() => _PorfolioPaymentWidgetState();
+}
+
+class _PorfolioPaymentWidgetState extends State<PorfolioPaymentWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -80,12 +85,13 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                 child: ListView.separated(
                                   shrinkWrap: true,
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: portfolioProductModel.length,
+                                  itemCount:
+                                      widget.portfolioProductModel.length,
                                   separatorBuilder:
                                       (_, __) => SizedBox(width: 12),
                                   itemBuilder: (context, index) {
                                     final product =
-                                        portfolioProductModel[index];
+                                        widget.portfolioProductModel[index];
                                     final isSelected = selectedIndex == index;
 
                                     return GestureDetector(
@@ -209,7 +215,10 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                 ),
                                                           ),
                                                           width: 600.h,
-                                                          height: 300.h,
+                                                          height:
+                                                              SizeUtils.height *
+                                                              .6,
+
                                                           child: Column(
                                                             crossAxisAlignment:
                                                                 CrossAxisAlignment
@@ -227,7 +236,8 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                   borderRadius: BorderRadius.vertical(
                                                                     top: Radius.circular(
                                                                       CustomPadding
-                                                                          .paddingLarge,
+                                                                          .paddingLarge
+                                                                          .v,
                                                                     ),
                                                                   ),
                                                                 ),
@@ -414,7 +424,7 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                           'RAZORPAY') {
                                                                         await PortfolioService.createPortfolioOrder(
                                                                           userId:
-                                                                              user.id,
+                                                                              widget.user.id,
                                                                           productId:
                                                                               product.id,
                                                                           paymentServiceProvider:
@@ -422,13 +432,17 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                           paymentMethod:
                                                                               'RAZORPAY',
                                                                         );
-                                                                        Navigator.pop(
-                                                                          context,
-                                                                        );
-                                                                        SnackbarHelper.showSuccess(
-                                                                          context,
-                                                                          'Order created via Razorpay',
-                                                                        );
+
+                                                                        if (mounted) {
+                                                                          Navigator.pop(
+                                                                            context,
+                                                                          );
+                                                                          SnackbarHelper.showSuccess(
+                                                                            context,
+                                                                            'Order created via Razorpay',
+                                                                          );
+                                                                        }
+
                                                                         // ScaffoldMessenger.of(
                                                                         //   context,
                                                                         // ).showSnackBar(
@@ -469,7 +483,7 @@ class PorfolioPaymentWidget extends StatelessWidget {
 
                                                                         await PortfolioService.createPortfolioOrder(
                                                                           userId:
-                                                                              user.id,
+                                                                              widget.user.id,
                                                                           productId:
                                                                               product.id,
                                                                           paymentServiceProvider:
@@ -483,9 +497,10 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                                                         Navigator.pop(
                                                                           context,
                                                                         );
-                                                                        if (onProceed !=
+                                                                        if (widget.onProceed !=
                                                                             null) {
-                                                                          onProceed!(); // 🔁 Trigger refresh callback
+                                                                          widget
+                                                                              .onProceed!(); // 🔁 Trigger refresh callback
                                                                         }
                                                                         ScaffoldMessenger.of(
                                                                           context,
@@ -554,7 +569,8 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                         Navigator.pop(context);
                                         showPaymentOptionsDialog(
                                           context,
-                                          portfolioProductModel[selectedIndex!],
+                                          widget
+                                              .portfolioProductModel[selectedIndex!],
                                         );
                                       },
                                     ),
