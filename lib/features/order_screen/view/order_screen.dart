@@ -241,7 +241,7 @@ class _OrderScreenState extends State<OrderScreen> {
                     ),
                   ),
                   width: double.infinity,
-                  height: SizeUtils.height - 100,
+                  height: SizeUtils.height * .8,
 
                   child: Column(
                     children: [
