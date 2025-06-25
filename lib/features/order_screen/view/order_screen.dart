@@ -31,7 +31,7 @@ class _OrderScreenState extends State<OrderScreen> {
   int currentPage = 1;
   int totalPages = 1;
   int totalOrder = 0;
-  final int _rowsPerPage = 6;
+  final int _rowsPerPage = 5;
 
   // data
 
