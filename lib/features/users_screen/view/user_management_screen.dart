@@ -122,6 +122,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle headingTextStyle = context.inter60016.copyWith(
+      fontSize: 18.fSize,
+      // color: Colors.red,
+      // fontWeight: FontWeight
+    );
     return Scaffold(
       // appBar: AppBar(title: const Text('User')),
       body: SingleChildScrollView(
@@ -226,17 +231,27 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           // You can customize this if needed
                           showFirstLastButtons: true,
                           columns: [
-                            DataColumn(label: Text('User ID')),
+                            DataColumn(
+                              label: Text('User ID', style: headingTextStyle),
+                            ),
                             DataColumn(
                               // headingRowAlignment: ,
-                              label: Text('Full Name'),
+                              label: Text('Full Name', style: headingTextStyle),
                             ),
 
-                            DataColumn(label: Text('Phone')),
-                            DataColumn(label: Text('WhatsApp')),
-                            DataColumn(label: Text('Email')),
+                            DataColumn(
+                              label: Text('Phone', style: headingTextStyle),
+                            ),
+                            DataColumn(
+                              label: Text('WhatsApp', style: headingTextStyle),
+                            ),
+                            DataColumn(
+                              label: Text('Email', style: headingTextStyle),
+                            ),
                             // DataColumn(label: Text('Website Link')),
-                            DataColumn(label: Text('Premium')),
+                            DataColumn(
+                              label: Text('Premium', style: headingTextStyle),
+                            ),
                           ],
                           source:
                               _dataSource ??
