@@ -225,6 +225,7 @@ class _OrderScreenState extends State<OrderScreen> {
             Gap(CustomPadding.paddingLarge.v),
             Expanded(
               child: SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: CustomPadding.paddingLarge.v,
