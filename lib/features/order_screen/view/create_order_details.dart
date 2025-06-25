@@ -57,7 +57,7 @@ Future<Map<String, dynamic>?> showPaymentMethodDialog(
                     decoration: BoxDecoration(
                       color: CustomColors.buttonColor1,
                       borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(CustomPadding.paddingLarge),
+                        top: Radius.circular(CustomPadding.paddingLarge.v),
                       ),
                     ),
                     child: Center(
