@@ -65,10 +65,10 @@ class CustomColors {
   static const Color buttonColor2 = Colors.lightGreen;
   static const Color green = Color(0xff27AE60);
   static const Color brown = Color(0xffa2845e);
-  static const Color retryRed=Color(0xFFF44336);
-  static const Color confirmOrange=Color(0xFFFF9800);
-  static const Color dispatchblue=Color(0xFF2196F3);
-  static const Color completeGreen=Color(0xFF4CAF50);
+  static const Color retryRed = Color(0xFFF44336);
+  static const Color confirmOrange = Color(0xFFFF9800);
+  static const Color dispatchblue = Color(0xFF2196F3);
+  static const Color completeGreen = Color(0xFF4CAF50);
 
   static const Color greenDark = Color(0xff005624);
   static const Color lightGreen = Color(0xffE0EEE8);
@@ -82,30 +82,29 @@ class CustomColors {
     end: Alignment.centerRight,
     colors: [Color(0xff0078e0), Color(0xff00b2af)],
   );
-   static const LinearGradient borderGradientRed = LinearGradient(
+  static const LinearGradient borderGradientRed = LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
     colors: [Color(0xFFF44336), Color(0xFFF44336)],
   );
 }
 
-
 Iterable<LocalizationsDelegate<dynamic>> customLocalizationsDelegates = const [
-              CountryLocalizations.delegate,
+  CountryLocalizations.delegate,
 
-              /// CountryLocalizations.getDelegate(enableLocalization: false),  // For no localization only english just declare delegate this way.
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-            ];
+  /// CountryLocalizations.getDelegate(enableLocalization: false),  // For no localization only english just declare delegate this way.
+  GlobalMaterialLocalizations.delegate,
+  GlobalWidgetsLocalizations.delegate,
+];
 
-// LocalizationsDelegate<dynamic> listDelegates = 
+// LocalizationsDelegate<dynamic> listDelegates =
 //    [
 //     CountryLocalizations.delegate,
 
 //     /// CountryLocalizations.getDelegate(enableLocalization: false),  // For no localization only english just declare delegate this way.
 //     GlobalMaterialLocalizations.delegate,
 //     GlobalWidgetsLocalizations.delegate,
-  
+
 // ];
 const loremIpsum =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
@@ -199,7 +198,7 @@ final List<BoxShadow> floatingShadow = [
 ];
 final List<BoxShadow> floatingShadowLarge = [
   BoxShadow(
-    color: CustomColors.textFieldBorderGrey,
+    color: CustomColors.textFieldBorderGrey.withValues(alpha: 0.2),
     spreadRadius: .5,
     blurRadius: 2,
     offset: Offset(0, 4), // Vertical shadow
