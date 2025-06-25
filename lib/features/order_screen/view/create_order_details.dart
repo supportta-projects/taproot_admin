@@ -47,7 +47,7 @@ Future<Map<String, dynamic>?> showPaymentMethodDialog(
                 ),
               ),
               width: 600.h,
-              height: 300.h,
+              height: SizeUtils.height * .6,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
