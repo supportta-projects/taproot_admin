@@ -234,7 +234,7 @@ class _OrderScreenState extends State<OrderScreen> {
                     horizontal: CustomPadding.paddingLarge.v,
                   ),
                   decoration: BoxDecoration(
-                    color: CustomColors.secondaryColor,
+                    color: CustomColors.burgandryRed,
                     borderRadius: BorderRadius.circular(
                       CustomPadding.paddingLarge.v,
                     ),
@@ -330,6 +330,10 @@ class _OrderScreenState extends State<OrderScreen> {
                             //TODO : SCROLL
 
                             return PaginatedDataTable(
+                              // dragStartBehavior: DragStartBehavior.
+                              controller: ScrollController(
+                                // keepScrollOffset:
+                              ),
                               primary: true,
                               showFirstLastButtons: true,
                               arrowHeadColor:
