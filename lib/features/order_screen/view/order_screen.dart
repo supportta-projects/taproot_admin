@@ -374,6 +374,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 ),
               ),
             ),
+            Gap(CustomPadding.paddingLarge.v),
           ],
         ),
       ),
