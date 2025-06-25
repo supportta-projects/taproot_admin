@@ -1,13 +1,12 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:taproot_admin/features/order_screen/data/invoice_download.dart';
-import 'package:taproot_admin/features/users_screen/data/user_data_model.dart'
-    as user_model;
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/order_screen/data/invoice_download.dart';
 import 'package:taproot_admin/features/order_screen/data/order_detail_add.model.dart'
     as add_model;
 import 'package:taproot_admin/features/order_screen/data/order_details_model.dart'
@@ -24,6 +23,8 @@ import 'package:taproot_admin/features/user_data_update_screen/views/user_data_u
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/location_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
+import 'package:taproot_admin/features/users_screen/data/user_data_model.dart'
+    as user_model;
 import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
@@ -346,6 +347,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       }
     }
 
+    String formatTimeString(String dateString) {
+      try {
+        final dt = DateTime.parse(dateString);
+        return DateFormat('hh:mm:ss a').format(dt.toLocal());
+      } catch (_) {
+        return 'Invalid date';
+      }
+    }
+
     return Scaffold(
       body:
           orderDetails == null
@@ -630,6 +640,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                       child: Column(
                                         spacing: CustomPadding.paddingLarge.v,
                                         children: [
+                                          Gap(CustomPadding.padding.v),
+
                                           CardRow(
                                             prefixText: 'Order ID',
                                             suffixText: widget.orderId,
@@ -661,6 +673,20 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                             prefixText: 'Order Status',
                                             suffixText:
                                                 orderDetails!.orderStatus,
+                                            prefixstyle: context.inter50014
+                                                .copyWith(
+                                                  color: CustomColors.hintGrey,
+                                                ),
+                                            sufixstyle: context.inter50016
+                                                .copyWith(
+                                                  color: CustomColors.textColor,
+                                                ),
+                                          ),
+                                          CardRow(
+                                            prefixText: 'Order time',
+                                            suffixText: formatTimeString(
+                                              orderDetails!.createdAt,
+                                            ),
                                             prefixstyle: context.inter50014
                                                 .copyWith(
                                                   color: CustomColors.hintGrey,
@@ -702,7 +728,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                                           as order_details.ProductDetails
                                       : null;
 
-                              return ProductCard(orderType: orderDetails!.orderType,
+                              return ProductCard(
+                                orderType: orderDetails!.orderType,
                                 image: productDetails?.firstImage?.key ?? '',
                                 productName:
                                     productDetails?.name ??
@@ -744,9 +771,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                         ),
                       ],
                     ),
-                                        orderDetails!.orderType == 'Portfolio'?SizedBox():
-
-                    Gap(CustomPadding.paddingXL.v),
+                    orderDetails!.orderType == 'Portfolio'
+                        ? SizedBox()
+                        : Gap(CustomPadding.paddingXL.v),
                     orderDetails!.orderType == 'Portfolio'
                         ? SizedBox()
                         : CommonProductContainer(
@@ -843,10 +870,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                               ),
                           ],
                         ),
-orderDetails!.orderType == 'Portfolio'
+                    orderDetails!.orderType == 'Portfolio'
                         ? SizedBox()
-                        :
-                    Gap(CustomPadding.paddingXL.v),
+                        : Gap(CustomPadding.paddingXL.v),
                     orderDetails!.orderType == 'Portfolio'
                         ? SizedBox()
                         : orderEdit
@@ -966,7 +992,6 @@ orderDetails!.orderType == 'Portfolio'
                                     CustomColors.borderGradient.colors,
                               ),
                             )
-                        // : SizedBox()
                         : CommonProductContainer(
                           title: 'Payment Details',
                           children: [
@@ -1004,12 +1029,8 @@ orderDetails!.orderType == 'Portfolio'
                                             children: [
                                               Text('Invoice'),
                                               Spacer(),
-                                              // TextButton(onPressed: , child: child)
+
                                               TextButton(
-                                                // isLoading: _isDownloading,
-                                                // useGradient: true,
-                                                // icon: LucideIcons.download,
-                                                // text: 'Download',
                                                 child: Text(
                                                   "Download",
                                                   style: context.inter50016
@@ -1024,10 +1045,6 @@ orderDetails!.orderType == 'Portfolio'
                                                 ),
                                                 onPressed: () async {
                                                   _handleDownload(context);
-                                                  // await downloadInvoicePdfWithoutPackage(
-                                                  //   context,
-                                                  //   orderDetails!.id,
-                                                  // );
                                                 },
                                               ),
                                             ],
