@@ -4,7 +4,6 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/product_porfolio_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
-import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
@@ -13,7 +12,7 @@ class PorfolioPaymentWidget extends StatelessWidget {
     super.key,
     required this.portfolioProductModel,
     required this.user,
-    this.onProceed
+    this.onProceed,
   });
 
   final List<PortfolioProductModel> portfolioProductModel;
@@ -52,7 +51,7 @@ class PorfolioPaymentWidget extends StatelessWidget {
                             ),
                           ),
                           width: 600.h,
-                          height: 350.h,
+                          height: SizeUtils.height * .6,
                           child: Column(
                             children: [
                               Container(
@@ -62,7 +61,7 @@ class PorfolioPaymentWidget extends StatelessWidget {
                                   color: CustomColors.buttonColor1,
                                   borderRadius: BorderRadius.vertical(
                                     top: Radius.circular(
-                                      CustomPadding.paddingLarge,
+                                      CustomPadding.paddingLarge.v,
                                     ),
                                   ),
                                 ),
