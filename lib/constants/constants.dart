@@ -197,3 +197,11 @@ final List<BoxShadow> floatingShadow = [
     offset: Offset(0, 1), // Vertical shadow
   ),
 ];
+final List<BoxShadow> floatingShadowLarge = [
+  BoxShadow(
+    color: CustomColors.textFieldBorderGrey,
+    spreadRadius: .5,
+    blurRadius: 2,
+    offset: Offset(0, 4), // Vertical shadow
+  ),
+];
