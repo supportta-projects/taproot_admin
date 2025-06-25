@@ -204,6 +204,26 @@ class _OrderScreenState extends State<OrderScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: CustomColors.buttonColor1,
+                    borderRadius: BorderRadius.circular(
+                      CustomPadding.paddingXL,
+                    ),
+                  ),
+
+                  child: IconButton(
+                    // color: Colors.blue,
+                    // highlightColor: Colors.blue,
+                    tooltip: 'Refresh',
+                    onPressed: () => fetchAllOrder(),
+                    icon: Icon(
+                      Icons.refresh,
+                      color: CustomColors.secondaryColor,
+                    ),
+                  ),
+                ),
+                CustomGap.gapLarge,
                 MiniLoadingButton(
                   icon: Icons.add,
                   text: 'Create Order',

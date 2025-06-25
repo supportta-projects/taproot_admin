@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 
 import '/exporter/exporter.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 enum ButtonSize {
   small,
@@ -48,7 +48,7 @@ class MiniLoadingButton extends StatelessWidget {
     super.key,
     this.icon,
     this.needRow = true,
-    required this.text,
+    this.text,
     required this.onPressed,
     this.isLoading = false,
     this.enabled = true,
@@ -60,7 +60,7 @@ class MiniLoadingButton extends StatelessWidget {
     this.gradientColors,
   });
   final bool needRow;
-  final String text;
+  final String? text;
   final VoidCallback onPressed;
   final bool isLoading;
   final bool enabled;
@@ -127,13 +127,21 @@ class MiniLoadingButton extends StatelessWidget {
                       children: [
                         needRow ? Icon(icon, color: textColor) : SizedBox(),
                         needRow ? Gap(CustomPadding.padding) : SizedBox(),
-                        Text(
-                          text,
-                          style: TextStyle(
-                            fontSize: size.fontSize.fSize,
-                            fontWeight: FontWeight.w600,
-                            color: textColor,
-                          ),
+                        Builder(
+                          builder: (context) {
+                            if (text != null) {
+                              return Text(
+                                text!,
+                                style: TextStyle(
+                                  fontSize: size.fontSize.fSize,
+                                  fontWeight: FontWeight.w600,
+                                  color: textColor,
+                                ),
+                              );
+                            } else {
+                              return SizedBox();
+                            }
+                          },
                         ),
                       ],
                     ),
