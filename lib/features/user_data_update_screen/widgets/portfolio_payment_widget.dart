@@ -43,11 +43,6 @@ class _PorfolioPaymentWidgetState extends State<PorfolioPaymentWidget> {
                 return StatefulBuilder(
                   builder:
                       (context, setState) => Dialog(
-                        // backgroundColor: CustomColors.secondaryColor,
-                        // title: Text(
-                        //   'Choose Portfolio Theme',
-                        //   style: context.inter60016,
-                        // ),
                         child: Container(
                           decoration: BoxDecoration(
                             color: CustomColors.secondaryColor,
@@ -442,16 +437,6 @@ class _PorfolioPaymentWidgetState extends State<PorfolioPaymentWidget> {
                                                                             'Order created via Razorpay',
                                                                           );
                                                                         }
-
-                                                                        // ScaffoldMessenger.of(
-                                                                        //   context,
-                                                                        // ).showSnackBar(
-                                                                        //   SnackBar(
-                                                                        //     content: Text(
-                                                                        //       'Order created via Razorpay',
-                                                                        //     ),
-                                                                        //   ),
-                                                                        // );
                                                                       } else if (offlineMethod !=
                                                                           null) {
                                                                         final method =
@@ -500,7 +485,7 @@ class _PorfolioPaymentWidgetState extends State<PorfolioPaymentWidget> {
                                                                         if (widget.onProceed !=
                                                                             null) {
                                                                           widget
-                                                                              .onProceed!(); // 🔁 Trigger refresh callback
+                                                                              .onProceed!();
                                                                         }
                                                                         ScaffoldMessenger.of(
                                                                           context,
@@ -536,31 +521,9 @@ class _PorfolioPaymentWidgetState extends State<PorfolioPaymentWidget> {
                                                                     .paddingLarge
                                                                     .v,
                                                               ),
-                                                              //  TextButton(
-
-                                                              //   child: Text(
-                                                              //     'Proceed',
-                                                              //   ),
-                                                              // ),
                                                             ],
                                                           ),
                                                         ),
-                                                        // title: Text(
-                                                        //   'Portfolio Payment - ${product.name}',
-                                                        // ),
-                                                        // content: Column(
-                                                        //   crossAxisAlignment:
-                                                        //       CrossAxisAlignment
-                                                        //           .start,
-                                                        //   mainAxisSize:
-                                                        //       MainAxisSize.min,
-                                                        //   children: [
-
-                                                        //   ],
-                                                        // ),
-                                                        // actions: [
-
-                                                        // ],
                                                       ),
                                                 ),
                                           );
@@ -581,15 +544,6 @@ class _PorfolioPaymentWidgetState extends State<PorfolioPaymentWidget> {
                             ],
                           ),
                         ),
-                        // content: SizedBox(
-                        //   width: 600,
-                        //   height: 330,
-                        //   child: Column(
-                        //     children: [
-
-                        //     ],
-                        //   ),
-                        // ),
                       ),
                 );
               },

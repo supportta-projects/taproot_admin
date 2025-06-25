@@ -165,6 +165,7 @@ Future<Map<String, dynamic>?> showPaymentMethodDialog(
                               "referenceId": refController.text.trim(),
                           };
                           Navigator.of(context).pop(paymentData);
+                          // Navigator.pushNamed(context,);
                         },
                       ),
                       // ElevatedButton(
@@ -904,7 +905,6 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                           ...List.generate(
                             selectedProducts.length,
                             (index) => ProductCard(
-                             
                               image:
                                   selectedProducts[index]
                                       .productImages

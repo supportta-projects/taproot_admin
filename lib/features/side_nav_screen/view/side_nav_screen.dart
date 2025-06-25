@@ -8,6 +8,7 @@ import 'package:taproot_admin/services/size_utils.dart';
 import '../widgets/custom_side_bar.dart';
 
 class SideNavScreen extends StatefulWidget {
+  final int passedIndex = 0;
   static const String path = '/sideNav';
   const SideNavScreen({super.key});
 

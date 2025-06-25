@@ -23,15 +23,23 @@ import 'package:taproot_admin/widgets/snakbar_helper.dart';
 import '../widgets/side_menu_lucide_icon_widgt.dart';
 
 class SideDrawerNavScreen extends StatefulWidget {
+  final int passedIndex;
+
   static const String path = '/sideDrawerNav';
-  const SideDrawerNavScreen({super.key});
+  const SideDrawerNavScreen({super.key, this.passedIndex =0 });
 
   @override
   State<SideDrawerNavScreen> createState() => _SideDrawerNavScreenState();
 }
 
 class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
+
+
   int _currentIndex = 0;
+  
+
+
+  
 
   final GlobalKey<NavigatorState> _innerNavigatorKey =
       GlobalKey<NavigatorState>();
