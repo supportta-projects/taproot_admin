@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -193,174 +194,179 @@ class _OrderScreenState extends State<OrderScreen> {
     return DefaultTabController(
       length: 8,
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Gap(CustomPadding.paddingLarge.v),
+        body: Column(
+          children: [
+            Gap(CustomPadding.paddingLarge.v),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  MiniLoadingButton(
-                    icon: Icons.add,
-                    text: 'Create Order',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  CreateOrder(refreshOrders: fetchAllOrder),
-                        ),
-                      );
-                    },
-                    useGradient: true,
-                    gradientColors: CustomColors.borderGradient.colors,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                MiniLoadingButton(
+                  icon: Icons.add,
+                  text: 'Create Order',
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                CreateOrder(refreshOrders: fetchAllOrder),
+                      ),
+                    );
+                  },
+                  useGradient: true,
+                  gradientColors: CustomColors.borderGradient.colors,
+                ),
+                Gap(CustomPadding.paddingXL.v),
+              ],
+            ),
+            Gap(CustomPadding.paddingLarge.v),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: CustomPadding.paddingLarge.v,
+                    vertical: CustomPadding.paddingLarge.v,
                   ),
-                  Gap(CustomPadding.paddingXL.v),
-                ],
-              ),
-              Gap(CustomPadding.paddingLarge.v),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: CustomPadding.paddingLarge.v,
-                  vertical: CustomPadding.paddingLarge.v,
-                ),
-                margin: EdgeInsets.symmetric(
-                  horizontal: CustomPadding.paddingLarge.v,
-                ),
-                decoration: BoxDecoration(
-                  color: CustomColors.secondaryColor,
-                  borderRadius: BorderRadius.circular(
-                    CustomPadding.paddingLarge.v,
+                  margin: EdgeInsets.symmetric(
+                    horizontal: CustomPadding.paddingLarge.v,
                   ),
-                ),
-                width: double.infinity,
-                height: SizeUtils.height - 100,
+                  decoration: BoxDecoration(
+                    color: CustomColors.secondaryColor,
+                    borderRadius: BorderRadius.circular(
+                      CustomPadding.paddingLarge.v,
+                    ),
+                  ),
+                  width: double.infinity,
+                  height: SizeUtils.height - 100,
 
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        SearchWidget(
-                          hintText: 'Search Order ID, Username',
-                          controller: _searchController,
-                          onChanged: handleSearch,
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            showDatePicker(
-                              context: context,
-                              firstDate: DateTime.utc(2024),
-                              lastDate: DateTime.now(),
-                            ).then((selectedDate) {
-                              fetchDateFilteredOrder(selectedDate.toString());
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SearchWidget(
+                            hintText: 'Search Order ID, Username',
+                            controller: _searchController,
+                            onChanged: handleSearch,
+                          ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              showDatePicker(
+                                context: context,
+                                firstDate: DateTime.utc(2024),
+                                lastDate: DateTime.now(),
+                              ).then((selectedDate) {
+                                fetchDateFilteredOrder(selectedDate.toString());
 
-                              if (selectedDate != null) {
-                                logInfo('Selected date: $selectedDate');
-                              }
-                            });
-                          },
-                          child: Container(
-                            width: 110.v,
-                            height: 40.h,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(
-                                CustomPadding.paddingXXL.v,
-                              ),
-                              border: Border.all(
-                                color: CustomColors.textColorLightGrey,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('Filter', style: context.inter50014),
-                                Gap(CustomPadding.padding.v),
-                                Icon(
-                                  LucideIcons.funnel,
-                                  color: CustomColors.textColorGrey,
+                                if (selectedDate != null) {
+                                  logInfo('Selected date: $selectedDate');
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: 110.v,
+                              height: 40.h,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  CustomPadding.paddingXXL.v,
                                 ),
-                              ],
+                                border: Border.all(
+                                  color: CustomColors.textColorLightGrey,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('Filter', style: context.inter50014),
+                                  Gap(CustomPadding.padding.v),
+                                  Icon(
+                                    LucideIcons.funnel,
+                                    color: CustomColors.textColorGrey,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    TabBar(
-                      onTap: handleTabChange,
-                      unselectedLabelColor: CustomColors.hintGrey,
-
-                      unselectedLabelStyle: context.inter50016,
-                      labelColor: CustomColors.textColor,
-                      labelStyle: context.inter50016,
-                      isScrollable: true,
-                      indicatorColor: CustomColors.greenDark,
-                      indicatorWeight: 4,
-                      dragStartBehavior: DragStartBehavior.start,
-                      tabs: [
-                        Tab(text: 'All'),
-                        Tab(text: 'Order Placed'),
-                        Tab(text: 'Shipped'),
-                        Tab(text: 'Completed'),
-                        Tab(text: 'Pending'),
-                        Tab(text: 'Confirmed'),
-                        Tab(text: 'Failed'),
-                        Tab(text: 'Cancelled'),
-                      ],
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        children: List.generate(8, (index) {
-                          if (isLoading) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-
-                          if (allOrder.isEmpty) {
-                            return NotFoundWidget();
-                          }
-
-                          return PaginatedDataTable(
-                            showFirstLastButtons: true,
-                            arrowHeadColor:
-                                CustomColors.borderGradient.colors.first,
-
-                            key: index == 0 ? _tableKey : null,
-                            dataRowMaxHeight: 90,
-                            rowsPerPage: _rowsPerPage,
-                            initialFirstRowIndex:
-                                (currentPage - 1) * _rowsPerPage,
-                            onPageChanged: handlePageChange,
-                            availableRowsPerPage: const [6, 10, 20, 50],
-                            columns: const [
-                              DataColumn(label: Text('Order ID')),
-                              DataColumn(label: Text('Full Name')),
-                              DataColumn(label: Text('Phone')),
-                              DataColumn(label: Text('Amount')),
-                              DataColumn(label: Text('Order Count')),
-                              DataColumn(label: Text('Status')),
-                              DataColumn(label: Text('Action')),
-                            ],
-                            source:
-                                orderDataSource ??
-                                OrderDataSource(
-                                  [],
-                                  0,
-                                  context,
-                                  widget.innerNavigatorKey,
-                                  _rowsPerPage,
-                                ),
-                          );
-                        }),
+                        ],
                       ),
-                    ),
-                  ],
+                      TabBar(
+                        onTap: handleTabChange,
+                        unselectedLabelColor: CustomColors.hintGrey,
+
+                        unselectedLabelStyle: context.inter50016,
+                        labelColor: CustomColors.textColor,
+                        labelStyle: context.inter50016,
+                        isScrollable: true,
+                        indicatorColor: CustomColors.greenDark,
+                        indicatorWeight: 4,
+                        dragStartBehavior: DragStartBehavior.start,
+                        tabs: [
+                          Tab(text: 'All'),
+                          Tab(text: 'Order Placed'),
+                          Tab(text: 'Shipped'),
+                          Tab(text: 'Completed'),
+                          Tab(text: 'Pending'),
+                          Tab(text: 'Confirmed'),
+                          Tab(text: 'Failed'),
+                          Tab(text: 'Cancelled'),
+                        ],
+                      ),
+                      Expanded(
+                        child: TabBarView(
+                          children: List.generate(8, (index) {
+                            if (isLoading) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            if (allOrder.isEmpty) {
+                              return NotFoundWidget();
+                            }
+
+                            return SingleChildScrollView(
+                              child: PaginatedDataTable(
+                                primary: true,
+                                showFirstLastButtons: true,
+                                arrowHeadColor:
+                                    CustomColors.borderGradient.colors.first,
+
+                                key: index == 0 ? _tableKey : null,
+                                dataRowMaxHeight: 90,
+                                rowsPerPage: _rowsPerPage,
+                                initialFirstRowIndex:
+                                    (currentPage - 1) * _rowsPerPage,
+                                onPageChanged: handlePageChange,
+                                availableRowsPerPage: const [6, 10, 20, 50],
+                                columns: const [
+                                  DataColumn(label: Text('Order ID')),
+                                  DataColumn(label: Text('Full Name')),
+                                  DataColumn(label: Text('Phone')),
+                                  DataColumn(label: Text('Amount')),
+                                  DataColumn(label: Text('Order Count')),
+                                  DataColumn(label: Text('Status')),
+                                  DataColumn(label: Text('Action')),
+                                ],
+                                source:
+                                    orderDataSource ??
+                                    OrderDataSource(
+                                      [],
+                                      0,
+                                      context,
+                                      widget.innerNavigatorKey,
+                                      _rowsPerPage,
+                                    ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'package:country_code_picker/country_code_picker.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'package:flutter/material.dart';
 import 'package:taproot_admin/constants/constants.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/services/shared_pref_services.dart';
 import 'package:taproot_admin/services/size_utils.dart';
 import 'package:window_size/window_size.dart';
-import '/theme/theme.dart';
+
 import '/routes/app_routes.dart';
-import 'package:flutter/material.dart';
+import '/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,10 +43,18 @@ class MyApp extends StatelessWidget {
             navigatorKey: navigatorKey,
             builder: (context, child) {
               final size = MediaQuery.of(context).size;
-              return SizedBox(
-                width: size.width,
-                height: size.height,
-                child: child,
+              // final isWindows = Platform.isWindows;
+
+              return Container(
+                // color :
+
+                // padding : EdgeInsets.only()
+                // padding: EdgeInsets.only(bottom: isWindows ? 40.0 : 0.0),
+                child: SizedBox(
+                  width: size.width,
+                  height: size.height,
+                  child: child,
+                ),
               );
             },
 
