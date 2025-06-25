@@ -331,9 +331,9 @@ class _OrderScreenState extends State<OrderScreen> {
 
                             return PaginatedDataTable(
                               // dragStartBehavior: DragStartBehavior.
-                              controller: ScrollController(
-                                // keepScrollOffset:
-                              ),
+                              // controller: ScrollController(
+                              //   // keepScrollOffset:
+                              // ),
                               primary: true,
                               showFirstLastButtons: true,
                               arrowHeadColor:
