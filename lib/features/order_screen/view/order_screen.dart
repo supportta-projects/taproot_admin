@@ -341,7 +341,7 @@ class _OrderScreenState extends State<OrderScreen> {
                                   CustomColors.borderGradient.colors.first,
 
                               key: index == 0 ? _tableKey : null,
-                              dataRowMaxHeight: 80,
+                              dataRowMaxHeight: SizeUtils.height * .089,
                               rowsPerPage: _rowsPerPage,
                               initialFirstRowIndex:
                                   (currentPage - 1) * _rowsPerPage,
