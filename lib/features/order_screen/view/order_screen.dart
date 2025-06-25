@@ -328,6 +328,11 @@ class _OrderScreenState extends State<OrderScreen> {
                             }
 
                             return SingleChildScrollView(
+
+
+                              //TODO : fix scroll
+                              
+                              physics: NeverScrollableScrollPhysics(),
                               child: PaginatedDataTable(
                                 primary: true,
                                 showFirstLastButtons: true,
