@@ -204,7 +204,6 @@ class _ProductPageState extends State<ProductPage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        
                         MiniLoadingButton(
                           icon: Icons.add,
                           text: 'Add Product',
@@ -235,9 +234,11 @@ class _ProductPageState extends State<ProductPage>
                         horizontal: CustomPadding.paddingLarge.v,
                       ),
                       decoration: BoxDecoration(
+                        boxShadow: floatingShadowLarge,
+
                         color: CustomColors.secondaryColor,
                         borderRadius: BorderRadius.circular(
-                          CustomPadding.paddingLarge.v,
+                          CustomPadding.paddingLarge * 2,
                         ),
                       ),
                       width: double.infinity,

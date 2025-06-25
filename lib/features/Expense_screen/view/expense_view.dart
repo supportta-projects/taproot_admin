@@ -10,7 +10,6 @@ import 'package:taproot_admin/features/Expense_screen/data/expense_model.dart';
 import 'package:taproot_admin/features/Expense_screen/data/expense_service.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/add_expense.dart';
 import 'package:taproot_admin/features/Expense_screen/widgets/edit_expense.dart';
-
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
 import 'package:taproot_admin/widgets/snakbar_helper.dart';
@@ -147,9 +146,11 @@ class _ExpenseViewState extends State<ExpenseView> {
                   horizontal: CustomPadding.paddingLarge.v,
                 ),
                 decoration: BoxDecoration(
+                  boxShadow: floatingShadowLarge,
+
                   color: CustomColors.secondaryColor,
                   borderRadius: BorderRadius.circular(
-                    CustomPadding.paddingLarge.v,
+                    CustomPadding.paddingLarge * 2,
                   ),
                 ),
                 width: double.infinity,
@@ -255,6 +256,11 @@ class _ExpenseViewState extends State<ExpenseView> {
   }
 
   Widget _buildPaginatedDataTable() {
+    TextStyle headingTextStyle = context.inter50016.copyWith(
+      fontSize: 16.fSize,
+      // color: Colors.red,
+      // fontWeight: FontWeight
+    );
     if (_isLoading) {
       return Center(child: CircularProgressIndicator());
     }
@@ -268,7 +274,7 @@ class _ExpenseViewState extends State<ExpenseView> {
       child: PaginatedDataTable(
         arrowHeadColor: CustomColors.borderGradient.colors.first,
 
-        dataRowMaxHeight: 100,
+        dataRowMaxHeight: SizeUtils.height * 0.11,
         source: ExpenseDataSource(
           _expenses,
           _expenseResponse.totalCount,
@@ -292,12 +298,14 @@ class _ExpenseViewState extends State<ExpenseView> {
           }
         },
         columns: [
-          DataColumn(label: Text('Expense Category')),
-          DataColumn(label: Text('Order ID /Expense name')),
-          DataColumn(label: Text('Description')),
-          DataColumn(label: Text('Amount')),
-          DataColumn(label: Text('Date')),
-          DataColumn(label: Text('Edit')),
+          DataColumn(label: Text('Expense Category', style: headingTextStyle)),
+          DataColumn(
+            label: Text('Order ID /Expense name', style: headingTextStyle),
+          ),
+          DataColumn(label: Text('Description', style: headingTextStyle)),
+          DataColumn(label: Text('Amount', style: headingTextStyle)),
+          DataColumn(label: Text('Date', style: headingTextStyle)),
+          DataColumn(label: Text('Edit', style: headingTextStyle)),
         ],
       ),
     );

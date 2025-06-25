@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:taproot_admin/constants/constants.dart';
+import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/leads_screen.dart/data/leads_model.dart';
 import 'package:taproot_admin/features/leads_screen.dart/data/leads_service.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
-import 'package:taproot_admin/services/size_utils.dart';
+import 'package:taproot_admin/widgets/refresh_button.dart';
 import 'package:taproot_admin/widgets/snakbar_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -66,11 +66,19 @@ class _LeadScreenState extends State<LeadScreen> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle headingTextStyle = context.inter60016.copyWith(
+      fontSize: 16.fSize,
+      // color: Colors.red,
+      // fontWeight: FontWeight
+    );
     return Scaffold(
       appBar: AppBar(
         // title: const Text('Leads'),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _fetchLeads),
+          RefreshButton(onTap: _fetchLeads),
+          SizedBox(width: CustomPadding.paddingLarge.v),
+
+          // IconButton(icon: const Icon(Icons.refresh), onPressed: _fetchLeads),
         ],
       ),
       body:
@@ -96,28 +104,53 @@ class _LeadScreenState extends State<LeadScreen> {
                   child: SizedBox(
                     width: .87 * SizeUtils.width,
 
-                    child: PaginatedDataTable(
-                      showFirstLastButtons: true,
-                      arrowHeadColor: CustomColors.borderGradient.colors.first,
-                      dataRowMaxHeight: 120,
-                      rowsPerPage: _rowsPerPage,
-                      availableRowsPerPage: const [5],
-                      onRowsPerPageChanged: null,
-                      initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
-                      onPageChanged: _handlePageChange,
-                      columns: const [
-                        DataColumn(label: Text('Full Name')),
-                        DataColumn(label: Text('Phone Number')),
-                        DataColumn(label: Text('Email')),
-                        DataColumn(label: Text('Description')),
-                        DataColumn(label: Text('WhatsApp')),
-                      ],
-                      source: _LeadsDataSource(
-                        leads: _leads,
-                        context: context,
-                        totalRowCount: _total,
-                        currentPage: _currentPage,
+                    child: Container(
+                      padding: EdgeInsets.all(CustomPadding.paddingLarge),
+                      decoration: BoxDecoration(
+                        boxShadow: floatingShadowLarge,
+
+                        color: CustomColors.secondaryColor,
+                        borderRadius: BorderRadius.circular(
+                          CustomPadding.paddingLarge * 2,
+                        ),
+                      ),
+                      child: PaginatedDataTable(
+                        showFirstLastButtons: true,
+                        arrowHeadColor:
+                            CustomColors.borderGradient.colors.first,
+                        dataRowMaxHeight: SizeUtils.height * 0.11,
                         rowsPerPage: _rowsPerPage,
+                        availableRowsPerPage: const [5],
+                        onRowsPerPageChanged: null,
+                        initialFirstRowIndex: (_currentPage - 1) * _rowsPerPage,
+                        onPageChanged: _handlePageChange,
+                        columns: [
+                          DataColumn(
+                            label: Text('Full Name', style: headingTextStyle),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Phone Number',
+                              style: headingTextStyle,
+                            ),
+                          ),
+                          DataColumn(
+                            label: Text('Email', style: headingTextStyle),
+                          ),
+                          DataColumn(
+                            label: Text('Description', style: headingTextStyle),
+                          ),
+                          DataColumn(
+                            label: Text('WhatsApp', style: headingTextStyle),
+                          ),
+                        ],
+                        source: _LeadsDataSource(
+                          leads: _leads,
+                          context: context,
+                          totalRowCount: _total,
+                          currentPage: _currentPage,
+                          rowsPerPage: _rowsPerPage,
+                        ),
                       ),
                     ),
                   ),
@@ -232,7 +265,7 @@ class _LeadsDataSource extends DataTableSource {
               }
             },
             child: Center(
-              child: SvgPicture.asset(Assets.svg.whatsapp, height: 50),
+              child: SvgPicture.asset(Assets.svg.whatsapp, height: 40),
             ),
           ),
         ),

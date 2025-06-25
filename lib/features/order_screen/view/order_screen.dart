@@ -13,6 +13,7 @@ import 'package:taproot_admin/features/order_screen/widgets/alert_widget.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
+import 'package:taproot_admin/widgets/refresh_button.dart';
 
 class OrderScreen extends StatefulWidget {
   final GlobalKey<NavigatorState>? innerNavigatorKey;
@@ -194,6 +195,11 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle headingTextStyle = context.inter60016.copyWith(
+      fontSize: 16.fSize,
+      // color: Colors.red,
+      // fontWeight: FontWeight
+    );
     return DefaultTabController(
       length: 8,
       child: Scaffold(
@@ -204,25 +210,7 @@ class _OrderScreenState extends State<OrderScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: CustomColors.buttonColor1,
-                    borderRadius: BorderRadius.circular(
-                      CustomPadding.paddingXL,
-                    ),
-                  ),
-
-                  child: IconButton(
-                    // color: Colors.blue,
-                    // highlightColor: Colors.blue,
-                    tooltip: 'Refresh',
-                    onPressed: () => fetchAllOrder(),
-                    icon: Icon(
-                      Icons.refresh,
-                      color: CustomColors.secondaryColor,
-                    ),
-                  ),
-                ),
+                RefreshButton(onTap: fetchAllOrder),
                 CustomGap.gapLarge,
                 MiniLoadingButton(
                   icon: Icons.add,
@@ -368,14 +356,46 @@ class _OrderScreenState extends State<OrderScreen> {
                                   (currentPage - 1) * _rowsPerPage,
                               onPageChanged: handlePageChange,
                               availableRowsPerPage: const [6, 10, 20, 50],
-                              columns: const [
-                                DataColumn(label: Text('Order ID')),
-                                DataColumn(label: Text('Full Name')),
-                                DataColumn(label: Text('Phone')),
-                                DataColumn(label: Text('Amount')),
-                                DataColumn(label: Text('Order Count')),
-                                DataColumn(label: Text('Status')),
-                                DataColumn(label: Text('Action')),
+                              columns: [
+                                DataColumn(
+                                  label: Text(
+                                    'Order ID',
+                                    style: headingTextStyle,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Full Name',
+                                    style: headingTextStyle,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text('Phone', style: headingTextStyle),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Amount',
+                                    style: headingTextStyle,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Order Count',
+                                    style: headingTextStyle,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Status',
+                                    style: headingTextStyle,
+                                  ),
+                                ),
+                                DataColumn(
+                                  label: Text(
+                                    'Action',
+                                    style: headingTextStyle,
+                                  ),
+                                ),
                               ],
                               source:
                                   orderDataSource ??
