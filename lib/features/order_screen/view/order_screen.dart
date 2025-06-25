@@ -32,6 +32,9 @@ class _OrderScreenState extends State<OrderScreen> {
   int totalPages = 1;
   int totalOrder = 0;
   final int _rowsPerPage = 6;
+
+  // data
+
   OrderDataSource? orderDataSource;
   final _tableKey = GlobalKey<PaginatedDataTableState>();
   final TextEditingController _searchController = TextEditingController();
