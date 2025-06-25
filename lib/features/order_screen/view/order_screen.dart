@@ -235,6 +235,7 @@ class _OrderScreenState extends State<OrderScreen> {
                     horizontal: CustomPadding.paddingLarge.v,
                   ),
                   decoration: BoxDecoration(
+                    boxShadow: floatingShadow,
                     color: CustomColors.secondaryColor,
                     borderRadius: BorderRadius.circular(
                       CustomPadding.paddingLarge.v,
